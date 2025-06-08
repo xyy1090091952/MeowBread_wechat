@@ -1,0 +1,24 @@
+/* pages/knowledge/knowledge.wxss */
+.container {
+  padding: 20rpx;
+}
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 40rpx;
+}
+.category-item {
+  background-color: #f0f0f0;
+  padding: 20rpx;
+  margin: 10rpx;
+  border-radius: 10rpx;
+}
+.content-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+.content-text {
+  font-size: 28rpx;
+  line-height: 1.6;
+}

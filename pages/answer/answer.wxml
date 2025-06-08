@@ -1,0 +1,19 @@
+<!--pages/answer/answer.wxml-->
+<view class="container">
+  <view class="mode-selector">
+    <button bindtap="startQuickMode">快速答题（30题）</button>
+    <button bindtap="startInfiniteMode">无尽模式</button>
+  </view>
+  <view class="question-card" wx:if="{{currentQuestion}}">
+    <text class="word">{{currentQuestion.word}}</text>
+    <text class="reading">{{currentQuestion.reading}}</text>
+    <input class="answer-input" placeholder="请输入你的答案" bindinput="onAnswerInput" value="{{userAnswer}}"/>
+    <button class="submit-btn" bindtap="submitAnswer">提交答案</button>
+  </view>
+  <view class="quiz-info">
+    <text>已答题: {{totalQuestions}}</text>
+    <text>正确率: {{score/totalQuestions*100}}%</text>
+    <text>用时: {{timeUsed}}分钟</text>
+  </view>
+  <button class="end-quiz-btn" bindtap="endQuiz">结束答题</button>
+</view>

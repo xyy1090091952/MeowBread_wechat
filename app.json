@@ -1,0 +1,37 @@
+{
+  "pages": [
+    "pages/answer/answer",
+    "pages/vocabulary/vocabulary",
+    "pages/knowledge/knowledge",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTitleText": "日语单词记忆",
+    "navigationBarTextStyle": "black"
+  },
+  "renderer": "webview",
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/answer/answer",
+        "text": "答题"
+      },
+      {
+        "pagePath": "pages/vocabulary/vocabulary",
+        "text": "单词库"
+      },
+      {
+        "pagePath": "pages/knowledge/knowledge",
+        "text": "知识点"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "个人"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

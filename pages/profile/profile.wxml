@@ -1,0 +1,21 @@
+<!--pages/profile/profile.wxml-->
+<view class="container">
+  <view class="user-info">
+    <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
+    <text class="nickname">{{userInfo.nickName}}</text>
+    <button wx:if="{{!isLoggedIn}}" bindtap="login">登录</button>
+    <button wx:if="{{isLoggedIn}}" bindtap="logout">退出登录</button>
+  </view>
+  <view class="statistics" wx:if="{{isLoggedIn}}">
+    <text class="stat-title">答题统计</text>
+    <view class="stat-item">总题数：{{statistics.totalQuestions}}</view>
+    <view class="stat-item">正确答案：{{statistics.correctAnswers}}</view>
+    <view class="stat-item">平均正确率：{{statistics.averageAccuracy}}%</view>
+  </view>
+  <view class="mistakes" wx:if="{{isLoggedIn}}">
+    <text class="mistake-title">错题库</text>
+    <view class="mistake-item" wx:for="{{mistakes}}" wx:key="index">
+      <text>{{item.word}} - {{item.meaning}}</text>
+    </view>
+  </view>
+</view>

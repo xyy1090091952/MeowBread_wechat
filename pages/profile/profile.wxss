@@ -1,0 +1,35 @@
+/* pages/profile/profile.wxss */
+.container {
+  padding: 20rpx;
+}
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40rpx;
+}
+.avatar {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+}
+.nickname {
+  margin-top: 20rpx;
+  font-size: 32rpx;
+}
+.stat-title, .mistake-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+.stat-item {
+  font-size: 28rpx;
+  margin-bottom: 10rpx;
+}
+.mistake-item {
+  background-color: #f8f8f8;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+}

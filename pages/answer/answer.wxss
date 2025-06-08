@@ -1,0 +1,39 @@
+/* pages/answer/answer.wxss */
+.container {
+  padding: 20rpx;
+}
+.mode-selector {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 40rpx;
+}
+.question-card {
+  background-color: #f8f8f8;
+  padding: 20rpx;
+  border-radius: 10rpx;
+  margin-bottom: 40rpx;
+}
+.word {
+  font-size: 40rpx;
+  font-weight: bold;
+}
+.reading {
+  font-size: 30rpx;
+  color: #666666;
+}
+.answer-input {
+  margin-top: 20rpx;
+  border: 1rpx solid #dddddd;
+  padding: 10rpx;
+}
+.submit-btn {
+  margin-top: 20rpx;
+}
+.quiz-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.end-quiz-btn {
+  margin-top: 40rpx;
+}

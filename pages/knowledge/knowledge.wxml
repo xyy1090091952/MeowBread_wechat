@@ -1,0 +1,12 @@
+<!--pages/knowledge/knowledge.wxml-->
+<view class="container">
+  <view class="category-list">
+    <view class="category-item" wx:for="{{categories}}" wx:key="id" bindtap="selectCategory" data-id="{{item.id}}">
+      {{item.name}}
+    </view>
+  </view>
+  <view class="content-area" wx:if="{{currentCategory}}">
+    <text class="content-title">{{currentCategory.name}}</text>
+    <text class="content-text">{{content}}</text>
+  </view>
+</view>

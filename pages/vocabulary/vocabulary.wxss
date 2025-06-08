@@ -1,0 +1,29 @@
+/* pages/vocabulary/vocabulary.wxss */
+.container {
+  padding: 20rpx;
+}
+.search-bar {
+  margin-bottom: 20rpx;
+}
+.search-bar input {
+  border: 1rpx solid #dddddd;
+  padding: 10rpx;
+}
+.display-mode-selector {
+  margin-bottom: 20rpx;
+}
+.word-list .word-item,
+.word-cards .word-card {
+  background-color: #f8f8f8;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  border-radius: 10rpx;
+}
+.word {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+.reading, .meaning, .type, .sentence {
+  font-size: 28rpx;
+  color: #666666;
+}

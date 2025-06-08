@@ -1,0 +1,31 @@
+<!--pages/vocabulary/vocabulary.wxml-->
+<view class="container">
+  <view class="search-bar">
+    <input type="text" placeholder="搜索单词" bindinput="onSearchInput" value="{{searchQuery}}"/>
+  </view>
+  <view class="display-mode-selector">
+    <button bindtap="toggleDisplayMode">切换到{{displayMode === 'list' ? '卡片' : '列表'}}模式</button>
+  </view>
+  <view class="word-list" wx:if="{{displayMode === 'list'}}">
+    <block wx:for="{{filteredWords}}" wx:key="word">
+      <view class="word-item">
+        <text class="word">{{item.word}}</text>
+        <text class="reading">{{item.reading}}</text>
+        <text class="meaning">{{item.meaning}}</text>
+        <text class="type">{{item.type}}</text>
+        <text class="sentence">{{item.sentence}}</text>
+      </view>
+    </block>
+  </view>
+  <view class="word-cards" wx:if="{{displayMode === 'card'}}">
+    <block wx:for="{{filteredWords}}" wx:key="word">
+      <view class="word-card">
+        <text class="word">{{item.word}}</text>
+        <text class="reading">{{item.reading}}</text>
+        <text class="meaning">{{item.meaning}}</text>
+        <text class="type">{{item.type}}</text>
+        <text class="sentence">{{item.sentence}}</text>
+      </view>
+    </block>
+  </view>
+</view>
