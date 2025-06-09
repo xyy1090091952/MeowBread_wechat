@@ -13,22 +13,31 @@
   },
   "renderer": "webview",
   "tabBar": {
+    "color": "#a9b7b7",
+    "selectedColor": "#48A9E2",
+    "borderStyle": "white",
+    "backgroundColor": "#fff",
     "list": [
       {
         "pagePath": "pages/answer/answer",
-        "text": "答题"
-      },
-      {
+        "text": "答题",
+        "iconPath": "images/tab/answer.png",
+        "selectedIconPath": "images/tab/answer_selected.png"
+      }, {
         "pagePath": "pages/vocabulary/vocabulary",
-        "text": "单词库"
-      },
-      {
+        "text": "单词库",
+        "iconPath": "images/tab/vocabulary.png",
+        "selectedIconPath": "images/tab/vocabulary_selected.png"
+      }, {
         "pagePath": "pages/knowledge/knowledge",
-        "text": "知识点"
-      },
-      {
+        "text": "知识点",
+        "iconPath": "images/tab/knowledge.png",
+        "selectedIconPath": "images/tab/knowledge_selected.png"
+      }, {
         "pagePath": "pages/profile/profile",
-        "text": "个人"
+        "text": "个人",
+        "iconPath": "images/tab/profile.png",
+        "selectedIconPath": "images/tab/profile_selected.png"
       }
     ]
   },
