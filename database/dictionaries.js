@@ -5,7 +5,13 @@ module.exports = {
             "name": "everyone's Japanese",
             "description": "大家的日语",
             "lesson_files": [
-                "everyones_japanese/lesson*.json"
+                "everyones_japanese/lesson31.js",
+                "everyones_japanese/lesson32.js",
+                "everyones_japanese/lesson33.js",
+                "everyones_japanese/lesson34.js",
+                "everyones_japanese/lesson35.js",
+                "everyones_japanese/lesson36.js",
+                "everyones_japanese/lesson37.js"
             ]
         },
         {
@@ -13,7 +19,13 @@ module.exports = {
             "name": "liang's class",
             "description": "梁老师的课程",
             "lesson_files": [
-                "liangs_class/lesson*.json"
+                "liangs_class/lesson17.js",
+                "liangs_class/lesson18.js",
+                "liangs_class/lesson19.js",
+                "liangs_class/lesson20.js",
+                "liangs_class/lesson21.js",
+                "liangs_class/lesson22.js",
+                "liangs_class/lesson23.js"
             ]
         },
         {
@@ -21,7 +33,7 @@ module.exports = {
             "name": "多邻国",
             "description": "多邻国日语词汇",
             "lesson_files": [
-                "duolingguo/lesson*.json"
+                "duolingguo/lesson1.js"
             ]
         }
     ]

@@ -32,9 +32,46 @@
           bindinput="handleAnswerInput" 
           value="{{userAnswer}}"
           disabled="{{showAnswerCard}}"/>
+        <!-- 调试信息 -->
+        <view style="font-size: 10px; color: grey; margin-top: 5px;">
+          Debug: userAnswer: [{{userAnswer}}] (实际值)
+          <br />
+          userAnswer.trim(): [{{userAnswer.trim()}}] (trim后)
+          <br />
+          !userAnswer.trim(): [{{!userAnswer.trim()}}] (取反后)
+          <br />
+          Question Type: [{{questions[currentQuestionIndex].type}}] (题目类型)
+          <br />
+          Button Disabled State: {{ (questions[currentQuestionIndex].type === 'fill' && isUserAnswerEmpty) }} (是否应禁用)
+        </view>
       </view>
 
-      <button class="submit-button" bindtap="submitAnswer" wx:if="{{!showAnswerCard}}" disabled="{{(questions[currentQuestionIndex].type === 'choice' && !selectedOption) || (questions[currentQuestionIndex].type === 'fill' && !userAnswer.trim()) }}">提交答案</button>
+      <view class="action-buttons">
+        <!-- 提交答案按钮 -->
+        <button 
+          class="submit-button" 
+          bindtap="submitAnswer" 
+          wx:if="{{!showAnswerCard}}" 
+          disabled="{{(questions[currentQuestionIndex].type === 'choice' && !selectedOption) || (questions[currentQuestionIndex].type === 'fill' && isUserAnswerEmpty) }}">
+          提交答案
+        </button>
+
+        <!-- 下一题按钮 -->
+        <button 
+          class="next-button" 
+          bindtap="nextQuestion" 
+          wx:if="{{showAnswerCard}}">
+          下一题
+        </button>
+
+        <!-- 跳过本题按钮 -->
+        <button 
+          class="skip-button" 
+          bindtap="skipQuestion" 
+          wx:if="{{!showAnswerCard}}">
+          跳过本题
+        </button>
+      </view>
     </view>
 
     <!-- 答案反馈卡片 -->

@@ -15,6 +15,7 @@ Page({
     questions: [], // 题目列表
     currentQuestionIndex: 0, // 当前题目索引
     userAnswer: '', // 用户答案
+    isUserAnswerEmpty: true, // 用户答案是否为空 (用于填空题按钮状态)
     selectedOption: null, // 用户选择的选项 (针对选择题)
     showAnswerCard: false, // 是否显示答案卡片
     isCorrect: false, // 当前答案是否正确
@@ -97,76 +98,94 @@ Page({
         return;
       }
 
-      // 根据用户要求，当前只测试 duolingguo
-      const targetDictionaryIdForTesting = 'duolingguo';
+      // 动态加载课程文件逻辑
+      const processLessonFile = (dict, lessonFileNamePattern) => {
+        // lessonFileNamePattern 可能是 "duolingguo/lesson*.js" 或 "lesson1.js"
+        // 我们需要提取纯文件名，并确保它是 .js
+        let actualLessonFileName = lessonFileNamePattern;
+        if (lessonFileNamePattern.includes('/')) {
+          actualLessonFileName = lessonFileNamePattern.split('/').pop();
+        }
+        // 确保是 .js 文件，如果之前是 .json，则替换
+        actualLessonFileName = actualLessonFileName.replace('.json', '.js'); 
+
+        try {
+          const lessonData = require(`../../database/${dict.id}/${actualLessonFileName}`);
+          if (lessonData && Array.isArray(lessonData)) {
+            wordsToLoad.push(...lessonData.map(item => ({ 
+              data: item.data, 
+              sourceDictionary: dict.id, 
+              lesson: actualLessonFileName.replace('.js', '') // 存储不带后缀的课程名
+            })));
+          }
+        } catch (e) {
+          console.warn(`加载词典 ${dict.name} 的 ${actualLessonFileName} 失败:`, e);
+        }
+      };
 
       if (lessonFile === 'ALL_DICTIONARIES_ALL_LESSONS') {
-        // 用户要求：即使选择“全部辞典”，也只加载 duolingguo 进行测试
-        const dictToTest = dictionariesConfig.find(d => d.id === targetDictionaryIdForTesting);
-        if (dictToTest && dictToTest.lesson_files && dictToTest.lesson_files.length > 0) {
-          // lesson_files 在 dictionaries.json 中是类似 "duolingguo/lesson*.json" 的模式
-          // 我们需要一种方法来解析这个模式并找到实际的文件名
-          // 暂时假设 lesson_files 直接包含文件名，如 ["lesson1.json"]
-          // 或者，如果 dictionaries.json 结构更新为直接包含 lessons 数组，则用那个
-          // 当前的 dictionaries.json 结构是 "lesson_files": ["duolingguo/lesson*.json"]
-          // 这暗示了需要更复杂的逻辑来列出文件，小程序端 require 不支持通配符
-          // 根据当前项目结构和用户测试要求，我们明确知道 duolingguo 词典的课程文件。
-          // 未来如果需要完全动态加载，需要调整 dictionaries.json 的结构或引入构建步骤。
-          // 目前，我们直接使用已知的 duolingguo 课程文件列表。
-          const duolingguoLessons = ['lesson1.js']; // 更新为 .js 文件
-          duolingguoLessons.forEach(lessonFileName => {
-            try {
-              // 词典的 base_path 应该直接是其 id，因为资源文件放在与 id 同名的目录下
-              const lessonData = require(`../../database/${dictToTest.id}/${lessonFileName}`); // lessonFileName 本身已包含 .js 后缀
-              if (lessonData && Array.isArray(lessonData)) {
-                wordsToLoad.push(...lessonData.map(item => ({ data: item.data, sourceDictionary: dictToTest.id, lesson: lessonFileName.replace('.json', '') })));
-              }
-            } catch (e) {
-              console.warn(`加载词典 ${dictToTest.name} 的 ${lessonFileName} 失败:`, e);
-            }
-          });
-        } else {
-            console.warn('测试词典 duolingguo 未找到或没有课程文件配置');
-        }
+        // 加载所有词典的所有课程
+        dictionariesConfig.forEach(dict => {
+          if (dict.lesson_files && Array.isArray(dict.lesson_files)) {
+            dict.lesson_files.forEach(lessonPattern => {
+              processLessonFile(dict, lessonPattern);
+            });
+          }
+        });
       } else if (lessonFile.startsWith('DICTIONARY_') && lessonFile.endsWith('_ALL_LESSONS')) {
         // 加载特定词典的所有课程
-        // 根据用户要求，这里也应该只处理 duolingguo
-        if (dictionaryId === targetDictionaryIdForTesting) {
-            const targetDictionary = dictionariesConfig.find(d => d.id === dictionaryId);
-            if (targetDictionary && targetDictionary.base_path) {
-                // 根据当前项目结构和用户测试要求，我们明确知道 duolingguo 词典的课程文件。
-                const duolingguoLessons = ['lesson1.js']; // 更新为 .js 文件
-                duolingguoLessons.forEach(lessonFileName => {
-                    try {
-                        // 词典的 base_path 应该直接是其 id，因为资源文件放在与 id 同名的目录下
-                        const lessonData = require(`../../database/${targetDictionary.id}/${lessonFileName}`); // lessonFileName 本身已包含 .js 后缀
-                        if (lessonData && Array.isArray(lessonData)) {
-                            wordsToLoad.push(...lessonData.map(item => ({ data: item.data, sourceDictionary: targetDictionary.id, lesson: lessonFileName.replace('.json', '') })));
-                        }
-                    } catch (e) {
-                        console.warn(`加载词典 ${targetDictionary.name} 的 ${lessonFileName} 失败:`, e);
-                    }
-                });
-            } else {
-                console.error('未找到指定测试词典ID或该词典没有课程:', dictionaryId);
-            }
+        const targetDictId = dictionaryId; // dictionaryId 应该是从 options 传入的实际词典 ID
+        const targetDictionary = dictionariesConfig.find(d => d.id === targetDictId);
+        if (targetDictionary && targetDictionary.lesson_files && Array.isArray(targetDictionary.lesson_files)) {
+          targetDictionary.lesson_files.forEach(lessonPattern => {
+            processLessonFile(targetDictionary, lessonPattern);
+          });
         } else {
-            console.log(`当前测试仅支持 ${targetDictionaryIdForTesting}，请求的词典 ${dictionaryId} 将被忽略。`);
-            // 可以选择显示一个提示，或者不加载任何内容
+          console.error(`未找到词典 ${targetDictId} 或其没有课程文件配置。`);
         }
       } else {
-        // 加载单个课程文件 (旧逻辑，目前不太可能走到)
-        console.log('尝试加载单个课程文件 (此路径通常不应被触发):', lessonFile);
-        try {
-            const lessonData = require(lessonFile); 
-            if (lessonData && Array.isArray(lessonData)) {
-                wordsToLoad.push(...lessonData.map(item => ({ data: item.data })));
+        // 加载单个课程文件 (例如 'duolingguo/lesson1.js' 或 'lesson1.js' 如果 basePath 已知)
+        // lessonFile 此时应该是类似 'duolingguo_lesson1' 或 'everyones_japanese_lesson31' 的格式
+        // 我们需要从中解析出 dictionaryId 和 lessonName
+        const parts = lessonFile.split('_'); // 假设格式为 'dictionaryId_lessonName'
+        let dictIdToLoad = '';
+        let lessonNameToLoad = '';
+
+        if (parts.length >= 2) {
+            // 尝试处理像 'everyones_japanese_lesson31' 这样的情况
+            // 或者 'duolingguo_lesson1'
+            const potentialLessonName = parts.pop(); // e.g., 'lesson31'
+            const potentialDictId = parts.join('_'); // e.g., 'everyones_japanese'
+            
+            const foundDict = dictionariesConfig.find(d => d.id === potentialDictId);
+            if (foundDict) {
+                dictIdToLoad = potentialDictId;
+                // 确保 lessonNameToLoad 包含 .js 后缀
+                lessonNameToLoad = potentialLessonName.endsWith('.js') ? potentialLessonName : `${potentialLessonName}.js`;
+            } else {
+                // 如果不是 'dictId_lessonName' 格式，可能 lessonFile 就是 'lesson1.js' 并且 dictionaryId 已在 data 中
+                if (this.data.dictionaryId && this.data.dictionaryId !== 'all') {
+                    dictIdToLoad = this.data.dictionaryId;
+                    lessonNameToLoad = lessonFile.endsWith('.js') ? lessonFile : `${lessonFile}.js`;
+                } else {
+                     console.error(`无法从 ${lessonFile} 解析词典ID和课程名，且当前词典ID (${this.data.dictionaryId}) 无效。`);
+                }
             }
-        } catch (e) {
-            console.error(`加载单个课程文件 ${lessonFile} 失败:`, e);
+        }
+
+        if (dictIdToLoad && lessonNameToLoad) {
+            const dictForSingleLesson = dictionariesConfig.find(d => d.id === dictIdToLoad);
+            if (dictForSingleLesson) {
+                console.log(`尝试加载单个课程文件: ${dictIdToLoad}/${lessonNameToLoad}`);
+                processLessonFile(dictForSingleLesson, lessonNameToLoad); // lessonNameToLoad 已经包含 .js
+            } else {
+                console.error(`加载单个课程文件时未找到词典: ${dictIdToLoad}`);
+            }
+        } else {
+             console.error(`无法加载单个课程文件，解析失败: ${lessonFile}`);
         }
       }
-
+      // try 块结束前确保所有逻辑分支都已闭合
       if (wordsToLoad.length === 0) {
         wx.showModal({
           title: '提示',
@@ -199,8 +218,8 @@ Page({
         // 这个情况已在前面处理
       }
       this.startTimer(); // 题目加载完毕，启动计时器
-
-    } catch (e) {
+    } // End of try
+    catch (e) { // Start of catch
       console.error('加载单词和题目数据失败:', e);
       wx.showModal({
         title: '加载失败',
@@ -306,7 +325,14 @@ Page({
 
   // 处理用户答案输入
   handleAnswerInput(e) {
-    this.setData({ userAnswer: e.detail.value });
+    console.log('Input event triggered. Value:', e.detail.value); // 打印输入事件和值
+    const userAnswer = e.detail.value;
+    this.setData({
+      userAnswer: userAnswer,
+      isUserAnswerEmpty: userAnswer.trim() === '' // 根据输入实时更新答案是否为空的状态
+    });
+    // console.log('userAnswer after setData:', this.data.userAnswer);
+    // console.log('isUserAnswerEmpty after setData:', this.data.isUserAnswerEmpty);
   },
 
   // 选择题：处理选项点击
@@ -341,11 +367,17 @@ Page({
       // this.addMistake(currentQ);
     }
 
-    // 延时一段时间后进入下一题或结束
-    setTimeout(() => {
-      this.setData({ showAnswerCard: false, selectedOption: null }); // 隐藏答案卡片，重置选项
-      this.nextQuestion();
-    }, 2500); // 稍微加长一点时间看答案
+    // 用户点击“下一题”按钮后才会进入下一题，此处不再自动跳转
+    // setTimeout(() => {
+    //   this.setData({ showAnswerCard: false, selectedOption: null }); // 隐藏答案卡片，重置选项
+    //   this.nextQuestion();
+    // }, 2500); 
+  },
+
+  // 跳过本题
+  skipQuestion() {
+    // 跳过题目不计分，直接进入下一题
+    this.nextQuestion();
   },
 
   // 下一题
@@ -358,12 +390,15 @@ Page({
       this.setData({ currentQuestionIndex: 0, score: 0}); // 简单处理：回到第一题
       // 或者 this.loadQuestions(); 重新加载打乱
     } else {
-      this.setData({
-        currentQuestionIndex: this.data.currentQuestionIndex + 1,
-        userAnswer: '', // 清空上一题答案
-        selectedOption: null, // 清空选择题选项高亮
-        showAnswerCard: false // 确保答案卡隐藏
-      });
+    const nextIndex = this.data.currentQuestionIndex + 1;
+    this.setData({
+      currentQuestionIndex: nextIndex,
+      userAnswer: '', // 重置用户答案
+      selectedOption: null, // 重置用户选项
+      isUserAnswerEmpty: true, // 重置填空题答案为空的状态
+      showAnswerCard: false, // 隐藏答案卡片
+      isCorrect: false // 重置正确状态
+    });
     }
   },
 

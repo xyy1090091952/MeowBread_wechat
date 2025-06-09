@@ -96,17 +96,18 @@ Page({
       console.log("Filter.js: dictionaries.js 加载结果:", dictionariesData);
 
       if (dictionariesData && dictionariesData.dictionaries) {
-        const duolingguoDictionary = dictionariesData.dictionaries.find(d => d.id === 'duolingguo');
-        if (duolingguoDictionary) {
-          // 将 duolingguo 词典添加到显示列表
-          // 我们需要确保它的结构与 allDictionariesOption 一致，特别是 name, id, description, base_path
-          // dictionaries.json 中的结构已经是 {id, name, description, lesson_files, base_path}
-          // 其中 lesson_files 在 filter.js 当前逻辑下不直接使用，base_path 会被 quiz.js 使用
-          dictionariesToDisplay.push(duolingguoDictionary);
-        } else {
-          console.warn('未在 dictionaries.json 中找到 id 为 "duolingguo" 的词典。');
+        // 加载所有在 dictionaries.js 中定义的词典
+        dictionariesData.dictionaries.forEach(dict => {
+          // 确保每个词典对象都包含必要的字段，特别是 id 和 name
+          // base_path 和 lesson_files 主要由 quiz.js 使用，但保持结构一致性是好的
+          if (dict.id && dict.name) {
+            dictionariesToDisplay.push(dict);
+          }
+        });
+        if (dictionariesToDisplay.length === 1) { // 只有 '全部辞典'
+          console.warn('dictionaries.js 中没有配置任何有效词典。');
           wx.showToast({
-            title: '多邻国词典未配置',
+            title: '没有可用的词典',
             icon: 'none',
             duration: 2000
           });
@@ -147,12 +148,32 @@ Page({
       lessonsToShow = [this.data.allLessonsOption];
       defaultLessonFile = this.data.allLessonsOption.file;
     } else {
-      // 对于特定词典，也只显示“该词典的全部课程”选项
+      // 对于特定词典，显示“该词典的全部课程”选项
       const specificDictAllLessonsOption = {
         name: `该词典 (${selectedDictionary.name}) 的全部课程`,
-        file: `DICTIONARY_${selectedDictionary.id}_ALL_LESSONS`
+        file: `DICTIONARY_${selectedDictionary.id}_ALL_LESSONS` // quiz.js 会处理这个特殊的 file 标识
       };
       lessonsToShow = [specificDictAllLessonsOption];
+      
+      // 动态加载该词典下的具体课程文件作为选项 (确保它们是 .js)
+      if (selectedDictionary.lesson_files && Array.isArray(selectedDictionary.lesson_files)) {
+        selectedDictionary.lesson_files.forEach(lessonFilePattern => {
+          let lessonName = lessonFilePattern;
+          if (lessonFilePattern.includes('/')) {
+            lessonName = lessonFilePattern.split('/').pop(); // 获取文件名如 lesson1.js
+          }
+          lessonName = lessonName.replace('.json', '.js'); // 确保是 .js
+          const lessonDisplayName = lessonName.replace('.js', ''); // 用于显示，如 lesson1
+          
+          // file 属性需要一个 quiz.js 能解析的唯一标识
+          // 例如 'dictionaryId_lessonName' (不含.js后缀)
+          lessonsToShow.push({
+            name: `课程: ${lessonDisplayName}`,
+            file: `${selectedDictionary.id}_${lessonDisplayName}` 
+          });
+        });
+      }
+      // 默认选中“该词典的全部课程”
       defaultLessonFile = specificDictAllLessonsOption.file;
     }
 
