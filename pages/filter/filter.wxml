@@ -1,0 +1,27 @@
+<!--pages/filter/filter.wxml-->
+<view class="container">
+  <view class="filter-group">
+    <view class="filter-label">选择词典：</view>
+    <picker mode="selector" range="{{dictionaries}}" range-key="name" value="{{selectedDictionaryIndex}}" bindchange="onDictionaryChange">
+      <view class="picker">
+        {{dictionaries[selectedDictionaryIndex].name || '请选择'}}
+      </view>
+    </picker>
+  </view>
+
+  <view class="filter-group" wx:if="{{lessons.length > 0}}">
+    <view class="filter-label">选择课程：</view>
+    <picker mode="selector" range="{{lessons}}" range-key="name" value="{{selectedLessonIndex}}" bindchange="onLessonChange">
+      <view class="picker">
+        {{selectedLessonIndex !== null && lessons[selectedLessonIndex] ? lessons[selectedLessonIndex].name : (selectedDictionaryIndex !== null ? '请选择课程' : '请先选词典')}}
+      </view>
+    </picker>
+  </view>
+  
+  <view class="filter-group" wx:if="{{lessons.length === 0 && selectedDictionaryIndex !== null}}">
+    <view class="filter-label">选择课程：</view>
+    <view class="picker-empty">该词典下暂无课程</view>
+  </view>
+
+  <button class="start-quiz-button" type="primary" bindtap="startQuiz" disabled="{{!selectedLessonFile}}">开始答题 ({{quizMode === 'quick' ? '快速模式' : '无尽模式'}})</button>
+</view>

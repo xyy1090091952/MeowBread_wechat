@@ -3,18 +3,20 @@
     "pages/answer/answer",
     "pages/vocabulary/vocabulary",
     "pages/knowledge/knowledge",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/filter/filter",
+    "pages/quiz/quiz"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#ffffff",
-    "navigationBarTitleText": "日语单词记忆",
+    "navigationBarTitleText": "MeowBread",
     "navigationBarTextStyle": "black"
   },
   "renderer": "webview",
   "tabBar": {
     "color": "#a9b7b7",
-    "selectedColor": "#48A9E2",
+    "selectedColor": "#98CF3F",
     "borderStyle": "white",
     "backgroundColor": "#fff",
     "list": [

@@ -1,10 +1,19 @@
 <!--pages/profile/profile.wxml-->
 <view class="container">
   <view class="user-info">
-    <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-    <text class="nickname">{{userInfo.nickName}}</text>
-    <button wx:if="{{!isLoggedIn}}" bindtap="login">登录</button>
-    <button wx:if="{{isLoggedIn}}" bindtap="logout">退出登录</button>
+    <!-- 未登录时显示 -->
+    <block wx:if="{{!isLoggedIn}}">
+      <image class="avatar" src="{{avatarUrl || '/images/icons/profile.png'}}"></image>
+      <button open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar" class="avatar-button"> 选择头像 </button>
+      <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:blur="onNicknameInput" value="{{nickname}}"/>
+      <button bindtap="login" class="login-button">保存并登录</button>
+    </block>
+    <!-- 登录后显示 -->
+    <block wx:if="{{isLoggedIn && userInfo}}">
+      <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
+      <text class="nickname">{{userInfo.nickName}}</text>
+      <button bindtap="logout">退出登录</button>
+    </block>
   </view>
   <view class="statistics" wx:if="{{isLoggedIn}}">
     <text class="stat-title">答题统计</text>

@@ -1,0 +1,67 @@
+/* pages/filter/filter.wxss */
+.container {
+  padding: 30rpx;
+  background-color: #f4f4f4;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.filter-group {
+  background-color: #fff;
+  border-radius: 10rpx;
+  margin-bottom: 30rpx;
+  padding: 20rpx 30rpx;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.filter-label {
+  font-size: 30rpx;
+  color: #333;
+  margin-bottom: 15rpx;
+  display: block;
+}
+
+.picker {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  font-size: 30rpx;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.picker::after {
+  content: '▼'; /* Simple dropdown arrow */
+  font-size: 24rpx;
+  color: #888;
+}
+
+.picker-empty {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  font-size: 30rpx;
+  color: #999;
+}
+
+.start-quiz-button {
+  background-color: #98CF3F; /* 主题绿色 */
+  color: white;
+  font-size: 34rpx;
+  border-radius: 10rpx;
+  padding: 25rpx 0;
+  text-align: center;
+  width: 100%;
+  margin-top: 40rpx;
+  box-shadow: 0 2px 6px rgba(152, 207, 63, 0.3);
+}
+
+.start-quiz-button[disabled] {
+  background-color: #c8e6c9; /* Disabled state lighter green */
+  color: #a5d6a7;
+  box-shadow: none;
+}

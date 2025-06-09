@@ -1,0 +1,74 @@
+<!--pages/quiz/quiz.wxml-->
+<view class="container" wx:if="{{questions.length > 0}}">
+  <view class="quiz-info">
+    <text class="score-display">得分: {{score}}</text>
+    <text class="timer-display">用时: {{formatTime(timeSpent)}}</text>
+    <text class="progress-display">进度: {{currentQuestionIndex + 1}} / {{totalQuestions}}</text>
+  </view>
+
+  <block wx:if="{{questions[currentQuestionIndex]}}">
+    <view class="question-card">
+      <view class="question-stem">{{questions[currentQuestionIndex].stem}}</view>
+
+      <!-- 选择题 -->
+      <view class="options-container" wx:if="{{questions[currentQuestionIndex].type === 'choice'}}">
+        <button 
+          wx:for="{{questions[currentQuestionIndex].options}}" 
+          wx:for-item="option"
+          wx:key="index"
+          class="option-button {{selectedOption === option ? (isCorrect && showAnswerCard ? 'correct' : (!isCorrect && showAnswerCard ? 'incorrect' : 'selected')) : ''}} {{showAnswerCard && option === questions[currentQuestionIndex].answer && option !== selectedOption ? 'correct-unselected' : ''}}"
+          bindtap="onOptionSelect"
+          data-option="{{option}}"
+          disabled="{{showAnswerCard}}">
+          {{option}}
+        </button>
+      </view>
+
+      <!-- 填空题 -->
+      <view wx:if="{{questions[currentQuestionIndex].type === 'fill'}}">
+        <input 
+          class="fill-input {{showAnswerCard ? (isCorrect ? 'correct-fill' : 'incorrect-fill') : ''}}" 
+          placeholder="请输入答案"
+          bindinput="handleAnswerInput" 
+          value="{{userAnswer}}"
+          disabled="{{showAnswerCard}}"/>
+      </view>
+
+      <button class="submit-button" bindtap="submitAnswer" wx:if="{{!showAnswerCard}}" disabled="{{(questions[currentQuestionIndex].type === 'choice' && !selectedOption) || (questions[currentQuestionIndex].type === 'fill' && !userAnswer.trim()) }}">提交答案</button>
+    </view>
+
+    <!-- 答案反馈卡片 -->
+    <view class="answer-card {{isCorrect ? 'correct' : 'incorrect'}}" wx:if="{{showAnswerCard}}">
+      <view class="answer-text">{{isCorrect ? '回答正确！' : '回答错误！'}}</view>
+      <view class="answer-text" wx:if="{{!isCorrect}}">正确答案: {{questions[currentQuestionIndex].answer}}</view>
+      <view class="word-details" wx:if="{{questions[currentQuestionIndex] && questions[currentQuestionIndex].wordInfo}}">
+        <text>单词: {{questions[currentQuestionIndex].wordInfo['汉字'] || questions[currentQuestionIndex].wordInfo['假名']}}</text>
+        <text wx:if="{{questions[currentQuestionIndex].wordInfo['假名']}}">假名: {{questions[currentQuestionIndex].wordInfo['假名']}}</text>
+        <text>中文: {{questions[currentQuestionIndex].wordInfo['中文']}}</text>
+        <text wx:if="{{questions[currentQuestionIndex].wordInfo['词性']}}">词性: {{questions[currentQuestionIndex].wordInfo['词性']}}</text>
+        <text wx:if="{{questions[currentQuestionIndex].wordInfo['例句']}}">例句: {{questions[currentQuestionIndex].wordInfo['例句']}}</text>
+      </view>
+    </view>
+  </block>
+
+  <view wx:if="{{questions.length === 0 && lessonFile}}">
+    <text>正在加载题目或当前课程没有题目...</text>
+  </view>
+
+</view>
+
+<view class="container" wx:elif="{{!lessonFile}}">
+  <text>错误：未指定课程文件。</text>
+</view>
+
+<wxs module="timeFormatter">
+  module.exports = {
+    formatTime: function(seconds) {
+      if (typeof seconds !== 'number' || seconds < 0) return '00:00:00';
+      var h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+      var m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+      var s = (seconds % 60).toString().padStart(2, '0');
+      return h + ':' + m + ':' + s;
+    }
+  }
+</wxs>

@@ -16,6 +16,36 @@
 .nickname {
   margin-top: 20rpx;
   font-size: 32rpx;
+  color: #333;
+}
+
+.avatar-button {
+  margin-top: 20rpx;
+  background-color: #07c160;
+  color: white;
+  border-radius: 8rpx;
+  padding: 10rpx 20rpx;
+  font-size: 28rpx;
+}
+
+.nickname-input {
+  margin-top: 20rpx;
+  border: 1px solid #ddd;
+  border-radius: 8rpx;
+  padding: 15rpx;
+  width: 80%;
+  text-align: center;
+  font-size: 28rpx;
+}
+
+.login-button {
+  margin-top: 30rpx;
+  background-color: #07c160;
+  color: white;
+  border-radius: 8rpx;
+  padding: 15rpx 30rpx;
+  font-size: 30rpx;
+  width: 80%;
 }
 .stat-title, .mistake-title {
   font-size: 36rpx;
