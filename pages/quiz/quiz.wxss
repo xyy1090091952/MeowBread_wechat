@@ -159,3 +159,163 @@
   border-color: #f44336;
   background-color: #ffebee;
 }
+
+/* Fixed action buttons at the bottom */
+.action-buttons-fixed {
+  position: fixed;
+  bottom: 0; /* 调整此值以增加底部安全区 */
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 20rpx 20rpx calc(20rpx + constant(safe-area-inset-bottom)) 20rpx; /* 适配 iPhone X 等底部安全区 */
+  padding: 20rpx 20rpx calc(20rpx + env(safe-area-inset-bottom)) 20rpx; /* 适配 iPhone X 等底部安全区 */
+  background-color: #fff; /* Add a background color to prevent content overlap */
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Optional: adds a shadow for better separation */
+  z-index: 1000; /* Ensure buttons are on top */
+}
+
+.button-group {
+  display: flex;
+  width: 100%;
+  gap: 20rpx; /* Space between skip and submit buttons */
+}
+
+.half-width-button {
+  flex: 1; /* 让按钮平分宽度 */
+  height: 88rpx; /* 固定高度为44px (@1x) */
+  padding: 0; /* 移除上下padding，因为高度已固定 */
+  font-size: 32rpx;
+  text-align: center;
+  border-radius: 8rpx;
+  display: flex; /* 使用flex布局 */
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+  box-sizing: border-box; /* 确保padding和border不会增加元素实际宽高 */
+  border: 1px solid transparent; /* 统一边框，避免高度不一致 */
+}
+
+.full-width-button {
+  width: 100%;
+  height: 88rpx; /* 固定高度为44px (@1x) */
+  padding: 0; /* 移除上下padding，因为高度已固定 */
+  font-size: 34rpx;
+  text-align: center;
+  border-radius: 8rpx;
+  display: flex; /* 使用flex布局 */
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+  box-sizing: border-box; /* 确保padding和border不会增加元素实际宽高 */
+}
+
+.skip-button {
+  background-color: #f0f0f0; /* Light grey, or choose another color */
+  color: #333;
+  border: 1px solid #ddd; /* 跳过按钮的边框 */
+}
+
+.submit-button {
+  background-color: #4CAF50; /* Green, or choose another color */
+  color: white;
+  box-shadow: none; /* 移除投影 */
+  border: 1px solid #ddd; /* 统一边框样式，与skip-button一致 */
+}
+
+.next-button {
+  background-color: #007bff; /* Blue, or choose another color */
+  color: white;
+  border: none; /* 下一题按钮通常不需要边框 */
+}
+
+/* 词性标签样式 */
+.question-header {
+  display: flex;
+  align-items: center; /* 垂直居中对齐题干和标签 */
+  justify-content: center; /* 水平居中 */
+  margin-bottom: 20rpx;
+  flex-wrap: wrap; /* 允许换行，如果内容太长 */
+}
+
+.part-of-speech-tag {
+  display: inline-block;
+  padding: 5rpx 15rpx;
+  font-size: 24rpx;
+  color: white;
+  border-radius: 20rpx; /* 圆角 */
+  margin-left: 10rpx; /* 与题干的间距 */
+  background-color: #6c757d; /* 默认背景色 */
+}
+
+.part-of-speech-tag.verb {
+  background-color: #598BF1;
+}
+
+.part-of-speech-tag.intransitive-verb {
+  background-color: #39D763;
+}
+
+.part-of-speech-tag.transitive-verb {
+  background-color: #FAAD3A;
+}
+
+.part-of-speech-tag.noun {
+  background-color: #B79EFF;
+}
+
+.part-of-speech-tag.adjective {
+  background-color: #F56593;
+}
+
+.part-of-speech-tag.adverb {
+  background-color: #FF375C;
+}
+
+.part-of-speech-tag.particle {
+  background-color: #5bc0de;
+}
+
+.part-of-speech-tag.conjunction {
+  background-color: #aa66cc;
+}
+
+.part-of-speech-tag.adjectival-noun {
+  background-color: #17a2b8;
+}
+
+.part-of-speech-tag.pronoun {
+  background-color: #6f42c1;
+}
+
+.part-of-speech-tag.numeral {
+  background-color: #fd7e14;
+}
+
+/* 答案卡片中的词性标签和详情项目 */
+.answer-card .word-details {
+  text-align: left; /* 详情左对齐 */
+  margin-top: 20rpx;
+}
+
+.answer-card .detail-item {
+  display: flex; /* 让标签和值在同一行 */
+  align-items: center; /* 垂直居中对齐 */
+  margin-bottom: 10rpx;
+}
+
+.answer-card .detail-label {
+  font-weight: bold;
+  margin-right: 10rpx;
+  min-width: 100rpx; /* 固定标签宽度，使其对齐 */
+}
+
+.answer-card .detail-value {
+  flex: 1; /* 值占据剩余空间 */
+}
+
+/* 确保答案卡片中的词性标签样式也能正确应用，并且可以根据需要调整大小或边距 */
+.answer-card .part-of-speech-tag {
+  margin-left: 0; /* 在答案卡中，标签通常紧跟在“词性:”之后，不需要额外左边距 */
+  /* 如果需要，可以调整字体大小或padding */
+  /* font-size: 22rpx; */
+  /* padding: 3rpx 10rpx; */
+}

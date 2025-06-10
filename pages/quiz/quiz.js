@@ -29,7 +29,7 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad(options) {
+  onLoad: function(options) {
     const lessonFile = options.lessonFile ? decodeURIComponent(options.lessonFile) : '';
     const dictionaryId = options.dictionaryId ? decodeURIComponent(options.dictionaryId) : 'all';
     const basePath = options.basePath ? decodeURIComponent(options.basePath) : '';
@@ -52,12 +52,13 @@ Page({
       });
       return;
     }
+    this.setData({ timeSpent: 0 }); // 初始化/重置用时
     this.loadQuestionsAndWords();
-    // 计时器应在题目加载完成后启动
   },
 
   // 加载单词和题目数据
-  loadQuestionsAndWords() {
+  loadQuestionsAndWords: function() {
+    this.setData({ isLoading: true, timeSpent: 0 }); // 重置加载状态和用时
     const { lessonFile, dictionaryId, basePath } = this.data;
     let wordsToLoad = [];
 
@@ -217,7 +218,9 @@ Page({
       } else if (questions.length === 0 && wordsToLoad.length === 0) {
         // 这个情况已在前面处理
       }
-      this.startTimer(); // 题目加载完毕，启动计时器
+      if (this.data.questions.length > 0) {
+        this.startTimer(); // 题目加载完毕且有题目时，启动计时器
+      }
     } // End of try
     catch (e) { // Start of catch
       console.error('加载单词和题目数据失败:', e);
@@ -233,7 +236,7 @@ Page({
   },
 
   // 根据模式选择题目 (示例)
-  selectWordsForQuiz(allWords, mode) {
+  selectWordsForQuiz: function(allWords, mode) {
     let selected = [];
     if (mode === 'quick') {
       // 随机选择30题
@@ -245,47 +248,84 @@ Page({
     return selected.map(word => this.formatQuestion(word, allWords)); // 传递allWords用于生成选项
   },
 
+
+
+  mapPartOfSpeechToClassName: function(partOfSpeech) {
+    const mapping = {
+      '动词': 'verb',
+      '自动词': 'intransitive-verb',
+      '他动词': 'transitive-verb',
+      '名词': 'noun',
+      '形容词': 'adjective',
+      '副词': 'adverb',
+      '助词': 'particle',
+      '连词': 'conjunction',
+      '形容动词': 'adjectival-noun',
+      '代词': 'pronoun',
+      '数词': 'numeral'
+      // 可以根据需要添加更多映射
+    };
+    return mapping[partOfSpeech] || partOfSpeech; // 如果没有匹配，返回原始值或空字符串
+  },
+
+  mapClassNameToPartOfSpeech: function(className) {
+    const mapping = {
+      'verb': '动词',
+      'intransitive-verb': '自动词',
+      'transitive-verb': '他动词',
+      'noun': '名词',
+      'adjective': '形容词',
+      'adverb': '副词',
+      'particle': '助词',
+      'conjunction': '连词',
+      'adjectival-noun': '形容动词',
+      'pronoun': '代词',
+      'numeral': '数词'
+      // 可以根据需要添加更多映射
+    };
+    return mapping[className] || className; // 如果没有匹配，返回原始值
+  },
+
   // 格式化单个单词为题目对象 (示例)
-  formatQuestion(wordData) { // allWords 将从 this.data.allWordsInLesson 获取
+  formatQuestion: function(wordData) { // allWords 将从 this.data.allWordsInLesson 获取
     // 随机决定是选择题还是填空题
     const questionType = Math.random() > 0.5 ? 'choice' : 'fill';
     let question = {
       id: wordData.data.汉字 || wordData.data.假名, // 唯一标识
       type: questionType,
       stem: '', // 题干
-      answer: wordData.data.中文, // 正确答案
+      answer: '', // 答案将在下面根据类型设置
       options: [], // 选择题选项 (如果适用)
-      wordInfo: wordData.data // 原始单词信息，用于显示答案详情
+      wordInfo: wordData.data, // 原始单词信息，用于显示答案详情
+      partOfSpeech: this.mapPartOfSpeechToClassName(wordData.data.词性) // 添加词性字段并映射到类名
     };
+
+    // 统一答案为单词的日文形式（假名或汉字）或中文意思
+    const japaneseForm = wordData.data.汉字 || wordData.data.假名;
+    const chineseMeaning = wordData.data.中文;
 
     if (questionType === 'choice') {
       // 生成选择题题干和选项
-      // 题干可以是 假名问中文，或者中文问假名/汉字
-      if (Math.random() > 0.5 && wordData.data.假名) {
-        question.stem = `「${wordData.data.假名}」的中文意思是什么？`;
-        question.answer = wordData.data.中文;
-      } else {
-        question.stem = `「${wordData.data.中文}」的假名或汉字是什么？`;
-        question.answer = wordData.data.汉字 || wordData.data.假名;
+      if (Math.random() > 0.5 && wordData.data.假名) { // 给出日文，选择中文
+        question.stem = `「${japaneseForm}」的中文意思是什么？`;
+        question.answer = chineseMeaning;
+        question.options = this.generateOptions(wordData.data, 'chinese');
+      } else { // 给出中文，选择日文
+        question.stem = `「${chineseMeaning}」的假名或汉字是什么？`;
+        question.answer = japaneseForm;
+        question.options = this.generateOptions(wordData.data, 'japanese');
       }
-      let optionType = question.stem.includes('中文意思是什么？') ? 'chinese' : 'japanese';
-      question.options = this.generateOptions(wordData.data, optionType);
-    } else {
-      // 生成填空题题干
-      // 可以是 给出假名填中文，或者给出中文填假名/汉字
-      if (Math.random() > 0.5 && wordData.data.假名) {
-        question.stem = `「${wordData.data.假名}」的中文意思是什么？(填空)`;
-        question.answer = wordData.data.中文;
-      } else {
-        question.stem = `「${wordData.data.中文}」的假名或汉字是什么？(填空)`;
-        question.answer = wordData.data.汉字 || wordData.data.假名;
-      }
+    } else { // fill 填空题
+      // 填空题统一要求填写“假名”或“汉字”
+      question.stem = `「${wordData.data.中文}」的假名或汉字是什么？(填空)`;
+      question.answer = japaneseForm; 
+      // 填空题的答案验证也需要调整，以接受假名或汉字
     }
     return question;
   },
 
   // 生成选择题选项 (示例)
-  generateOptions(correctWord, optionType) {
+  generateOptions: function(correctWord, optionType) {
     const allWordsInLesson = this.data.allWordsInLesson; // 使用当前课程的单词列表
     let correctAnswerText = '';
     if (optionType === 'chinese') {
@@ -324,7 +364,7 @@ Page({
   },
 
   // 处理用户答案输入
-  handleAnswerInput(e) {
+  handleAnswerInput: function(e) {
     console.log('Input event triggered. Value:', e.detail.value); // 打印输入事件和值
     const userAnswer = e.detail.value;
     this.setData({
@@ -336,7 +376,7 @@ Page({
   },
 
   // 选择题：处理选项点击
-  onOptionSelect(e) {
+  onOptionSelect: function(e) {
     const selected = e.currentTarget.dataset.option;
     this.setData({ 
       userAnswer: selected, // 将选择的选项作为答案
@@ -345,14 +385,29 @@ Page({
   },
 
   // 提交答案
-  submitAnswer() {
+  submitAnswer: function() {
     const currentQ = this.data.questions[this.data.currentQuestionIndex];
     let isCorrect = false;
     if (currentQ.type === 'choice') {
       isCorrect = this.data.userAnswer === currentQ.answer;
     } else { // fill
-      // 填空题答案可能需要更宽松的比较，例如忽略大小写、空格等，或允许多个正确答案
-      isCorrect = this.data.userAnswer.trim() === currentQ.answer.trim();
+      // 填空题答案验证：用户输入的答案与问题的标准答案（可能是假名或汉字）一致
+      // 或者，如果标准答案是汉字，用户输入了对应的假名也算对；反之亦然（如果都有的话）
+      const userAnswerTrimmed = this.data.userAnswer.trim();
+      const correctAnswer = currentQ.answer.trim(); // currentQ.answer 现在是日文形式
+      const wordInfo = currentQ.wordInfo; // 原始单词信息
+
+      isCorrect = userAnswerTrimmed === correctAnswer;
+
+      // 额外判断：如果答案是汉字，输入假名也算对；如果答案是假名，输入汉字也算对
+      if (!isCorrect && wordInfo) {
+        if (correctAnswer === wordInfo.汉字 && userAnswerTrimmed === wordInfo.假名) {
+          isCorrect = true;
+        }
+        if (correctAnswer === wordInfo.假名 && userAnswerTrimmed === wordInfo.汉字) {
+          isCorrect = true;
+        }
+      }
     }
 
     this.setData({
@@ -375,13 +430,13 @@ Page({
   },
 
   // 跳过本题
-  skipQuestion() {
+  skipQuestion: function() {
     // 跳过题目不计分，直接进入下一题
     this.nextQuestion();
   },
 
   // 下一题
-  nextQuestion() {
+  nextQuestion: function() {
     if (this.data.quizMode === 'quick' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1) {
       this.endQuiz();
     } else if (this.data.currentQuestionIndex >= this.data.questions.length - 1 && this.data.quizMode === 'endless'){
@@ -403,8 +458,8 @@ Page({
   },
 
   // 结束答题
-  endQuiz() {
-    clearInterval(this.data.timer);
+  endQuiz: function() {
+    this.stopTimer(); // 停止计时器
     // TODO: 显示答题结果页面，包括得分、正确率、用时等
     wx.showModal({
       title: '答题结束',
@@ -420,14 +475,29 @@ Page({
   },
 
   // 开始计时器
-  startTimer() {
-    this.data.timer = setInterval(() => {
-      this.setData({ timeSpent: this.data.timeSpent + 1 });
+  startTimer: function() {
+    if (this.data.timer) { // 如果已有计时器，先清除，避免重复启动
+      clearInterval(this.data.timer);
+    }
+    // 创建新的计时器
+    const newTimer = setInterval(() => {
+      this.setData({
+        timeSpent: this.data.timeSpent + 1
+      });
     }, 1000);
+    this.setData({ timer: newTimer }); // 将计时器ID存入data，以便后续清除
+  },
+
+  // 停止计时器
+  stopTimer: function() {
+    if (this.data.timer) {
+      clearInterval(this.data.timer);
+      this.setData({ timer: null }); // 清除后将timer重置为null
+    }
   },
 
   // 格式化时间 (秒 -> HH:MM:SS)
-  formatTime(seconds) {
+  formatTime: function(seconds) {
     const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
     const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
     const s = (seconds % 60).toString().padStart(2, '0');
@@ -435,9 +505,33 @@ Page({
   },
 
   /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function() {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function() {
+    // 如果页面从后台切回来，且计时器已停止（可能在onHide中停止），并且答题未结束，则重新启动计时器
+    if (!this.data.timer && this.data.questions.length > 0 && !this.data.showAnswerCard && this.data.currentQuestionIndex < (this.data.quizMode === 'quick' ? this.data.totalQuestions : this.data.questions.length)) {
+      this.startTimer();
+    }
+  },
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function() {
+    this.stopTimer(); // 页面隐藏时停止计时器
+  },
+
+  /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload() {
-    clearInterval(this.data.timer); // 页面卸载时清除计时器
+  onUnload: function() {
+    this.stopTimer(); // 页面卸载时清除计时器
   }
 })

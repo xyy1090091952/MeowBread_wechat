@@ -8,7 +8,12 @@
 
   <block wx:if="{{questions[currentQuestionIndex]}}">
     <view class="question-card">
-      <view class="question-stem">{{questions[currentQuestionIndex].stem}}</view>
+      <view class="question-header">
+        <view class="question-stem">{{questions[currentQuestionIndex].stem}}</view>
+        <view class="part-of-speech-tag {{questions[currentQuestionIndex].partOfSpeech}}" wx:if="{{questions[currentQuestionIndex].partOfSpeech}}">
+          {{utils.mapClassNameToPartOfSpeech(questions[currentQuestionIndex].partOfSpeech)}}
+        </view>
+      </view>
 
       <!-- 选择题 -->
       <view class="options-container" wx:if="{{questions[currentQuestionIndex].type === 'choice'}}">
@@ -32,44 +37,31 @@
           bindinput="handleAnswerInput" 
           value="{{userAnswer}}"
           disabled="{{showAnswerCard}}"/>
-        <!-- 调试信息 -->
-        <view style="font-size: 10px; color: grey; margin-top: 5px;">
-          Debug: userAnswer: [{{userAnswer}}] (实际值)
-          <br />
-          userAnswer.trim(): [{{userAnswer.trim()}}] (trim后)
-          <br />
-          !userAnswer.trim(): [{{!userAnswer.trim()}}] (取反后)
-          <br />
-          Question Type: [{{questions[currentQuestionIndex].type}}] (题目类型)
-          <br />
-          Button Disabled State: {{ (questions[currentQuestionIndex].type === 'fill' && isUserAnswerEmpty) }} (是否应禁用)
-        </view>
+
       </view>
 
-      <view class="action-buttons">
-        <!-- 提交答案按钮 -->
-        <button 
-          class="submit-button" 
-          bindtap="submitAnswer" 
-          wx:if="{{!showAnswerCard}}" 
-          disabled="{{(questions[currentQuestionIndex].type === 'choice' && !selectedOption) || (questions[currentQuestionIndex].type === 'fill' && isUserAnswerEmpty) }}">
-          提交答案
-        </button>
+      <view class="action-buttons-fixed">
+        <!-- 提交答案和跳过本题按钮 -->
+        <view class="button-group" wx:if="{{!showAnswerCard}}">
+          <button 
+            class="skip-button half-width-button" 
+            bindtap="skipQuestion">
+            跳过本题
+          </button>
+          <button 
+            class="submit-button half-width-button" 
+            bindtap="submitAnswer" 
+            disabled="{{(questions[currentQuestionIndex].type === 'choice' && !selectedOption) || (questions[currentQuestionIndex].type === 'fill' && isUserAnswerEmpty) }}">
+            提交答案
+          </button>
+        </view>
 
         <!-- 下一题按钮 -->
         <button 
-          class="next-button" 
+          class="next-button full-width-button" 
           bindtap="nextQuestion" 
           wx:if="{{showAnswerCard}}">
           下一题
-        </button>
-
-        <!-- 跳过本题按钮 -->
-        <button 
-          class="skip-button" 
-          bindtap="skipQuestion" 
-          wx:if="{{!showAnswerCard}}">
-          跳过本题
         </button>
       </view>
     </view>
@@ -79,11 +71,28 @@
       <view class="answer-text">{{isCorrect ? '回答正确！' : '回答错误！'}}</view>
       <view class="answer-text" wx:if="{{!isCorrect}}">正确答案: {{questions[currentQuestionIndex].answer}}</view>
       <view class="word-details" wx:if="{{questions[currentQuestionIndex] && questions[currentQuestionIndex].wordInfo}}">
-        <text>单词: {{questions[currentQuestionIndex].wordInfo['汉字'] || questions[currentQuestionIndex].wordInfo['假名']}}</text>
-        <text wx:if="{{questions[currentQuestionIndex].wordInfo['假名']}}">假名: {{questions[currentQuestionIndex].wordInfo['假名']}}</text>
-        <text>中文: {{questions[currentQuestionIndex].wordInfo['中文']}}</text>
-        <text wx:if="{{questions[currentQuestionIndex].wordInfo['词性']}}">词性: {{questions[currentQuestionIndex].wordInfo['词性']}}</text>
-        <text wx:if="{{questions[currentQuestionIndex].wordInfo['例句']}}">例句: {{questions[currentQuestionIndex].wordInfo['例句']}}</text>
+        <view wx:if="{{questions[currentQuestionIndex].wordInfo['假名']}}" class="detail-item">
+          <text class="detail-label">假名:</text>
+          <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['假名']}}</text>
+        </view>
+        <view wx:if="{{questions[currentQuestionIndex].wordInfo['汉字']}}" class="detail-item">
+          <text class="detail-label">汉字:</text>
+          <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['汉字']}}</text>
+        </view>
+        <view wx:if="{{questions[currentQuestionIndex].wordInfo['中文']}}" class="detail-item">
+          <text class="detail-label">中文:</text>
+          <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['中文']}}</text>
+        </view>
+        <view wx:if="{{questions[currentQuestionIndex].wordInfo['例句']}}" class="detail-item">
+          <text class="detail-label">例句:</text>
+          <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['例句']}}</text>
+        </view>
+        <view wx:if="{{questions[currentQuestionIndex].wordInfo['词性']}}" class="detail-item">
+          <text class="detail-label">词性:</text>
+          <view class="part-of-speech-tag {{questions[currentQuestionIndex].partOfSpeech}}">
+            {{questions[currentQuestionIndex].wordInfo['词性']}}
+          </view>
+        </view>
       </view>
     </view>
   </block>
@@ -98,10 +107,11 @@
   <text>错误：未指定课程文件。</text>
 </view>
 
+<wxs module="utils" src="../utils.wxs"></wxs>
 <wxs module="timeFormatter">
   module.exports = {
     formatTime: function(seconds) {
-      if (typeof seconds !== 'number' || seconds < 0) return '00:00:00';
+        if (typeof seconds !== 'number' || seconds < 0) return '00:00:00';
       var h = Math.floor(seconds / 3600).toString().padStart(2, '0');
       var m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
       var s = (seconds % 60).toString().padStart(2, '0');
