@@ -24,10 +24,23 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    this.setData({
-      quizMode: options.mode || 'quick'
+    // 尝试从全局或本地存储中读取已保存的筛选条件
+    const savedFilter = wx.getStorageSync('quizFilter');
+    let dataToSet = {
+      quizMode: options.mode || 'quick' // 默认值
+    };
+
+    if (savedFilter) {
+      dataToSet.selectedDictionaryIndex = savedFilter.selectedDictionaryIndex !== undefined ? savedFilter.selectedDictionaryIndex : this.data.selectedDictionaryIndex;
+      dataToSet.selectedLessonFile = savedFilter.selectedLessonFile || this.data.selectedLessonFile;
+      dataToSet.quizMode = savedFilter.quizMode || options.mode || 'quick';
+      // selectedLessonIndex 的恢复将在 loadDictionariesAndLessons 之后，通过匹配 selectedLessonFile 进行
+    }
+
+    this.setData(dataToSet, () => {
+      // 确保 setData 完成后才加载词典和课程
+      this.loadDictionariesAndLessons(); // 这会基于（可能已恢复的）selectedDictionaryIndex 更新 lessons
     });
-    this.loadDictionariesAndLessons();
   },
 
   /**
@@ -131,7 +144,11 @@ Page({
 
     this.setData({
       dictionaries: dictionariesToDisplay,
-      selectedDictionaryIndex: 0, // 默认选中第一个选项（“全部辞典”或唯一的“多邻国”）
+      // selectedDictionaryIndex 应该在 onLoad 中从缓存恢复，这里不再强制设为0
+      // 如果 onLoad 中没有恢复，其初始值或 onLoad 中设置的默认值会被保留
+      // 若 onLoad 中已从 savedFilter 恢复了 selectedDictionaryIndex，则使用该值
+      // 否则，使用 data 中定义的默认值或 onLoad 中未找到 savedFilter 时设置的默认值
+      selectedDictionaryIndex: this.data.selectedDictionaryIndex 
     });
     this.updateLessonsBasedOnDictionary(); // 根据选中的词典加载课程
   },
@@ -177,10 +194,26 @@ Page({
       defaultLessonFile = specificDictAllLessonsOption.file;
     }
 
+    // 尝试恢复之前选择的课程索引
+    let finalSelectedLessonIndex = 0;
+    let finalSelectedLessonFile = defaultLessonFile;
+
+    // 如果 onLoad 时从缓存中恢复了 selectedLessonFile，且它不是当前词典的默认“全部课程”
+    // 则尝试在新生成的 lessonsToShow 中找到它
+    const cachedLessonFile = this.data.selectedLessonFile; // 这是 onLoad 时可能从缓存恢复的值
+
+    if (cachedLessonFile && cachedLessonFile !== defaultLessonFile) {
+      const lessonIndex = lessonsToShow.findIndex(lesson => lesson.file === cachedLessonFile);
+      if (lessonIndex !== -1) {
+        finalSelectedLessonIndex = lessonIndex;
+        finalSelectedLessonFile = cachedLessonFile;
+      }
+    }
+
     this.setData({
       lessons: lessonsToShow,
-      selectedLessonIndex: 0,
-      selectedLessonFile: defaultLessonFile
+      selectedLessonIndex: finalSelectedLessonIndex,
+      selectedLessonFile: finalSelectedLessonFile
     });
   },
 
@@ -209,26 +242,44 @@ Page({
     }
   },
 
-  // 开始答题
-  startQuiz() {
+  // 完成选择并保存筛选条件的逻辑
+  startQuiz() { // 函数名保持 startQuiz 以减少 wxml 的修改，但功能已变为“完成选择”
     if (!this.data.selectedLessonFile) {
       wx.showToast({
-        title: '请选择范围',
+        title: '请选择课程范围',
         icon: 'none'
       });
       return;
     }
 
     const selectedDictionary = this.data.dictionaries[this.data.selectedDictionaryIndex];
-    let dictionaryIdToSend = selectedDictionary.id; // 'all' 或具体的词典ID
-    let lessonFileToSend = this.data.selectedLessonFile; // 'ALL_DICTIONARIES_ALL_LESSONS' 或 'DICTIONARY_{id}_ALL_LESSONS'
-    
-    // 如果选的是具体词典，我们传递词典的 base_path，quiz.js 会需要它来定位课程文件
-    // 如果选的是“全部辞典”，则不需要 base_path，因为 quiz.js 会处理所有词典
-    let basePathToSend = (dictionaryIdToSend !== 'all') ? selectedDictionary.base_path : '';
+    const selectedLesson = this.data.lessons[this.data.selectedLessonIndex];
 
-    wx.navigateTo({
-      url: `/pages/quiz/quiz?lessonFile=${encodeURIComponent(lessonFileToSend)}&mode=${this.data.quizMode}&dictionaryId=${encodeURIComponent(dictionaryIdToSend)}&basePath=${encodeURIComponent(basePathToSend)}`
+    const quizFilter = {
+      selectedDictionaryIndex: this.data.selectedDictionaryIndex, // 保存索引，方便恢复picker状态
+      selectedDictionaryName: selectedDictionary.name, // 保存名称，方便显示
+      selectedLessonFile: this.data.selectedLessonFile, // 核心，用于加载题目
+      selectedLessonName: selectedLesson ? selectedLesson.name : '未知课程', // 保存名称，方便显示
+      selectedLessonIndex: this.data.selectedLessonIndex, // 保存索引，方便恢复picker状态
+      dictionaryId: selectedDictionary.id, // 实际的词典ID
+      basePath: selectedDictionary.base_path || '', // 词典基础路径
+      quizMode: this.data.quizMode // 保存当前的答题模式
+    };
+
+    // 将筛选条件保存到本地存储
+    wx.setStorageSync('quizFilter', quizFilter);
+    console.log('Filter.js: 筛选条件已保存:', quizFilter);
+
+    wx.showToast({
+      title: '筛选条件已保存',
+      icon: 'success',
+      duration: 1500,
+      complete: () => {
+        // 显示提示后，跳转到答题页面 (quiz是tabBar页面，使用switchTab)
+        wx.switchTab({
+          url: '/pages/answer/answer' // 修改跳转到answer页面
+        });
+      }
     });
   }
 

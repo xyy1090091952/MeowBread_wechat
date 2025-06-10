@@ -1,4 +1,14 @@
 /* pages/quiz/quiz.wxss */
+.current-filter-display {
+  width: 100%;
+  text-align: center; /* 文本居中 */
+  margin-bottom: 10rpx; /* 和下方元素的间距 */
+  color: #888; /* 文本颜色，可以根据主题调整 */
+}
+
+.current-filter-display text {
+  font-size: 24rpx; /* 调小字号 */
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -179,6 +189,7 @@
   display: flex;
   width: 100%;
   gap: 20rpx; /* Space between skip and submit buttons */
+  align-items: center; /* 确保按钮在垂直方向上对齐 */
 }
 
 .half-width-button {

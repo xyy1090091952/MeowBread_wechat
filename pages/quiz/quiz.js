@@ -30,30 +30,70 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    const lessonFile = options.lessonFile ? decodeURIComponent(options.lessonFile) : '';
-    const dictionaryId = options.dictionaryId ? decodeURIComponent(options.dictionaryId) : 'all';
-    const basePath = options.basePath ? decodeURIComponent(options.basePath) : '';
+    // 尝试从本地存储中获取用户已选择的筛选条件
+    let quizFilter = wx.getStorageSync('quizFilter');
+
+    // 如果没有找到已保存的筛选条件 (例如首次进入)
+    if (!quizFilter || !quizFilter.selectedLessonFile) {
+      console.log('quiz.js: 未找到已保存的筛选条件，将使用默认“全部辞典”范围');
+      // 构建一个默认的筛选条件，代表“全部辞典”和“全部课程”
+      quizFilter = {
+        selectedDictionaryIndex: 0, // 假设“全部辞典”在picker中是第一个
+        selectedDictionaryName: '全部辞典',
+        selectedLessonFile: 'ALL_DICTIONARIES_ALL_LESSONS', // 特殊标识，代表所有词典的所有课程
+        selectedLessonName: '全部课程',
+        selectedLessonIndex: 0, // 假设“全部课程”在picker中是第一个
+        dictionaryId: 'all', // “全部辞典”的ID
+        basePath: 'all',     // “全部辞典”的路径标识
+        quizMode: options.mode || 'quick' // 默认或从options获取模式
+      };
+      // 可以选择是否将这个默认值也存入storage，以便filter页面能正确显示
+      // wx.setStorageSync('quizFilter', quizFilter); 
+      // 但如果希望filter页总是从用户实际选择开始，则不存
+    }
+
+    // 从筛选条件中提取必要信息
+    const lessonFile = quizFilter.selectedLessonFile;
+    const dictionaryId = quizFilter.dictionaryId;
+    const basePath = quizFilter.basePath;
+    // 优先使用 options.mode, 然后是 quizFilter.quizMode, 最后是默认值 'quick'
+    const quizMode = options.mode || (quizFilter && quizFilter.quizMode) || 'quick';
+    const currentFilterDisplay = `${quizFilter.selectedDictionaryName} - ${quizFilter.selectedLessonName}`;
 
     this.setData({
-      quizMode: options.mode || 'quick',
+      quizMode: quizMode,
       lessonFile: lessonFile,
       dictionaryId: dictionaryId,
       basePath: basePath,
-      isLoading: true
+      isLoading: true,
+      currentFilterDisplay: currentFilterDisplay, // 用于在WXML中显示
+      score: 0, // 重置分数
+      currentQuestionIndex: 0, // 重置题目索引
+      userAnswer: '',
+      isUserAnswerEmpty: true,
+      selectedOption: null,
+      showAnswerCard: false,
+      isCorrect: false,
+      // totalQuestions 将在题目加载后设置
     });
 
     if (!lessonFile) {
       wx.showModal({
         title: '错误',
-        content: '未指定课程范围，无法开始答题。',
+        content: '未指定课程范围，无法开始答题。请先去“题库筛选”页面选择。',
         showCancel: false,
-        confirmText: '返回',
-        success: () => wx.navigateBack()
+        confirmText: '知道了',
+        success: () => {
+          // 可以选择跳转到筛选页或首页
+          wx.switchTab({
+            url: '/pages/answer/answer' // 或者跳转到筛选页所在的tab
+          });
+        }
       });
       return;
     }
     this.setData({ timeSpent: 0 }); // 初始化/重置用时
-    this.loadQuestionsAndWords();
+    this.loadQuestionsAndWords(); // loadQuestionsAndWords 内部会在题目加载完成后启动计时器
   },
 
   // 加载单词和题目数据
@@ -203,23 +243,18 @@ Page({
       const questions = this.selectWordsForQuiz(wordsToLoad, this.data.quizMode);
       this.setData({ questions: questions });
 
-      if (this.data.quizMode === 'quick') {
-        const total = Math.min(wordsToLoad.length, 30);
-        this.setData({ totalQuestions: total });
-        if (questions.length < total && questions.length > 0) {
-          this.setData({ totalQuestions: questions.length });
-        }
-      } else {
-        this.setData({ totalQuestions: questions.length });
-      }
+      // 设置总题数，对于无尽模式，totalQuestions 就是实际生成的题目数量
+      // 对于快速模式，totalQuestions 是 questions.length (因为 selectWordsForQuiz 已经处理了上限30)
+      this.setData({ totalQuestions: questions.length });
 
       if (questions.length === 0 && wordsToLoad.length > 0) {
         wx.showToast({ title: '无法生成题目', icon: 'none', duration: 2000 });
       } else if (questions.length === 0 && wordsToLoad.length === 0) {
         // 这个情况已在前面处理
       }
-      if (this.data.questions.length > 0) {
-        this.startTimer(); // 题目加载完毕且有题目时，启动计时器
+      // 确保在题目数据实际可用后再启动计时器
+      if (this.data.questions && this.data.questions.length > 0 && !this.data.timer) {
+        this.startTimer();
       }
     } // End of try
     catch (e) { // Start of catch
@@ -235,17 +270,18 @@ Page({
     }
   },
 
-  // 根据模式选择题目 (示例)
+  // 根据模式选择题目
   selectWordsForQuiz: function(allWords, mode) {
     let selected = [];
     if (mode === 'quick') {
-      // 随机选择30题
-      selected = allWords.sort(() => 0.5 - Math.random()).slice(0, 30);
-    } else {
-      // 无尽模式，可以考虑打乱顺序或按特定逻辑
+      // 快速模式：随机选择最多30题
+      selected = allWords.sort(() => 0.5 - Math.random()).slice(0, Math.min(allWords.length, 30));
+    } else { // endless 模式
+      // 无尽模式：使用所有题目，并打乱顺序
       selected = allWords.sort(() => 0.5 - Math.random());
     }
-    return selected.map(word => this.formatQuestion(word, allWords)); // 传递allWords用于生成选项
+    // 为选中的单词格式化成题目，不再传递 allWords，因为 formatQuestion 内部会从 this.data 获取
+    return selected.map(word => this.formatQuestion(word)); 
   },
 
 
@@ -437,33 +473,36 @@ Page({
 
   // 下一题
   nextQuestion: function() {
-    if (this.data.quizMode === 'quick' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1) {
-      this.endQuiz();
-    } else if (this.data.currentQuestionIndex >= this.data.questions.length - 1 && this.data.quizMode === 'endless'){
-      // 无尽模式下如果题目答完，可以考虑重新加载或提示
-      wx.showToast({title: '你已完成所有题目！将重新开始。', icon: 'none'});
-      this.setData({ currentQuestionIndex: 0, score: 0}); // 简单处理：回到第一题
-      // 或者 this.loadQuestions(); 重新加载打乱
+    // 检查是否是快速模式且达到最后一题，或者是无尽模式且达到最后一题
+    if ((this.data.quizMode === 'quick' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1) || 
+        (this.data.quizMode === 'endless' && this.data.currentQuestionIndex >= this.data.questions.length - 1)) {
+      this.endQuiz(); // 两种模式下答完都结束答题
     } else {
-    const nextIndex = this.data.currentQuestionIndex + 1;
-    this.setData({
-      currentQuestionIndex: nextIndex,
-      userAnswer: '', // 重置用户答案
-      selectedOption: null, // 重置用户选项
-      isUserAnswerEmpty: true, // 重置填空题答案为空的状态
-      showAnswerCard: false, // 隐藏答案卡片
-      isCorrect: false // 重置正确状态
-    });
+      // 进入下一题
+      const nextIndex = this.data.currentQuestionIndex + 1;
+      this.setData({
+        currentQuestionIndex: nextIndex,
+        userAnswer: '', // 重置用户答案
+        selectedOption: null, // 重置用户选项
+        isUserAnswerEmpty: true, // 重置填空题答案为空的状态
+        showAnswerCard: false, // 隐藏答案卡片
+        isCorrect: false // 重置正确状态
+      });
     }
   },
 
   // 结束答题
   endQuiz: function() {
-    this.stopTimer(); // 停止计时器
-    // TODO: 显示答题结果页面，包括得分、正确率、用时等
+    this.clearTimer(); // 停止计时器
+    // 根据当前的 quizMode 确定显示的模式文本
+    let modeText = this.data.quizMode === 'quick' ? '快速答题' : '无尽模式';
+    // 在无尽模式下，总题数应该是实际题目数组的长度
+    // 在快速答题模式下，totalQuestions 是预设的（最多30或实际题目数，已在loadQuestionsAndWords中设置）
+    let displayedTotalQuestions = this.data.quizMode === 'quick' ? this.data.totalQuestions : this.data.questions.length;
+
     wx.showModal({
       title: '答题结束',
-      content: `模式：${this.data.quizMode}\n得分：${this.data.score}\n总题数：${this.data.quizMode === 'quick' ? this.data.totalQuestions : this.data.currentQuestionIndex +1 }\n用时：${this.formatTime(this.data.timeSpent)}`,
+      content: `模式：${modeText}\n得分：${this.data.score}\n总题数：${displayedTotalQuestions}\n用时：${this.formatTime(this.data.timeSpent)}`,
       showCancel: false,
       confirmText: '返回',
       success: (res) => {
@@ -474,25 +513,23 @@ Page({
     });
   },
 
-  // 开始计时器
   startTimer: function() {
-    if (this.data.timer) { // 如果已有计时器，先清除，避免重复启动
-      clearInterval(this.data.timer);
-    }
-    // 创建新的计时器
-    const newTimer = setInterval(() => {
+    // 如果计时器已存在，则不再重复启动
+    if (this.data.timer) return;
+
+    const timer = setInterval(() => {
       this.setData({
         timeSpent: this.data.timeSpent + 1
       });
     }, 1000);
-    this.setData({ timer: newTimer }); // 将计时器ID存入data，以便后续清除
+    this.setData({ timer: timer });
   },
 
-  // 停止计时器
-  stopTimer: function() {
+  // 清除计时器
+  clearTimer: function() {
     if (this.data.timer) {
       clearInterval(this.data.timer);
-      this.setData({ timer: null }); // 清除后将timer重置为null
+      this.setData({ timer: null }); // 将timer设置为null，以便下次可以重新启动
     }
   },
 
@@ -525,13 +562,31 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide: function() {
-    this.stopTimer(); // 页面隐藏时停止计时器
+    this.clearTimer(); // 页面隐藏时停止计时器，修正函数名
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
   onUnload: function() {
-    this.stopTimer(); // 页面卸载时清除计时器
+    this.clearTimer(); // 页面卸载时清除计时器
+  },
+
+  // 确保在答题结束或者重新开始答题时也重置和停止计时器
+  resetQuizState: function() {
+    this.clearTimer();
+    this.setData({
+      currentQuestionIndex: 0,
+      userAnswer: '',
+      isUserAnswerEmpty: true,
+      selectedOption: null,
+      showAnswerCard: false,
+      isCorrect: false,
+      score: 0,
+      timeSpent: 0, // 重置用时
+      // questions 和 totalQuestions 通常在 loadQuestionsAndWords 中重置
+    });
+    // 可能需要重新加载题目或根据逻辑决定下一步
+    // this.loadQuestionsAndWords(); 
   }
 })

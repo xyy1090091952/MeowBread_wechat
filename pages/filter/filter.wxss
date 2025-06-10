@@ -1,67 +1,85 @@
 /* pages/filter/filter.wxss */
 .container {
-  padding: 30rpx;
-  background-color: #f4f4f4;
+  padding: 40rpx; /* 增加容器内边距 */
+  background-color: #FFFFFF; /* 将背景改为白色，让内容区更突出 */
   min-height: 100vh;
   box-sizing: border-box;
 }
 
 .filter-group {
   background-color: #fff;
-  border-radius: 10rpx;
-  margin-bottom: 30rpx;
-  padding: 20rpx 30rpx;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-radius: 16rpx; /* 增大圆角 */
+  margin-bottom: 40rpx; /* 增大组间距 */
+  padding: 30rpx 30rpx; /* 调整内边距 */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* 调整阴影使其更柔和 */
 }
 
 .filter-label {
-  font-size: 30rpx;
-  color: #333;
-  margin-bottom: 15rpx;
+  font-size: 32rpx; /* 稍微增大字号 */
+  color: #333333; /* 深灰色，保持可读性 */
+  margin-bottom: 20rpx; /* 增大与选择器的间距 */
   display: block;
+  font-weight: bold; /* 加粗标签 */
 }
 
 .picker {
-  background-color: #f9f9f9;
-  border: 1px solid #eee;
-  border-radius: 8rpx;
-  padding: 20rpx;
+  background-color: #F7F7F7; /* 调整背景色 */
+  border: 1px solid #E0E0E0; /* 调整边框颜色 */
+  border-radius: 12rpx; /* 增大圆角 */
+  padding: 25rpx 20rpx; /* 调整内边距 */
   font-size: 30rpx;
-  color: #555;
+  color: #333333; /* 调整文字颜色 */
   display: flex;
   align-items: center;
   justify-content: space-between;
+  transition: background-color 0.2s; /* 添加过渡效果 */
+}
+
+.picker:active {
+  background-color: #E0E0E0; /* 点击时的背景色 */
 }
 
 .picker::after {
-  content: '▼'; /* Simple dropdown arrow */
-  font-size: 24rpx;
-  color: #888;
+  content: ''; /* 移除默认箭头，后续可以考虑使用图片或SVG */
+  border: 5px solid transparent;
+  border-top-color: #888888; /* 使用边框创建三角形箭头 */
+  margin-left: 10rpx;
+  position: relative;
+  top: 2px; /* 微调箭头位置 */
 }
 
 .picker-empty {
-  background-color: #f9f9f9;
-  border: 1px solid #eee;
-  border-radius: 8rpx;
-  padding: 20rpx;
+  background-color: #F7F7F7;
+  border: 1px solid #E0E0E0;
+  border-radius: 12rpx;
+  padding: 25rpx 20rpx;
   font-size: 30rpx;
-  color: #999;
+  color: #AAAAAA; /* 调整空状态文字颜色 */
+  text-align: center; /* 文本居中 */
 }
 
 .start-quiz-button {
   background-color: #98CF3F; /* 主题绿色 */
   color: white;
-  font-size: 34rpx;
-  border-radius: 10rpx;
-  padding: 25rpx 0;
+  font-size: 36rpx; /* 增大字号 */
+  font-weight: bold; /* 加粗 */
+  border-radius: 16rpx; /* 增大圆角 */
+  padding: 28rpx 0; /* 调整内边距 */
   text-align: center;
   width: 100%;
-  margin-top: 40rpx;
-  box-shadow: 0 2px 6px rgba(152, 207, 63, 0.3);
+  margin-top: 60rpx; /* 增大与上方元素的间距 */
+  box-shadow: 0 4px 10px rgba(152, 207, 63, 0.4); /* 调整阴影 */
+  transition: background-color 0.2s, box-shadow 0.2s; /* 添加过渡效果 */
+}
+
+.start-quiz-button:active {
+  background-color: #82B033; /* 点击时的颜色 */
+  box-shadow: 0 2px 5px rgba(152, 207, 63, 0.2); /* 点击时的阴影 */
 }
 
 .start-quiz-button[disabled] {
-  background-color: #c8e6c9; /* Disabled state lighter green */
-  color: #a5d6a7;
+  background-color: #DCECCB; /* 调整禁用状态背景色 */
+  color: #A8C090; /* 调整禁用状态文字颜色 */
   box-shadow: none;
+  font-weight: normal; /* 禁用时取消加粗 */
 }

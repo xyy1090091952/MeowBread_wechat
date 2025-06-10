@@ -1,4 +1,13 @@
 /* pages/answer/answer.wxss */
+.filter-display-text {
+  font-size: 24rpx; /* 设置较小的字号 */
+  color: #888; /* 设置字体颜色 */
+  margin-top: 10rpx; /* 设置上边距 */
+  margin-bottom: 20rpx; /* 设置下边距，与分割线保持一定距离 */
+  text-align: center; /* 文本居中显示 */
+  width: 100%; /* 宽度占满父容器 */
+  display: block; /* 设置为块级元素，使其能够占据整行并应用上下边距 */
+}
 .container {
   display: flex;
   flex-direction: column;

@@ -1,8 +1,11 @@
 <!--pages/quiz/quiz.wxml-->
 <view class="container" wx:if="{{questions.length > 0}}">
+  <view class="current-filter-display" wx:if="{{currentFilterDisplay}}">
+    <text>当前范围: {{currentFilterDisplay}}</text>
+  </view>
   <view class="quiz-info">
     <text class="score-display">得分: {{score}}</text>
-    <text class="timer-display">用时: {{formatTime(timeSpent)}}</text>
+    <text class="timer-display">用时: {{timeFormatter.formatTime(timeSpent)}}</text>
     <text class="progress-display">进度: {{currentQuestionIndex + 1}} / {{totalQuestions}}</text>
   </view>
 
@@ -111,11 +114,17 @@
 <wxs module="timeFormatter">
   module.exports = {
     formatTime: function(seconds) {
-        if (typeof seconds !== 'number' || seconds < 0) return '00:00:00';
-      var h = Math.floor(seconds / 3600).toString().padStart(2, '0');
-      var m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-      var s = (seconds % 60).toString().padStart(2, '0');
-      return h + ':' + m + ':' + s;
+      if (typeof seconds !== 'number' || seconds < 0) return '00:00:00';
+      var h = Math.floor(seconds / 3600);
+      var m = Math.floor((seconds % 3600) / 60);
+      var s = seconds % 60;
+
+      // 手动实现 padStart 的功能
+      var hStr = h < 10 ? '0' + h : h.toString();
+      var mStr = m < 10 ? '0' + m : m.toString();
+      var sStr = s < 10 ? '0' + s : s.toString();
+
+      return hStr + ':' + mStr + ':' + sStr;
     }
   }
 </wxs>

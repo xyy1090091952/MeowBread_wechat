@@ -1,4 +1,5 @@
 {
+  "lazyCodeLoading": "requiredComponents",
   "pages": [
     "pages/answer/answer",
     "pages/vocabulary/vocabulary",

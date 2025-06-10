@@ -23,5 +23,5 @@
     <view class="picker-empty">该词典下暂无课程</view>
   </view>
 
-  <button class="start-quiz-button" type="primary" bindtap="startQuiz" disabled="{{!selectedLessonFile}}">开始答题 ({{quizMode === 'quick' ? '快速模式' : '无尽模式'}})</button>
+  <button class="start-quiz-button" type="primary" bindtap="startQuiz" disabled="{{!selectedLessonFile}}">完成选择</button>
 </view>

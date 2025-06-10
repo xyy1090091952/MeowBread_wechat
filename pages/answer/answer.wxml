@@ -6,6 +6,8 @@
       <text class="option-text">题库筛选</text>
       <image class="option-icon" src="/images/icons/arrow_right.png" />
     </view>
+    <!-- 显示当前题库筛选范围 -->
+    <text class="filter-display-text">{{currentFilterDisplay}}</text>
 
     <!-- 中间的分割线 -->
     <view class="main-divider"></view>

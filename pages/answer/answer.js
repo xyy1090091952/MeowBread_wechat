@@ -2,6 +2,7 @@
 Page({
   data: {
     // 根据Figma设计稿，一级页面主要是选项，不直接展示题目信息
+    currentFilterDisplay: '' // 用于显示当前题库筛选范围
   },
   onLoad: function (options) {
     // 页面加载时可以进行一些初始化操作
@@ -20,6 +21,36 @@ Page({
    */
   onShow() {
     console.log('Page show');
+    // 页面显示时，从本地存储加载筛选条件并更新显示
+    const quizFilter = wx.getStorageSync('quizFilter');
+    let currentFilterDisplay = '当前选择：暂未设置筛选条件，将使用默认设置（全部辞典）'; // 默认提示
+
+    if (quizFilter && quizFilter.selectedDictionaryName && quizFilter.selectedLessonName) {
+      // 与 quiz.js 保持一致的显示逻辑
+      currentFilterDisplay = `当前选择：${quizFilter.selectedDictionaryName} - ${quizFilter.selectedLessonName}`;
+      // 如果需要显示模式，可以添加，但 answer 页面主要用于选择，模式信息可能在 quiz 页更重要
+      // if (quizFilter.quizMode) {
+      //   const modeText = quizFilter.quizMode === 'quick' ? '快速答题' : quizFilter.quizMode === 'endless' ? '无尽模式' : '练习模式';
+      //   currentFilterDisplay += ` (${modeText})`;
+      // }
+    } else if (quizFilter && quizFilter.dictionaryName && quizFilter.selectedLessons) {
+      // 兼容旧的存储结构 (如果存在)
+      let lessonsDisplay = '全部课程';
+      if (quizFilter.selectedLessons.length > 0) {
+        if (quizFilter.selectedLessons.length <= 3) {
+          lessonsDisplay = quizFilter.selectedLessons.map(lesson => lesson.name).join(', ');
+        } else {
+          lessonsDisplay = `已选 ${quizFilter.selectedLessons.length} 节课程`;
+        }
+      }
+      currentFilterDisplay = `当前选择：${quizFilter.dictionaryName} - ${lessonsDisplay}`;
+      // const modeText = quizFilter.mode === 'quick' ? '快速答题' : quizFilter.mode === 'endless' ? '无尽模式' : '练习模式';
+      // currentFilterDisplay += ` (${modeText})`;
+    }
+
+    this.setData({
+      currentFilterDisplay: currentFilterDisplay
+    });
   },
 
   /**
@@ -79,13 +110,29 @@ Page({
    * 开始快速答题
    */
   startQuickQuiz() {
-    console.log('Start Quick Quiz - All Dictionaries, All Lessons');
-    // 快速答题默认加载所有词典的所有课程
-    const lessonFile = 'ALL_DICTIONARIES_ALL_LESSONS';
-    const dictionaryId = 'all';
-    const basePath = ''; // 'all' 模式不需要 basePath
+    console.log('Start Quick Quiz');
+    // 从本地存储中获取用户已选择的筛选条件
+    let quizFilter = wx.getStorageSync('quizFilter');
+
+    // 如果没有找到已保存的筛选条件，则使用默认值（全部辞典，全部课程）
+    if (!quizFilter || !quizFilter.selectedLessonFile) {
+      quizFilter = {
+        selectedDictionaryName: '全部辞典',
+        selectedLessonFile: 'ALL_DICTIONARIES_ALL_LESSONS',
+        selectedLessonName: '全部课程',
+        dictionaryId: 'all',
+        basePath: 'all', // 修正：'all' 模式 basePath 也应该是 'all'
+      };
+    }
+
+    // 确保 quizMode 设置为 quick
+    quizFilter.quizMode = 'quick'; 
+    // 将更新后的筛选条件（包含正确的 quizMode）保存回 storage，以便 quiz 页面能正确加载
+    wx.setStorageSync('quizFilter', quizFilter);
+
+    // 导航到 quiz 页面，传递所有必要的参数
     wx.navigateTo({
-      url: `/pages/quiz/quiz?mode=quick&lessonFile=${encodeURIComponent(lessonFile)}&dictionaryId=${encodeURIComponent(dictionaryId)}&basePath=${encodeURIComponent(basePath)}`
+      url: `/pages/quiz/quiz?mode=quick&lessonFile=${encodeURIComponent(quizFilter.selectedLessonFile)}&dictionaryId=${encodeURIComponent(quizFilter.dictionaryId)}&basePath=${encodeURIComponent(quizFilter.basePath)}`
     });
   },
 
@@ -94,6 +141,28 @@ Page({
    */
   startEndlessQuiz() {
     console.log('Start Endless Quiz');
-    wx.navigateTo({ url: '/pages/quiz/quiz?mode=endless' });
+    // 从本地存储中获取用户已选择的筛选条件
+    let quizFilter = wx.getStorageSync('quizFilter');
+
+    // 如果没有找到已保存的筛选条件，则使用默认值（全部辞典，全部课程）
+    if (!quizFilter || !quizFilter.selectedLessonFile) {
+      quizFilter = {
+        selectedDictionaryName: '全部辞典',
+        selectedLessonFile: 'ALL_DICTIONARIES_ALL_LESSONS',
+        selectedLessonName: '全部课程',
+        dictionaryId: 'all',
+        basePath: 'all',
+      };
+    }
+
+    // 确保 quizMode 设置为 endless
+    quizFilter.quizMode = 'endless'; 
+    // 将更新后的筛选条件（包含正确的 quizMode）保存回 storage，以便 quiz 页面能正确加载
+    wx.setStorageSync('quizFilter', quizFilter);
+
+    // 导航到 quiz 页面，传递所有必要的参数
+    wx.navigateTo({
+      url: `/pages/quiz/quiz?mode=endless&lessonFile=${encodeURIComponent(quizFilter.selectedLessonFile)}&dictionaryId=${encodeURIComponent(quizFilter.dictionaryId)}&basePath=${encodeURIComponent(quizFilter.basePath)}`
+    });
   }
 })
