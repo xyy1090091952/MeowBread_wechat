@@ -11,10 +11,14 @@
 
   <block wx:if="{{questions[currentQuestionIndex]}}">
     <view class="question-card">
+      <!-- 问题区域 -->
       <view class="question-header">
-        <view class="question-stem">{{questions[currentQuestionIndex].stem}}</view>
-        <view class="part-of-speech-tag {{questions[currentQuestionIndex].partOfSpeech}}" wx:if="{{questions[currentQuestionIndex].partOfSpeech}}">
-          {{utils.mapClassNameToPartOfSpeech(questions[currentQuestionIndex].partOfSpeech)}}
+        <view class="question-stem-container">
+          <text class="question-word">{{questions[currentQuestionIndex].wordToDisplay}}</text>
+          <view class="part-of-speech-tag {{questions[currentQuestionIndex].partOfSpeech}}">
+            {{questions[currentQuestionIndex].wordInfo['词性']}}
+          </view>
+          <text class="question-stem-remainder">{{questions[currentQuestionIndex].stemRemainder}}</text>
         </view>
       </view>
 
@@ -72,7 +76,15 @@
     <!-- 答案反馈卡片 -->
     <view class="answer-card {{isCorrect ? 'correct' : 'incorrect'}}" wx:if="{{showAnswerCard}}">
       <view class="answer-text">{{isCorrect ? '回答正确！' : '回答错误！'}}</view>
-      <view class="answer-text" wx:if="{{!isCorrect}}">正确答案: {{questions[currentQuestionIndex].answer}}</view>
+      <view class="answer-text" wx:if="{{!isCorrect}}">
+        正确答案: 
+        <block wx:if="{{questions[currentQuestionIndex].answer.word || questions[currentQuestionIndex].answer.kana}}">
+          {{questions[currentQuestionIndex].answer.word || ''}}<block wx:if="{{questions[currentQuestionIndex].answer.word && questions[currentQuestionIndex].answer.kana && questions[currentQuestionIndex].answer.word !== questions[currentQuestionIndex].answer.kana}}"> / {{questions[currentQuestionIndex].answer.kana}}</block><block wx:elif="{{!questions[currentQuestionIndex].answer.word && questions[currentQuestionIndex].answer.kana}}">{{questions[currentQuestionIndex].answer.kana}}</block>
+        </block>
+        <block wx:else>
+          {{questions[currentQuestionIndex].answer}}
+        </block>
+      </view>
       <view class="word-details" wx:if="{{questions[currentQuestionIndex] && questions[currentQuestionIndex].wordInfo}}">
         <view wx:if="{{questions[currentQuestionIndex].wordInfo['假名']}}" class="detail-item">
           <text class="detail-label">假名:</text>

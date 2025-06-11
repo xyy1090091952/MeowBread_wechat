@@ -1,5 +1,9 @@
 <!--pages/answer/answer.wxml-->
 <view class="container">
+  <!-- Banner模块 -->
+  <view class="banner-container">
+    <image class="banner-image" src="/images/banner/banner1.jpg" mode="widthFix"></image>
+  </view>
   <view class="content">
     <!-- 题库筛选按钮 -->
     <view class="option-card filter-card" bindtap="navigateToFilter">
