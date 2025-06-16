@@ -2,7 +2,7 @@ module.exports = {
     "dictionaries": [
         {
             "id": "everyones_japanese",
-            "name": "everyone's Japanese",
+            "name": "大家的日语",
             "description": "大家的日语",
             "lesson_files": [
                 "everyones_japanese/lesson31.js",
@@ -19,8 +19,8 @@ module.exports = {
         },
         {
             "id": "liangs_class",
-            "name": "liang's class",
-            "description": "梁老师的课程",
+            "name": "梁老师的课",
+            "description": "梁老师的课",
             "lesson_files": [
                 "liangs_class/lesson17.js",
                 "liangs_class/lesson18.js",
