@@ -23,7 +23,7 @@ Page({
     console.log('Page show');
     // 页面显示时，从本地存储加载筛选条件并更新显示
     const quizFilter = wx.getStorageSync('quizFilter');
-    let currentFilterDisplay = '当前选择：暂未设置筛选条件，将使用默认设置（全部辞典）'; // 默认提示
+    let currentFilterDisplay = '当前选择：未筛选条件，使用默认设置（全部辞典）'; // 默认提示
 
     if (quizFilter && quizFilter.selectedDictionaryName && quizFilter.selectedLessonName) {
       // 与 quiz.js 保持一致的显示逻辑
@@ -163,6 +163,18 @@ Page({
     // 导航到 quiz 页面，传递所有必要的参数
     wx.navigateTo({
       url: `/pages/quiz/quiz?mode=endless&lessonFile=${encodeURIComponent(quizFilter.selectedLessonFile)}&dictionaryId=${encodeURIComponent(quizFilter.dictionaryId)}&basePath=${encodeURIComponent(quizFilter.basePath)}`
+    });
+  },
+
+  /**
+   * 错题重练
+   */
+  practiceWrongQuestions() {
+    console.log('Practice Wrong Questions');
+    wx.showToast({
+      title: '功能开发中...',
+      icon: 'none', // 不显示图标，只显示文本
+      duration: 2000 // 提示持续时间，单位毫秒
     });
   }
 })

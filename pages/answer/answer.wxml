@@ -1,5 +1,10 @@
 <!--pages/answer/answer.wxml-->
 <view class="container">
+  <!-- 页面标题 -->
+  <view class="page-title-container">
+    <text class="main-title">MEOW BREAD</text>
+    <text class="sub-title">記憶の面包</text>
+  </view>
   <!-- Banner模块 -->
   <view class="banner-container">
     <image class="banner-image" src="/images/banner/banner1.jpg" mode="widthFix"></image>
@@ -7,24 +12,38 @@
   <view class="content">
     <!-- 题库筛选按钮 -->
     <view class="option-card filter-card" bindtap="navigateToFilter">
-      <text class="option-text">题库筛选</text>
+      <view class="option-text-container">
+        <text class="option-text">选择你的题型&题库</text>
+        <!-- 显示当前题库筛选范围 -->
+        <text class="filter-display-text">{{currentFilterDisplay}}</text>
+      </view>
       <image class="option-icon" src="/images/icons/arrow_right.png" />
     </view>
-    <!-- 显示当前题库筛选范围 -->
-    <text class="filter-display-text">{{currentFilterDisplay}}</text>
 
-    <!-- 中间的分割线 -->
-    <view class="main-divider"></view>
-
-    <!-- 快速答题按钮 -->
+    <!-- 标准模式按钮 -->
     <view class="option-card quick-quiz-card" bindtap="startQuickQuiz">
-      <text class="option-text">快速答题</text>
+      <view class="option-text-container">
+        <text class="option-text">标准模式</text>
+        <text class="option-sub-text">30道题目，没有时间限制</text>
+      </view>
       <image class="option-icon" src="/images/icons/arrow_right.png" />
     </view>
 
     <!-- 无尽模式按钮 -->
     <view class="option-card endless-mode-card" bindtap="startEndlessQuiz">
-      <text class="option-text">无尽模式</text>
+      <view class="option-text-container">
+        <text class="option-text">无尽模式</text>
+        <text class="option-sub-text">选中题库的所有题目，10次错误后结束</text>
+      </view>
+      <image class="option-icon" src="/images/icons/arrow_right.png" />
+    </view>
+
+    <!-- 错题重练按钮 -->
+    <view class="option-card wrong-questions-card" bindtap="practiceWrongQuestions">
+      <view class="option-text-container">
+        <text class="option-text">错题重练</text>
+        <text class="option-sub-text">巩固错误题目</text>
+      </view>
       <image class="option-icon" src="/images/icons/arrow_right.png" />
     </view>
   </view>
