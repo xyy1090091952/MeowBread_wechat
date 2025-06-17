@@ -16,8 +16,8 @@
   },
   "renderer": "webview",
   "tabBar": {
-    "color": "#a9b7b7",
-    "selectedColor": "#98CF3F",
+    "color": "#9B9BFA",
+    "selectedColor": "#4845F7",
     "borderStyle": "white",
     "backgroundColor": "#fff",
     "list": [

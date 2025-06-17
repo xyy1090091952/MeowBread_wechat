@@ -1,102 +1,122 @@
 /* pages/answer/answer.wxss */
 
-.page-title-container {
-  width: 100%;
-  display: flex;
-  flex-direction: row; /* 主副标题水平排列 */
-  align-items: baseline; /* 基线对齐，使得不同大小的文字看起来更和谐 */
-  padding: 20rpx 0; /* 上下内边距，左右内边距由父容器控制 */
-}
-
-.main-title {
-  font-size: 48rpx; /* 主标题字号 */
-  color: #3F51B5; /* 主标题颜色 */
-  margin-right: 20rpx; /* 主标题和副标题之间的间距 */
-  font-weight: bolder; /* 主标题字体加粗 */
-}
-
-.sub-title {
-  font-size: 28rpx; /* 副标题字号，根据图片调整 */
-  color: #3F51B5; /* 与主标题颜色一致或稍浅，根据实际需求调整 */
-}
-
-.banner-container {
-  width: 100%; /* Banner容器宽度占满父容器 */
-  margin-bottom: 0; /* 移除Banner与下方内容的间距 */
-  border-radius: 20rpx; /* Banner圆角 */
-  overflow: hidden; /* 确保图片圆角生效 */
-}
-
-.banner-image {
-  width: 100%; /* 图片宽度占满Banner容器 */
-  display: block; /* 消除图片下方的空白间隙 */
-}
-.option-text-container {
-  display: flex;
-  flex-direction: column; /* 主轴为垂直方向，起点在上沿 */
-  justify-content: center; /* 居中对齐 */
-  flex-grow: 1; /* 占据剩余空间 */
-}
-
-.filter-display-text {
-  font-size: 24rpx; /* 设置较小的字号 */
-  color: #FFFFFF; /* 修改字体颜色为白色，以适应绿色背景 */
-  margin-top: 8rpx; /* 设置与上方主文字的上边距 */
-  /* text-align: left; /* 默认左对齐，如果需要特定对齐方式可以取消注释 */
-  /* width: auto; /* 宽度自动，由flex容器控制 */
-  /* display: block; /* 在flex item中通常不需要显式设置block */
-}
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* 使子元素从顶部开始排列 */
+  justify-content: flex-start;
   box-sizing: border-box;
   background-color:rgb(255, 255, 255); /* Figma 页面背景色 */
   min-height: 100vh;
-  padding: 0 30rpx 40rpx 30rpx; /* 移除顶部内边距，保持左右和底部内边距 */
+  padding: 0 48rpx 40rpx 48rpx; /* Figma 左右内边距 24px, 对应图片中按钮两侧留白 */
+}
+
+.page-title-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  padding: 40rpx 0 30rpx 0; /* Figma 上下内边距 */
+}
+
+.main-title {
+  font-size: 48rpx; /* Figma 主标题字号 24px */
+  color: #4440F4; /* Figma 主标题颜色 */
+  margin-right: 16rpx; /* Figma 主副标题间距 8px */
+  margin-left: 24rpx;
+  font-weight: bold;
+}
+
+.sub-title {
+  font-size: 28rpx; /* Figma 副标题字号 14px */
+  color: #4440F4; /* Figma 副标题颜色 */
+}
+
+.banner-container {
+  width: 100%;
+  margin-bottom: 24rpx; /* Figma Banner与下方内容间距 24px */
+  border-radius: 32rpx; /* Figma Banner圆角 12px */
+  overflow: hidden;
+}
+
+.banner-image {
+  width: 100%;
+  display: block;
 }
 
 .content {
   width: 100%;
-  padding-top: 40rpx; /* 为内容区域顶部增加内边距 */
 }
 
 .option-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 32rpx 30rpx; /* Figma 内边距 (16px, 15px) */
-  border-radius: 20rpx; /* Figma 圆角 (10px) */
+  padding: 32rpx 40rpx; /* Figma 内边距 (16px, 20px) */
+  border-radius: 32rpx; /* Figma 圆角 (16px), 调整圆角以匹配图片 */
   margin-bottom: 24rpx; /* 卡片间距 (12px) */
-  box-shadow: 0px 4rpx 12rpx rgba(0, 0, 0, 0.08); /* Figma 阴影 */
+  box-shadow: 0px 8rpx 24rpx rgba(0, 0, 0, 0.05); /* Figma 阴影 */
 }
 
 .filter-card {
-  background-color: #98CF3F; /* 题库筛选背景色 */
-  color: #FFFFFF; /* 题库筛选文字颜色 */
-  align-items: center; /* 确保图标和文本容器垂直居中 */
+  background: linear-gradient(135deg, #7A88FF 0%, #4A5BFF 100%); /* Figma 渐变背景色 */
 }
 
-.quick-quiz-card,
-.endless-mode-card,
+.standard-mode-card {
+  background-color: #FFFFFF;
+ border: 4rpx solid #4845F7; 
+}
+
+.endless-mode-card {
+  background-color: #FFFFFF;
+  border: 4rpx solid #4845F7; 
+}
+
 .wrong-questions-card {
-  background-color: #000000; /* 按钮背景色 */
-  color: #FFFFFF; /* 按钮文字颜色 */
+  background-color: #FFFFFF;
+  border: 4rpx solid #FF5252; /* 错题重练红色描边 */
 }
 
-.option-text {
+.option-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.option-main-text {
   font-size: 32rpx; /* Figma 字体大小 16px */
-  font-weight: bold; /* 根据图片，文字似乎有加粗 */
+  font-weight: 500; /* Figma 字重 Medium */
+}
+
+.filter-card .option-main-text,
+.filter-card .option-sub-text {
+  color: #FFFFFF; /* 筛选卡片文字颜色 */
+}
+
+.standard-mode-card .option-main-text,
+.endless-mode-card .option-main-text,
+.wrong-questions-card .option-main-text {
+  color: #1D2129; /* 其他卡片主文字颜色 */
 }
 
 .option-sub-text {
-  font-size: 24rpx; /* 副文本字号 */
-  color: #FFFFFF; /* 副文本颜色，与主文本一致或稍浅 */
-  margin-top: 8rpx; /* 与主文本的间距 */
+  font-size: 24rpx; /* Figma 字体大小 12px */
+  margin-top: 8rpx; /* Figma 上边距 4px */
+}
+
+.standard-mode-card .option-sub-text,
+.endless-mode-card .option-sub-text,
+.wrong-questions-card .option-sub-text {
+  color: #86909C; /* 其他卡片副文字颜色 */
+}
+
+.filter-sub-text {
+  /* filter-card 的副文本在上面已经统一设置颜色 */
 }
 
 .option-icon {
   width: 32rpx; /* Figma 图标尺寸 16px */
   height: 32rpx; /* Figma 图标尺寸 16px */
+  margin-left: 20rpx; /* 图标与文字容器的间距 */
 }

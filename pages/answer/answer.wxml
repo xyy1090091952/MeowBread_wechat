@@ -13,38 +13,37 @@
     <!-- 题库筛选按钮 -->
     <view class="option-card filter-card" bindtap="navigateToFilter">
       <view class="option-text-container">
-        <text class="option-text">选择你的题型&题库</text>
-        <!-- 显示当前题库筛选范围 -->
-        <text class="filter-display-text">{{currentFilterDisplay}}</text>
+        <text class="option-main-text">选择你的题型&题库</text>
+        <text class="option-sub-text filter-sub-text">{{currentFilterDisplay}}</text>
       </view>
       <image class="option-icon" src="/images/icons/arrow_right.png" />
     </view>
 
     <!-- 标准模式按钮 -->
-    <view class="option-card quick-quiz-card" bindtap="startQuickQuiz">
+    <view class="option-card standard-mode-card" bindtap="startQuickQuiz">
       <view class="option-text-container">
-        <text class="option-text">标准模式</text>
+        <text class="option-main-text">标准模式</text>
         <text class="option-sub-text">30道题目，没有时间限制</text>
       </view>
-      <image class="option-icon" src="/images/icons/arrow_right.png" />
+      <image class="option-icon" src="/images/icons/arrow_right_dark.png" />
     </view>
 
     <!-- 无尽模式按钮 -->
     <view class="option-card endless-mode-card" bindtap="startEndlessQuiz">
       <view class="option-text-container">
-        <text class="option-text">无尽模式</text>
+        <text class="option-main-text">无尽模式</text>
         <text class="option-sub-text">选中题库的所有题目，10次错误后结束</text>
       </view>
-      <image class="option-icon" src="/images/icons/arrow_right.png" />
+      <image class="option-icon" src="/images/icons/arrow_right_dark.png" />
     </view>
 
     <!-- 错题重练按钮 -->
     <view class="option-card wrong-questions-card" bindtap="practiceWrongQuestions">
       <view class="option-text-container">
-        <text class="option-text">错题重练</text>
+        <text class="option-main-text">错题重练</text>
         <text class="option-sub-text">巩固错误题目</text>
       </view>
-      <image class="option-icon" src="/images/icons/arrow_right.png" />
+      <image class="option-icon" src="/images/icons/arrow_right_dark.png" />
     </view>
   </view>
 </view>

@@ -29,14 +29,14 @@
       <view class="question-type-group-title">选择题：</view>
       <label class="switch-item" wx:for="{{questionTypeOptions}}" wx:if="{{item.category === '选择题'}}" wx:key="value">
         <text class="switch-label">{{item.name}}</text>
-        <switch checked="{{item.checked}}" bindchange="onQuestionTypeChange" data-value="{{item.value}}" color="#98CF3F"/>
+        <switch checked="{{item.checked}}" bindchange="onQuestionTypeChange" data-value="{{item.value}}" color="#4845F7"/>
       </label>
     </view>
     <view class="question-type-group">
       <view class="question-type-group-title">填空题：</view>
       <label class="switch-item" wx:for="{{questionTypeOptions}}" wx:if="{{item.category === '填空题'}}" wx:key="value">
         <text class="switch-label">{{item.name}}</text>
-        <switch checked="{{item.checked}}" bindchange="onQuestionTypeChange" data-value="{{item.value}}" color="#98CF3F"/>
+        <switch checked="{{item.checked}}" bindchange="onQuestionTypeChange" data-value="{{item.value}}" color="#4845F7"/>
       </label>
     </view>
   </view>
