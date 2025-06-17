@@ -1,85 +1,108 @@
 /* pages/filter/filter.wxss */
-.container {
-  padding: 40rpx; /* 增加容器内边距 */
-  background-color: #FFFFFF; /* 将背景改为白色，让内容区更突出 */
+.page-container {
+  background-color: #F8F8F8; /* 页面背景色，比卡片浅一点 */
+  padding: 30rpx 30rpx 120rpx; /* 底部留出按钮空间 */
   min-height: 100vh;
   box-sizing: border-box;
 }
 
-.filter-group {
-  background-color: #fff;
-  border-radius: 16rpx; /* 增大圆角 */
-  margin-bottom: 40rpx; /* 增大组间距 */
-  padding: 30rpx 30rpx; /* 调整内边距 */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* 调整阴影使其更柔和 */
+.section-card {
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
 }
 
-.filter-label {
-  font-size: 32rpx; /* 稍微增大字号 */
-  color: #333333; /* 深灰色，保持可读性 */
-  margin-bottom: 20rpx; /* 增大与选择器的间距 */
-  display: block;
-  font-weight: bold; /* 加粗标签 */
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 30rpx;
 }
 
-.picker {
-  background-color: #F7F7F7; /* 调整背景色 */
-  border: 1px solid #E0E0E0; /* 调整边框颜色 */
-  border-radius: 12rpx; /* 增大圆角 */
-  padding: 25rpx 20rpx; /* 调整内边距 */
-  font-size: 30rpx;
-  color: #333333; /* 调整文字颜色 */
+.filter-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: background-color 0.2s; /* 添加过渡效果 */
+  padding: 25rpx 0;
+  border-bottom: 1rpx solid #F0F0F0; /* 分割线颜色更浅 */
 }
 
-.picker:active {
-  background-color: #E0E0E0; /* 点击时的背景色 */
+.filter-item:last-child {
+  border-bottom: none;
 }
 
-.picker::after {
-  content: ''; /* 移除默认箭头，后续可以考虑使用图片或SVG */
-  border: 5px solid transparent;
-  border-top-color: #888888; /* 使用边框创建三角形箭头 */
+.filter-item-label {
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.picker-display {
+  font-size: 28rpx;
+  color: #666666;
+  display: flex;
+  align-items: center;
+}
+
+.picker-display.disabled {
+  color: #AAAAAA;
+}
+
+.picker-arrow {
+  width: 24rpx;
+  height: 24rpx;
   margin-left: 10rpx;
-  position: relative;
-  top: 2px; /* 微调箭头位置 */
 }
 
-.picker-empty {
-  background-color: #F7F7F7;
-  border: 1px solid #E0E0E0;
-  border-radius: 12rpx;
-  padding: 25rpx 20rpx;
-  font-size: 30rpx;
-  color: #AAAAAA; /* 调整空状态文字颜色 */
-  text-align: center; /* 文本居中 */
+.question-type-group {
+  margin-bottom: 20rpx;
 }
 
-.start-quiz-button {
+.question-type-group:last-child {
+  margin-bottom: 0;
+}
+
+.question-type-group-title {
+  font-size: 26rpx;
+  color: #888888;
+  margin-bottom: 20rpx;
+}
+
+.switch-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25rpx 0;
+  border-bottom: 1rpx solid #F0F0F0;
+}
+
+.switch-item:last-child {
+  border-bottom: none;
+}
+
+.switch-label {
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.confirm-button {
+  position: fixed;
+  bottom: 60rpx; /* 增加底部距离，保留安全区 */
+  left: 30rpx; /* 左右保持原有边距，实现通栏效果 */
+  right: 30rpx;
   background-color: #98CF3F; /* 主题绿色 */
   color: white;
-  font-size: 36rpx; /* 增大字号 */
-  font-weight: bold; /* 加粗 */
-  border-radius: 16rpx; /* 增大圆角 */
-  padding: 28rpx 0; /* 调整内边距 */
+  font-size: 32rpx;
+  font-weight: bold;
+  border-radius: 16rpx; /* 圆角调整为 8px (16rpx) */
+  padding: 25rpx 0;
   text-align: center;
-  width: 100%;
-  margin-top: 60rpx; /* 增大与上方元素的间距 */
-  box-shadow: 0 4px 10px rgba(152, 207, 63, 0.4); /* 调整阴影 */
-  transition: background-color 0.2s, box-shadow 0.2s; /* 添加过渡效果 */
+  box-shadow: 0 4rpx 12rpx rgba(152, 207, 63, 0.3);
 }
 
-.start-quiz-button:active {
-  background-color: #82B033; /* 点击时的颜色 */
-  box-shadow: 0 2px 5px rgba(152, 207, 63, 0.2); /* 点击时的阴影 */
-}
-
-.start-quiz-button[disabled] {
-  background-color: #DCECCB; /* 调整禁用状态背景色 */
-  color: #A8C090; /* 调整禁用状态文字颜色 */
+.confirm-button[disabled] {
+  background-color: #E0E0E0;
+  color: #AAAAAA;
   box-shadow: none;
-  font-weight: normal; /* 禁用时取消加粗 */
 }

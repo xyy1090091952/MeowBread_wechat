@@ -1,4 +1,16 @@
 /* pages/answer/answer.wxss */
+
+.banner-container {
+  width: 100%; /* Banner容器宽度占满父容器 */
+  margin-bottom: 0; /* 移除Banner与下方内容的间距 */
+  border-radius: 20rpx; /* Banner圆角 */
+  overflow: hidden; /* 确保图片圆角生效 */
+}
+
+.banner-image {
+  width: 100%; /* 图片宽度占满Banner容器 */
+  display: block; /* 消除图片下方的空白间隙 */
+}
 .filter-display-text {
   font-size: 24rpx; /* 设置较小的字号 */
   color: #888; /* 设置字体颜色 */
@@ -12,14 +24,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start; /* 使子元素从顶部开始排列 */
   box-sizing: border-box;
   background-color: #F8F8F8; /* Figma 页面背景色 */
   min-height: 100vh;
-  padding: 40rpx 30rpx; /* 页面整体内边距，上下边距调整为20px，左右15px */
+  padding: 0 30rpx 40rpx 30rpx; /* 移除顶部内边距，保持左右和底部内边距 */
 }
 
 .content {
   width: 100%;
+  padding-top: 40rpx; /* 为内容区域顶部增加内边距 */
 }
 
 .option-card {

@@ -17,7 +17,14 @@ Page({
     quizMode: 'quick', // 默认答题模式
     allDictionariesOption: { id: 'all', name: '全部辞典', description: '所有可用词典中的全部课程', base_path: 'all' },
     allLessonsOption: { name: '全部课程', file: 'ALL_DICTIONARIES_ALL_LESSONS' },
-    dictionaryAllLessonsOptionTemplate: { name: '该词典的全部课程', file: 'DICTIONARY_{id}_ALL_LESSONS' }
+    dictionaryAllLessonsOptionTemplate: { name: '该词典的全部课程', file: 'DICTIONARY_{id}_ALL_LESSONS' },
+    questionTypeOptions: [
+      { name: '根据中文意思选日语', value: 'zh_to_jp_choice', checked: true, category: '选择题' },
+      { name: '根据日语选中文', value: 'jp_to_zh_choice', checked: true, category: '选择题' },
+      { name: '根据中文意思写日语', value: 'zh_to_jp_fill', checked: true, category: '填空题' },
+      { name: '根据日文汉字写假名', value: 'jp_kanji_to_kana_fill', checked: true, category: '填空题' }
+    ],
+    selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'] // 默认全部选中
   },
 
   /**
@@ -35,6 +42,23 @@ Page({
       dataToSet.selectedLessonFile = savedFilter.selectedLessonFile || this.data.selectedLessonFile;
       dataToSet.quizMode = savedFilter.quizMode || options.mode || 'quick';
       // selectedLessonIndex 的恢复将在 loadDictionariesAndLessons 之后，通过匹配 selectedLessonFile 进行
+    }
+
+    // 恢复题型选择
+    if (savedFilter && savedFilter.selectedQuestionTypes) {
+      dataToSet.selectedQuestionTypes = savedFilter.selectedQuestionTypes;
+      // 更新 questionTypeOptions 的选中状态
+      const newQuestionTypeOptions = this.data.questionTypeOptions.map(opt => {
+        return {...opt, checked: savedFilter.selectedQuestionTypes.includes(opt.value)};
+      });
+      dataToSet.questionTypeOptions = newQuestionTypeOptions;
+    } else {
+      // 如果没有保存的题型，则使用默认值，并确保 questionTypeOptions 的 checked 状态正确
+      const defaultSelectedTypes = this.data.selectedQuestionTypes;
+      const newQuestionTypeOptions = this.data.questionTypeOptions.map(opt => {
+        return {...opt, checked: defaultSelectedTypes.includes(opt.value)};
+      });
+      dataToSet.questionTypeOptions = newQuestionTypeOptions;
     }
 
     this.setData(dataToSet, () => {
@@ -90,6 +114,55 @@ Page({
    */
   onShareAppMessage() {
 
+  },
+
+  // 处理题型选择变化的函数
+  onQuestionTypeChange(e) {
+    const { value } = e.currentTarget.dataset; // 获取当前操作的 switch 的 value，即题型代码
+    const checked = e.detail.value; // 获取当前 switch 的选中状态 (true/false)
+
+    let currentSelectedTypes = [...this.data.selectedQuestionTypes];
+
+    if (checked) {
+      // 如果是选中，则添加到 selectedQuestionTypes
+      if (!currentSelectedTypes.includes(value)) {
+        currentSelectedTypes.push(value);
+      }
+    } else {
+      // 如果是取消选中
+      // 校验是否是最后一个被选中的题型
+      if (currentSelectedTypes.length === 1 && currentSelectedTypes[0] === value) {
+        wx.showToast({
+          title: '至少选择一种题型',
+          icon: 'none'
+        });
+        // 阻止取消，需要将 UI 恢复
+        const newQuestionTypeOptions = this.data.questionTypeOptions.map(opt => {
+          if (opt.value === value) {
+            return { ...opt, checked: true }; // 强制改回选中状态
+          }
+          return opt;
+        });
+        this.setData({
+          questionTypeOptions: newQuestionTypeOptions
+        });
+        return; // 提前返回，不更新 selectedQuestionTypes
+      }
+      // 移除该题型
+      currentSelectedTypes = currentSelectedTypes.filter(type => type !== value);
+    }
+
+    const newQuestionTypeOptions = this.data.questionTypeOptions.map(opt => {
+      return { ...opt, checked: currentSelectedTypes.includes(opt.value) };
+    });
+
+    this.setData({
+      selectedQuestionTypes: currentSelectedTypes,
+      questionTypeOptions: newQuestionTypeOptions
+    });
+
+    // 保存筛选条件到本地存储
+    this.saveFilterSettings();
   },
 
   // 加载词典和课程列表的逻辑
@@ -242,8 +315,25 @@ Page({
     }
   },
 
+  // 保存筛选条件到本地存储
+  saveFilterSettings() {
+    const filterToSave = {
+      selectedDictionaryIndex: this.data.selectedDictionaryIndex,
+      selectedLessonFile: this.data.selectedLessonFile,
+      selectedLessonIndex: this.data.selectedLessonIndex, //确保课程索引也被保存
+      selectedDictionaryName: this.data.dictionaries[this.data.selectedDictionaryIndex].name,
+      selectedLessonName: this.data.lessons[this.data.selectedLessonIndex] ? this.data.lessons[this.data.selectedLessonIndex].name : '未知课程',
+      dictionaryId: this.data.dictionaries[this.data.selectedDictionaryIndex].id,
+      basePath: this.data.dictionaries[this.data.selectedDictionaryIndex].base_path || '',
+      quizMode: this.data.quizMode,
+      selectedQuestionTypes: this.data.selectedQuestionTypes // 新增保存题型选择
+    };
+    wx.setStorageSync('quizFilter', filterToSave);
+    console.log('Filter settings saved:', filterToSave);
+  },
+
   // 完成选择并保存筛选条件的逻辑
-  startQuiz() { // 函数名保持 startQuiz 以减少 wxml 的修改，但功能已变为“完成选择”
+  startQuiz() { 
     if (!this.data.selectedLessonFile) {
       wx.showToast({
         title: '请选择课程范围',
@@ -251,33 +341,24 @@ Page({
       });
       return;
     }
+    // 确保至少选择了一个题型
+    if (!this.data.selectedQuestionTypes || this.data.selectedQuestionTypes.length === 0) {
+      wx.showToast({
+        title: '请至少选择一种题型',
+        icon: 'none'
+      });
+      return;
+    }
 
-    const selectedDictionary = this.data.dictionaries[this.data.selectedDictionaryIndex];
-    const selectedLesson = this.data.lessons[this.data.selectedLessonIndex];
-
-    const quizFilter = {
-      selectedDictionaryIndex: this.data.selectedDictionaryIndex, // 保存索引，方便恢复picker状态
-      selectedDictionaryName: selectedDictionary.name, // 保存名称，方便显示
-      selectedLessonFile: this.data.selectedLessonFile, // 核心，用于加载题目
-      selectedLessonName: selectedLesson ? selectedLesson.name : '未知课程', // 保存名称，方便显示
-      selectedLessonIndex: this.data.selectedLessonIndex, // 保存索引，方便恢复picker状态
-      dictionaryId: selectedDictionary.id, // 实际的词典ID
-      basePath: selectedDictionary.base_path || '', // 词典基础路径
-      quizMode: this.data.quizMode // 保存当前的答题模式
-    };
-
-    // 将筛选条件保存到本地存储
-    wx.setStorageSync('quizFilter', quizFilter);
-    console.log('Filter.js: 筛选条件已保存:', quizFilter);
+    this.saveFilterSettings(); // 调用保存函数
 
     wx.showToast({
       title: '筛选条件已保存',
       icon: 'success',
       duration: 1500,
       complete: () => {
-        // 显示提示后，跳转到答题页面 (quiz是tabBar页面，使用switchTab)
         wx.switchTab({
-          url: '/pages/answer/answer' // 修改跳转到answer页面
+          url: '/pages/answer/answer' 
         });
       }
     });

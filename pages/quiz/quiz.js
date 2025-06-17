@@ -59,6 +59,8 @@ Page({
     // 优先使用 options.mode, 然后是 quizFilter.quizMode, 最后是默认值 'quick'
     const quizMode = options.mode || (quizFilter && quizFilter.quizMode) || 'quick';
     const currentFilterDisplay = `${quizFilter.selectedDictionaryName} - ${quizFilter.selectedLessonName}`;
+    // 获取题型选择，如果不存在则使用默认（全部）
+    const selectedQuestionTypes = quizFilter.selectedQuestionTypes || ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'];
 
     this.setData({
       quizMode: quizMode,
@@ -67,6 +69,7 @@ Page({
       basePath: basePath,
       isLoading: true,
       currentFilterDisplay: currentFilterDisplay, // 用于在WXML中显示
+      selectedQuestionTypes: selectedQuestionTypes, // 保存题型选择
       score: 0, // 重置分数
       currentQuestionIndex: 0, // 重置题目索引
       userAnswer: '',
@@ -270,18 +273,51 @@ Page({
     }
   },
 
-  // 根据模式选择题目
+  // 根据模式和选定的题型选择题目
   selectWordsForQuiz: function(allWords, mode) {
-    let selected = [];
-    if (mode === 'quick') {
-      // 快速模式：随机选择最多30题
-      selected = allWords.sort(() => 0.5 - Math.random()).slice(0, Math.min(allWords.length, 30));
-    } else { // endless 模式
-      // 无尽模式：使用所有题目，并打乱顺序
-      selected = allWords.sort(() => 0.5 - Math.random());
+    const { selectedQuestionTypes } = this.data;
+    let finalQuestions = [];
+    // 如果没有选择任何题型，或者没有单词，则直接返回空数组
+    if (!selectedQuestionTypes || selectedQuestionTypes.length === 0 || !allWords || allWords.length === 0) {
+      console.warn('没有选择题型或没有单词数据，无法生成题目。');
+      return [];
     }
-    // 为选中的单词格式化成题目，不再传递 allWords，因为 formatQuestion 内部会从 this.data 获取
-    return selected.map(word => this.formatQuestion(word)); 
+
+    // 1. 复制并打乱原始单词数组的顺序，确保每次测验的单词顺序不同，且不修改原始 allWordsInLesson
+    let shuffledWords = [...allWords].sort(() => 0.5 - Math.random());
+
+    // 2. 遍历打乱后的单词，为每个单词只生成一个题目
+    shuffledWords.forEach(word => {
+      // 从用户选择的题型中随机选择一个
+      const randomTypeIndex = Math.floor(Math.random() * selectedQuestionTypes.length);
+      const randomQuestionType = selectedQuestionTypes[randomTypeIndex];
+
+      // 尝试用选定的随机题型为当前单词生成题目
+      const question = this.formatQuestion(word, randomQuestionType);
+      if (question) {
+        finalQuestions.push(question);
+      }
+    });
+
+    // 如果经过上述处理后，仍然没有生成任何题目（例如所有单词都不适用于随机选出的题型）
+    if (finalQuestions.length === 0) {
+      console.warn('根据当前筛选条件和随机选择的题型组合，未能为任何单词生成有效题目。');
+      // 可以尝试为每个单词遍历所有可选类型，直到成功生成一个，但这会更复杂
+      // 目前的逻辑是：随机选一个类型，不行就算了。如果希望每个单词必出一题（只要有可选类型能出），则需要调整。
+      // 为了简单起见，暂时保持当前逻辑。如果需要更强的“必出”逻辑，可以后续优化。
+      return [];
+    }
+
+    // 3. 根据模式选择题目数量
+    // 注意：此时 finalQuestions 中的题目已经是每个单词最多一道题了
+    // 如果需要，可以再次打乱 finalQuestions 的顺序，确保题目出现的顺序也是随机的
+    finalQuestions.sort(() => 0.5 - Math.random());
+
+    if (mode === 'quick') {
+      return finalQuestions.slice(0, Math.min(finalQuestions.length, 30));
+    } else { // endless 模式
+      return finalQuestions; // 无尽模式使用所有生成的题目
+    }
   },
 
 
@@ -322,42 +358,80 @@ Page({
     return mapping[className] || className; // 如果没有匹配，返回原始值
   },
 
-  // 格式化单个单词为题目对象 (示例)
-  formatQuestion: function(wordData) { // allWords 将从 this.data.allWordsInLesson 获取
-    // 随机决定是选择题还是填空题
-    const questionType = Math.random() > 0.5 ? 'choice' : 'fill';
-    let question = {
-      id: wordData.data.汉字 || wordData.data.假名, // 唯一标识
-      type: questionType,
-      stem: '', // 题干
-      answer: '', // 答案将在下面根据类型设置
-      options: [], // 选择题选项 (如果适用)
-      wordInfo: wordData.data, // 原始单词信息，用于显示答案详情
-      partOfSpeech: this.mapPartOfSpeechToClassName(wordData.data.词性) // 添加词性字段并映射到类名
-    };
-
-    // 统一答案为单词的日文形式（假名或汉字）或中文意思
-    const japaneseForm = wordData.data.汉字 || wordData.data.假名;
-    const chineseMeaning = wordData.data.中文;
-
-    if (questionType === 'choice') {
-      // 生成选择题题干和选项
-      if (Math.random() > 0.5 && wordData.data.假名) { // 给出日文，选择中文
-        question.stem = `「${japaneseForm}」的中文意思是什么？`;
-        question.answer = chineseMeaning;
-        question.options = this.generateOptions(wordData.data, 'chinese');
-      } else { // 给出中文，选择日文
-        question.stem = `「${chineseMeaning}」的假名或汉字是什么？`;
-        question.answer = japaneseForm;
-        question.options = this.generateOptions(wordData.data, 'japanese');
-      }
-    } else { // fill 填空题
-      // 填空题统一要求填写“假名”或“汉字”
-      question.stem = `「${wordData.data.中文}」的假名或汉字是什么？(填空)`;
-      question.answer = japaneseForm; 
-      // 填空题的答案验证也需要调整，以接受假名或汉字
+  // 为单个单词格式化成特定类型的题目
+  formatQuestion: function(wordData, questionTypeToGenerate) {
+    const word = wordData.data; // 原始单词数据，例如 { '汉字': '単語', '假名': 'たんご', '中文': '单词', '词性': '名词', ... }
+    if (!word || !word.中文 || (!word.汉字 && !word.假名)) {
+      console.warn('formatQuestion: 无效的单词数据或缺少必要字段:', wordData);
+      return null;
     }
-    return question;
+
+    let questionText = '';
+    let correctAnswer = '';
+    let options = [];
+    let actualQuestionType = ''; // 'choice' 或 'fill'
+    let wordToDisplay = '';
+    let stemRemainder = '';
+
+    const japaneseForm = word.汉字 || word.假名;
+    const chineseMeaning = word.中文;
+
+    switch (questionTypeToGenerate) {
+      case 'zh_to_jp_choice': // 根据中文意思选日语（4选1）
+        questionText = `「${chineseMeaning}」的日语是什么？`;
+        correctAnswer = japaneseForm;
+        actualQuestionType = 'choice';
+        options = this.generateOptions(word, 'japanese'); // 传入原始 word 对象
+        wordToDisplay = `「${chineseMeaning}」`;
+        stemRemainder = '的日语是什么？';
+        break;
+      case 'jp_to_zh_choice': // 根据日语选中文（4选1）
+        questionText = `「${japaneseForm}」的中文意思是什么？`;
+        correctAnswer = chineseMeaning;
+        actualQuestionType = 'choice';
+        options = this.generateOptions(word, 'chinese'); // 传入原始 word 对象
+        wordToDisplay = `「${japaneseForm}」`;
+        stemRemainder = '的中文意思是什么？';
+        break;
+      case 'zh_to_jp_fill': // 根据中文意思写日语
+        questionText = `「${chineseMeaning}」的日语是？(可填汉字或假名)`;
+        correctAnswer = { word: word.汉字, kana: word.假名 }; // 答案包含汉字和假名，校验时两者皆可
+        actualQuestionType = 'fill';
+        wordToDisplay = `「${chineseMeaning}」`;
+        stemRemainder = '的日语是？(可填汉字或假名)';
+        break;
+      case 'jp_kanji_to_kana_fill': // 根据日文汉字写假名（单词这两个字段不为空）
+        if (word.汉字 && word.假名 && word.汉字 !== word.假名) {
+          questionText = `「${word.汉字}」的假名是？`;
+          correctAnswer = word.假名;
+          actualQuestionType = 'fill';
+          wordToDisplay = `「${word.汉字}」`;
+          stemRemainder = '的假名是？';
+        } else {
+          return null; // 不符合出题条件
+        }
+        break;
+      default:
+        console.warn(`formatQuestion: 未知的题型请求 '${questionTypeToGenerate}'`);
+        return null;
+    }
+
+    if (actualQuestionType === 'choice' && (!options || options.length === 0)) {
+      console.warn(`无法为单词 '${japaneseForm}' 生成 '${questionTypeToGenerate}' 的选项。`);
+      return null;
+    }
+
+    return {
+      id: japaneseForm + '_' + questionTypeToGenerate, // 确保题目ID的唯一性
+      type: actualQuestionType, // 'choice' or 'fill'
+      wordToDisplay: wordToDisplay,
+      stemRemainder: stemRemainder,
+      answer: correctAnswer,
+      options: options,
+      wordInfo: word, // 原始单词信息
+      partOfSpeech: this.mapPartOfSpeechToClassName(word.词性 || ''),
+      specificQuestionType: questionTypeToGenerate // 保存具体的生成题型，方便调试或特定逻辑
+    };
   },
 
   // 生成选择题选项 (示例)
@@ -424,25 +498,23 @@ Page({
   submitAnswer: function() {
     const currentQ = this.data.questions[this.data.currentQuestionIndex];
     let isCorrect = false;
+    const userAnswerTrimmed = this.data.userAnswer.trim();
+
     if (currentQ.type === 'choice') {
-      isCorrect = this.data.userAnswer === currentQ.answer;
+      isCorrect = userAnswerTrimmed === currentQ.answer;
     } else { // fill
-      // 填空题答案验证：用户输入的答案与问题的标准答案（可能是假名或汉字）一致
-      // 或者，如果标准答案是汉字，用户输入了对应的假名也算对；反之亦然（如果都有的话）
-      const userAnswerTrimmed = this.data.userAnswer.trim();
-      const correctAnswer = currentQ.answer.trim(); // currentQ.answer 现在是日文形式
-      const wordInfo = currentQ.wordInfo; // 原始单词信息
-
-      isCorrect = userAnswerTrimmed === correctAnswer;
-
-      // 额外判断：如果答案是汉字，输入假名也算对；如果答案是假名，输入汉字也算对
-      if (!isCorrect && wordInfo) {
-        if (correctAnswer === wordInfo.汉字 && userAnswerTrimmed === wordInfo.假名) {
-          isCorrect = true;
-        }
-        if (correctAnswer === wordInfo.假名 && userAnswerTrimmed === wordInfo.汉字) {
-          isCorrect = true;
-        }
+      const correctAnswerData = currentQ.answer; // 对于填空题，answer现在是一个对象 {word, kana} 或 字符串
+      if (typeof correctAnswerData === 'object' && correctAnswerData !== null && correctAnswerData.hasOwnProperty('word')) {
+        // 对应 zh_to_jp_fill: 答案是 { word: '汉字', kana: '假名' }
+        isCorrect = (userAnswerTrimmed === correctAnswerData.word) || 
+                    (correctAnswerData.kana && userAnswerTrimmed === correctAnswerData.kana);
+      } else if (typeof correctAnswerData === 'string') {
+        // 对应 jp_kanji_to_kana_fill: 答案是假名字符串
+        isCorrect = userAnswerTrimmed === correctAnswerData;
+      } else {
+        // Fallback or error for unexpected answer format
+        console.error("未知答案格式: ", correctAnswerData);
+        isCorrect = userAnswerTrimmed === correctAnswerData; // 尝试按字符串比较
       }
     }
 

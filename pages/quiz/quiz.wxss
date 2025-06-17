@@ -35,12 +35,24 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.question-stem {
+.question-word {
   font-size: 36rpx;
   font-weight: bold;
-  margin-bottom: 20rpx;
   color: #333;
-  text-align: center;
+  margin-right: 10rpx; /* 与词性标签的间距 */
+}
+
+.question-stem-remainder {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-left: 10rpx; /* 与词性标签的间距 */
+}
+
+.question-stem-container {
+  display: inline-flex; 
+  align-items: center; 
+  flex-wrap: wrap; 
 }
 
 .options-container {
@@ -85,7 +97,6 @@
   font-size: 34rpx;
   width: 100%;
   text-align: center;
-  margin-top: 20rpx;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
@@ -189,7 +200,7 @@
   display: flex;
   width: 100%;
   gap: 20rpx; /* Space between skip and submit buttons */
-  align-items: center; /* 确保按钮在垂直方向上对齐 */
+  align-items: center; /* 恢复为 center, 确保按钮垂直居中对齐 */
 }
 
 .half-width-button {
@@ -200,10 +211,10 @@
   text-align: center;
   border-radius: 8rpx;
   display: flex; /* 使用flex布局 */
-  align-items: center; /* 垂直居中 */
-  justify-content: center; /* 水平居中 */
+  align-items: center; /* 内部文本垂直居中 */
+  justify-content: center; /* 内部文本水平居中 */
   box-sizing: border-box; /* 确保padding和border不会增加元素实际宽高 */
-  border: 1px solid transparent; /* 统一边框，避免高度不一致 */
+  /* border: 1px solid transparent;  暂时移除这个统一边框，看看是否是边框导致的问题 */
 }
 
 .full-width-button {
@@ -241,20 +252,27 @@
 /* 词性标签样式 */
 .question-header {
   display: flex;
-  align-items: center; /* 垂直居中对齐题干和标签 */
   justify-content: center; /* 水平居中 */
   margin-bottom: 20rpx;
+  text-align: center; /* 确保容器内文本也居中，以防单词过长换行 */
+}
+
+.question-stem-container {
+  display: inline-flex; /* 改为 inline-flex 使其内容在一行，并且容器宽度自适应内容 */
+  align-items: center; /* 垂直居中单词和标签 */
   flex-wrap: wrap; /* 允许换行，如果内容太长 */
+  justify-content: center; /* 内部元素也居中 */
 }
 
 .part-of-speech-tag {
-  display: inline-block;
-  padding: 5rpx 15rpx;
-  font-size: 24rpx;
+  font-size: 10px; /* 调小字体 */
+  padding: 2px 4px; /* 减小内边距 */
+  border-radius: 4px;
   color: white;
-  border-radius: 20rpx; /* 圆角 */
-  margin-left: 10rpx; /* 与题干的间距 */
-  background-color: #6c757d; /* 默认背景色 */
+  line-height: normal; /* 确保行高正常，避免影响垂直对齐 */
+  display: inline-block; /* 或者 inline-flex，确保能和其他文本元素良好配合 */
+  vertical-align: baseline; /* 尝试基线对齐 */
+  background-color: #6c757d; /* 为未匹配词性提供默认背景色 */
 }
 
 .part-of-speech-tag.verb {
