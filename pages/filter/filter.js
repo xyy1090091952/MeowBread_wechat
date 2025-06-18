@@ -17,7 +17,7 @@ Page({
     quizMode: 'quick', // 默认答题模式
     allDictionariesOption: { id: 'all', name: '全部辞典', description: '所有可用词典中的全部课程', base_path: 'all' },
     allLessonsOption: { name: '全部课程', file: 'ALL_DICTIONARIES_ALL_LESSONS' },
-    dictionaryAllLessonsOptionTemplate: { name: '该词典的全部课程', file: 'DICTIONARY_{id}_ALL_LESSONS' },
+    dictionaryAllLessonsOptionTemplate: { name: '全部课程', file: 'DICTIONARY_{id}_ALL_LESSONS' },
     questionTypeOptions: [
       { name: '根据中文意思选日语', value: 'zh_to_jp_choice', checked: true, category: '选择题' },
       { name: '根据日语选中文', value: 'jp_to_zh_choice', checked: true, category: '选择题' },
@@ -240,7 +240,7 @@ Page({
     } else {
       // 对于特定词典，显示“该词典的全部课程”选项
       const specificDictAllLessonsOption = {
-        name: `该词典 (${selectedDictionary.name}) 的全部课程`,
+        name: `全部课程`,
         file: `DICTIONARY_${selectedDictionary.id}_ALL_LESSONS` // quiz.js 会处理这个特殊的 file 标识
       };
       lessonsToShow = [specificDictAllLessonsOption];
