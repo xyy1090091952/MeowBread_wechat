@@ -13,7 +13,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20rpx;
+  padding: 20rpx 48rpx;
   font-family: Arial, sans-serif;
 }
 
@@ -26,13 +26,13 @@
   color: #666;
 }
 
-.question-card {
+.content-card {
   background-color: #fff;
-  border-radius: 10rpx;
-  padding: 30rpx;
-  margin-bottom: 30rpx;
+  border-radius: 24px;
+  padding: 24px 0rpx; /* 上下24px，左右48rpx的内边距 */
+  margin-bottom: 24px;
   width: 100%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box; /* 确保padding不会影响总宽度 */
 }
 
 .question-word {
@@ -58,34 +58,45 @@
 .options-container {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
+  gap: 12px; /* 选项之间的间距 */
 }
 
+/* 选项按钮的基本样式 */
 .option-button {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ddd;
-  border-radius: 8rpx;
-  padding: 20rpx;
-  text-align: center;
-  font-size: 32rpx;
-  transition: background-color 0.2s;
+  background-color: #FFFFFF; /* 白色背景 */
+  color: #000000; /* 黑色文字 */
+  border: none; /* 无边框 */
+  border-radius: 24px; /* 圆角 */
+  padding: 0 24px; /* 左右内边距 */
+  text-align: left; /* 文字左对齐 */
+  font-size: 16px; /* 字体大小 */
+  font-weight: 600; /* 字体粗细 */
+  transition: background-color 0.2s, box-shadow 0.2s; /* 过渡效果 */
+  margin-bottom: 0px; /* 下外边距 */
+  display: flex; /* 使用flex布局 */
+  align-items: center; /* 垂直居中 */
+  height: 64px; /* 固定高度 */
+  width: 100%; /* 宽度占满容器 */
+  box-sizing: border-box; /* 盒模型 */
+  box-shadow: 4px 4px 16px 0px rgba(0, 0, 0, 0.08); /* 阴影 */
 }
 
 .option-button.selected {
-  background-color: #007aff;
-  color: white;
-  border-color: #007aff;
+  background-color: #F0F0F0;
+  border-color: #F0F0F0;
+  color: #000000;
 }
 
 .fill-input {
-  border: 1px solid #ddd;
-  border-radius: 8rpx;
+
+  border-radius: 24rpx;
   padding: 20rpx;
   font-size: 32rpx;
   width: calc(100% - 40rpx);
+  height: 200rpx;
   text-align: center;
   margin-bottom: 20rpx;
+  box-shadow: 4px 4px 16px 0px rgba(0, 0, 0, 0.08); /* 阴影 */
 }
 
 .submit-button {
@@ -100,17 +111,42 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-.answer-card {
-  margin-top: 30rpx;
-  padding: 20rpx;
-  background-color: #e8f5e9; /* Light green for correct */
-  border-radius: 8rpx;
-  width: 100%;
-  text-align: center;
+.answer-card-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
 }
 
-.answer-card.incorrect {
-  background-color: #ffebee; /* Light red for incorrect */
+.answer-card {
+  background-color: #FFFFFF;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  padding: 24px;
+  box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.answer-card .next-button {
+  margin-top: 20px;
+  background-color: #007aff;
+  color: white;
+}
+
+.answer-header {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.answer-card.correct .answer-header {
+  color: #28a745;
+}
+
+.answer-card.incorrect .answer-header {
+  color: #dc3545;
 }
 
 .answer-text {
@@ -119,9 +155,8 @@
 }
 
 .word-details {
-  margin-top: 10rpx;
-  font-size: 26rpx;
-  color: #555;
+  font-size: 16px;
+  color: #333333;
 }
 
 .word-details text {
@@ -253,7 +288,7 @@
 .question-header {
   display: flex;
   justify-content: center; /* 水平居中 */
-  margin-bottom: 20rpx;
+  margin-bottom: 40rpx;
   text-align: center; /* 确保容器内文本也居中，以防单词过长换行 */
 }
 
@@ -325,20 +360,21 @@
   margin-top: 20rpx;
 }
 
-.answer-card .detail-item {
-  display: flex; /* 让标签和值在同一行 */
-  align-items: center; /* 垂直居中对齐 */
-  margin-bottom: 10rpx;
+.detail-item {
+  display: flex;
+  margin-bottom: 12px;
 }
 
-.answer-card .detail-label {
-  font-weight: bold;
-  margin-right: 10rpx;
-  min-width: 100rpx; /* 固定标签宽度，使其对齐 */
+.detail-label {
+  font-weight: normal;
+  margin-right: 8px;
+  color: #888888;
+  width: 60px; /* 确保对齐 */
 }
 
-.answer-card .detail-value {
-  flex: 1; /* 值占据剩余空间 */
+.detail-value {
+  color: #333333;
+  flex: 1;
 }
 
 /* 确保答案卡片中的词性标签样式也能正确应用，并且可以根据需要调整大小或边距 */
