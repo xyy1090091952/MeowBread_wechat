@@ -23,7 +23,8 @@ Page({
     totalQuestions: 0, // 总题数 (快速答题模式)
     timeSpent: 0, // 用时
     timer: null, // 计时器
-    isLoading: true // 加载状态
+    isLoading: true, // 加载状态
+    showQuestion: true // 用于控制题目显示/隐藏以触发动画
   },
 
   /**
@@ -533,22 +534,27 @@ Page({
 
   // 下一题
   nextQuestion: function() {
-    // 检查是否是快速模式且达到最后一题，或者是无尽模式且达到最后一题
-    if ((this.data.quizMode === 'quick' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1) || 
+    this.setData({ showQuestion: false }); // 先隐藏题目以重置动画状态
+
+    wx.nextTick(() => {
+      // 检查是否是快速模式且达到最后一题，或者是无尽模式且达到最后一题
+      if ((this.data.quizMode === 'quick' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1) ||
         (this.data.quizMode === 'endless' && this.data.currentQuestionIndex >= this.data.questions.length - 1)) {
-      this.endQuiz(); // 两种模式下答完都结束答题
-    } else {
-      // 进入下一题
-      const nextIndex = this.data.currentQuestionIndex + 1;
-      this.setData({
-        currentQuestionIndex: nextIndex,
-        userAnswer: '', // 重置用户答案
-        selectedOption: null, // 重置用户选项
-        isUserAnswerEmpty: true, // 重置填空题答案为空的状态
-        showAnswerCard: false, // 隐藏答案卡片
-        isCorrect: false // 重置正确状态
-      });
-    }
+        this.endQuiz(); // 两种模式下答完都结束答题
+      } else {
+        // 进入下一题
+        const nextIndex = this.data.currentQuestionIndex + 1;
+        this.setData({
+          currentQuestionIndex: nextIndex,
+          userAnswer: '', // 重置用户答案
+          selectedOption: null, // 重置用户选项
+          isUserAnswerEmpty: true, // 重置填空题答案为空的状态
+          showAnswerCard: false, // 隐藏答案卡片
+          isCorrect: false, // 重置正确状态
+          showQuestion: true // 数据更新后，再显示题目以触发动画
+        });
+      }
+    });
   },
 
   // 结束答题

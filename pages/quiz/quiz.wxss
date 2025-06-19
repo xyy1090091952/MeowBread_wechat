@@ -63,6 +63,7 @@
 
 /* 选项按钮的基本样式 */
 .option-button {
+  animation: fadeInUp 0.3s ease-out both; /* 加快动画速度 */
   background-color: #FFFFFF; /* 白色背景 */
   color: #000000; /* 黑色文字 */
   border: none; /* 无边框 */
@@ -88,6 +89,7 @@
 }
 
 .fill-input {
+  animation: fadeInUp 0.3s ease-out 0.2s both; /* 动画加快，延迟也相应缩短 */
 
   border-radius: 24rpx;
   padding: 20rpx;
@@ -111,19 +113,48 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
+/* 动画定义 */
+/* 问题卡片元素入场动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.question-header {
+  animation: fadeInUp 0.3s ease-out both; /* 为题干也加上动画，并加快速度 */
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* 答案卡容器，定义了弹出动画的效果 */
 .answer-card-container {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 1001;
+  /* 应用名为 slideUp 的动画，持续时间0.3秒，并使用贝塞尔曲线实现快进慢出的效果 */
+  animation: slideUp 0.3s cubic-bezier(0.215, 0.610, 0.355, 1);
 }
 
 .answer-card {
   background-color: #FFFFFF;
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
-  padding: 24px;
+  padding: 24px 48rpx calc(20rpx + env(safe-area-inset-bottom));
   box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.08);
   width: 100%;
   box-sizing: border-box;
@@ -131,8 +162,18 @@
 
 .answer-card .next-button {
   margin-top: 20px;
-  background-color: #007aff;
-  color: white;
+}
+
+.next-button {
+  background-color: #007aff; /* 蓝色背景 */
+  color: white; /* 白色文字 */
+  border-radius: 24rpx; /* 大圆角 */
+  height: 45px; /* 固定高度 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .answer-header {
@@ -227,7 +268,6 @@
   padding: 20rpx 20rpx calc(20rpx + constant(safe-area-inset-bottom)) 20rpx; /* 适配 iPhone X 等底部安全区 */
   padding: 20rpx 20rpx calc(20rpx + env(safe-area-inset-bottom)) 20rpx; /* 适配 iPhone X 等底部安全区 */
   background-color: #fff; /* Add a background color to prevent content overlap */
-  box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Optional: adds a shadow for better separation */
   z-index: 1000; /* Ensure buttons are on top */
 }
 
@@ -244,7 +284,7 @@
   padding: 0; /* 移除上下padding，因为高度已固定 */
   font-size: 32rpx;
   text-align: center;
-  border-radius: 8rpx;
+  border-radius: 24rpx;
   display: flex; /* 使用flex布局 */
   align-items: center; /* 内部文本垂直居中 */
   justify-content: center; /* 内部文本水平居中 */
@@ -254,21 +294,12 @@
 
 .full-width-button {
   width: 100%;
-  height: 88rpx; /* 固定高度为44px (@1x) */
-  padding: 0; /* 移除上下padding，因为高度已固定 */
-  font-size: 34rpx;
-  text-align: center;
-  border-radius: 8rpx;
-  display: flex; /* 使用flex布局 */
-  align-items: center; /* 垂直居中 */
-  justify-content: center; /* 水平居中 */
-  box-sizing: border-box; /* 确保padding和border不会增加元素实际宽高 */
+  box-sizing: border-box;
 }
 
 .skip-button {
   background-color: #f0f0f0; /* Light grey, or choose another color */
   color: #333;
-  border: 1px solid #ddd; /* 跳过按钮的边框 */
 }
 
 .submit-button {
@@ -286,6 +317,7 @@
 
 /* 词性标签样式 */
 .question-header {
+  animation: fadeInUp 0.5s ease-out both;
   display: flex;
   justify-content: center; /* 水平居中 */
   margin-bottom: 40rpx;

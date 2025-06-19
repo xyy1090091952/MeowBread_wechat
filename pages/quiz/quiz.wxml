@@ -9,7 +9,7 @@
     <text class="progress-display">进度: {{currentQuestionIndex + 1}} / {{totalQuestions}}</text>
   </view>
 
-  <block wx:if="{{questions[currentQuestionIndex]}}">
+  <block wx:if="{{showQuestion}}" wx:key="{{currentQuestionIndex}}">
     <view class="content-card">
       <!-- 问题区域 -->
       <view class="question-header">
@@ -23,12 +23,13 @@
       </view>
 
       <!-- 选择题 -->
-      <view class="options-container" wx:if="{{questions[currentQuestionIndex].type === 'choice'}}">
+      <view class="options-container" wx:if="{{questions[currentQuestionIndex].type === 'choice'}}" wx:key="choice-{{currentQuestionIndex}}">
         <view 
           wx:for="{{questions[currentQuestionIndex].options}}" 
           wx:for-item="option"
           wx:key="index"
           class="option-button {{selectedOption === option ? (isCorrect && showAnswerCard ? 'correct' : (!isCorrect && showAnswerCard ? 'incorrect' : 'selected')) : ''}} {{showAnswerCard && option === questions[currentQuestionIndex].answer && option !== selectedOption ? 'correct-unselected' : ''}} {{showAnswerCard ? 'disabled' : ''}}"
+          style="animation-delay: {{index * 0.1}}s;"
           bindtap="onOptionSelect"
           data-option="{{option}}">
           {{option}}
@@ -36,7 +37,7 @@
       </view>
 
       <!-- 填空题 -->
-      <view wx:if="{{questions[currentQuestionIndex].type === 'fill'}}">
+      <view wx:if="{{questions[currentQuestionIndex].type === 'fill'}}" wx:key="fill-{{currentQuestionIndex}}">
         <input 
           class="fill-input {{showAnswerCard ? (isCorrect ? 'correct-fill' : 'incorrect-fill') : ''}}" 
           placeholder="请输入答案"
@@ -71,12 +72,12 @@
           </view>
         </view>
         <!-- 下一题按钮 -->
-        <button 
+        <view 
           class="next-button full-width-button" 
           bindtap="nextQuestion" 
           wx:if="{{showAnswerCard}}">
           下一题
-        </button>
+        </view>
       </view>
     </view>
 
