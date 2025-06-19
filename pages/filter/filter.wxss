@@ -91,7 +91,7 @@
   bottom: 60rpx; /* 增加底部距离，保留安全区 */
   left: 30rpx; /* 左右保持原有边距，实现通栏效果 */
   right: 30rpx;
-  background-color: #98CF3F; /* 主题绿色 */
+  background-color: #4845F7; /* 主题绿色 */
   color: white;
   font-size: 32rpx;
   font-weight: bold;

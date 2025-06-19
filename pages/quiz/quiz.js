@@ -109,19 +109,8 @@ Page({
       let dictionariesConfig = [];
       try {
         // 使用 FileSystemManager 读取 JSON 文件
-        const fs = wx.getFileSystemManager();
-        const dictionariesPath = `${wx.env.USER_DATA_PATH}/../../database/dictionaries.json`.replace('/../../', '/'); // 小程序中需要处理相对路径
-        // 注意：直接使用 '../../database/dictionaries.json' 对于 FileSystemManager 可能不是预期的工作方式
-        // 小程序的文件系统路径比较特殊，通常我们操作的是 wx.env.USER_DATA_PATH 下的文件
-        // 对于项目内的文件，如果不是包内文件，直接访问可能受限。
-        // 然而，dictionaries.json 是项目文件，require 应该能处理。
-        // 鉴于 require 行为异常，我们先尝试一种更明确的 require 路径，如果不行再换 FileSystemManager
-        // 错误提示是 module 'database/dictionaries.json.js' is not defined, require args is '../../database/dictionaries.json'
-        // 这说明 require 本身找到了路径，但解析时出了问题。
-        // 微信小程序中，require JSON 文件通常是直接支持的。
-        // 尝试清除缓存或重启开发者工具可能解决此类问题。
-        // 暂时保持 require，但添加更详细的错误日志。
-
+        // 直接导入JS模块代替读取JSON文件（数据库已迁移为JS格式）
+        dictionariesConfig = require('../../database/dictionaries.js'); // 直接赋值给已声明的变量
         // 回退到 require，但确保路径正确性，并添加更详细的日志
         const relativePath = '../../database/dictionaries.js'; // 更新路径为 .js 文件
         console.log(`尝试通过 require 加载: ${relativePath}`);
@@ -151,7 +140,6 @@ Page({
           actualLessonFileName = lessonFileNamePattern.split('/').pop();
         }
         // 确保是 .js 文件，如果之前是 .json，则替换
-        actualLessonFileName = actualLessonFileName.replace('.json', '.js'); 
 
         try {
           const lessonData = require(`../../database/${dict.id}/${actualLessonFileName}`);
