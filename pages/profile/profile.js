@@ -94,5 +94,13 @@ Page({
   loadMistakes: function () {
     // 加载错题
     // 这里应该从后端或本地存储加载实际的错题数据
+  },
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().updateSelected(3);
+    }
   }
 })

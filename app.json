@@ -19,6 +19,7 @@
     "color": "#9B9BFA",
     "selectedColor": "#4845F7",
     "borderStyle": "white",
+    "custom": true,
     "backgroundColor": "#fff",
     "list": [
       {
@@ -38,7 +39,7 @@
         "selectedIconPath": "images/tab/knowledge_selected.png"
       }, {
         "pagePath": "pages/profile/profile",
-        "text": "个人",
+        "text": "我的",
         "iconPath": "images/tab/profile.png",
         "selectedIconPath": "images/tab/profile_selected.png"
       }

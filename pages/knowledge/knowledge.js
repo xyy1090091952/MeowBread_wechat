@@ -26,5 +26,13 @@ Page({
     const content = `这里是关于${this.data.currentCategory.name}的内容。
     这个函数应该从后端或本地存储加载实际的内容。`
     this.setData({ content })
+  },
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().updateSelected(2);
+    }
   }
 })

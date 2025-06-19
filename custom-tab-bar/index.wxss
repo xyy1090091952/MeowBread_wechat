@@ -1,0 +1,72 @@
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  /* 使导航栏紧贴安全区域上方 */
+  bottom: constant(safe-area-inset-bottom);
+  bottom: env(safe-area-inset-bottom);
+  height: 136rpx; /* 与渐变背景一致 */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* 垂直居中 icon */
+  box-sizing: border-box;
+  z-index: 999;
+}
+
+/* 渐变背景容器 */
+.bg {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0; /* 紧贴tabbar底部 */
+  width: 716rpx; /*≈358px*/
+  height: 136rpx; /*≈68px*/
+  background: linear-gradient(90deg, #e8e8ff 0%, #fbfbff 100%);
+  border-radius: 68rpx;
+  box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 每个tab */
+.tab-item {
+  width: 172rpx; /*≈86px*/
+  height: 136rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* 选中背景 */
+.tab-item.active::before {
+  /* 已由统一 indicator 实现 */
+}
+
+/* 活动指示器 */
+.indicator {
+  position: absolute;
+  top: 12rpx;
+  width: 172rpx;
+  height: 112rpx;
+  background: #f7f6ff;
+  border-radius: 68rpx;
+  box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
+  transition: left 0.3s ease;
+  z-index: 0;
+}
+
+.icon {
+  width: 64rpx; /*≈32px*/
+  height: 64rpx;
+}
+
+.label {
+  font-size: 20rpx; /*≈10px*/
+  color: #9b9bfa;
+  margin-top: 4rpx;
+}
+
+.label.active {
+  color: #4845f7;
+} 
