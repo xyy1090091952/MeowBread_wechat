@@ -29,9 +29,11 @@
 }
 .progress-tag {
   position: absolute;
-  top: 48rpx; /* 24px: cover top 16px + offset 8px */
+  /* 调整位置到图片左下角 */
+  /* 计算过程：图片底部位置 (32rpx margin-top + 512rpx height) - 标签自身高度 (48rpx) - 距离图片底部间距 (32rpx) = 464rpx */
+  top: 476rpx;
   left: 48rpx; /* 24px: cover left 16px + offset 8px */
-  width: 184rpx; /* 92px */
+  width: 150rpx; /* 92px */
   height: 48rpx; /* 24px */
   line-height: 48rpx;
   text-align: left;
@@ -51,7 +53,7 @@
 
 /* 顶部横幅 */
 .banner {
-  margin: 48rpx 48rpx 0 48rpx;
+  margin: 24rpx 48rpx 0 48rpx;
   height: 64rpx;
   background: linear-gradient(90deg,#f0f6fc 0%,#cfe2ff 100%);
   border-radius: 32rpx;
