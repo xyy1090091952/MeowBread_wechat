@@ -13,7 +13,8 @@
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#ffffff",
     "navigationBarTitleText": "MeowBread",
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFFFFF"
   },
   "renderer": "webview",
   "tabBar": {

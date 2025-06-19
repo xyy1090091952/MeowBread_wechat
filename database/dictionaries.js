@@ -12,9 +12,9 @@ module.exports = {
                 "everyones_japanese/lesson35.js",
                 "everyones_japanese/lesson36.js",
                 "everyones_japanese/lesson37.js",
-                "everyones_japanese/words38.js",
-                "everyones_japanese/words44.js",
-                "everyones_japanese/words45.js"
+                "everyones_japanese/lesson38.js",
+                "everyones_japanese/lesson44.js",
+                "everyones_japanese/lesson45.js"
             ]
         },
         {
