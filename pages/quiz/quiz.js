@@ -561,22 +561,27 @@ Page({
   // 结束答题
   endQuiz: function() {
     this.clearTimer(); // 停止计时器
-    // 根据当前的 quizMode 确定显示的模式文本
-    let modeText = this.data.quizMode === 'quick' ? '快速答题' : '无尽模式';
+
     // 在无尽模式下，总题数应该是实际题目数组的长度
     // 在快速答题模式下，totalQuestions 是预设的（最多30或实际题目数，已在loadQuestionsAndWords中设置）
-    let displayedTotalQuestions = this.data.quizMode === 'quick' ? this.data.totalQuestions : this.data.questions.length;
+    const displayedTotalQuestions = this.data.quizMode === 'quick' ? this.data.totalQuestions : this.data.questions.length;
+    const { score, timeSpent } = this.data;
+    const accuracy = displayedTotalQuestions > 0 ? (score / displayedTotalQuestions) : 0;
 
-    wx.showModal({
-      title: '答题结束',
-      content: `模式：${modeText}\n得分：${this.data.score}\n总题数：${displayedTotalQuestions}\n用时：${this.formatTime(this.data.timeSpent)}`,
-      showCancel: false,
-      confirmText: '返回',
-      success: (res) => {
-        if (res.confirm) {
-          wx.navigateBack();
-        }
-      }
+    // 根据正确率确定结果等级
+    let resultLevel = '';
+    if (accuracy <= 0.2) {
+      resultLevel = 'noob'; // 菜鸟
+    } else if (accuracy > 0.2 && accuracy <= 0.8) {
+      resultLevel = 'normal'; // 普通
+    } else {
+      resultLevel = 'perfect'; // 完美
+    }
+
+    // 跳转到结算页，并传递所有需要的数据
+    // 使用 navigateTo 允许用户返回
+    wx.redirectTo({
+      url: `/pages/quiz-result/quiz-result?score=${score}&totalQuestions=${displayedTotalQuestions}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}`
     });
   },
 

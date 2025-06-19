@@ -6,7 +6,8 @@
     "pages/knowledge/knowledge",
     "pages/profile/profile",
     "pages/filter/filter",
-    "pages/quiz/quiz"
+    "pages/quiz/quiz",
+    "pages/quiz-result/quiz-result"
   ],
   "window": {
     "backgroundTextStyle": "light",
