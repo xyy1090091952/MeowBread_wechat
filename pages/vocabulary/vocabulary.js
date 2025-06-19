@@ -80,7 +80,13 @@ Page({
   /** 页面展示时更新底部导航选中状态 */
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().updateSelected(1);
+      const page = getCurrentPages().pop();
+      const route = page.route;
+      const tabList = this.getTabBar().data.tabList;
+      const index = tabList.findIndex(item => item.pagePath === route);
+      if (index !== -1) {
+        this.getTabBar().updateSelected(index);
+      }
     }
   }
 })

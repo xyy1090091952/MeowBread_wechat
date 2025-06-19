@@ -28,11 +28,6 @@ Page({
     if (quizFilter && quizFilter.selectedDictionaryName && quizFilter.selectedLessonName) {
       // 与 quiz.js 保持一致的显示逻辑
       currentFilterDisplay = `当前选择：${quizFilter.selectedDictionaryName} - ${quizFilter.selectedLessonName}`;
-      // 如果需要显示模式，可以添加，但 answer 页面主要用于选择，模式信息可能在 quiz 页更重要
-      // if (quizFilter.quizMode) {
-      //   const modeText = quizFilter.quizMode === 'quick' ? '快速答题' : quizFilter.quizMode === 'endless' ? '无尽模式' : '练习模式';
-      //   currentFilterDisplay += ` (${modeText})`;
-      // }
     } else if (quizFilter && quizFilter.dictionaryName && quizFilter.selectedLessons) {
       // 兼容旧的存储结构 (如果存在)
       let lessonsDisplay = '全部课程';
@@ -44,8 +39,6 @@ Page({
         }
       }
       currentFilterDisplay = `当前选择：${quizFilter.dictionaryName} - ${lessonsDisplay}`;
-      // const modeText = quizFilter.mode === 'quick' ? '快速答题' : quizFilter.mode === 'endless' ? '无尽模式' : '练习模式';
-      // currentFilterDisplay += ` (${modeText})`;
     }
 
     this.setData({
@@ -54,7 +47,13 @@ Page({
 
     // 更新自定义底部导航的选中状态
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().updateSelected(0);
+      const page = getCurrentPages().pop();
+      const route = page.route;
+      const tabList = this.getTabBar().data.tabList;
+      const index = tabList.findIndex(item => item.pagePath === route);
+      if (index !== -1) {
+        this.getTabBar().updateSelected(index);
+      }
     }
   },
 

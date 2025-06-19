@@ -1,10 +1,10 @@
 <view class="tabbar">
   <view class="bg"></view>
-  <view class="indicator" style="left: {{indicatorLeft}}px;"></view>
+  <view class="indicator" style="left: {{indicatorLeft}}px; transition: {{indicatorTransition}};"></view>
   <block wx:for="{{tabList}}" wx:key="index">
     <view class="tab-item {{index===selected ? 'active' : ''}}" data-index="{{index}}" bindtap="switchTab">
       <image class="icon" src="{{index===selected ? item.selectedIconPath : item.iconPath}}"></image>
       <text class="label {{index===selected ? 'active' : ''}}">{{item.text}}</text>
     </view>
   </block>
-</view> 
+</view>

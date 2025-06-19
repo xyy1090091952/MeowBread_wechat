@@ -1,6 +1,6 @@
 Component({
   data: {
-    selected: 0,
+    selected: null, // 初始状态设为 null，以识别首次加载
     color: "#9B9BFA",
     selectedColor: "#4845F7",
     indicatorLeft: 0,
@@ -32,40 +32,38 @@ Component({
     ]
   },
   attached() {
-    // 设置当前选中项
-    const pages = getCurrentPages();
-    const route = pages[pages.length - 1].route;
-    const index = this.data.tabList.findIndex(item => item.pagePath === route);
-    if (index !== -1) {
-      this.setData({ selected: index });
-    }
-    this.updateIndicator();
+    // attached 生命周期中不再初始化指示器
+    // 指示器的位置完全由页面的 onShow 事件驱动
   },
   methods: {
     switchTab(e) {
       const index = e.currentTarget.dataset.index;
       const path = this.data.tabList[index].pagePath;
-      wx.switchTab({ url: "/" + path });
-      this.setData({ selected: index }, () => {
-        this.updateIndicator();
-      });
+      // 仅负责页面跳转，状态更新交由目标页面的 onShow 处理
+      // 这样可以避免竞态条件，保证状态来源单一
+      wx.switchTab({ url: '/' + path });
     },
     updateSelected(index) {
-      this.setData({ selected: index }, () => {
-        this.updateIndicator();
-      });
+      // 如果已经是当前选中的 tab，则不执行任何操作
+      if (this.data.selected === index) {
+        return;
+      }
+      this.setData({ selected: index });
+      this.updateIndicator();
     },
+
     updateIndicator() {
-      // 查询当前选中 tab-item 的位置
-      wx.createSelectorQuery()
-        .in(this)
-        .selectAll('.tab-item')
-        .boundingClientRect(rects => {
-          if (rects && rects[this.data.selected]) {
-            this.setData({ indicatorLeft: rects[this.data.selected].left });
+      // 使用 nextTick 确保在 DOM 更新后执行
+      wx.nextTick(() => {
+        const query = wx.createSelectorQuery().in(this);
+        query.selectAll('.tab-item').boundingClientRect(rects => {
+          if (rects && rects.length > this.data.selected) {
+            const rect = rects[this.data.selected];
+            // 直接设置指示器的位置，不再有动画
+            this.setData({ indicatorLeft: rect.left });
           }
-        })
-        .exec();
+        }).exec();
+      });
     }
   }
-}); 
+});

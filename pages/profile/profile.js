@@ -100,7 +100,13 @@ Page({
    */
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().updateSelected(3);
+      const page = getCurrentPages().pop();
+      const route = page.route;
+      const tabList = this.getTabBar().data.tabList;
+      const index = tabList.findIndex(item => item.pagePath === route);
+      if (index !== -1) {
+        this.getTabBar().updateSelected(index);
+      }
     }
   }
 })
