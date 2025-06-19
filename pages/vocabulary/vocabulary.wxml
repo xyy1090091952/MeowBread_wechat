@@ -1,5 +1,5 @@
 <!--pages/vocabulary/vocabulary.wxml-->
-<scroll-view scroll-y class="page">
+<view class="page">
   <!-- 顶部提示横幅 -->
   <view class="banner">
     <text class="banner-text">{{bannerText}}</text>
@@ -33,4 +33,4 @@
 
   <!-- 底部间距 -->
   <view style="height:140rpx;"></view>
-</scroll-view>
+</view>

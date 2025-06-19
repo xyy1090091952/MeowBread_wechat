@@ -46,15 +46,21 @@ Page({
     });
 
     // 简单分类：教材放 textbook, 其他放 software
+    // 这里将词典数据 `dicts` 分成不同的类别 `categories` 以便在界面上展示
+    // 这是一个常见的数据处理方法，用于将原始数据根据特定规则进行分组
     const categories = [
       {
-        id: 'textbook',
-        title: '课本Textbook',
+        id: 'textbook', // 分类ID
+        title: '课本', // 分类标题
+        // 使用 Array.prototype.filter 方法筛选出所有 id 不等于 'duolingguo' 的词典
+        // 这些词典将被归类到“课本”这个类别下
         dicts: dicts.filter(d => d.id !== 'duolingguo')
       },
       {
         id: 'software',
-        title: '软件Software',
+        title: '软件',
+        // 这里同样使用 filter 方法，筛选出 id 等于 'duolingguo' 的词典
+        // 将 'duolingguo' 这个词典单独归类到“软件”类别下
         dicts: dicts.filter(d => d.id === 'duolingguo')
       }
     ];
