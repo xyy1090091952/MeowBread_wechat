@@ -1,0 +1,26 @@
+<!--pages/quiz-result/quiz-result.wxml-->
+<view class="container">
+  <view class="result-container">
+    <view class="result-card {{resultLevel}} {{animationClass.resultCard}}">
+      <image class="result-image" src="{{resultImage}}" mode="aspectFit"></image>
+      <view class="result-text">{{resultText}}</view>
+    </view>
+
+    <view class="stats-grid">
+      <view class="stat-item stat-item-1 {{animationClass.statItem1}}">
+        <view class="stat-label">答题数</view>
+        <view class="stat-value">{{totalQuestions}}</view>
+      </view>
+      <view class="stat-item stat-item-2 {{animationClass.statItem2}}">
+        <view class="stat-label">正确率</view>
+        <view class="stat-value">{{accuracyPercentage}}%</view>
+      </view>
+      <view class="stat-item stat-item-3 {{animationClass.statItem3}}">
+        <view class="stat-label">用时</view>
+        <view class="stat-value">{{formattedTime}}</view>
+      </view>
+    </view>
+
+    <button class="done-button {{animationClass.doneButton}}" bindtap="handleDone">完成答题</button>
+  </view>
+</view>

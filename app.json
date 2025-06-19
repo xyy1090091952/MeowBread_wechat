@@ -6,13 +6,15 @@
     "pages/knowledge/knowledge",
     "pages/profile/profile",
     "pages/filter/filter",
-    "pages/quiz/quiz"
+    "pages/quiz/quiz",
+    "pages/quiz-result/quiz-result"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#ffffff",
     "navigationBarTitleText": "MeowBread",
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFFFFF"
   },
   "renderer": "webview",
   "tabBar": {

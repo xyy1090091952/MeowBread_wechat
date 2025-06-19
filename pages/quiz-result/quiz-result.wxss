@@ -1,0 +1,119 @@
+.container {
+  padding: 0;
+  margin: 0;
+  height: 100vh; /* 确保容器占满整个屏幕高度 */
+  width: 100vw; /* 确保容器占满整个屏幕宽度 */
+}
+
+.result-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0; /* 去掉左右内边距 */
+  width: 100%; /* 确保容器宽度占满父容器 */
+  box-sizing: border-box;
+  background-color:rgb(255, 255, 255); /* 轻微的背景色 */
+  min-height: 100vh;
+}
+
+.result-card {
+  text-align: center;
+  margin-top: 15vh; /* 与顶部的距离 */
+  margin-bottom: 5vh;
+}
+
+.result-image {
+  width: 150px; /* 根据设计稿调整图片宽度 */
+  height: 150px; /* 根据设计稿调整图片高度 */
+  margin-bottom: 15px;
+}
+
+.result-text {
+  font-size: 22px; /* 调整字体大小 */
+  font-weight: 600; /* 字体加粗 */
+  color: #333;
+}
+
+.stats-grid {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  gap: 10px; /* 使用gap来创建间距 */
+  margin-bottom: 8vh;
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px 10px 20px 10px;
+  border-radius: 16px; /* 设计稿中的圆角 */
+}
+
+.stat-label {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: bolder;
+  color: #000;
+  margin-top: 14px;
+}
+
+/* 为每个统计项设置不同的渐变背景 */
+.stat-item-1 {
+  background: linear-gradient(to top, #F0FCFB 65.55%, #CFFFF0 100%);
+}
+
+.stat-item-2 {
+  background: linear-gradient(to top, #FCF0F1 59.02%, #FFCFE6 100%);
+}
+
+.stat-item-3 {
+  background: linear-gradient(to top, #F0F7FC 64.04%, #CFEBFF 100%);
+}
+
+/* 动画定义 */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 动画类 */
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
+}
+
+.result-card, .stat-item, .done-button {
+  opacity: 0; /* 初始状态透明 */
+}
+
+button.done-button {
+  position: fixed;
+  bottom: 40px;
+  left: 5%; /* 距离左边5% */
+  right: 5%; /* 距离右边5% */
+  width: auto; /* 宽度自动计算，从而实现90%的通栏效果 */
+  height: 45px; /* 固定高度 */
+  margin: 0; /* 重置微信默认的margin */
+  padding: 15px 0;
+  background: #4845F7;
+  color: white;
+  border-radius: 24rpx; /* 大圆角 */
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 4px 10px #C6C5F9;
+  border: none;
+  box-sizing: border-box;
+  display: flex; /* 使用flex布局 */
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+}

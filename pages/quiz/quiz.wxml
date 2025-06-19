@@ -3,14 +3,31 @@
   <view class="current-filter-display" wx:if="{{currentFilterDisplay}}">
     <text>当前范围: {{currentFilterDisplay}}</text>
   </view>
-  <view class="quiz-info">
-    <text class="score-display">得分: {{score}}</text>
-    <text class="timer-display">用时: {{timeFormatter.formatTime(timeSpent)}}</text>
-    <text class="progress-display">进度: {{currentQuestionIndex + 1}} / {{totalQuestions}}</text>
-  </view>
+    <!-- 新增的进度条和计时器容器 -->
+    <view class="progress-timer-container" wx:if="{{quizMode === 'quick'}}">
+      <!-- 进度条 -->
+      <view class="progress-bar-wrapper">
+        <view class="progress-bar-background">
+          <view class="progress-bar-foreground" style="width: {{(currentQuestionIndex + 1) / totalQuestions * 100}}%;"></view>
+        </view>
+        <!-- 进度节点 -->
+        <view class="progress-node-group">
+            <view class="progress-node" wx:for="{{[10, 20, 30]}}" wx:key="*this" style="left: calc({{(item / totalQuestions) * 100}}% - 12px);"> 
+                <view class="progress-node-circle {{ (currentQuestionIndex + 1) >= item ? 'active' : '' }}"></view>
+                <text class="progress-node-text {{ (currentQuestionIndex + 1) >= item ? 'active' : '' }}">{{item}}</text>
+            </view>
+        </view>
+      </view>
 
-  <block wx:if="{{questions[currentQuestionIndex]}}">
-    <view class="question-card">
+      <!-- 计时器 -->
+      <view class="timer-box">
+        <image class="timer-icon" src="/images/icons/timericon.png"></image>
+        <text class="timer-text">{{formattedTime}}</text>
+      </view>
+    </view>
+
+  <block wx:if="{{showQuestion}}" wx:key="{{currentQuestionIndex}}">
+    <view class="content-card">
       <!-- 问题区域 -->
       <view class="question-header">
         <view class="question-stem-container">
@@ -23,21 +40,21 @@
       </view>
 
       <!-- 选择题 -->
-      <view class="options-container" wx:if="{{questions[currentQuestionIndex].type === 'choice'}}">
-        <button 
+      <view class="options-container" wx:if="{{questions[currentQuestionIndex].type === 'choice'}}" wx:key="choice-{{currentQuestionIndex}}">
+        <view 
           wx:for="{{questions[currentQuestionIndex].options}}" 
           wx:for-item="option"
           wx:key="index"
-          class="option-button {{selectedOption === option ? (isCorrect && showAnswerCard ? 'correct' : (!isCorrect && showAnswerCard ? 'incorrect' : 'selected')) : ''}} {{showAnswerCard && option === questions[currentQuestionIndex].answer && option !== selectedOption ? 'correct-unselected' : ''}}"
+          class="option-button {{selectedOption === option ? (isCorrect && showAnswerCard ? 'correct' : (!isCorrect && showAnswerCard ? 'incorrect' : 'selected')) : ''}} {{showAnswerCard && option === questions[currentQuestionIndex].answer && option !== selectedOption ? 'correct-unselected' : ''}} {{showAnswerCard ? 'disabled' : ''}}"
+          style="animation-delay: {{index * 0.1}}s;"
           bindtap="onOptionSelect"
-          data-option="{{option}}"
-          disabled="{{showAnswerCard}}">
+          data-option="{{option}}">
           {{option}}
-        </button>
+        </view>
       </view>
 
       <!-- 填空题 -->
-      <view wx:if="{{questions[currentQuestionIndex].type === 'fill'}}">
+      <view wx:if="{{questions[currentQuestionIndex].type === 'fill'}}" wx:key="fill-{{currentQuestionIndex}}">
         <input 
           class="fill-input {{showAnswerCard ? (isCorrect ? 'correct-fill' : 'incorrect-fill') : ''}}" 
           placeholder="请输入答案"
@@ -47,67 +64,54 @@
 
       </view>
 
-      <view class="action-buttons-fixed">
-        <!-- 提交答案和跳过本题按钮 -->
-        <view class="button-group" wx:if="{{!showAnswerCard}}">
-          <button 
-            class="skip-button half-width-button" 
-            bindtap="skipQuestion">
-            跳过本题
-          </button>
-          <button 
-            class="submit-button half-width-button" 
-            bindtap="submitAnswer" 
-            disabled="{{(questions[currentQuestionIndex].type === 'choice' && !selectedOption) || (questions[currentQuestionIndex].type === 'fill' && isUserAnswerEmpty) }}">
-            提交答案
-          </button>
-        </view>
+    </view>
 
+    <!-- 答案反馈卡片 -->
+    <view class="answer-card-container" wx:if="{{showAnswerCard}}">
+      <view class="answer-card {{isCorrect ? 'correct' : 'incorrect'}}">
+        <view class="answer-header">{{isCorrect ? '正确' : '错误'}}</view>
+        <view class="word-details">
+          <view wx:if="{{questions[currentQuestionIndex].wordInfo['假名']}}" class="detail-item">
+            <text class="detail-label">假名：</text>
+            <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['假名']}}</text>
+          </view>
+          <view wx:if="{{questions[currentQuestionIndex].wordInfo['汉字']}}" class="detail-item">
+            <text class="detail-label">汉字：</text>
+            <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['汉字']}}</text>
+          </view>
+          <view wx:if="{{questions[currentQuestionIndex].wordInfo['中文']}}" class="detail-item">
+            <text class="detail-label">中文：</text>
+            <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['中文']}}</text>
+          </view>
+          <view wx:if="{{questions[currentQuestionIndex].wordInfo['例句']}}" class="detail-item">
+            <text class="detail-label">例句：</text>
+            <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['例句']}}</text>
+          </view>
+        </view>
         <!-- 下一题按钮 -->
-        <button 
+        <view 
           class="next-button full-width-button" 
           bindtap="nextQuestion" 
           wx:if="{{showAnswerCard}}">
           下一题
-        </button>
+        </view>
       </view>
     </view>
 
-    <!-- 答案反馈卡片 -->
-    <view class="answer-card {{isCorrect ? 'correct' : 'incorrect'}}" wx:if="{{showAnswerCard}}">
-      <view class="answer-text">{{isCorrect ? '回答正确！' : '回答错误！'}}</view>
-      <view class="answer-text" wx:if="{{!isCorrect}}">
-        正确答案: 
-        <block wx:if="{{questions[currentQuestionIndex].answer.word || questions[currentQuestionIndex].answer.kana}}">
-          {{questions[currentQuestionIndex].answer.word || ''}}<block wx:if="{{questions[currentQuestionIndex].answer.word && questions[currentQuestionIndex].answer.kana && questions[currentQuestionIndex].answer.word !== questions[currentQuestionIndex].answer.kana}}"> / {{questions[currentQuestionIndex].answer.kana}}</block><block wx:elif="{{!questions[currentQuestionIndex].answer.word && questions[currentQuestionIndex].answer.kana}}">{{questions[currentQuestionIndex].answer.kana}}</block>
-        </block>
-        <block wx:else>
-          {{questions[currentQuestionIndex].answer}}
-        </block>
-      </view>
-      <view class="word-details" wx:if="{{questions[currentQuestionIndex] && questions[currentQuestionIndex].wordInfo}}">
-        <view wx:if="{{questions[currentQuestionIndex].wordInfo['假名']}}" class="detail-item">
-          <text class="detail-label">假名:</text>
-          <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['假名']}}</text>
-        </view>
-        <view wx:if="{{questions[currentQuestionIndex].wordInfo['汉字']}}" class="detail-item">
-          <text class="detail-label">汉字:</text>
-          <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['汉字']}}</text>
-        </view>
-        <view wx:if="{{questions[currentQuestionIndex].wordInfo['中文']}}" class="detail-item">
-          <text class="detail-label">中文:</text>
-          <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['中文']}}</text>
-        </view>
-        <view wx:if="{{questions[currentQuestionIndex].wordInfo['例句']}}" class="detail-item">
-          <text class="detail-label">例句:</text>
-          <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['例句']}}</text>
-        </view>
-        <view wx:if="{{questions[currentQuestionIndex].wordInfo['词性']}}" class="detail-item">
-          <text class="detail-label">词性:</text>
-          <view class="part-of-speech-tag {{questions[currentQuestionIndex].partOfSpeech}}">
-            {{questions[currentQuestionIndex].wordInfo['词性']}}
-          </view>
-        </view>
+    <view class="action-buttons-fixed" wx:if="{{!showAnswerCard}}">
+      <!-- 提交答案和跳过本题按钮 -->
+      <view class="button-group">
+        <button 
+          class="skip-button half-width-button" 
+          bindtap="skipQuestion">
+          跳过本题
+        </button>
+        <button 
+          class="submit-button half-width-button" 
+          bindtap="submitAnswer" 
+          disabled="{{(questions[currentQuestionIndex].type === 'choice' && !selectedOption) || (questions[currentQuestionIndex].type === 'fill' && isUserAnswerEmpty) }}">
+          提交答案
+        </button>
       </view>
     </view>
   </block>

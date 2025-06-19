@@ -22,8 +22,10 @@ Page({
     score: 0, // 得分
     totalQuestions: 0, // 总题数 (快速答题模式)
     timeSpent: 0, // 用时
+    formattedTime: '00:00', // 格式化后的时间
     timer: null, // 计时器
-    isLoading: true // 加载状态
+    isLoading: true, // 加载状态
+    showQuestion: true // 用于控制题目显示/隐藏以触发动画
   },
 
   /**
@@ -533,53 +535,65 @@ Page({
 
   // 下一题
   nextQuestion: function() {
-    // 检查是否是快速模式且达到最后一题，或者是无尽模式且达到最后一题
-    if ((this.data.quizMode === 'quick' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1) || 
+    this.setData({ showQuestion: false }); // 先隐藏题目以重置动画状态
+
+    wx.nextTick(() => {
+      // 检查是否是快速模式且达到最后一题，或者是无尽模式且达到最后一题
+      if ((this.data.quizMode === 'quick' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1) ||
         (this.data.quizMode === 'endless' && this.data.currentQuestionIndex >= this.data.questions.length - 1)) {
-      this.endQuiz(); // 两种模式下答完都结束答题
-    } else {
-      // 进入下一题
-      const nextIndex = this.data.currentQuestionIndex + 1;
-      this.setData({
-        currentQuestionIndex: nextIndex,
-        userAnswer: '', // 重置用户答案
-        selectedOption: null, // 重置用户选项
-        isUserAnswerEmpty: true, // 重置填空题答案为空的状态
-        showAnswerCard: false, // 隐藏答案卡片
-        isCorrect: false // 重置正确状态
-      });
-    }
+        this.endQuiz(); // 两种模式下答完都结束答题
+      } else {
+        // 进入下一题
+        const nextIndex = this.data.currentQuestionIndex + 1;
+        this.setData({
+          currentQuestionIndex: nextIndex,
+          userAnswer: '', // 重置用户答案
+          selectedOption: null, // 重置用户选项
+          isUserAnswerEmpty: true, // 重置填空题答案为空的状态
+          showAnswerCard: false, // 隐藏答案卡片
+          isCorrect: false, // 重置正确状态
+          showQuestion: true // 数据更新后，再显示题目以触发动画
+        });
+      }
+    });
   },
 
   // 结束答题
   endQuiz: function() {
     this.clearTimer(); // 停止计时器
-    // 根据当前的 quizMode 确定显示的模式文本
-    let modeText = this.data.quizMode === 'quick' ? '快速答题' : '无尽模式';
+
     // 在无尽模式下，总题数应该是实际题目数组的长度
     // 在快速答题模式下，totalQuestions 是预设的（最多30或实际题目数，已在loadQuestionsAndWords中设置）
-    let displayedTotalQuestions = this.data.quizMode === 'quick' ? this.data.totalQuestions : this.data.questions.length;
+    const displayedTotalQuestions = this.data.quizMode === 'quick' ? this.data.totalQuestions : this.data.questions.length;
+    const { score, timeSpent } = this.data;
+    const accuracy = displayedTotalQuestions > 0 ? (score / displayedTotalQuestions) : 0;
 
-    wx.showModal({
-      title: '答题结束',
-      content: `模式：${modeText}\n得分：${this.data.score}\n总题数：${displayedTotalQuestions}\n用时：${this.formatTime(this.data.timeSpent)}`,
-      showCancel: false,
-      confirmText: '返回',
-      success: (res) => {
-        if (res.confirm) {
-          wx.navigateBack();
-        }
-      }
+    // 根据正确率确定结果等级
+    let resultLevel = '';
+    if (accuracy <= 0.2) {
+      resultLevel = 'noob'; // 菜鸟
+    } else if (accuracy > 0.2 && accuracy <= 0.8) {
+      resultLevel = 'normal'; // 普通
+    } else {
+      resultLevel = 'perfect'; // 完美
+    }
+
+    // 跳转到结算页，并传递所有需要的数据
+    // 使用 navigateTo 允许用户返回
+    wx.redirectTo({
+      url: `/pages/quiz-result/quiz-result?score=${score}&totalQuestions=${displayedTotalQuestions}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}`
     });
   },
 
   startTimer: function() {
-    // 如果计时器已存在，则不再重复启动
-    if (this.data.timer) return;
+    // 先停止任何可能存在的计时器
+    this.clearTimer();
 
     const timer = setInterval(() => {
+      const newTimeSpent = this.data.timeSpent + 1;
       this.setData({
-        timeSpent: this.data.timeSpent + 1
+        timeSpent: newTimeSpent,
+        formattedTime: this.formatTime(newTimeSpent)
       });
     }, 1000);
     this.setData({ timer: timer });
@@ -593,12 +607,13 @@ Page({
     }
   },
 
-  // 格式化时间 (秒 -> HH:MM:SS)
+  // 格式化时间 (秒 -> MM:SS)
   formatTime: function(seconds) {
-    const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
-    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${h}:${m}:${s}`;
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+    return `${formattedMinutes}:${formattedSeconds}`;
   },
 
   /**
