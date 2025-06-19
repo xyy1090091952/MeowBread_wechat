@@ -1,31 +1,36 @@
 <!--pages/vocabulary/vocabulary.wxml-->
-<view class="container">
-  <view class="search-bar">
-    <input type="text" placeholder="搜索单词" bindinput="onSearchInput" value="{{searchQuery}}"/>
+<scroll-view scroll-y class="page">
+  <!-- 顶部提示横幅 -->
+  <view class="banner">
+    <text class="banner-text">{{bannerText}}</text>
   </view>
-  <view class="display-mode-selector">
-    <button bindtap="toggleDisplayMode">切换到{{displayMode === 'list' ? '卡片' : '列表'}}模式</button>
-  </view>
-  <view class="word-list" wx:if="{{displayMode === 'list'}}">
-    <block wx:for="{{filteredWords}}" wx:key="word">
-      <view class="word-item">
-        <text class="word">{{item.word}}</text>
-        <text class="reading">{{item.reading}}</text>
-        <text class="meaning">{{item.meaning}}</text>
-        <text class="type">{{item.type}}</text>
-        <text class="sentence">{{item.sentence}}</text>
-      </view>
-    </block>
-  </view>
-  <view class="word-cards" wx:if="{{displayMode === 'card'}}">
-    <block wx:for="{{filteredWords}}" wx:key="word">
-      <view class="word-card">
-        <text class="word">{{item.word}}</text>
-        <text class="reading">{{item.reading}}</text>
-        <text class="meaning">{{item.meaning}}</text>
-        <text class="type">{{item.type}}</text>
-        <text class="sentence">{{item.sentence}}</text>
-      </view>
-    </block>
-  </view>
-</view>
+
+  <!-- 分类循环 -->
+  <block wx:for="{{categories}}" wx:key="id">
+    <!-- 分类标题 -->
+    <view class="section-title">{{item.title}}</view>
+
+    <!-- 横向滑动词典列表 -->
+    <view class="dict-scroll-wrapper">
+      <scroll-view scroll-x class="dict-scroll" enable-flex>
+        <view class="dict-row">
+          <block wx:for="{{item.dicts}}" wx:for-item="dict" wx:key="id">
+            <view class="dict-card" data-id="{{dict.id}}" bindtap="openDictionary">
+              <image class="cover-image" src="{{dict.cover}}" mode="aspectFill"></image>
+              <!-- 底部信息 -->
+              <view class="dict-info">
+                <text class="dict-name">{{dict.name}}</text>
+                <text class="dict-count">词汇量 {{dict.wordCount}}</text>
+              </view>
+              <!-- 进度标签 -->
+              <view class="progress-tag">单词进度 {{dict.progress}}%</view>
+            </view>
+          </block>
+        </view>
+      </scroll-view>
+    </view>
+  </block>
+
+  <!-- 底部间距 -->
+  <view style="height:140rpx;"></view>
+</scroll-view>

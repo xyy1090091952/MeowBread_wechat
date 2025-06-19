@@ -51,6 +51,11 @@ Page({
     this.setData({
       currentFilterDisplay: currentFilterDisplay
     });
+
+    // 更新自定义底部导航的选中状态
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().updateSelected(0);
+    }
   },
 
   /**

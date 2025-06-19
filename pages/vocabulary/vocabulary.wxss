@@ -27,3 +27,113 @@
   font-size: 28rpx;
   color: #666666;
 }
+.progress-tag {
+  position: absolute;
+  top: 48rpx; /* 24px: cover top 16px + offset 8px */
+  left: 48rpx; /* 24px: cover left 16px + offset 8px */
+  width: 184rpx; /* 92px */
+  height: 48rpx; /* 24px */
+  line-height: 48rpx;
+  text-align: left;
+  padding-left: 16rpx;
+  font-size: 20rpx;
+  border: 1rpx solid rgba(72,69,247,0.2);
+  border-radius: 24rpx;
+  background: #ffffff;
+  color: #000;
+}
+
+/* ———————— 之前被误删的样式恢复 ———————— */
+.page {
+  background: #ffffff;
+  height: 100%;
+}
+
+/* 顶部横幅 */
+.banner {
+  margin: 48rpx 48rpx 0 48rpx;
+  height: 64rpx;
+  background: linear-gradient(90deg,#f0f6fc 0%,#cfe2ff 100%);
+  border-radius: 32rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 48rpx; /* 24px */
+}
+.banner-text {
+  font-size: 24rpx;
+  color: #4845f7;
+  font-weight: 600;
+}
+
+/* 分类标题 */
+.section-title {
+  margin: 48rpx 48rpx 24rpx;
+  font-size: 48rpx; /* 24px */
+  font-weight: bold;
+  font-family: 'Inter', sans-serif;
+  color: #111111;
+  line-height: 60rpx;
+}
+
+/* 词典滚动 */
+.dict-scroll-wrapper {
+  padding-left: 48rpx; /* 24px */
+  padding-right: 24rpx; /* 12px */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.dict-scroll {
+  width: 100%;
+  white-space: nowrap;
+  padding-left: 0;
+  box-sizing: border-box;
+}
+
+.dict-row {
+  display: flex;
+  flex-direction: row;
+  overflow: visible;
+  padding-bottom: 48rpx; /* 给阴影留空间 */
+}
+
+/* 卡片 */
+.dict-card {
+  width: 400rpx;
+  height: 640rpx;
+  background: #ffffff;
+  border-radius: 24rpx;
+  box-shadow: 8rpx 8rpx 32rpx rgba(0,0,0,0.08);
+  position: relative;
+  margin-right: 24rpx; /* 间距12px */
+  overflow: visible;
+}
+
+.cover-image {
+  width: 336rpx;
+  height: 512rpx;
+  margin: 32rpx 32rpx 0 32rpx;
+  border-radius: 8rpx;
+  object-fit: cover;
+}
+
+.dict-info {
+  position: absolute;
+  bottom: 32rpx;
+  left: 48rpx; /* 缩进 8px (16rpx) */
+  right: 48rpx; /* 缩进 8px (16rpx) */
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #000;
+}
+
+.dict-name {
+  font-weight: 600;
+}
+
+.dict-count {
+  text-align: right;
+}
+
+/* ———————— 恢复结束 ———————— */
