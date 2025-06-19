@@ -17,6 +17,110 @@
   font-family: Arial, sans-serif;
 }
 
+/* 新增：进度条和计时器容器 */
+.progress-timer-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 15px 0 0 0;
+}
+
+/* 进度条包裹器 */
+.progress-bar-wrapper {
+  flex-grow: 1;
+  position: relative;
+  height: 24px; /* 根据Figma调整 */
+  display: flex;
+  align-items: center;
+}
+
+/* 进度条背景 */
+.progress-bar-background {
+  background-color: #EEEEEE; /* Figma: #EEEEEE */
+  height: 16px; /* Figma: 16px */
+  width: 100%;
+  border-radius: 24px; /* Figma: 24px */
+  overflow: hidden;
+  position: absolute;
+}
+
+/* 进度条前景 */
+.progress-bar-foreground {
+  background: linear-gradient(to right, #F0F7FC, #4845F7); /* Figma: 渐变 */
+  height: 100%;
+  border-radius: 24px;
+  transition: width 0.3s ease-in-out;
+}
+
+/* 进度节点组 */
+.progress-node-group {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.progress-node {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-node-circle {
+    width: 24px; /* Figma: 24px */
+    height: 24px;
+    background-color: #EEEEEE; /* Figma: #EEEEEE */
+    border-radius: 50%;
+    position: absolute;
+}
+
+.progress-node-text {
+    font-size: 12px; /* Figma: 12px */
+    font-weight: 700; /* Figma: bold */
+    color: #000000; /* Figma: black */
+    z-index: 1;
+}
+
+/* 激活状态的节点 */
+.progress-node-circle.active {
+    background-color: #4845F7; /* Figma: #4845F7 */
+}
+
+.progress-node-text.active {
+    color: #FFFFFF; /* Figma: white */
+}
+
+
+/* 计时器 */
+.timer-box {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to right, #F0F6FC, #CFE2FF); /* Figma: 渐变 */
+  border-radius: 24px; /* Figma: 24px */
+  padding: 6px 12px;
+  margin-left: 16px;
+  height: 24px; /* Figma: 24px */
+  box-sizing: border-box;
+}
+
+.timer-icon {
+  width: 12px; /* Figma: 12px */
+  height: 12px;
+  margin-right: 6px;
+}
+
+.timer-text {
+  font-size: 12px; /* Figma: 12px */
+  font-weight: 700; /* Figma: bold */
+  color: #000000; /* Figma: black */
+}
+
 .quiz-info {
   width: 100%;
   display: flex;

@@ -22,6 +22,7 @@ Page({
     score: 0, // 得分
     totalQuestions: 0, // 总题数 (快速答题模式)
     timeSpent: 0, // 用时
+    formattedTime: '00:00', // 格式化后的时间
     timer: null, // 计时器
     isLoading: true, // 加载状态
     showQuestion: true // 用于控制题目显示/隐藏以触发动画
@@ -580,12 +581,14 @@ Page({
   },
 
   startTimer: function() {
-    // 如果计时器已存在，则不再重复启动
-    if (this.data.timer) return;
+    // 先停止任何可能存在的计时器
+    this.clearTimer();
 
     const timer = setInterval(() => {
+      const newTimeSpent = this.data.timeSpent + 1;
       this.setData({
-        timeSpent: this.data.timeSpent + 1
+        timeSpent: newTimeSpent,
+        formattedTime: this.formatTime(newTimeSpent)
       });
     }, 1000);
     this.setData({ timer: timer });
@@ -599,12 +602,13 @@ Page({
     }
   },
 
-  // 格式化时间 (秒 -> HH:MM:SS)
+  // 格式化时间 (秒 -> MM:SS)
   formatTime: function(seconds) {
-    const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
-    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${h}:${m}:${s}`;
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+    return `${formattedMinutes}:${formattedSeconds}`;
   },
 
   /**

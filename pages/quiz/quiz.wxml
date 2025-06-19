@@ -3,11 +3,28 @@
   <view class="current-filter-display" wx:if="{{currentFilterDisplay}}">
     <text>当前范围: {{currentFilterDisplay}}</text>
   </view>
-  <view class="quiz-info">
-    <text class="score-display">得分: {{score}}</text>
-    <text class="timer-display">用时: {{timeFormatter.formatTime(timeSpent)}}</text>
-    <text class="progress-display">进度: {{currentQuestionIndex + 1}} / {{totalQuestions}}</text>
-  </view>
+    <!-- 新增的进度条和计时器容器 -->
+    <view class="progress-timer-container" wx:if="{{quizMode === 'quick'}}">
+      <!-- 进度条 -->
+      <view class="progress-bar-wrapper">
+        <view class="progress-bar-background">
+          <view class="progress-bar-foreground" style="width: {{(currentQuestionIndex + 1) / totalQuestions * 100}}%;"></view>
+        </view>
+        <!-- 进度节点 -->
+        <view class="progress-node-group">
+            <view class="progress-node" wx:for="{{[10, 20, 30]}}" wx:key="*this" style="left: calc({{(item / totalQuestions) * 100}}% - 12px);"> 
+                <view class="progress-node-circle {{ (currentQuestionIndex + 1) >= item ? 'active' : '' }}"></view>
+                <text class="progress-node-text {{ (currentQuestionIndex + 1) >= item ? 'active' : '' }}">{{item}}</text>
+            </view>
+        </view>
+      </view>
+
+      <!-- 计时器 -->
+      <view class="timer-box">
+        <image class="timer-icon" src="/images/icons/timericon.png"></image>
+        <text class="timer-text">{{formattedTime}}</text>
+      </view>
+    </view>
 
   <block wx:if="{{showQuestion}}" wx:key="{{currentQuestionIndex}}">
     <view class="content-card">
