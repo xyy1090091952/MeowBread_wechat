@@ -2,11 +2,18 @@
 Page({
   data: {
     // 根据Figma设计稿，一级页面主要是选项，不直接展示题目信息
-    currentFilterDisplay: '' // 用于显示当前题库筛选范围
+    currentFilterDisplay: '', // 用于显示当前题库筛选范围
+    showTextbookSelector: false // 控制教材选择弹窗的显示
   },
   onLoad: function (options) {
     // 页面加载时可以进行一些初始化操作
     console.log('Page loaded with options:', options);
+
+    // 检查是否已选择教材
+    const selectedDict = wx.getStorageSync('selectedDictionary');
+    if (!selectedDict) {
+      this.setData({ showTextbookSelector: true });
+    }
   },
 
   /**
@@ -23,22 +30,19 @@ Page({
     console.log('Page show');
     // 页面显示时，从本地存储加载筛选条件并更新显示
     const quizFilter = wx.getStorageSync('quizFilter');
-    let currentFilterDisplay = '当前选择：未筛选条件，使用默认设置（全部辞典）'; // 默认提示
+    const selectedDictId = wx.getStorageSync('selectedDictionary');
+    let currentFilterDisplay = '请选择教材和课程'; // 默认提示
 
     if (quizFilter && quizFilter.selectedDictionaryName && quizFilter.selectedLessonName) {
-      // 与 quiz.js 保持一致的显示逻辑
-      currentFilterDisplay = `当前选择：${quizFilter.selectedDictionaryName} - ${quizFilter.selectedLessonName}`;
-    } else if (quizFilter && quizFilter.dictionaryName && quizFilter.selectedLessons) {
-      // 兼容旧的存储结构 (如果存在)
-      let lessonsDisplay = '全部课程';
-      if (quizFilter.selectedLessons.length > 0) {
-        if (quizFilter.selectedLessons.length <= 3) {
-          lessonsDisplay = quizFilter.selectedLessons.map(lesson => lesson.name).join(', ');
-        } else {
-          lessonsDisplay = `已选 ${quizFilter.selectedLessons.length} 节课程`;
-        }
+      // 优先显示来自Filter页面的精确筛选结果
+      currentFilterDisplay = `当前：${quizFilter.selectedDictionaryName} - ${quizFilter.selectedLessonName}`;
+    } else if (selectedDictId) {
+      // 如果没有精确筛选，则显示已选择的教材
+      const dictionaries = require('../../database/dictionaries.js').dictionaries;
+      const selectedDict = dictionaries.find(d => d.id === selectedDictId);
+      if (selectedDict) {
+        currentFilterDisplay = `当前：${selectedDict.name} - 全部课程`;
       }
-      currentFilterDisplay = `当前选择：${quizFilter.dictionaryName} - ${lessonsDisplay}`;
     }
 
     this.setData({
@@ -56,6 +60,63 @@ Page({
       }
     }
   },
+
+  /** 关闭教材选择弹窗 */
+  onCloseSelector() {
+    this.setData({ showTextbookSelector: false });
+    // 如果用户关闭了弹窗但没有选择，可以设置一个默认教材
+    const selectedDict = wx.getStorageSync('selectedDictionary');
+    if (!selectedDict) {
+        wx.setStorageSync('selectedDictionary', 'everyones_japanese');
+    }
+  },
+
+  /** 处理教材选择 */
+  onSelectTextbook(e) {
+    const { selectedDictionary } = e.detail; // 从事件中获取完整的词典对象
+    if (!selectedDictionary || !selectedDictionary.id) {
+      console.error('onSelectTextbook: 无效的 selectedDictionary');
+      this.setData({ showTextbookSelector: false });
+      return;
+    }
+
+    // 加载所有词典以找到索引
+    const allDictionaries = require('../../database/dictionaries.js').dictionaries;
+    const dictionariesWithAllOption = [{ id: 'all', name: '全部辞典' }, ...allDictionaries];
+    const dictionaryIndex = dictionariesWithAllOption.findIndex(d => d.id === selectedDictionary.id);
+
+    // 构建一个与 filter 页面保存的结构一致的 quizFilter 对象
+    const quizFilter = {
+      selectedDictionaryIndex: dictionaryIndex !== -1 ? dictionaryIndex : 0,
+      selectedLessonFile: `DICTIONARY_${selectedDictionary.id}_ALL_LESSONS`, // 默认选择该教材的全部课程
+      selectedLessonName: '全部课程',
+      selectedDictionaryName: selectedDictionary.name,
+      dictionaryId: selectedDictionary.id,
+      basePath: selectedDictionary.base_path || '',
+      quizMode: 'quick', // 默认为快速答题模式
+      // 首次选择时，使用默认的题型
+      selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill']
+    };
+
+    // 保存完整的筛选条件
+    wx.setStorageSync('quizFilter', quizFilter);
+    // 为了兼容旧逻辑或其他地方可能的直接引用，也保存一份 selectedDictionary
+    wx.setStorageSync('selectedDictionary', selectedDictionary.id);
+
+    // 更新页面显示并关闭弹窗
+    this.setData({
+      showTextbookSelector: false,
+      currentFilterDisplay: `当前：${selectedDictionary.name} - 全部课程`
+    });
+
+    wx.showToast({
+      title: '教材已选择',
+      icon: 'success',
+      duration: 1500
+    });
+  },
+
+  
 
   /**
    * 生命周期函数--监听页面隐藏

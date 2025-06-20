@@ -1,4 +1,6 @@
 {
   "navigationBarTitleText": "题库筛选",
-  "usingComponents": {}
+  "usingComponents": {
+    "textbook-selector": "/components/textbook-selector/index"
+  }
 }

@@ -24,7 +24,8 @@ Page({
       { name: '根据中文意思写日语', value: 'zh_to_jp_fill', checked: true, category: '填空题' },
       { name: '根据日文汉字写假名', value: 'jp_kanji_to_kana_fill', checked: true, category: '填空题' }
     ],
-    selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'] // 默认全部选中
+    selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'], // 默认全部选中
+    isSelectorVisible: false // 控制教材选择弹窗的显示与隐藏
   },
 
   /**
@@ -116,6 +117,31 @@ Page({
 
   },
 
+  // 显示教材选择弹窗
+  showTextbookSelector() {
+    console.log('showTextbookSelector called. Setting isSelectorVisible to true.');
+    this.setData({ isSelectorVisible: true });
+  },
+
+  // 处理教材选择确认事件
+  onConfirmTextbook(e) {
+    const { selectedDictionary } = e.detail;
+    const dictionaryIndex = this.data.dictionaries.findIndex(dict => dict.id === selectedDictionary.id);
+
+    this.setData({
+      selectedDictionaryIndex: dictionaryIndex,
+      isSelectorVisible: false
+    });
+
+    // 更新课程列表并保存设置
+    this.updateLessonsAndSave();
+  },
+
+  // 处理教材选择取消事件
+  onCancelTextbook() {
+    this.setData({ isSelectorVisible: false });
+  },
+
   // 处理题型选择变化的函数
   onQuestionTypeChange(e) {
     const { value } = e.currentTarget.dataset; // 获取当前操作的 switch 的 value，即题型代码
@@ -162,6 +188,12 @@ Page({
     });
 
     // 保存筛选条件到本地存储
+    this.saveFilterSettings();
+  },
+
+  // 更新课程列表并保存设置
+  updateLessonsAndSave() {
+    this.updateLessonsBasedOnDictionary();
     this.saveFilterSettings();
   },
 

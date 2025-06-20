@@ -1,0 +1,135 @@
+/* components/textbook-selector/index.wxss */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Figma: rgba(0, 0, 0, 0.6) */
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 9999;
+}
+
+.modal-container {
+  background-color: #FAFAFA; /* Figma: #FAFAFA */
+  width: 100%;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  box-shadow: 4px 4px 40px 0px rgba(0, 0, 0, 0.12); /* Figma: effect_WHJPY9 */
+  z-index: 10000;
+  transform: translateY(100%);
+  transition: transform 0.3s ease-in-out;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.modal-show {
+  transform: translateY(0);
+}
+
+.modal-content {
+  padding-top: 48rpx;
+  padding-bottom: 48rpx;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-title {
+  font-family: 'Inter', sans-serif; /* Figma: Inter */
+  font-size: 24px; /* Figma: 24px */
+  font-weight: 700; /* Figma: 700 */
+  color: #111111; /* Figma: #111111 */
+  margin-bottom: 16px;
+  text-align: left; /* Figma: LEFT */
+  padding: 0 48rpx; /* 左右内边距 */
+}
+
+.dict-scroll {
+  flex: 1;
+  width: 100%; /* 确保 scroll-view 占满容器宽度 */
+}
+
+.dict-list {
+  display: inline-flex; /* 使用inline-flex确保宽度自适应内容 */
+  flex-direction: row;
+  overflow: visible;
+  padding-bottom: 48rpx; /* 给阴影留空间 */
+  /* 左右边距由 scroll-view 的父级或自身处理 */
+  padding-left: 48rpx; /* 列表的起始边距 */
+  padding-right: 24rpx; /* 列表的结束边距，留出空间 */
+  box-sizing: border-box;
+}
+
+.dict-card {
+  width: 400rpx;
+  height: 640rpx;
+  background: #ffffff;
+  border-radius: 24rpx;
+  box-shadow: 8rpx 8rpx 32rpx rgba(0,0,0,0.08);
+  position: relative;
+  margin-right: 24rpx; /* 卡片间距12px */
+  overflow: visible;
+  flex-shrink: 0; /* 防止卡片在flex布局中被压缩 */
+  border: 2px solid transparent; /* 默认无边框 */
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.dict-card.selected {
+  border: 2px solid #4845F7; /* Figma: #4845F7 */
+}
+
+.cover-image {
+  width: 336rpx;
+  height: 512rpx;
+  margin: 32rpx 32rpx 0 32rpx;
+  border-radius: 8rpx;
+  object-fit: cover;
+}
+
+.dict-info {
+  position: absolute;
+  bottom: 32rpx;
+  left: 48rpx; /* 缩进 8px (16rpx) */
+  right: 48rpx; /* 缩进 8px (16rpx) */
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #000;
+}
+
+.dict-name {
+  font-weight: 600;
+}
+
+.dict-count {
+  text-align: right;
+}
+
+.confirm-button-container {
+  padding: 20px 24px;
+  background-color: #FAFAFA;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.confirm-button {
+  width: 100%;
+  height: 48px;
+  line-height: 48px;
+  background-color: #4d55ff;
+  color: #fff;
+  border: none;
+  border-radius: 24rpx;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  display: flex; /* 使用flex布局来居中 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+}

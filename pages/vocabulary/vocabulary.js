@@ -83,6 +83,7 @@ Page({
     wx.navigateTo({ url: `/pages/filter/filter?dictionaryId=${id}` });
   },
 
+
   /** 页面展示时更新底部导航选中状态 */
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {

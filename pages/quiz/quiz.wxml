@@ -12,10 +12,10 @@
         </view>
         <!-- 进度节点 -->
         <view class="progress-node-group">
-            <view class="progress-node" wx:for="{{[10, 20, 30]}}" wx:key="*this" style="left: calc({{(item / totalQuestions) * 100}}% - 12px);"> 
-                <view class="progress-node-circle {{ (currentQuestionIndex + 1) >= item ? 'active' : '' }}"></view>
-                <text class="progress-node-text {{ (currentQuestionIndex + 1) >= item ? 'active' : '' }}">{{item}}</text>
-            </view>
+            <view class="progress-node" wx:for="{{[10, 20, 30]}}" wx:key="*this" wx:if="{{item <= totalQuestions}}" style="left: calc({{(item / totalQuestions) * 100}}%);"> 
+                  <view class="progress-node-circle {{ (currentQuestionIndex + 1) >= item ? 'active' : '' }}"></view>
+                  <text class="progress-node-text {{ (currentQuestionIndex + 1) >= item ? 'active' : '' }}">{{item}}</text>
+             </view>
         </view>
       </view>
 

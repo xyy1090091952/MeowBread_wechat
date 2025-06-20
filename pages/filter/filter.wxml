@@ -1,15 +1,18 @@
 <!--pages/filter/filter.wxml-->
+<textbook-selector
+  visible="{{isSelectorVisible}}"
+  bind:select="onConfirmTextbook"
+  bind:close="onCancelTextbook"
+/>
 <view class="page-container">
   <view class="section-card">
     <view class="section-title">词库选择</view>
     <view class="filter-item">
       <view class="filter-item-label">选择教材：</view>
-      <picker mode="selector" range="{{dictionaries}}" range-key="name" value="{{selectedDictionaryIndex}}" bindchange="onDictionaryChange">
-        <view class="picker-display">
-          {{dictionaries[selectedDictionaryIndex].name || '请选择教材'}}
-          <image class="picker-arrow" src="/images/icons/arrow-right.svg" />
-        </view>
-      </picker>
+      <view class="picker-display" bindtap="showTextbookSelector">
+        {{dictionaries[selectedDictionaryIndex].name || '请选择教材'}}
+        <image class="picker-arrow" src="/images/icons/arrow-right.svg" />
+      </view>
     </view>
 
     <view class="filter-item">
