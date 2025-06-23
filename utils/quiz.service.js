@@ -1,7 +1,9 @@
 /**
- * @file 答题页面服务层
- * @description 封装答题页面的核心业务逻辑，包括题目生成、答案校验、状态管理等。
- * @author MeowBread Team
+ * @file 答题页面服务层 (考官)
+ * @description 
+ *   职责：作为“考官”，组织和管理整场答题活动，负责流程控制、题目生成、答案判断等核心业务逻辑。
+ *   特点：调用`wordManager`获取单词，调用`filterManager`获取筛选配置，协调各个模块完成一场完整的答题。
+ *   比喻：应用的“考官”，负责整场考试的顺利进行。
  */
 const quizUtils = require('./quizUtils.js');
 const wordManager = require('./wordManager.js');
