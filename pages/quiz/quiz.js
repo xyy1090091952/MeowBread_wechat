@@ -132,14 +132,20 @@ Page({
             }
           });
         } else if (lessonFile.startsWith('DICTIONARY_') && lessonFile.endsWith('_ALL_LESSONS')) {
-          const targetDictId = lessonFile.split('_')[1];
+          // 修正逻辑：正确处理“特定词典的全部课程”
+          // lessonFile 的格式是 DICTIONARY_{dict_id}_ALL_LESSONS
+          const parts = lessonFile.split('_');
+          const targetDictId = parts.slice(1, parts.length - 2).join('_'); // 允许词典ID中包含下划线
+
           const targetDictionary = dictionariesConfig.find(d => d.id === targetDictId);
           if (targetDictionary && targetDictionary.lesson_files) {
-            targetDictionary.lesson_files.forEach(lessonPattern => {
-              const lessonFileName = lessonPattern.split('/').pop();
+            targetDictionary.lesson_files.forEach(fullPathPattern => {
+              // fullPathPattern 的格式是 'dict_id/lesson_name.js'
+              const lessonFileName = fullPathPattern.split('/').pop();
               processLessonFile(targetDictionary, lessonFileName);
             });
           }
+
         } else {
           // 改进的解析逻辑，以处理词典ID中包含下划线的情况
           let foundDictionary = false;

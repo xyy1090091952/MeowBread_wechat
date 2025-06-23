@@ -1,0 +1,19 @@
+{
+  "name": "meowbread-wechat",
+  "version": "1.0.0",
+  "description": "A WeChat mini-program for learning Japanese vocabulary.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-lessons": "node scripts/generate-lesson-map.js",
+    "convert-json": "node scripts/batch_convert_json.js"
+  },
+  "keywords": [
+    "wechat",
+    "miniprogram",
+    "japanese",
+    "learning"
+  ],
+  "author": "",
+  "license": "ISC"
+}

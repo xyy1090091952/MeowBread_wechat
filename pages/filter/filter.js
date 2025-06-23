@@ -125,14 +125,18 @@ Page({
     const { selectedDictionary } = e.detail;
     const dictionaryIndex = this.data.dictionaries.findIndex(dict => dict.id === selectedDictionary.id);
 
+    // 切换教材时，重置课程选择为新教材的“全部课程”
+    const newSelectedLessonFiles = [`DICTIONARY_${selectedDictionary.id}_ALL_LESSONS`];
+
     this.setData({
       selectedDictionaryIndex: dictionaryIndex,
-      isSelectorVisible: false
+      isSelectorVisible: false,
+      selectedLessonFiles: newSelectedLessonFiles // 应用新的课程选择
+    }, () => {
+      // setData 回调中执行后续操作，确保数据已更新
+      this.updateLessonsBasedOnDictionary();
+      this.saveFilterSettings();
     });
-
-    // 更新课程列表并保存设置
-    this.updateLessonsBasedOnDictionary();
-    this.saveFilterSettings();
   },
 
   // 处理教材选择取消事件
@@ -283,25 +287,36 @@ Page({
       });
     }
 
-    // 恢复选中状态
-    const cachedFiles = this.data.selectedLessonFiles || [];
-    let allChecked = true;
-    lessonsToShow.forEach(lesson => {
-      if (cachedFiles.includes(lesson.file)) {
-        lesson.checked = true;
-      }
-      if (lesson.file !== allLessonsOption.file && !lesson.checked) {
-        allChecked = false;
-      }
-    });
+    // 恢复或设置选中状态
+    const currentSelectedFiles = this.data.selectedLessonFiles || [];
+    
+    // 检查“全部课程”选项是否应该被选中
+    const isAllLessonsSelected = currentSelectedFiles.includes(allLessonsOption.file);
 
-    if (lessonsToShow.length > 1) {
-        allLessonsOption.checked = allChecked;
+    if (isAllLessonsSelected) {
+      // 如果“全部课程”被选中，则所有课程都应被勾选
+      lessonsToShow.forEach(lesson => lesson.checked = true);
+    } else {
+      // 否则，根据 currentSelectedFiles 单独判断每个课程的选中状态
+      let allIndividualLessonsChecked = lessonsToShow.length > 1; // 初始假设所有单独课程都被选中
+      lessonsToShow.forEach(lesson => {
+        if (lesson.file !== allLessonsOption.file) {
+          if (currentSelectedFiles.includes(lesson.file)) {
+            lesson.checked = true;
+          } else {
+            lesson.checked = false;
+            allIndividualLessonsChecked = false; // 只要有一个未选中，整体就不是全选
+          }
+        }
+      });
+      // 更新“全部课程”的勾选状态
+      allLessonsOption.checked = allIndividualLessonsChecked;
     }
     
+    // 最终更新 lessons 列表到页面，并确保 selectedLessonFiles 也被正确设置
     this.setData({
       lessons: lessonsToShow,
-      selectedLessonFiles: cachedFiles
+      selectedLessonFiles: currentSelectedFiles
     });
   },
 
