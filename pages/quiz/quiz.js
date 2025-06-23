@@ -22,7 +22,9 @@ Page({
     formattedTime: '00:00', // 格式化后的时间
     timer: null, // 计时器
     isLoading: true, // 加载状态
-    showQuestion: true // 用于控制题目显示/隐藏以触发动画
+    showQuestion: true, // 用于控制题目显示/隐藏以触发动画
+    highlightParticles: true, // 新增：是否高亮助词
+    processedExampleSentence: '' // 新增：处理后的例句
   },
 
   /**
@@ -83,6 +85,35 @@ Page({
     }
     this.setData({ timeSpent: 0 });
     this.loadQuestionsAndWords();
+  },
+
+  // 新增：切换助词高亮状态
+  toggleHighlight: function() {
+    const newState = !this.data.highlightParticles;
+    this.setData({ highlightParticles: newState });
+    if (this.data.showAnswerCard) {
+      this.processHighlight(); // 如果答案卡已显示，立即处理高亮
+    }
+  },
+
+  // 新增：处理例句中的助词高亮
+  processHighlight: function() {
+    const currentQuestion = this.data.questions[this.data.currentQuestionIndex];
+    if (!currentQuestion || !currentQuestion.wordInfo || !currentQuestion.wordInfo['例句']) {
+      this.setData({ processedExampleSentence: '' });
+      return;
+    }
+
+    let sentence = currentQuestion.wordInfo['例句'];
+
+    if (this.data.highlightParticles) {
+      const particles = ['は', 'が', 'を', 'に', 'で', 'と', 'から', 'まで', 'より', 'の', 'へ', 'や', 'か', 'も', 'ば', 'ながら', 'たり', 'たら', 'なら'];
+      // 使用正则表达式为所有助词添加高亮标签
+      const regex = new RegExp(`(${particles.join('|')})`, 'g');
+      sentence = sentence.replace(regex, '<span class="highlight">$1</span>');
+    }
+
+    this.setData({ processedExampleSentence: sentence });
   },
 
   // 加载单词和题目数据
@@ -400,12 +431,12 @@ Page({
 
     this.setData({
       isCorrect: isCorrect,
-      showAnswerCard: true
+      showAnswerCard: true,
+      score: this.data.score + (isCorrect ? 1 : 0)
+    }, () => {
+      // 在setData回调中处理高亮，确保UI已更新
+      this.processHighlight();
     });
-
-    if (isCorrect) {
-      this.setData({ score: this.data.score + 1 });
-    }
   },
 
   skipQuestion: function() {

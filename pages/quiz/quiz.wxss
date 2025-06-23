@@ -284,9 +284,13 @@
 }
 
 .answer-header {
-  font-size: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 40rpx;
   font-weight: bold;
-  margin-bottom: 16px;
+  margin-bottom: 20rpx;
+  text-align: left;
 }
 
 .answer-card.correct .answer-header {
@@ -294,7 +298,31 @@
 }
 
 .answer-card.incorrect .answer-header {
-  color: #dc3545;
+  color: #FF4D4F; /* 错误状态下的标题颜色 */
+}
+
+.highlight-toggle {
+  display: flex;
+  align-items: center;
+  background-color: #f0f0f0;
+  padding: 5rpx 15rpx;
+  border-radius: 20rpx;
+}
+
+.highlight-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 10rpx;
+}
+
+.highlight-text {
+  font-size: 24rpx;
+  color: #333;
+}
+
+.detail-value .highlight {
+  color: #FF9D00;
+  font-weight: bold;
 }
 
 .answer-text {

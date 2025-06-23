@@ -69,7 +69,13 @@
     <!-- 答案反馈卡片 -->
     <view class="answer-card-container" wx:if="{{showAnswerCard}}">
       <view class="answer-card {{isCorrect ? 'correct' : 'incorrect'}}">
-        <view class="answer-header">{{isCorrect ? '正确' : '错误'}}</view>
+        <view class="answer-header">
+          <text>{{isCorrect ? '正确' : '错误'}}</text>
+          <view class="highlight-toggle" bindtap="toggleHighlight">
+            <image class="highlight-icon" src="{{highlightParticles ? '/images/icons/highlight_on.png' : '/images/icons/highlight_off.png'}}"></image>
+            <text class="highlight-text">助词高亮</text>
+          </view>
+        </view>
         <view class="word-details">
           <view wx:if="{{questions[currentQuestionIndex].wordInfo['假名']}}" class="detail-item">
             <text class="detail-label">假名：</text>
@@ -85,7 +91,8 @@
           </view>
           <view wx:if="{{questions[currentQuestionIndex].wordInfo['例句']}}" class="detail-item">
             <text class="detail-label">例句：</text>
-            <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['例句']}}</text>
+            <!-- 使用 rich-text 来解析带高亮标签的句子 -->
+            <rich-text class="detail-value" nodes="{{processedExampleSentence}}"></rich-text>
           </view>
         </view>
         <!-- 下一题按钮 -->
