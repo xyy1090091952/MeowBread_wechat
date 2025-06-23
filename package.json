@@ -5,8 +5,12 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "generate-lessons": "node scripts/generate-lesson-map.js",
+    "update-dict": "node scripts/update-dictionaries.js",
     "convert-json": "node scripts/batch_convert_json.js"
+  },
+  "scripts_description": {
+    "update-dict": "（开发用）自动扫描 database 目录，更新 dictionaries.js 文件中每个词典的课程列表。当你新增或删除课程文件后，运行此命令。",
+    "convert-json": "（开发用）自动将 database 目录下的 .json 单词数据文件批量转换为小程序可直接引用的 .js 文件。当你使用 .json 格式维护单词时，运行此命令。"
   },
   "keywords": [
     "wechat",
@@ -14,6 +18,6 @@
     "japanese",
     "learning"
   ],
-  "author": "",
+  "author": "OGS&Shane&Zoichi_不分先后",
   "license": "ISC"
 }

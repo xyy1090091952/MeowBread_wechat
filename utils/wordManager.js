@@ -5,8 +5,6 @@
  */
 
 const allDictionariesData = require('../database/dictionaries.js');
-const allLessons = require('../database/lesson-map.js');
-
 /**
  * 根据筛选条件获取单词列表
  * @param {object} filter - 筛选条件，包含 lessonFiles, dictionaryId 等
@@ -24,16 +22,19 @@ function getWordsByFilter(filter) {
   const dictionariesConfig = allDictionariesData.dictionaries;
 
   const processLessonFile = (dict, lessonFileName) => {
-    const fullPath = `${dict.id}/${lessonFileName}`;
-    const lessonData = allLessons[fullPath];
-    if (lessonData && Array.isArray(lessonData)) {
-      wordsToLoad.push(...lessonData.map(item => ({
-        data: item.data,
-        sourceDictionary: dict.id,
-        lesson: lessonFileName.replace('.js', '')
-      })));
-    } else {
-      console.warn(`wordManager: 无法从预加载数据中找到课程: ${fullPath}`);
+    try {
+      const lessonData = require(`../database/${dict.id}/${lessonFileName}`);
+      if (lessonData && Array.isArray(lessonData)) {
+        wordsToLoad.push(...lessonData.map(item => ({
+          data: item.data,
+          sourceDictionary: dict.id,
+          lesson: lessonFileName.replace('.js', '')
+        })));
+      } else {
+        console.warn(`wordManager: 课程文件格式不正确或为空: ${dict.id}/${lessonFileName}`);
+      }
+    } catch (e) {
+      console.error(`wordManager: 无法加载课程文件: ${dict.id}/${lessonFileName}`, e);
     }
   };
 
