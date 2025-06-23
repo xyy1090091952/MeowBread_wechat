@@ -133,7 +133,7 @@
   <text>错误：未指定课程文件。</text>
 </view>
 
-<wxs module="utils" src="../utils.wxs"></wxs>
+<wxs module="utils" src="../../utils/utils.wxs"></wxs>
 <wxs module="timeFormatter">
   module.exports = {
     formatTime: function(seconds) {

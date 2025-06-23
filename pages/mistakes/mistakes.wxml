@@ -28,4 +28,4 @@
   </view>
 </view>
 
-<wxs module="utils" src="../utils.wxs"></wxs>
+<wxs module="utils" src="../../utils/utils.wxs"></wxs>

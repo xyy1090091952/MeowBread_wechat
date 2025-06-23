@@ -81,10 +81,8 @@ Page({
 
   handleDone: function () {
     if (this.data.fromMistakes) {
-      // 如果是从错题库来的，则返回错题库页面
-      wx.reLaunch({
-        url: '/pages/mistakes/mistakes'
-      });
+      // 如果是从错题库来的，则返回上一页，即错题库页面
+      wx.navigateBack();
     } else {
       // 否则，返回答题首页
       wx.reLaunch({
