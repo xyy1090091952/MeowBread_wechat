@@ -1,0 +1,25 @@
+<!--components/question-type-popup/index.wxml-->
+<view class="modal-mask" wx:if="{{visible}}" bindtap="closePopup"></view>
+<view class="popup-container {{visible ? 'popup-show' : ''}}">
+  <view class="popup-content">
+    <view class="popup-header">
+      <text class="popup-title">题型选择</text>
+      <view class="close-button" bindtap="closePopup">×</view>
+    </view>
+    <view class="question-type-group">
+      <view class="question-type-group-title">选择题：</view>
+      <label class="switch-item" wx:for="{{questionTypeOptions}}" wx:if="{{item.category === '选择题'}}" wx:key="value">
+        <text class="switch-label">{{item.name}}</text>
+        <switch checked="{{item.checked}}" bindchange="onQuestionTypeChange" data-value="{{item.value}}" color="#4845F7"/>
+      </label>
+    </view>
+    <view class="question-type-group">
+      <view class="question-type-group-title">填空题：</view>
+      <label class="switch-item" wx:for="{{questionTypeOptions}}" wx:if="{{item.category === '填空题'}}" wx:key="value">
+        <text class="switch-label">{{item.name}}</text>
+        <switch checked="{{item.checked}}" bindchange="onQuestionTypeChange" data-value="{{item.value}}" color="#4845F7"/>
+      </label>
+    </view>
+    <button class="confirm-button" bindtap="onConfirm">确定</button>
+  </view>
+</view>

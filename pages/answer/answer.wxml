@@ -46,4 +46,11 @@
       <image class="option-icon" src="/images/icons/arrow_right_dark.png" />
     </view>
   </view>
+
+  <!-- 教材选择弹窗 -->
+  <textbook-selector
+    visible="{{showTextbookSelector}}"
+    bind:close="onCloseSelector"
+    bind:select="onSelectTextbook"
+  />
 </view>

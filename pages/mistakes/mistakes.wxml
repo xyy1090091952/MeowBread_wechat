@@ -1,0 +1,31 @@
+<view class="page">
+  <view class="container">
+    <view class="header">
+      <text class="title">错词库</text>
+      <text class="mistake-count">错误单词 {{mistakeCount}}</text>
+    </view>
+
+    <scroll-view scroll-y class="mistake-list-scroll">
+      <view class="mistake-item" wx:for="{{mistakeList}}" wx:key="index">
+        <view class="item-top">
+          <view class="word-info">
+            <text class="word">{{item.data['汉字'] ? item.data['汉字'] : item.data['假名']}}</text>
+            <text class="type {{utils.mapPartOfSpeechToClassName(item.data['词性'])}}">{{item.data['词性']}}</text>
+          </view>
+          <view class="status-label {{item.statusClass}}">
+            <text>{{item.statusText}}</text>
+          </view>
+        </view>
+        <view class="item-bottom">
+          <text>{{item.data['假名']}} | {{item.data['中文']}} | 例句：{{item.data['例句']}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="footer">
+    <view class="review-button" bindtap="startReview">开始复习</view>
+  </view>
+</view>
+
+<wxs module="utils" src="../../utils/utils.wxs"></wxs>

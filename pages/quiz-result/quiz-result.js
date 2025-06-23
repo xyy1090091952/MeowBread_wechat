@@ -9,6 +9,7 @@ Page({
     resultText: '',
     resultImage: '',
     formattedTime: '00:00',
+    fromMistakes: false // 默认不是从错题库来
   },
 
   onLoad: function (options) {
@@ -32,6 +33,7 @@ Page({
     const accuracyPercentage = (parseFloat(accuracy) * 100).toFixed(0);
 
     this.setData({
+      fromMistakes: options.fromMistakes === 'true',
       score: parseInt(score, 10) || 0,
       totalQuestions: parseInt(totalQuestions, 10) || 0,
       timeSpent: parseInt(timeSpent, 10) || 0,
@@ -78,9 +80,14 @@ Page({
   },
 
   handleDone: function () {
-    // 使用 reLaunch 跳转到答题首页，会关闭所有其他页面
-    wx.reLaunch({
-      url: '/pages/answer/answer'
-    });
+    if (this.data.fromMistakes) {
+      // 如果是从错题库来的，则返回上一页，即错题库页面
+      wx.navigateBack();
+    } else {
+      // 否则，返回答题首页
+      wx.reLaunch({
+        url: '/pages/answer/answer'
+      });
+    }
   }
 })

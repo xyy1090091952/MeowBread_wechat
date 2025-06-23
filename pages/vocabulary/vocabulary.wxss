@@ -29,9 +29,11 @@
 }
 .progress-tag {
   position: absolute;
-  top: 48rpx; /* 24px: cover top 16px + offset 8px */
+  /* 调整位置到图片左下角 */
+  /* 计算过程：图片底部位置 (32rpx margin-top + 512rpx height) - 标签自身高度 (48rpx) - 距离图片底部间距 (32rpx) = 464rpx */
+  top: 476rpx;
   left: 48rpx; /* 24px: cover left 16px + offset 8px */
-  width: 184rpx; /* 92px */
+  width: 150rpx; /* 92px */
   height: 48rpx; /* 24px */
   line-height: 48rpx;
   text-align: left;
@@ -51,7 +53,7 @@
 
 /* 顶部横幅 */
 .banner {
-  margin: 48rpx 48rpx 0 48rpx;
+  margin: 24rpx 48rpx 0 48rpx;
   height: 64rpx;
   background: linear-gradient(90deg,#f0f6fc 0%,#cfe2ff 100%);
   border-radius: 32rpx;
@@ -77,24 +79,28 @@
 
 /* 词典滚动 */
 .dict-scroll-wrapper {
-  padding-left: 48rpx; /* 24px */
-  padding-right: 24rpx; /* 12px */
+  /* 让 scroll-view 占满整行宽度，不再需要左内边距 */
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .dict-scroll {
   width: 100%;
   white-space: nowrap;
-  padding-left: 0;
   box-sizing: border-box;
 }
 
 .dict-row {
-  display: flex;
+  display: inline-flex; /* 使用inline-flex确保宽度自适应内容 */
   flex-direction: row;
   overflow: visible;
   padding-bottom: 48rpx; /* 给阴影留空间 */
+  /* 
+    为左右两边都留出 48rpx 的边距，与页面标题对齐。
+    padding-left: 48rpx; 直接设置左边距。
+    padding-right: 24rpx; 因为每个卡片都有 margin-right: 24rpx，所以这里只需要 24rpx 就能凑够 48rpx 的右边距。
+  */
+  padding-left: 48rpx;
+  padding-right: 24rpx;
 }
 
 /* 卡片 */
@@ -105,8 +111,9 @@
   border-radius: 24rpx;
   box-shadow: 8rpx 8rpx 32rpx rgba(0,0,0,0.08);
   position: relative;
-  margin-right: 24rpx; /* 间距12px */
+  margin-right: 24rpx; /* 卡片间距12px */
   overflow: visible;
+  flex-shrink: 0; /* 防止卡片在flex布局中被压缩 */
 }
 
 .cover-image {

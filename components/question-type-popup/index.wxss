@@ -1,0 +1,89 @@
+/* components/question-type-popup/index.wxss */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+}
+
+.popup-container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #FFFFFF;
+  border-top-left-radius: 24rpx;
+  border-top-right-radius: 24rpx;
+  transform: translateY(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+  padding:40rpx;
+  box-sizing: border-box;
+}
+
+.popup-show {
+  transform: translateY(0);
+}
+
+.popup-content {
+  /* 内容区域不再需要独立的背景和边距，由 container 控制 */
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40rpx;
+}
+
+.popup-title {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.close-button {
+  font-size: 48rpx;
+  color: #999;
+  cursor: pointer;
+}
+
+.question-type-group {
+  margin-bottom: 30rpx;
+}
+
+.question-type-group-title {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+}
+
+.switch-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.switch-item:last-child {
+  border-bottom: none;
+}
+
+.switch-label {
+  font-size: 32rpx;
+}
+
+.confirm-button {
+  width: 100%;
+  background-color: #4845F7;
+  color: white;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  text-align: center;
+  font-size: 32rpx;
+  margin-top: 40rpx;
+  margin-bottom: 40rpx;
+}

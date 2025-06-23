@@ -12,10 +12,10 @@
         </view>
         <!-- 进度节点 -->
         <view class="progress-node-group">
-            <view class="progress-node" wx:for="{{[10, 20, 30]}}" wx:key="*this" style="left: calc({{(item / totalQuestions) * 100}}% - 12px);"> 
-                <view class="progress-node-circle {{ (currentQuestionIndex + 1) >= item ? 'active' : '' }}"></view>
-                <text class="progress-node-text {{ (currentQuestionIndex + 1) >= item ? 'active' : '' }}">{{item}}</text>
-            </view>
+            <view class="progress-node" wx:for="{{[10, 20, 30]}}" wx:key="*this" wx:if="{{item <= totalQuestions}}" style="left: calc({{(item / totalQuestions) * 100}}%);"> 
+                  <view class="progress-node-circle {{ (currentQuestionIndex + 1) >= item ? 'active' : '' }}"></view>
+                  <text class="progress-node-text {{ (currentQuestionIndex + 1) >= item ? 'active' : '' }}">{{item}}</text>
+             </view>
         </view>
       </view>
 
@@ -32,7 +32,7 @@
       <view class="question-header">
         <view class="question-stem-container">
           <text class="question-word">{{questions[currentQuestionIndex].wordToDisplay}}</text>
-          <view class="part-of-speech-tag {{questions[currentQuestionIndex].partOfSpeech}}">
+          <view class="part-of-speech-tag {{utils.mapPartOfSpeechToClassName(questions[currentQuestionIndex].partOfSpeech)}}">
             {{questions[currentQuestionIndex].wordInfo['词性']}}
           </view>
           <text class="question-stem-remainder">{{questions[currentQuestionIndex].stemRemainder}}</text>
@@ -69,7 +69,13 @@
     <!-- 答案反馈卡片 -->
     <view class="answer-card-container" wx:if="{{showAnswerCard}}">
       <view class="answer-card {{isCorrect ? 'correct' : 'incorrect'}}">
-        <view class="answer-header">{{isCorrect ? '正确' : '错误'}}</view>
+        <view class="answer-header">
+          <text>{{isCorrect ? '正确' : '错误'}}</text>
+          <view class="highlight-toggle" bindtap="toggleHighlight">
+            <image class="highlight-icon" src="{{highlightParticles ? '/images/icons/highlight_on.png' : '/images/icons/highlight_off.png'}}"></image>
+            <text class="highlight-text">助词高亮</text>
+          </view>
+        </view>
         <view class="word-details">
           <view wx:if="{{questions[currentQuestionIndex].wordInfo['假名']}}" class="detail-item">
             <text class="detail-label">假名：</text>
@@ -85,7 +91,8 @@
           </view>
           <view wx:if="{{questions[currentQuestionIndex].wordInfo['例句']}}" class="detail-item">
             <text class="detail-label">例句：</text>
-            <text class="detail-value">{{questions[currentQuestionIndex].wordInfo['例句']}}</text>
+            <!-- 使用 rich-text 来解析带高亮标签的句子 -->
+            <rich-text class="detail-value" nodes="{{processedExampleSentence}}"></rich-text>
           </view>
         </view>
         <!-- 下一题按钮 -->
@@ -126,7 +133,7 @@
   <text>错误：未指定课程文件。</text>
 </view>
 
-<wxs module="utils" src="../utils.wxs"></wxs>
+<wxs module="utils" src="../../utils/utils.wxs"></wxs>
 <wxs module="timeFormatter">
   module.exports = {
     formatTime: function(seconds) {

@@ -25,17 +25,26 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 25rpx 0;
+  padding: 24rpx 0;
   border-bottom: 1rpx solid #F0F0F0; /* 分割线颜色更浅 */
 }
 
-.filter-item:last-child {
+.filter-item-column {
+  display: flex;
+  flex-direction: column;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+
+.filter-item:last-child,
+.filter-item-column:last-child {
   border-bottom: none;
 }
 
 .filter-item-label {
   font-size: 28rpx;
   color: #333333;
+  margin-bottom: 10rpx; /* for column layout */
 }
 
 .picker-display {
@@ -52,7 +61,24 @@
 .picker-arrow {
   width: 24rpx;
   height: 24rpx;
+  margin: 0 0 0 20rpx;
+}
+
+.lesson-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.lesson-checkbox-item {
+  display: flex;
+  align-items: center;
+  padding: 15rpx 0;
+}
+
+.lesson-checkbox-item text {
   margin-left: 10rpx;
+  font-size: 28rpx;
 }
 
 .question-type-group {

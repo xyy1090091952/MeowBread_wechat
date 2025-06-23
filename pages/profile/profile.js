@@ -10,9 +10,7 @@ Page({
       correctAnswers: 0,
       averageAccuracy: 0
     },
-    mistakes: [
-      // 错题列表
-    ]
+
   },
   onLoad: function (options) {
     // 页面加载时，尝试从本地缓存获取用户信息
@@ -23,7 +21,7 @@ Page({
         isLoggedIn: true
       });
       this.loadStatistics(); // 如果已登录，加载统计信息
-      this.loadMistakes(); // 如果已登录，加载错题信息
+
     }
   },
   onChooseAvatar: function (e) {
@@ -62,7 +60,7 @@ Page({
       isLoggedIn: true
     });
     this.loadStatistics(); // 登录成功后加载统计信息
-    this.loadMistakes(); // 登录成功后加载错题信息
+
     wx.showToast({
       title: '登录成功',
       icon: 'success'
@@ -79,7 +77,7 @@ Page({
         correctAnswers: 0,
         averageAccuracy: 0
       },
-      mistakes: [] // 清空错题列表
+
     });
     wx.showToast({
       title: '已退出登录',
@@ -91,16 +89,23 @@ Page({
     // 加载统计信息
     // 这里应该从后端或本地存储加载实际的统计数据
   },
-  loadMistakes: function () {
-    // 加载错题
-    // 这里应该从后端或本地存储加载实际的错题数据
+  goToMistakes: function() {
+    wx.navigateTo({
+      url: '/pages/mistakes/mistakes'
+    });
   },
   /**
    * 生命周期函数--监听页面显示
    */
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().updateSelected(3);
+      const page = getCurrentPages().pop();
+      const route = page.route;
+      const tabList = this.getTabBar().data.tabList;
+      const index = tabList.findIndex(item => item.pagePath === route);
+      if (index !== -1) {
+        this.getTabBar().updateSelected(index);
+      }
     }
   }
 })

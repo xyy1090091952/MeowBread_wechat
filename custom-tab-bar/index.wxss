@@ -52,7 +52,6 @@
   background: #f7f6ff;
   border-radius: 68rpx;
   box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
-  transition: left 0.3s ease;
   z-index: 0;
 }
 
@@ -69,4 +68,4 @@
 
 .label.active {
   color: #4845f7;
-} 
+}
