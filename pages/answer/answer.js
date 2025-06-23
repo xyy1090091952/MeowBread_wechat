@@ -260,10 +260,8 @@ Page({
    */
   practiceWrongQuestions() {
     console.log('Practice Wrong Questions');
-    wx.showToast({
-      title: '功能开发中...',
-      icon: 'none', // 不显示图标，只显示文本
-      duration: 2000 // 提示持续时间，单位毫秒
+    wx.navigateTo({
+      url: '/pages/mistakes/mistakes'
     });
   }
 })

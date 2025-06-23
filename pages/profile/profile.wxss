@@ -47,19 +47,30 @@
   font-size: 30rpx;
   width: 80%;
 }
-.stat-title, .mistake-title {
-  font-size: 36rpx;
-  font-weight: bold;
-  margin-bottom: 20rpx;
+.menu-section {
+  margin-top: 40rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 0 30rpx;
 }
-.stat-item {
-  font-size: 28rpx;
-  margin-bottom: 10rpx;
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
 }
-.mistake-item {
-  background-color: #f8f8f8;
-  padding: 20rpx;
-  margin-bottom: 20rpx;
-  border-radius: 10rpx;
-  font-size: 28rpx;
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-text {
+  font-size: 32rpx;
+}
+
+.menu-arrow {
+  width: 16rpx;
+  height: 28rpx;
 }

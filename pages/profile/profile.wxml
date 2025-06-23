@@ -21,10 +21,10 @@
     <view class="stat-item">正确答案：{{statistics.correctAnswers}}</view>
     <view class="stat-item">平均正确率：{{statistics.averageAccuracy}}%</view>
   </view>
-  <view class="mistakes" wx:if="{{isLoggedIn}}">
-    <text class="mistake-title">错题库</text>
-    <view class="mistake-item" wx:for="{{mistakes}}" wx:key="index">
-      <text>{{item.word}} - {{item.meaning}}</text>
+  <view class="menu-section" wx:if="{{isLoggedIn}}">
+    <view class="menu-item" bindtap="goToMistakes">
+      <text class="menu-text">错词库</text>
+      <image class="menu-arrow" src="/images/icons/arrow-right.svg"></image>
     </view>
   </view>
 </view>

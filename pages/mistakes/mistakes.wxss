@@ -1,0 +1,137 @@
+.page {
+  background-color: #F7F7F7;
+  min-height: 100vh;
+  padding-bottom: 180rpx; /* 为底部按钮留出空间 */
+}
+
+.container {
+  padding: 0 32rpx;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 40rpx 0;
+  padding-top: 20rpx;
+}
+
+.title {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #1F2329;
+}
+
+.mistake-count {
+  font-size: 28rpx;
+  color: #8A8A8A;
+}
+
+.mistake-list-scroll {
+  height: calc(100vh - 300rpx); /* 减去头部和底部按钮的高度 */
+}
+
+.mistake-item {
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0px 8rpx 16rpx 0px rgba(14, 21, 44, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.word-info {
+  display: flex;
+  align-items: center;
+}
+
+.word {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #1F2329;
+  margin-right: 16rpx;
+}
+
+.type {
+  background-color: #FFC107;
+  color: white;
+  padding: 6rpx 12rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+.item-bottom {
+  font-size: 26rpx;
+  color: #8A8A8A;
+  line-height: 40rpx;
+}
+
+.status-toggle {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 16rpx;
+  border-radius: 24rpx;
+  border: 1px solid #E0E0E0;
+}
+
+.status-text {
+  font-size: 24rpx;
+  margin-right: 8rpx;
+}
+
+.status-switch {
+  transform: scale(0.7);
+}
+
+.status-toggle.corrected {
+  border-color: #FFC107;
+}
+
+.status-text.corrected {
+  color: #1F2329;
+}
+
+.status-toggle.error {
+  border-color: #FF4D4F;
+}
+
+.status-text.error {
+  color: #1F2329;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #F7F7F7;
+  padding: 24rpx 32rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.review-button {
+  width: 100%;
+  height: 96rpx;
+  line-height: 96rpx;
+  background-color: #4845F7;
+  color: white;
+  text-align: center;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  box-shadow: 0px 8rpx 16rpx 0px rgba(72, 69, 247, 0.2);
+}
+
+.review-button:active {
+  background-color: #3a37d3;
+}

@@ -31,6 +31,27 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
+    if (options.from === 'mistakes' && options.words) {
+      const reviewWords = JSON.parse(options.words);
+      this.setData({
+        quizMode: 'endless', // 错题重练通常是无尽模式
+        allWordsInLesson: reviewWords.map(item => ({ data: item, sourceDictionary: 'mistakes', lesson: 'review' })),
+        isLoading: false,
+        currentFilterDisplay: '错题重练',
+        selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'],
+        score: 0,
+        currentQuestionIndex: 0,
+        userAnswer: '',
+        isUserAnswerEmpty: true,
+        selectedOption: null,
+        showAnswerCard: false,
+        isCorrect: false,
+      });
+      this.generateQuestions();
+      this.startTimer();
+      return;
+    }
+
     let quizFilter = wx.getStorageSync('quizFilter');
 
     if (!quizFilter || !quizFilter.selectedLessonFiles || quizFilter.selectedLessonFiles.length === 0) {
@@ -427,6 +448,30 @@ Page({
         console.error("未知答案格式: ", correctAnswerData);
         isCorrect = userAnswerTrimmed === correctAnswerData;
       }
+    }
+
+    if (!isCorrect) {
+      wx.getStorage({
+        key: 'mistakeList',
+        success: (res) => {
+          let mistakes = res.data || [];
+          const existing = mistakes.find(item => item.data.汉字 === currentQ.wordInfo.汉字 && item.data.假名 === currentQ.wordInfo.假名);
+          if (!existing) {
+            mistakes.push({ data: currentQ.wordInfo, status: '错误' });
+            wx.setStorage({
+              key: 'mistakeList',
+              data: mistakes
+            });
+          }
+        },
+        fail: () => {
+          let mistakes = [{ data: currentQ.wordInfo, status: '错误' }];
+          wx.setStorage({
+            key: 'mistakelist',
+            data: mistakes
+          });
+        }
+      });
     }
 
     this.setData({
