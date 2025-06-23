@@ -1,0 +1,181 @@
+/**
+ * @file 筛选页面服务层 (业务逻辑处理器)
+ * @description 
+ *   职责：处理筛选页面的所有业务逻辑，如状态初始化、课程列表更新、选项联动等。
+ *   特点：调用 Manager 层进行数据持久化，但不直接操作缓存。
+ *   比喻：像是应用的“店长”，负责处理所有业务流程和决策。
+ */
+const dictionariesData = require('../database/dictionaries.js');
+const filterManager = require('./filterManager.js');
+
+const ALL_DICTIONARIES_OPTION = { id: 'all', name: '全部辞典', description: '所有可用词典中的全部课程', base_path: 'all' };
+
+const service = {
+  // 初始化筛选器状态
+  initializeFilterState(options) {
+    const savedFilter = filterManager.getFilter();
+    let state = {
+      dictionaries: [ALL_DICTIONARIES_OPTION, ...dictionariesData.dictionaries],
+      selectedDictionaryIndex: 0,
+      selectedLessonFiles: [],
+      quizMode: options.mode || 'quick',
+      questionTypeOptions: this.getDefaultQuestionTypeOptions(),
+      selectedQuestionTypes: [],
+      lessons: [],
+    };
+
+    if (savedFilter) {
+      state.selectedDictionaryIndex = savedFilter.selectedDictionaryIndex !== undefined ? savedFilter.selectedDictionaryIndex : 0;
+      state.selectedLessonFiles = savedFilter.selectedLessonFiles || [];
+      state.quizMode = savedFilter.quizMode || options.mode || 'quick';
+      state.selectedQuestionTypes = savedFilter.selectedQuestionTypes || this.getDefaultSelectedQuestionTypes();
+    } else {
+      state.selectedQuestionTypes = this.getDefaultSelectedQuestionTypes();
+    }
+
+    state.questionTypeOptions = state.questionTypeOptions.map(opt => ({
+      ...opt,
+      checked: state.selectedQuestionTypes.includes(opt.value)
+    }));
+
+    state.lessons = this.getLessonsForDictionary(state.dictionaries[state.selectedDictionaryIndex], state.selectedLessonFiles);
+
+    return state;
+  },
+
+  // 获取默认题型选项
+  getDefaultQuestionTypeOptions() {
+    return [
+      { name: '根据中文意思选日语', value: 'zh_to_jp_choice', checked: true, category: '选择题' },
+      { name: '根据日语选中文', value: 'jp_to_zh_choice', checked: true, category: '选择题' },
+      { name: '根据中文意思写日语', value: 'zh_to_jp_fill', checked: true, category: '填空题' },
+      { name: '根据日文汉字写假名', value: 'jp_kanji_to_kana_fill', checked: true, category: '填空题' }
+    ];
+  },
+
+  // 获取默认选中的题型
+  getDefaultSelectedQuestionTypes() {
+    return this.getDefaultQuestionTypeOptions().map(opt => opt.value);
+  },
+
+  // 根据词典获取课程列表
+  getLessonsForDictionary(dictionary, selectedLessonFiles = []) {
+    if (dictionary.id === 'all') {
+      return [];
+    }
+
+    const allLessonsOption = {
+      name: '全部课程',
+      file: `DICTIONARY_${dictionary.id}_ALL_LESSONS`,
+      checked: false
+    };
+
+    let lessonsToShow = [allLessonsOption];
+    if (dictionary.lesson_files && Array.isArray(dictionary.lesson_files)) {
+      dictionary.lesson_files.forEach(lessonFilePattern => {
+        let lessonName = lessonFilePattern.split('/').pop().replace('.js', '');
+        lessonsToShow.push({
+          name: `课程: ${lessonName}`,
+          file: `${dictionary.id}_${lessonName}`,
+          checked: false
+        });
+      });
+    }
+
+    return this.updateLessonSelection(lessonsToShow, selectedLessonFiles);
+  },
+
+  // 更新课程的选中状态
+  updateLessonSelection(lessons, selectedFiles) {
+    const allLessonsOption = lessons.find(l => l.file.includes('_ALL_LESSONS'));
+    if (!allLessonsOption) return lessons.map(l => ({...l, checked: selectedFiles.includes(l.file) }));
+
+    const isAllLessonsSelected = selectedFiles.includes(allLessonsOption.file);
+
+    if (isAllLessonsSelected) {
+      return lessons.map(l => ({ ...l, checked: true }));
+    }
+
+    let allIndividualLessonsChecked = lessons.length > 1;
+    const updatedLessons = lessons.map(lesson => {
+      if (lesson.file !== allLessonsOption.file) {
+        const isChecked = selectedFiles.includes(lesson.file);
+        if (!isChecked) allIndividualLessonsChecked = false;
+        return { ...lesson, checked: isChecked };
+      }
+      return lesson; // 返回未修改的“全部课程”选项
+    });
+
+    allLessonsOption.checked = allIndividualLessonsChecked;
+    // 在返回的数组中也更新“全部课程”的状态
+    const finalLessons = updatedLessons.map(l => l.file === allLessonsOption.file ? { ...l, checked: allIndividualLessonsChecked } : l);
+
+    return finalLessons;
+  },
+
+  // 处理课程复选框变化
+  handleLessonCheckboxChange(lessons, clickedFile) {
+    let currentLessons = JSON.parse(JSON.stringify(lessons));
+    let selectedFiles = [];
+
+    const allLessonsOption = currentLessons.find(l => l.file.includes('_ALL_LESSONS'));
+    const isAllLessonsOptionClick = clickedFile === allLessonsOption.file;
+
+    if (isAllLessonsOptionClick) {
+      const shouldSelectAll = !allLessonsOption.checked;
+      currentLessons.forEach(lesson => lesson.checked = shouldSelectAll);
+      if (shouldSelectAll) {
+        selectedFiles = [allLessonsOption.file];
+      } else {
+        selectedFiles = [];
+      }
+    } else {
+      const clickedLesson = currentLessons.find(l => l.file === clickedFile);
+      if (clickedLesson) {
+        clickedLesson.checked = !clickedLesson.checked;
+      }
+
+      const allOtherLessonsChecked = currentLessons.filter(l => !l.file.includes('_ALL_LESSONS')).every(l => l.checked);
+      if (allLessonsOption) {
+        allLessonsOption.checked = allOtherLessonsChecked;
+      }
+
+      if (allOtherLessonsChecked) {
+        selectedFiles = [allLessonsOption.file];
+      } else {
+        selectedFiles = currentLessons.filter(l => l.checked && !l.file.includes('_ALL_LESSONS')).map(l => l.file);
+      }
+    }
+
+    return { lessons: currentLessons, selectedLessonFiles: selectedFiles };
+  },
+
+  // 保存筛选设置
+  saveFilterSettings(data) {
+    const selectedDict = data.dictionaries[data.selectedDictionaryIndex];
+    let lessonName = '请选择课程';
+    const selectedCount = data.selectedLessonFiles.filter(file => !file.includes('_ALL_LESSONS')).length;
+    const allLessonsFile = `DICTIONARY_${selectedDict.id}_ALL_LESSONS`;
+
+    if (data.selectedLessonFiles.includes(allLessonsFile)) {
+      lessonName = '全部课程';
+    } else if (selectedCount > 0) {
+      lessonName = `${selectedCount}个课程`;
+    }
+
+    const filterToSave = {
+      selectedDictionaryIndex: data.selectedDictionaryIndex,
+      selectedLessonFiles: data.selectedLessonFiles,
+      selectedDictionaryName: selectedDict.name,
+      selectedLessonName: lessonName,
+      dictionaryId: selectedDict.id,
+      basePath: selectedDict.base_path || '',
+      quizMode: data.quizMode,
+      selectedQuestionTypes: data.selectedQuestionTypes
+    };
+    filterManager.saveFilter(filterToSave);
+    console.log('Filter settings saved:', filterToSave);
+  }
+};
+
+module.exports = service;

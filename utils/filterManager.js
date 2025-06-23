@@ -1,7 +1,9 @@
 /**
- * @file 筛选条件管理器
- * @description 封装所有与筛选条件（quizFilter）相关的本地存储操作。
- * @author MeowBread Team
+ * @file 筛选条件管理器 (仓库管理员)
+ * @description 
+ *   职责：只负责数据的存取（写入和读取本地缓存）。
+ *   特点：不关心业务逻辑，只提供标准化的数据存取接口。
+ *   比喻：像是应用的“仓库保管员”，根据指令存货、取货。
  */
 
 const FILTER_KEY = 'quizFilter';
