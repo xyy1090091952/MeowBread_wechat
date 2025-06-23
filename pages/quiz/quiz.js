@@ -3,8 +3,8 @@
  * @file 答题页面核心逻辑
  * @author MeowBread Team
  */
-const { WORD_STATUS } = require('../../utils/constants.js');
-const quizUtils = require('../../utils/quizUtils.js');
+const mistakeManager = require('../../utils/mistakeManager.js');
+const quizDataManager = require('../../utils/quizDataManager.js');
 
 Page({
   /**
@@ -48,12 +48,18 @@ Page({
       const quizFilter = wx.getStorageSync('quizFilter') || {};
       const selectedQuestionTypes = quizFilter.selectedQuestionTypes || ['zh_to_jp_choice', 'jp_to_zh_choice']; // 默认题型
 
+      const questions = quizDataManager.generateQuestions(
+        reviewWords.map(word => ({ data: word, sourceDictionary: 'mistakes', lesson: 'review' })),
+        selectedQuestionTypes
+      );
+
       this.setData({
-        quizMode: 'endless', // 错题重练通常是无尽模式
-        allWordsInLesson: reviewWords.map(word => ({ data: word, sourceDictionary: 'mistakes', lesson: 'review' })),
+        quizMode: 'endless',
+        questions: questions,
+        totalQuestions: questions.length,
         isLoading: false,
         currentFilterDisplay: '错题重练',
-        selectedQuestionTypes: selectedQuestionTypes, // 使用用户选择的题型
+        selectedQuestionTypes: selectedQuestionTypes,
         score: 0,
         currentQuestionIndex: 0,
         userAnswer: '',
@@ -61,10 +67,20 @@ Page({
         selectedOption: null,
         showAnswerCard: false,
         isCorrect: false,
-        fromMistakes: true // 增加一个标志位，用于后续判断
+        fromMistakes: true
       });
-      this.generateQuestions();
-      this.startTimer();
+
+      if (questions.length > 0) {
+        this.startTimer();
+      } else {
+        wx.showModal({
+          title: '提示',
+          content: '没有需要重练的错题。',
+          showCancel: false,
+          confirmText: '返回',
+          success: () => wx.navigateBack(),
+        });
+      }
       return;
     }
 
@@ -121,40 +137,16 @@ Page({
       return;
     }
     this.setData({ timeSpent: 0 });
-    this.loadQuestionsAndWords();
-  },
-
-  // 生成问题列表
-    /**
-   * 从 allWordsInLesson 生成问题列表
-   * 逻辑：为每个单词随机选择一种题型，然后打乱题目顺序
-   */
-  generateQuestions: function() {
-    let allWords = this.data.allWordsInLesson;
-    let questionTypes = this.data.selectedQuestionTypes;
-    let questions = [];
-
-    if (!questionTypes || questionTypes.length === 0) {
-      // 如果没有指定题型，则使用默认题型
-      questionTypes = ['zh_to_jp_choice', 'jp_to_zh_choice'];
-    }
-
-    allWords.forEach(wordInfo => {
-      // 为每个单词只生成一个随机类型的题目
-      const randomType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
-      const question = quizUtils.formatQuestion(wordInfo, randomType, allWords);
-      if (question) {
-        questions.push(question);
-      }
+    const questions = quizDataManager.loadQuestions({
+      ...options,
+      filterConditions: JSON.stringify(quizFilter),
+      quizMode: quizMode,
+      totalQuestions: this.data.totalQuestions,
+      selectedQuestionTypes: selectedQuestionTypes
     });
-
-    // 随机打乱题目顺序
-    questions.sort(() => Math.random() - 0.5);
-
     this.setData({
       questions: questions,
-      totalQuestions: questions.length,
-      isLoading: false
+      totalQuestions: questions.length
     });
 
     if (questions.length > 0) {
@@ -171,6 +163,8 @@ Page({
       });
     }
   },
+
+
 
   // 新增：切换助词高亮状态
   toggleHighlight: function() {
@@ -201,158 +195,7 @@ Page({
     this.setData({ processedExampleSentence: sentence });
   },
 
-  // 加载单词和题目数据
-  // 注意：微信小程序中 require() 的路径不能是动态拼接的变量。
-  // 当前的实现方式在小程序环境中会报错。
-  // 理想的实现是创建一个映射文件，将所有课程静态 require 进来，然后通过 key 访问。
-  // 此处仅修复语法错误，保留原有逻辑以便开发者后续重构。
-  loadQuestionsAndWords: function() {
-    this.setData({ isLoading: true, timeSpent: 0 });
-    const { lessonFiles } = this.data;
-    let wordsToLoad = [];
 
-    try {
-      const allDictionariesData = require('../../database/dictionaries.js');
-      if (!allDictionariesData || !allDictionariesData.dictionaries) {
-        console.error('无法加载或解析 dictionaries.js');
-        wx.showModal({ title: '错误', content: '词典配置文件缺失或格式错误。', showCancel: false, success: () => wx.navigateBack() });
-        return;
-      }
-      const dictionariesConfig = allDictionariesData.dictionaries;
-
-      // 从自动生成的映射文件中加载所有课程，实现动态加载
-      const allLessons = require('../../database/lesson-map.js');
-
-      const processLessonFile = (dict, lessonFileName) => {
-        const fullPath = `${dict.id}/${lessonFileName}`;
-        const lessonData = allLessons[fullPath];
-        if (lessonData && Array.isArray(lessonData)) {
-          wordsToLoad.push(...lessonData.map(item => ({ 
-            data: item.data, 
-            sourceDictionary: dict.id, 
-            lesson: lessonFileName.replace('.js', '')
-          })));
-        } else {
-          console.warn(`无法从预加载数据中找到课程: ${fullPath}`);
-        }
-      };
-
-      lessonFiles.forEach(lessonFile => {
-        if (lessonFile === 'ALL_DICTIONARIES_ALL_LESSONS') {
-          dictionariesConfig.forEach(dict => {
-            if (dict.lesson_files && Array.isArray(dict.lesson_files)) {
-              dict.lesson_files.forEach(lessonPattern => {
-                const lessonFileName = lessonPattern.split('/').pop();
-                processLessonFile(dict, lessonFileName);
-              });
-            }
-          });
-        } else if (lessonFile.startsWith('DICTIONARY_') && lessonFile.endsWith('_ALL_LESSONS')) {
-          // 修正逻辑：正确处理“特定词典的全部课程”
-          // lessonFile 的格式是 DICTIONARY_{dict_id}_ALL_LESSONS
-          const parts = lessonFile.split('_');
-          const targetDictId = parts.slice(1, parts.length - 2).join('_'); // 允许词典ID中包含下划线
-
-          const targetDictionary = dictionariesConfig.find(d => d.id === targetDictId);
-          if (targetDictionary && targetDictionary.lesson_files) {
-            targetDictionary.lesson_files.forEach(fullPathPattern => {
-              // fullPathPattern 的格式是 'dict_id/lesson_name.js'
-              const lessonFileName = fullPathPattern.split('/').pop();
-              processLessonFile(targetDictionary, lessonFileName);
-            });
-          }
-
-        } else {
-          // 改进的解析逻辑，以处理词典ID中包含下划线的情况
-          let foundDictionary = false;
-          for (const dict of dictionariesConfig) {
-            if (lessonFile.startsWith(dict.id + '_')) {
-              const lessonName = lessonFile.substring(dict.id.length + 1);
-              const lessonFileName = `${lessonName}.js`;
-              // 修正：dictionaries.js 中的 lesson_files 路径是 '词典ID/课程文件名.js'
-              const fullPathPattern = `${dict.id}/${lessonFileName}`;
-
-              if (dict.lesson_files && dict.lesson_files.includes(fullPathPattern)) {
-                processLessonFile(dict, lessonFileName);
-                foundDictionary = true;
-                break; // 找到并处理后，跳出循环
-              } else {
-                console.warn(`课程文件 ${lessonFileName} (检查路径: ${fullPathPattern}) 未在词典 ${dict.id} 的 lesson_files 中配置。`);
-              }
-            }
-          }
-          if (!foundDictionary) {
-            console.warn(`无法为课程文件标识 ${lessonFile} 找到匹配的词典。`);
-          }
-        }
-      });
-
-      if (wordsToLoad.length === 0) {
-        wx.showModal({
-          title: '提示',
-          content: '当前筛选条件下没有找到任何单词，请尝试调整筛选范围。',
-          showCancel: false,
-          confirmText: '返回筛选',
-          success: () => wx.navigateBack(),
-        });
-        this.setData({ isLoading: false });
-        return;
-      }
-
-      this.setData({ allWordsInLesson: wordsToLoad, isLoading: false });
-      const questions = this.selectWordsForQuiz(wordsToLoad, this.data.quizMode);
-      this.setData({ 
-        questions: questions,
-        totalQuestions: questions.length
-      });
-
-      if (questions.length > 0) {
-        this.startTimer();
-      }
-    } catch (e) {
-      console.error('加载题目和单词时发生严重错误:', e);
-      this.setData({ isLoading: false });
-      wx.showModal({
-        title: '加载失败',
-        content: '无法加载课程数据，请稍后重试。',
-        showCancel: false,
-        success: () => wx.navigateBack(),
-      });
-    }
-  },
-
-  selectWordsForQuiz: function(allWords, mode) {
-    const { selectedQuestionTypes } = this.data;
-    let finalQuestions = [];
-    if (!selectedQuestionTypes || selectedQuestionTypes.length === 0 || !allWords || allWords.length === 0) {
-      console.warn('没有选择题型或没有单词数据，无法生成题目。');
-      return [];
-    }
-
-    let shuffledWords = [...allWords].sort(() => 0.5 - Math.random());
-
-    shuffledWords.forEach(word => {
-      const randomTypeIndex = Math.floor(Math.random() * selectedQuestionTypes.length);
-      const randomQuestionType = selectedQuestionTypes[randomTypeIndex];
-      const question = quizUtils.formatQuestion(word, randomQuestionType, shuffledWords);
-      if (question) {
-        finalQuestions.push(question);
-      }
-    });
-
-    if (finalQuestions.length === 0) {
-      console.warn('根据当前筛选条件和随机选择的题型组合，未能为任何单词生成有效题目。');
-      return [];
-    }
-
-    finalQuestions.sort(() => 0.5 - Math.random());
-
-    if (mode === 'quick') {
-      return finalQuestions.slice(0, Math.min(finalQuestions.length, 30));
-    } else {
-      return finalQuestions;
-    }
-  },
 
 
 
@@ -415,51 +258,13 @@ Page({
     });
   },
 
-  // 更新错题列表，使用同步API避免数据竞争
-    /**
-   * 将答错的单词添加到本地缓存的错题库中
-   * @param {object} wordInfo - 包含完整单词信息的对象
-   */
   updateMistakeList: function(wordInfo) {
-    let mistakes = wx.getStorageSync('mistakeList') || [];
-    // 使用更健壮的匹配逻辑，同时考虑汉字和假名
-    const existing = mistakes.find(item => {
-      if (!item.data) return false;
-      const kanjiMatch = (!wordInfo['汉字'] && !item.data['汉字']) || (wordInfo['汉字'] === item.data['汉字']);
-      const kanaMatch = wordInfo['假名'] === item.data['假名'];
-      return kanjiMatch && kanaMatch;
-    });
-
-    if (!existing) {
-            mistakes.push({ data: wordInfo, status: WORD_STATUS.ERROR });
-      wx.setStorageSync('mistakeList', mistakes);
-      console.log(`单词 "${wordInfo['汉字'] || wordInfo['假名']}" 已添加到错题库`);
-    }
+    mistakeManager.addMistake(wordInfo);
   },
 
-  // 将错题状态从 '错误' 更新为 '修正'
-    /**
-   * 在错题重练模式下，将答对的单词状态从 'error' 更新为 'corrected'
-   * @param {object} word - 包含完整单词信息的对象
-   */
   correctMistake: function(word) {
-    let mistakeList = wx.getStorageSync('mistakeList') || [];
-    
-    // 查找错题库中匹配的单词索引
-    const mistakeIndex = mistakeList.findIndex(item => {
-      if (!item.data) return false;
-      // 严格匹配：汉字（如果存在）和假名都必须一致
-      const kanjiMatch = (!word['汉字'] && !item.data['汉字']) || (word['汉字'] === item.data['汉字']);
-      const kanaMatch = word['假名'] === item.data['假名'];
-      return kanjiMatch && kanaMatch;
-    });
+    mistakeManager.correctMistake(word);
 
-    // 如果找到匹配的单词，并且其状态为'错误'，则更新状态
-        if (mistakeIndex !== -1 && (mistakeList[mistakeIndex].status === '错误' || mistakeList[mistakeIndex].status === WORD_STATUS.ERROR)) {
-            mistakeList[mistakeIndex].status = WORD_STATUS.CORRECTED; // 更新为“修正”状态
-      wx.setStorageSync('mistakeList', mistakeList);
-      console.log(`单词 "${word['汉字'] || word['假名']}" 状态已更新为 '修正'`);
-    }
   },
 
   skipQuestion: function() {

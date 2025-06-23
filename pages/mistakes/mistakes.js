@@ -3,6 +3,7 @@
  * @author MeowBread Team
  */
 
+const mistakeManager = require('../../utils/mistakeManager.js');
 const { WORD_STATUS } = require('../../utils/constants.js');
 
 Page({
@@ -23,7 +24,7 @@ Page({
    * 从本地缓存加载错题列表，并进行处理和渲染
    */
   loadMistakes: function () {
-    const mistakes = wx.getStorageSync('mistakeList') || [];
+    const mistakes = mistakeManager.getMistakes();
         const statusMap = {
       [WORD_STATUS.UNSEEN]: { text: '未背', class: 'status-unseen' },
       [WORD_STATUS.ERROR]: { text: '错误', class: 'status-error' },
