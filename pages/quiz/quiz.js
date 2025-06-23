@@ -1,4 +1,11 @@
 // pages/quiz/quiz.js
+/**
+ * @file 答题页面核心逻辑
+ * @author MeowBread Team
+ */
+const { WORD_STATUS } = require('../../utils/constants.js');
+const quizUtils = require('../../utils/quizUtils.js');
+
 Page({
   /**
    * 页面的初始数据
@@ -30,15 +37,23 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
+    /**
+   * 生命周期函数--监听页面加载
+   * @param {object} options - 页面启动参数，包含 mode, from, words 等
+   */
   onLoad: function(options) {
     if (options.from === 'mistakes' && options.words) {
       const reviewWords = JSON.parse(options.words);
+      // 从缓存中读取用户设置的题型
+      const quizFilter = wx.getStorageSync('quizFilter') || {};
+      const selectedQuestionTypes = quizFilter.selectedQuestionTypes || ['zh_to_jp_choice', 'jp_to_zh_choice']; // 默认题型
+
       this.setData({
         quizMode: 'endless', // 错题重练通常是无尽模式
-        allWordsInLesson: reviewWords.map(item => ({ data: item, sourceDictionary: 'mistakes', lesson: 'review' })),
+        allWordsInLesson: reviewWords.map(word => ({ data: word, sourceDictionary: 'mistakes', lesson: 'review' })),
         isLoading: false,
         currentFilterDisplay: '错题重练',
-        selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'],
+        selectedQuestionTypes: selectedQuestionTypes, // 使用用户选择的题型
         score: 0,
         currentQuestionIndex: 0,
         userAnswer: '',
@@ -46,6 +61,7 @@ Page({
         selectedOption: null,
         showAnswerCard: false,
         isCorrect: false,
+        fromMistakes: true // 增加一个标志位，用于后续判断
       });
       this.generateQuestions();
       this.startTimer();
@@ -106,6 +122,54 @@ Page({
     }
     this.setData({ timeSpent: 0 });
     this.loadQuestionsAndWords();
+  },
+
+  // 生成问题列表
+    /**
+   * 从 allWordsInLesson 生成问题列表
+   * 逻辑：为每个单词随机选择一种题型，然后打乱题目顺序
+   */
+  generateQuestions: function() {
+    let allWords = this.data.allWordsInLesson;
+    let questionTypes = this.data.selectedQuestionTypes;
+    let questions = [];
+
+    if (!questionTypes || questionTypes.length === 0) {
+      // 如果没有指定题型，则使用默认题型
+      questionTypes = ['zh_to_jp_choice', 'jp_to_zh_choice'];
+    }
+
+    allWords.forEach(wordInfo => {
+      // 为每个单词只生成一个随机类型的题目
+      const randomType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+      const question = quizUtils.formatQuestion(wordInfo, randomType, allWords);
+      if (question) {
+        questions.push(question);
+      }
+    });
+
+    // 随机打乱题目顺序
+    questions.sort(() => Math.random() - 0.5);
+
+    this.setData({
+      questions: questions,
+      totalQuestions: questions.length,
+      isLoading: false
+    });
+
+    if (questions.length > 0) {
+      this.startTimer();
+    } else {
+      wx.showModal({
+        title: '提示',
+        content: '根据当前筛选条件，没有可生成的题目。请尝试更改筛选设置。',
+        showCancel: false,
+        confirmText: '返回',
+        success: () => {
+          wx.navigateBack();
+        }
+      });
+    }
   },
 
   // 新增：切换助词高亮状态
@@ -270,7 +334,7 @@ Page({
     shuffledWords.forEach(word => {
       const randomTypeIndex = Math.floor(Math.random() * selectedQuestionTypes.length);
       const randomQuestionType = selectedQuestionTypes[randomTypeIndex];
-      const question = this.formatQuestion(word, randomQuestionType);
+      const question = quizUtils.formatQuestion(word, randomQuestionType, shuffledWords);
       if (question) {
         finalQuestions.push(question);
       }
@@ -292,111 +356,7 @@ Page({
 
 
 
-  formatQuestion: function(wordData, questionTypeToGenerate) {
-    const word = wordData.data;
-    if (!word || !word.中文 || (!word.汉字 && !word.假名)) {
-      console.warn('formatQuestion: 无效的单词数据或缺少必要字段:', wordData);
-      return null;
-    }
 
-    let questionText = '', correctAnswer = '', options = [], actualQuestionType = '', wordToDisplay = '', stemRemainder = '';
-    const japaneseForm = word.汉字 || word.假名;
-    const chineseMeaning = word.中文;
-
-    switch (questionTypeToGenerate) {
-      case 'zh_to_jp_choice':
-        questionText = `「${chineseMeaning}」的日语是什么？`;
-        correctAnswer = japaneseForm;
-        actualQuestionType = 'choice';
-        options = this.generateOptions(wordData, 'japanese');
-        wordToDisplay = `「${chineseMeaning}」`;
-        stemRemainder = '的日语是什么？';
-        break;
-      case 'jp_to_zh_choice':
-        questionText = `「${japaneseForm}」的中文意思是什么？`;
-        correctAnswer = chineseMeaning;
-        actualQuestionType = 'choice';
-        options = this.generateOptions(wordData, 'chinese');
-        wordToDisplay = `「${japaneseForm}」`;
-        stemRemainder = '的中文意思是什么？';
-        break;
-      case 'zh_to_jp_fill':
-        questionText = `「${chineseMeaning}」的日语是？(可填汉字或假名)`;
-        correctAnswer = { word: word.汉字, kana: word.假名 };
-        actualQuestionType = 'fill';
-        wordToDisplay = `「${chineseMeaning}」`;
-        stemRemainder = '的日语是？(可填汉字或假名)';
-        break;
-      case 'jp_kanji_to_kana_fill':
-        if (word.汉字 && word.假名 && word.汉字 !== word.假名) {
-          questionText = `「${word.汉字}」的假名是？`;
-          correctAnswer = word.假名;
-          actualQuestionType = 'fill';
-          wordToDisplay = `「${word.汉字}」`;
-          stemRemainder = '的假名是？';
-        } else {
-          return null;
-        }
-        break;
-      default:
-        console.warn(`formatQuestion: 未知的题型请求 '${questionTypeToGenerate}'`);
-        return null;
-    }
-
-    if (actualQuestionType === 'choice' && (!options || options.length === 0)) {
-      console.warn(`无法为单词 '${japaneseForm}' 生成 '${questionTypeToGenerate}' 的选项。`);
-      return null;
-    }
-
-    return {
-      id: japaneseForm + '_' + questionTypeToGenerate,
-      type: actualQuestionType,
-      wordToDisplay: wordToDisplay,
-      stemRemainder: stemRemainder,
-      answer: correctAnswer,
-      options: options,
-      wordInfo: word,
-      partOfSpeech: word.词性 || '',
-      specificQuestionType: questionTypeToGenerate
-    };
-  },
-
-  generateOptions: function(correctWordData, optionType) {
-    const allWordsInLesson = this.data.allWordsInLesson;
-    const correctWord = correctWordData.data;
-    let correctAnswerText = '';
-    if (optionType === 'chinese') {
-        correctAnswerText = correctWord.中文;
-    } else {
-        correctAnswerText = correctWord.汉字 || correctWord.假名;
-    }
-
-    let options = [correctAnswerText];
-    const distractorsPool = allWordsInLesson.filter(w => {
-        const wData = w.data;
-        if (optionType === 'chinese') {
-            return wData.中文 !== correctAnswerText && wData.中文;
-        } else {
-            return (wData.汉字 || wData.假名) !== correctAnswerText && (wData.汉字 || wData.假名);
-        }
-    });
-
-    while (options.length < 4 && distractorsPool.length > 0) {
-      const randomIndex = Math.floor(Math.random() * distractorsPool.length);
-      const distractorWord = distractorsPool.splice(randomIndex, 1)[0].data;
-      let distractorText = '';
-      if (optionType === 'chinese') {
-        distractorText = distractorWord.中文;
-      } else {
-        distractorText = distractorWord.汉字 || distractorWord.假名;
-      }
-      if (distractorText && !options.includes(distractorText)) {
-        options.push(distractorText);
-      }
-    }
-
-    return options.sort(() => 0.5 - Math.random());
-  },
 
   handleAnswerInput: function(e) {
     const userAnswer = e.detail.value;
@@ -414,6 +374,9 @@ Page({
     });
   },
 
+    /**
+   * 提交答案，进行对错判断，并更新UI和数据
+   */
   submitAnswer: function() {
     const currentQ = this.data.questions[this.data.currentQuestionIndex];
     let isCorrect = false;
@@ -434,28 +397,12 @@ Page({
       }
     }
 
-    if (!isCorrect) {
-      wx.getStorage({
-        key: 'mistakeList',
-        success: (res) => {
-          let mistakes = res.data || [];
-          const existing = mistakes.find(item => item.data.汉字 === currentQ.wordInfo.汉字 && item.data.假名 === currentQ.wordInfo.假名);
-          if (!existing) {
-            mistakes.push({ data: currentQ.wordInfo, status: '错误' });
-            wx.setStorage({
-              key: 'mistakeList',
-              data: mistakes
-            });
-          }
-        },
-        fail: () => {
-          let mistakes = [{ data: currentQ.wordInfo, status: '错误' }];
-          wx.setStorage({
-            key: 'mistakeList', // 修正：确保key与读取时一致
-            data: mistakes
-          });
-        }
-      });
+    if (isCorrect) {
+      // 如果答对了，检查是否需要将错题状态从 'error' 更新为 'corrected'
+      this.correctMistake(currentQ.wordInfo);
+    } else {
+      // 如果答错了，将单词添加到错题库
+      this.updateMistakeList(currentQ.wordInfo);
     }
 
     this.setData({
@@ -468,10 +415,60 @@ Page({
     });
   },
 
+  // 更新错题列表，使用同步API避免数据竞争
+    /**
+   * 将答错的单词添加到本地缓存的错题库中
+   * @param {object} wordInfo - 包含完整单词信息的对象
+   */
+  updateMistakeList: function(wordInfo) {
+    let mistakes = wx.getStorageSync('mistakeList') || [];
+    // 使用更健壮的匹配逻辑，同时考虑汉字和假名
+    const existing = mistakes.find(item => {
+      if (!item.data) return false;
+      const kanjiMatch = (!wordInfo['汉字'] && !item.data['汉字']) || (wordInfo['汉字'] === item.data['汉字']);
+      const kanaMatch = wordInfo['假名'] === item.data['假名'];
+      return kanjiMatch && kanaMatch;
+    });
+
+    if (!existing) {
+            mistakes.push({ data: wordInfo, status: WORD_STATUS.ERROR });
+      wx.setStorageSync('mistakeList', mistakes);
+      console.log(`单词 "${wordInfo['汉字'] || wordInfo['假名']}" 已添加到错题库`);
+    }
+  },
+
+  // 将错题状态从 '错误' 更新为 '修正'
+    /**
+   * 在错题重练模式下，将答对的单词状态从 'error' 更新为 'corrected'
+   * @param {object} word - 包含完整单词信息的对象
+   */
+  correctMistake: function(word) {
+    let mistakeList = wx.getStorageSync('mistakeList') || [];
+    
+    // 查找错题库中匹配的单词索引
+    const mistakeIndex = mistakeList.findIndex(item => {
+      if (!item.data) return false;
+      // 严格匹配：汉字（如果存在）和假名都必须一致
+      const kanjiMatch = (!word['汉字'] && !item.data['汉字']) || (word['汉字'] === item.data['汉字']);
+      const kanaMatch = word['假名'] === item.data['假名'];
+      return kanjiMatch && kanaMatch;
+    });
+
+    // 如果找到匹配的单词，并且其状态为'错误'，则更新状态
+        if (mistakeIndex !== -1 && (mistakeList[mistakeIndex].status === '错误' || mistakeList[mistakeIndex].status === WORD_STATUS.ERROR)) {
+            mistakeList[mistakeIndex].status = WORD_STATUS.CORRECTED; // 更新为“修正”状态
+      wx.setStorageSync('mistakeList', mistakeList);
+      console.log(`单词 "${word['汉字'] || word['假名']}" 状态已更新为 '修正'`);
+    }
+  },
+
   skipQuestion: function() {
     this.nextQuestion();
   },
 
+    /**
+   * 显示下一题或结束测验
+   */
   nextQuestion: function() {
     this.setData({ showQuestion: false });
 
@@ -506,7 +503,7 @@ Page({
     else resultLevel = 'perfect';
 
     wx.redirectTo({
-      url: `/pages/quiz-result/quiz-result?score=${score}&totalQuestions=${displayedTotalQuestions}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}`
+      url: `/pages/quiz-result/quiz-result?score=${score}&totalQuestions=${displayedTotalQuestions}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}&fromMistakes=${this.data.fromMistakes || false}`
     });
   },
 

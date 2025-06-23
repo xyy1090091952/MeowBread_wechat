@@ -190,7 +190,6 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: #F7F7F7;
   padding: 24rpx 32rpx;
   padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
@@ -203,7 +202,7 @@
   background-color: #4845F7;
   color: white;
   text-align: center;
-  border-radius: 48rpx;
+  border-radius: 24rpx;
   font-size: 32rpx;
   font-weight: 600;
   box-shadow: 0px 8rpx 16rpx 0px rgba(72, 69, 247, 0.2);
