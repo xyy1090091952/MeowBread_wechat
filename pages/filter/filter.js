@@ -1,5 +1,6 @@
 // pages/filter/filter.js
 const app = getApp();
+const filterManager = require('../../utils/filterManager.js');
 
 // 词典数据将从 database/dictionaries.json 动态加载
 
@@ -32,7 +33,7 @@ Page({
    */
   onLoad(options) {
     // 尝试从全局或本地存储中读取已保存的筛选条件
-    const savedFilter = wx.getStorageSync('quizFilter');
+    const savedFilter = filterManager.getFilter();
     let dataToSet = {
       quizMode: options.mode || 'quick' // 默认值
     };
@@ -376,7 +377,7 @@ Page({
       quizMode: this.data.quizMode,
       selectedQuestionTypes: this.data.selectedQuestionTypes
     };
-    wx.setStorageSync('quizFilter', filterToSave);
+    filterManager.saveFilter(filterToSave);
     console.log('Filter settings saved:', filterToSave);
   },
 

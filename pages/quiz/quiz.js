@@ -3,8 +3,11 @@
  * @file 答题页面核心逻辑
  * @author MeowBread Team
  */
+const { WORD_STATUS } = require('../../utils/constants.js');
+const quizUtils = require('../../utils/quizUtils.js');
+const wordManager = require('../../utils/wordManager.js');
 const mistakeManager = require('../../utils/mistakeManager.js');
-const quizDataManager = require('../../utils/quizDataManager.js');
+const filterManager = require('../../utils/filterManager.js');
 
 Page({
   /**
@@ -45,21 +48,15 @@ Page({
     if (options.from === 'mistakes' && options.words) {
       const reviewWords = JSON.parse(options.words);
       // 从缓存中读取用户设置的题型
-      const quizFilter = wx.getStorageSync('quizFilter') || {};
+      const quizFilter = filterManager.getFilter() || {};
       const selectedQuestionTypes = quizFilter.selectedQuestionTypes || ['zh_to_jp_choice', 'jp_to_zh_choice']; // 默认题型
 
-      const questions = quizDataManager.generateQuestions(
-        reviewWords.map(word => ({ data: word, sourceDictionary: 'mistakes', lesson: 'review' })),
-        selectedQuestionTypes
-      );
-
       this.setData({
-        quizMode: 'endless',
-        questions: questions,
-        totalQuestions: questions.length,
+        quizMode: 'endless', // 错题重练通常是无尽模式
+        allWordsInLesson: reviewWords.map(word => ({ data: word, sourceDictionary: 'mistakes', lesson: 'review' })),
         isLoading: false,
         currentFilterDisplay: '错题重练',
-        selectedQuestionTypes: selectedQuestionTypes,
+        selectedQuestionTypes: selectedQuestionTypes, // 使用用户选择的题型
         score: 0,
         currentQuestionIndex: 0,
         userAnswer: '',
@@ -67,24 +64,14 @@ Page({
         selectedOption: null,
         showAnswerCard: false,
         isCorrect: false,
-        fromMistakes: true
+        fromMistakes: true // 增加一个标志位，用于后续判断
       });
-
-      if (questions.length > 0) {
-        this.startTimer();
-      } else {
-        wx.showModal({
-          title: '提示',
-          content: '没有需要重练的错题。',
-          showCancel: false,
-          confirmText: '返回',
-          success: () => wx.navigateBack(),
-        });
-      }
+      this.generateQuestions();
+      this.startTimer();
       return;
     }
 
-    let quizFilter = wx.getStorageSync('quizFilter');
+    let quizFilter = filterManager.getFilter();
 
     if (!quizFilter || !quizFilter.selectedLessonFiles || quizFilter.selectedLessonFiles.length === 0) {
       console.log('quiz.js: 未找到有效筛选条件，将使用默认“全部辞典”范围');
@@ -137,16 +124,40 @@ Page({
       return;
     }
     this.setData({ timeSpent: 0 });
-    const questions = quizDataManager.loadQuestions({
-      ...options,
-      filterConditions: JSON.stringify(quizFilter),
-      quizMode: quizMode,
-      totalQuestions: this.data.totalQuestions,
-      selectedQuestionTypes: selectedQuestionTypes
+    this.loadWords();
+  },
+
+  // 生成问题列表
+    /**
+   * 从 allWordsInLesson 生成问题列表
+   * 逻辑：为每个单词随机选择一种题型，然后打乱题目顺序
+   */
+  generateQuestions: function() {
+    let allWords = this.data.allWordsInLesson;
+    let questionTypes = this.data.selectedQuestionTypes;
+    let questions = [];
+
+    if (!questionTypes || questionTypes.length === 0) {
+      // 如果没有指定题型，则使用默认题型
+      questionTypes = ['zh_to_jp_choice', 'jp_to_zh_choice'];
+    }
+
+    allWords.forEach(wordInfo => {
+      // 为每个单词只生成一个随机类型的题目
+      const randomType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+      const question = quizUtils.formatQuestion(wordInfo, randomType, allWords);
+      if (question) {
+        questions.push(question);
+      }
     });
+
+    // 随机打乱题目顺序
+    questions.sort(() => Math.random() - 0.5);
+
     this.setData({
       questions: questions,
-      totalQuestions: questions.length
+      totalQuestions: questions.length,
+      isLoading: false
     });
 
     if (questions.length > 0) {
@@ -163,8 +174,6 @@ Page({
       });
     }
   },
-
-
 
   // 新增：切换助词高亮状态
   toggleHighlight: function() {
@@ -195,7 +204,75 @@ Page({
     this.setData({ processedExampleSentence: sentence });
   },
 
+  /**
+   * @description 使用 wordManager 加载单词数据，并生成题目
+   */
+  loadWords: function() {
+    this.setData({ isLoading: true });
 
+    const words = wordManager.getWordsByFilter({
+      lessonFiles: this.data.lessonFiles,
+      dictionaryId: this.data.dictionaryId
+    });
+
+    if (words.length === 0) {
+      this.setData({ isLoading: false });
+      wx.showModal({
+        title: '提示',
+        content: '当前筛选条件下没有找到任何单词，请尝试调整筛选范围。',
+        showCancel: false,
+        confirmText: '返回筛选',
+        success: () => wx.navigateBack(),
+      });
+      return;
+    }
+
+    this.setData({ allWordsInLesson: words });
+    const questions = this.selectWordsForQuiz(words, this.data.quizMode);
+    
+    this.setData({
+      questions: questions,
+      totalQuestions: questions.length,
+      isLoading: false
+    });
+
+    if (questions.length > 0) {
+      this.startTimer();
+    }
+  },
+
+  selectWordsForQuiz: function(allWords, mode) {
+    const { selectedQuestionTypes } = this.data;
+    let finalQuestions = [];
+    if (!selectedQuestionTypes || selectedQuestionTypes.length === 0 || !allWords || allWords.length === 0) {
+      console.warn('没有选择题型或没有单词数据，无法生成题目。');
+      return [];
+    }
+
+    let shuffledWords = [...allWords].sort(() => 0.5 - Math.random());
+
+    shuffledWords.forEach(word => {
+      const randomTypeIndex = Math.floor(Math.random() * selectedQuestionTypes.length);
+      const randomQuestionType = selectedQuestionTypes[randomTypeIndex];
+      const question = quizUtils.formatQuestion(word, randomQuestionType, shuffledWords);
+      if (question) {
+        finalQuestions.push(question);
+      }
+    });
+
+    if (finalQuestions.length === 0) {
+      console.warn('根据当前筛选条件和随机选择的题型组合，未能为任何单词生成有效题目。');
+      return [];
+    }
+
+    finalQuestions.sort(() => 0.5 - Math.random());
+
+    if (mode === 'quick') {
+      return finalQuestions.slice(0, Math.min(finalQuestions.length, 30));
+    } else {
+      return finalQuestions;
+    }
+  },
 
 
 
@@ -241,11 +318,9 @@ Page({
     }
 
     if (isCorrect) {
-      // 如果答对了，检查是否需要将错题状态从 'error' 更新为 'corrected'
-      this.correctMistake(currentQ.wordInfo);
+      mistakeManager.correctMistake(currentQ.wordInfo);
     } else {
-      // 如果答错了，将单词添加到错题库
-      this.updateMistakeList(currentQ.wordInfo);
+      mistakeManager.addMistake(currentQ.wordInfo);
     }
 
     this.setData({
@@ -258,14 +333,7 @@ Page({
     });
   },
 
-  updateMistakeList: function(wordInfo) {
-    mistakeManager.addMistake(wordInfo);
-  },
 
-  correctMistake: function(word) {
-    mistakeManager.correctMistake(word);
-
-  },
 
   skipQuestion: function() {
     this.nextQuestion();
