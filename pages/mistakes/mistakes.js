@@ -18,15 +18,19 @@ Page({
     };
 
     const processedMistakes = mistakes.map(item => {
-      const status = item.status && statusMap[item.status] ? item.status : 'unseen';
+      // 如果单词没有状态或状态无效，则默认为 'error'
+      const status = item.status && statusMap[item.status] ? item.status : 'error';
+      item.status = status; // 确保每个item都有一个有效的状态
       item.statusText = statusMap[status].text;
       item.statusClass = statusMap[status].class;
+
       return item;
     });
 
     this.setData({
       mistakeList: processedMistakes,
-      mistakeCount: mistakes.filter(item => item.status === 'error').length
+      // 错词数应包含 'error' 和 'corrected' 状态的单词
+      mistakeCount: processedMistakes.filter(item => item.status === 'error' || item.status === 'corrected').length
     });
   },
 

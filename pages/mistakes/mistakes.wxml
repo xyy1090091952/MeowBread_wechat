@@ -10,7 +10,7 @@
         <view class="item-top">
           <view class="word-info">
             <text class="word">{{item.data['汉字'] ? item.data['汉字'] : item.data['假名']}}</text>
-            <text class="type">{{item.data['词性']}}</text>
+            <text class="type {{utils.mapPartOfSpeechToClassName(item.data['词性'])}}">{{item.data['词性']}}</text>
           </view>
           <view class="status-label {{item.statusClass}}">
             <text>{{item.statusText}}</text>
@@ -27,3 +27,5 @@
     <view class="review-button" bindtap="startReview">开始复习</view>
   </view>
 </view>
+
+<wxs module="utils" src="../utils.wxs"></wxs>

@@ -290,23 +290,7 @@ Page({
     }
   },
 
-  mapPartOfSpeechToClassName: function(partOfSpeech) {
-    const mapping = {
-      '动词': 'verb', '自动词': 'intransitive-verb', '他动词': 'transitive-verb', '名词': 'noun',
-      '形容词': 'adjective', '副词': 'adverb', '助词': 'particle', '连词': 'conjunction',
-      '形容动词': 'adjectival-noun', '代词': 'pronoun', '数词': 'numeral'
-    };
-    return mapping[partOfSpeech] || partOfSpeech;
-  },
 
-  mapClassNameToPartOfSpeech: function(className) {
-    const mapping = {
-      'verb': '动词', 'intransitive-verb': '自动词', 'transitive-verb': '他动词', 'noun': '名词',
-      'adjective': '形容词', 'adverb': '副词', 'particle': '助词', 'conjunction': '连词',
-      'adjectival-noun': '形容动词', 'pronoun': '代词', 'numeral': '数词'
-    };
-    return mapping[className] || className;
-  },
 
   formatQuestion: function(wordData, questionTypeToGenerate) {
     const word = wordData.data;
@@ -372,7 +356,7 @@ Page({
       answer: correctAnswer,
       options: options,
       wordInfo: word,
-      partOfSpeech: this.mapPartOfSpeechToClassName(word.词性 || ''),
+      partOfSpeech: word.词性 || '',
       specificQuestionType: questionTypeToGenerate
     };
   },

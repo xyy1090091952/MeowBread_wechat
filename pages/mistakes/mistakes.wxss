@@ -11,20 +11,22 @@
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: baseline; /* 改为基线对齐，让不同大小的文字对齐更自然 */
   padding: 40rpx 0;
-  padding-top: 20rpx;
+  width: 100%;
 }
 
 .title {
   font-size: 48rpx;
   font-weight: 600;
   color: #1F2329;
+  margin-left: 32rpx;
 }
 
 .mistake-count {
   font-size: 28rpx;
   color: #8A8A8A;
+  margin-right: 32rpx;
 }
 
 .mistake-list-scroll {
@@ -87,13 +89,61 @@
   margin-right: 16rpx;
 }
 
+/* 词性标签样式与quiz页面统一 */
 .type {
-  background-color: #FFC107;
+  font-size: 10px; /* 调小字体 */
+  padding: 2px 4px; /* 减小内边距 */
+  border-radius: 4px;
   color: white;
-  padding: 6rpx 12rpx;
-  border-radius: 8rpx;
-  font-size: 22rpx;
-  font-weight: 500;
+  line-height: normal; /* 确保行高正常，避免影响垂直对齐 */
+  display: inline-block; /* 或者 inline-flex，确保能和其他文本元素良好配合 */
+  vertical-align: baseline; /* 尝试基线对齐 */
+  background-color: #6c757d; /* 为未匹配词性提供默认背景色 */
+  margin-left: 8rpx; /* 调整与单词的间距 */
+}
+
+.type.verb {
+  background-color: #598BF1;
+}
+
+.type.intransitive-verb {
+  background-color: #39D763;
+}
+
+.type.transitive-verb {
+  background-color: #FAAD3A;
+}
+
+.type.noun {
+  background-color: #B79EFF;
+}
+
+.type.adjective {
+  background-color: #F56593;
+}
+
+.type.adverb {
+  background-color: #FF375C;
+}
+
+.type.particle {
+  background-color: #5bc0de;
+}
+
+.type.conjunction {
+  background-color: #aa66cc;
+}
+
+.type.adjectival-noun {
+  background-color: #17a2b8;
+}
+
+.type.pronoun {
+  background-color: #6f42c1;
+}
+
+.type.numeral {
+  background-color: #fd7e14;
 }
 
 .item-bottom {

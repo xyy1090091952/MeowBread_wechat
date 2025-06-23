@@ -32,7 +32,7 @@
       <view class="question-header">
         <view class="question-stem-container">
           <text class="question-word">{{questions[currentQuestionIndex].wordToDisplay}}</text>
-          <view class="part-of-speech-tag {{questions[currentQuestionIndex].partOfSpeech}}">
+          <view class="part-of-speech-tag {{utils.mapPartOfSpeechToClassName(questions[currentQuestionIndex].partOfSpeech)}}">
             {{questions[currentQuestionIndex].wordInfo['词性']}}
           </view>
           <text class="question-stem-remainder">{{questions[currentQuestionIndex].stemRemainder}}</text>
