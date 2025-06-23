@@ -467,7 +467,7 @@ Page({
         fail: () => {
           let mistakes = [{ data: currentQ.wordInfo, status: '错误' }];
           wx.setStorage({
-            key: 'mistakelist',
+            key: 'mistakeList', // 修正：确保key与读取时一致
             data: mistakes
           });
         }

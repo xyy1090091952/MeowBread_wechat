@@ -12,9 +12,8 @@
             <text class="word">{{item.data['汉字'] ? item.data['汉字'] : item.data['假名']}}</text>
             <text class="type">{{item.data['词性']}}</text>
           </view>
-          <view class="status-toggle {{item.status === '已纠正' ? 'corrected' : 'error'}}" bindtap="toggleStatus" data-index="{{index}}">
-            <text class="status-text">{{item.status}}</text>
-            <switch class="status-switch" checked="{{item.status === '已纠正'}}" color="{{item.status === '已纠正' ? '#FFC107' : '#FF4D4F'}}"/>
+          <view class="status-label {{item.statusClass}}">
+            <text>{{item.statusText}}</text>
           </view>
         </view>
         <view class="item-bottom">

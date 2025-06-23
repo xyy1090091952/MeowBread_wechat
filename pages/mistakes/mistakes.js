@@ -9,27 +9,25 @@ Page({
   },
 
   loadMistakes: function () {
-    const mistakes = wx.getStorageSync('mistakes') || [];
-    this.setData({
-      mistakeList: mistakes,
-      mistakeCount: mistakes.filter(item => item.status === 'error').length
-    });
-  },
+    const mistakes = wx.getStorageSync('mistakeList') || [];
+    const statusMap = {
+      unseen: { text: '未背', class: 'status-unseen' },
+      error: { text: '错误', class: 'status-error' },
+      corrected: { text: '修正', class: 'status-corrected' },
+      memorized: { text: '已背', class: 'status-memorized' }
+    };
 
-  toggleStatus: function (e) {
-    const id = e.currentTarget.dataset.id;
-    const mistakeList = this.data.mistakeList.map(item => {
-      if (item.id === id) {
-        item.status = item.status === 'corrected' ? 'error' : 'corrected';
-      }
+    const processedMistakes = mistakes.map(item => {
+      const status = item.status && statusMap[item.status] ? item.status : 'unseen';
+      item.statusText = statusMap[status].text;
+      item.statusClass = statusMap[status].class;
       return item;
     });
 
     this.setData({
-      mistakeList: mistakeList,
-      mistakeCount: mistakeList.filter(item => item.status === 'error').length
+      mistakeList: processedMistakes,
+      mistakeCount: mistakes.filter(item => item.status === 'error').length
     });
-    wx.setStorageSync('mistakes', mistakeList);
   },
 
   startReview: function () {

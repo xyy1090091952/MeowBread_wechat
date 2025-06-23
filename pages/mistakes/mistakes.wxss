@@ -48,6 +48,33 @@
   margin-bottom: 16rpx;
 }
 
+.status-label {
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.status-unseen {
+  color: #8A8A8A;
+  background-color: #F0F0F0;
+}
+
+.status-error {
+  color: #FF4D4F;
+  background-color: #FFF1F0;
+}
+
+.status-corrected {
+  color: #FAAD14;
+  background-color: #FFFBE6;
+}
+
+.status-memorized {
+  color: #52C41A;
+  background-color: #F6FFED;
+}
+
 .word-info {
   display: flex;
   align-items: center;
