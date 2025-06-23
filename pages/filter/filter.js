@@ -23,7 +23,8 @@ Page({
       { name: '根据日文汉字写假名', value: 'jp_kanji_to_kana_fill', checked: true, category: '填空题' }
     ],
     selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'], // 默认全部选中
-    isSelectorVisible: false // 控制教材选择弹窗的显示与隐藏
+    isSelectorVisible: false, // 控制教材选择弹窗的显示与隐藏
+    isQuestionTypePopupVisible: false // 控制题型选择弹窗的显示与隐藏
   },
 
   /**
@@ -144,53 +145,26 @@ Page({
     this.setData({ isSelectorVisible: false });
   },
 
-  // 处理题型选择变化的函数
-  onQuestionTypeChange(e) {
-    const { value } = e.currentTarget.dataset; // 获取当前操作的 switch 的 value，即题型代码
-    const checked = e.detail.value; // 获取当前 switch 的选中状态 (true/false)
+  // 显示题型选择弹窗
+  showQuestionTypePopup() {
+    this.setData({ isQuestionTypePopupVisible: true });
+  },
 
-    let currentSelectedTypes = [...this.data.selectedQuestionTypes];
+  // 关闭题型选择弹窗
+  onCloseQuestionTypePopup() {
+    this.setData({ isQuestionTypePopupVisible: false });
+  },
 
-    if (checked) {
-      // 如果是选中，则添加到 selectedQuestionTypes
-      if (!currentSelectedTypes.includes(value)) {
-        currentSelectedTypes.push(value);
-      }
-    } else {
-      // 如果是取消选中
-      // 校验是否是最后一个被选中的题型
-      if (currentSelectedTypes.length === 1 && currentSelectedTypes[0] === value) {
-        wx.showToast({
-          title: '至少选择一种题型',
-          icon: 'none'
-        });
-        // 阻止取消，需要将 UI 恢复
-        const newQuestionTypeOptions = this.data.questionTypeOptions.map(opt => {
-          if (opt.value === value) {
-            return { ...opt, checked: true }; // 强制改回选中状态
-          }
-          return opt;
-        });
-        this.setData({
-          questionTypeOptions: newQuestionTypeOptions
-        });
-        return; // 提前返回，不更新 selectedQuestionTypes
-      }
-      // 移除该题型
-      currentSelectedTypes = currentSelectedTypes.filter(type => type !== value);
-    }
-
-    const newQuestionTypeOptions = this.data.questionTypeOptions.map(opt => {
-      return { ...opt, checked: currentSelectedTypes.includes(opt.value) };
-    });
-
+  // 确认题型选择
+  onConfirmQuestionTypePopup(e) {
+    const { selectedQuestionTypes, questionTypeOptions } = e.detail;
     this.setData({
-      selectedQuestionTypes: currentSelectedTypes,
-      questionTypeOptions: newQuestionTypeOptions
+      selectedQuestionTypes,
+      questionTypeOptions,
+      isQuestionTypePopupVisible: false
+    }, () => {
+      this.saveFilterSettings();
     });
-
-    // 保存筛选条件到本地存储
-    this.saveFilterSettings();
   },
 
 

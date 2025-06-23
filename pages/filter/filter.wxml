@@ -4,14 +4,28 @@
   bind:select="onConfirmTextbook"
   bind:close="onCancelTextbook"
 />
+<question-type-popup
+  visible="{{isQuestionTypePopupVisible}}"
+  questionTypeOptions="{{questionTypeOptions}}"
+  bind:close="onCloseQuestionTypePopup"
+  bind:confirm="onConfirmQuestionTypePopup"
+/>
 <view class="page-container">
+  <view class="section-card" bindtap="showQuestionTypePopup">
+    <view class="section-title">题型选择</view>
+    <view class="filter-item">
+      <view class="filter-item-label">当前已选 {{selectedQuestionTypes.length}} 种</view>
+      <image class="picker-arrow" src="/images/icons/change.png" />
+    </view>
+  </view>
+
   <view class="section-card">
     <view class="section-title">词库选择</view>
     <view class="filter-item">
       <view class="filter-item-label">选择教材：</view>
       <view class="picker-display" bindtap="showTextbookSelector">
         {{dictionaries[selectedDictionaryIndex].name || '请选择教材'}}
-        <image class="picker-arrow" src="/images/icons/arrow-right.svg" />
+        <image class="picker-arrow" src="/images/icons/change.png" />
       </view>
     </view>
 
@@ -23,24 +37,6 @@
           <text>{{item.name}}</text>
         </label>
       </view>
-    </view>
-  </view>
-
-  <view class="section-card">
-    <view class="section-title">题型选择</view>
-    <view class="question-type-group">
-      <view class="question-type-group-title">选择题：</view>
-      <label class="switch-item" wx:for="{{questionTypeOptions}}" wx:if="{{item.category === '选择题'}}" wx:key="value">
-        <text class="switch-label">{{item.name}}</text>
-        <switch checked="{{item.checked}}" bindchange="onQuestionTypeChange" data-value="{{item.value}}" color="#4845F7"/>
-      </label>
-    </view>
-    <view class="question-type-group">
-      <view class="question-type-group-title">填空题：</view>
-      <label class="switch-item" wx:for="{{questionTypeOptions}}" wx:if="{{item.category === '填空题'}}" wx:key="value">
-        <text class="switch-label">{{item.name}}</text>
-        <switch checked="{{item.checked}}" bindchange="onQuestionTypeChange" data-value="{{item.value}}" color="#4845F7"/>
-      </label>
     </view>
   </view>
 
