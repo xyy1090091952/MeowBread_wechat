@@ -11,13 +11,11 @@ Page({
   data: {
     dictionaries: [], // 词典列表，包含“全部辞典”
     selectedDictionaryIndex: 0, // 默认选中“全部辞典”
-    lessons: [], // 课程列表
-    selectedLessonFile: 'ALL_DICTIONARIES_ALL_LESSONS', // 默认选中“全部课程”
-    selectedLessonIndex: 0, // 默认选中第一个课程选项
+    lessons: [], // 课程列表，每个课程对象将包含 checked 属性
+    selectedLessonFiles: [], // 用于存储所有选中的课程文件
     quizMode: 'quick', // 默认答题模式
     allDictionariesOption: { id: 'all', name: '全部辞典', description: '所有可用词典中的全部课程', base_path: 'all' },
-    allLessonsOption: { name: '全部课程', file: 'ALL_DICTIONARIES_ALL_LESSONS' },
-    dictionaryAllLessonsOptionTemplate: { name: '全部课程', file: 'DICTIONARY_{id}_ALL_LESSONS' },
+    // allLessonsOption 和 dictionaryAllLessonsOptionTemplate 将在 updateLessonsBasedOnDictionary 中动态创建
     questionTypeOptions: [
       { name: '根据中文意思选日语', value: 'zh_to_jp_choice', checked: true, category: '选择题' },
       { name: '根据日语选中文', value: 'jp_to_zh_choice', checked: true, category: '选择题' },
@@ -40,9 +38,8 @@ Page({
 
     if (savedFilter) {
       dataToSet.selectedDictionaryIndex = savedFilter.selectedDictionaryIndex !== undefined ? savedFilter.selectedDictionaryIndex : this.data.selectedDictionaryIndex;
-      dataToSet.selectedLessonFile = savedFilter.selectedLessonFile || this.data.selectedLessonFile;
+      dataToSet.selectedLessonFiles = savedFilter.selectedLessonFiles || [];
       dataToSet.quizMode = savedFilter.quizMode || options.mode || 'quick';
-      // selectedLessonIndex 的恢复将在 loadDictionariesAndLessons 之后，通过匹配 selectedLessonFile 进行
     }
 
     // 恢复题型选择
@@ -134,7 +131,8 @@ Page({
     });
 
     // 更新课程列表并保存设置
-    this.updateLessonsAndSave();
+    this.updateLessonsBasedOnDictionary();
+    this.saveFilterSettings();
   },
 
   // 处理教材选择取消事件
@@ -191,11 +189,7 @@ Page({
     this.saveFilterSettings();
   },
 
-  // 更新课程列表并保存设置
-  updateLessonsAndSave() {
-    this.updateLessonsBasedOnDictionary();
-    this.saveFilterSettings();
-  },
+
 
   // 加载词典和课程列表的逻辑
   loadDictionariesAndLessons() {
@@ -262,63 +256,52 @@ Page({
   updateLessonsBasedOnDictionary() {
     const selectedDictIndex = this.data.selectedDictionaryIndex;
     const selectedDictionary = this.data.dictionaries[selectedDictIndex];
-
     let lessonsToShow = [];
-    let defaultLessonFile = null;
 
     if (selectedDictionary.id === 'all') {
-      lessonsToShow = [this.data.allLessonsOption];
-      defaultLessonFile = this.data.allLessonsOption.file;
-    } else {
-      // 对于特定词典，显示“该词典的全部课程”选项
-      const specificDictAllLessonsOption = {
-        name: `全部课程`,
-        file: `DICTIONARY_${selectedDictionary.id}_ALL_LESSONS` // quiz.js 会处理这个特殊的 file 标识
-      };
-      lessonsToShow = [specificDictAllLessonsOption];
-      
-      // 动态加载该词典下的具体课程文件作为选项 (确保它们是 .js)
-      if (selectedDictionary.lesson_files && Array.isArray(selectedDictionary.lesson_files)) {
-        selectedDictionary.lesson_files.forEach(lessonFilePattern => {
-          let lessonName = lessonFilePattern;
-          if (lessonFilePattern.includes('/')) {
-            lessonName = lessonFilePattern.split('/').pop(); // 获取文件名如 lesson1.js
-          }
-          lessonName = lessonName.replace('.json', '.js'); // 确保是 .js
-          const lessonDisplayName = lessonName.replace('.js', ''); // 用于显示，如 lesson1
-          
-          // file 属性需要一个 quiz.js 能解析的唯一标识
-          // 例如 'dictionaryId_lessonName' (不含.js后缀)
-          lessonsToShow.push({
-            name: `课程: ${lessonDisplayName}`,
-            file: `${selectedDictionary.id}_${lessonDisplayName}` 
-          });
+      // “全部辞典”模式下，不显示课程选择
+      this.setData({ lessons: [], selectedLessonFiles: [] });
+      return;
+    }
+
+    // 特定词典模式
+    const allLessonsOption = {
+      name: '全部课程',
+      file: `DICTIONARY_${selectedDictionary.id}_ALL_LESSONS`,
+      checked: false
+    };
+    lessonsToShow.push(allLessonsOption);
+
+    if (selectedDictionary.lesson_files && Array.isArray(selectedDictionary.lesson_files)) {
+      selectedDictionary.lesson_files.forEach(lessonFilePattern => {
+        let lessonName = lessonFilePattern.split('/').pop().replace('.js', '');
+        lessonsToShow.push({
+          name: `课程: ${lessonName}`,
+          file: `${selectedDictionary.id}_${lessonName}`,
+          checked: false
         });
-      }
-      // 默认选中“该词典的全部课程”
-      defaultLessonFile = specificDictAllLessonsOption.file;
+      });
     }
 
-    // 尝试恢复之前选择的课程索引
-    let finalSelectedLessonIndex = 0;
-    let finalSelectedLessonFile = defaultLessonFile;
-
-    // 如果 onLoad 时从缓存中恢复了 selectedLessonFile，且它不是当前词典的默认“全部课程”
-    // 则尝试在新生成的 lessonsToShow 中找到它
-    const cachedLessonFile = this.data.selectedLessonFile; // 这是 onLoad 时可能从缓存恢复的值
-
-    if (cachedLessonFile && cachedLessonFile !== defaultLessonFile) {
-      const lessonIndex = lessonsToShow.findIndex(lesson => lesson.file === cachedLessonFile);
-      if (lessonIndex !== -1) {
-        finalSelectedLessonIndex = lessonIndex;
-        finalSelectedLessonFile = cachedLessonFile;
+    // 恢复选中状态
+    const cachedFiles = this.data.selectedLessonFiles || [];
+    let allChecked = true;
+    lessonsToShow.forEach(lesson => {
+      if (cachedFiles.includes(lesson.file)) {
+        lesson.checked = true;
       }
-    }
+      if (lesson.file !== allLessonsOption.file && !lesson.checked) {
+        allChecked = false;
+      }
+    });
 
+    if (lessonsToShow.length > 1) {
+        allLessonsOption.checked = allChecked;
+    }
+    
     this.setData({
       lessons: lessonsToShow,
-      selectedLessonIndex: finalSelectedLessonIndex,
-      selectedLessonFile: finalSelectedLessonFile
+      selectedLessonFiles: cachedFiles
     });
   },
 
@@ -331,34 +314,78 @@ Page({
     this.updateLessonsBasedOnDictionary();
   },
 
-  // 当选择的课程变化时
-  onLessonChange(e) {
-    const lessonIndex = parseInt(e.detail.value, 10);
-    if (this.data.lessons && this.data.lessons[lessonIndex]) {
-      this.setData({
-        selectedLessonIndex: lessonIndex,
-        selectedLessonFile: this.data.lessons[lessonIndex].file
-      });
+  onLessonCheckboxChange(e) {
+    const clickedFile = e.currentTarget.dataset.file;
+    let lessons = JSON.parse(JSON.stringify(this.data.lessons));
+    let selectedFiles = [];
+
+    const allLessonsOption = lessons.find(l => l.file.includes('_ALL_LESSONS'));
+    const isAllLessonsOptionClick = clickedFile === allLessonsOption.file;
+
+    if (isAllLessonsOptionClick) {
+      // 点击了“全部课程”
+      const shouldSelectAll = !allLessonsOption.checked;
+      lessons.forEach(lesson => lesson.checked = shouldSelectAll);
+      if (shouldSelectAll) {
+        // 如果选中“全部课程”，selectedFiles 只包含这一个标识
+        selectedFiles = [allLessonsOption.file];
+      } else {
+        // 如果取消“全部课程”，则清空所有选择
+        selectedFiles = [];
+      }
     } else {
-      // 理论上，由于课程列表只有一个选项，这里不太会出错，但保留以防万一
-      console.warn('选择的课程索引无效:', lessonIndex);
-      // 如果真的发生，则重置为当前词典的默认课程选项
-      this.updateLessonsBasedOnDictionary(); 
+      // 点击了单个课程
+      const clickedLesson = lessons.find(l => l.file === clickedFile);
+      if (clickedLesson) {
+        clickedLesson.checked = !clickedLesson.checked;
+      }
+
+      // 检查除“全部课程”外的所有课程是否都已选中
+      const allOtherLessonsChecked = lessons.filter(l => !l.file.includes('_ALL_LESSONS')).every(l => l.checked);
+      
+      if (allLessonsOption) {
+        allLessonsOption.checked = allOtherLessonsChecked;
+      }
+
+      if (allOtherLessonsChecked) {
+        // 如果所有单个课程都选中了，等同于选中“全部课程”
+        selectedFiles = [allLessonsOption.file];
+      } else {
+        // 否则，只包含选中的单个课程
+        selectedFiles = lessons.filter(l => l.checked && !l.file.includes('_ALL_LESSONS')).map(l => l.file);
+      }
     }
+
+    this.setData({
+      lessons: lessons,
+      selectedLessonFiles: selectedFiles
+    }, () => {
+      this.saveFilterSettings();
+    });
   },
 
   // 保存筛选条件到本地存储
   saveFilterSettings() {
+    const selectedDict = this.data.dictionaries[this.data.selectedDictionaryIndex];
+    let lessonName = '请选择课程';
+    const selectedCount = this.data.selectedLessonFiles.filter(file => !file.includes('_ALL_LESSONS')).length;
+    const allLessonsFile = `DICTIONARY_${selectedDict.id}_ALL_LESSONS`;
+
+    if (this.data.selectedLessonFiles.includes(allLessonsFile)) {
+      lessonName = '全部课程';
+    } else if (selectedCount > 0) {
+      lessonName = `${selectedCount}个课程`;
+    }
+
     const filterToSave = {
       selectedDictionaryIndex: this.data.selectedDictionaryIndex,
-      selectedLessonFile: this.data.selectedLessonFile,
-      selectedLessonIndex: this.data.selectedLessonIndex, //确保课程索引也被保存
-      selectedDictionaryName: this.data.dictionaries[this.data.selectedDictionaryIndex].name,
-      selectedLessonName: this.data.lessons[this.data.selectedLessonIndex] ? this.data.lessons[this.data.selectedLessonIndex].name : '未知课程',
-      dictionaryId: this.data.dictionaries[this.data.selectedDictionaryIndex].id,
-      basePath: this.data.dictionaries[this.data.selectedDictionaryIndex].base_path || '',
+      selectedLessonFiles: this.data.selectedLessonFiles,
+      selectedDictionaryName: selectedDict.name,
+      selectedLessonName: lessonName,
+      dictionaryId: selectedDict.id,
+      basePath: selectedDict.base_path || '',
       quizMode: this.data.quizMode,
-      selectedQuestionTypes: this.data.selectedQuestionTypes // 新增保存题型选择
+      selectedQuestionTypes: this.data.selectedQuestionTypes
     };
     wx.setStorageSync('quizFilter', filterToSave);
     console.log('Filter settings saved:', filterToSave);
@@ -366,7 +393,7 @@ Page({
 
   // 完成选择并保存筛选条件的逻辑
   startQuiz() { 
-    if (!this.data.selectedLessonFile) {
+    if (this.data.selectedLessonFiles.length === 0) {
       wx.showToast({
         title: '请选择课程范围',
         icon: 'none'

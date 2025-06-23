@@ -15,14 +15,14 @@
       </view>
     </view>
 
-    <view class="filter-item">
+    <view class="filter-item-column">
       <view class="filter-item-label">选择课程：</view>
-      <picker mode="selector" range="{{lessons}}" range-key="name" value="{{selectedLessonIndex}}" bindchange="onLessonChange" disabled="{{lessons.length === 0 && selectedDictionaryIndex === null}}">
-        <view class="picker-display {{ (lessons.length === 0 && selectedDictionaryIndex === null) ? 'disabled' : '' }}">
-          {{selectedLessonIndex !== null && lessons[selectedLessonIndex] ? lessons[selectedLessonIndex].name : (selectedDictionaryIndex !== null ? (lessons.length > 0 ? '请选择课程' : '该词典下暂无课程') : '请先选择教材')}}
-          <image class="picker-arrow" src="/images/icons/arrow-right.svg" />
-        </view>
-      </picker>
+      <view class="lesson-checkbox-group">
+        <label class="lesson-checkbox-item" wx:for="{{lessons}}" wx:key="file" catch:tap="onLessonCheckboxChange" data-file="{{item.file}}">
+          <checkbox value="{{item.file}}" checked="{{item.checked}}" />
+          <text>{{item.name}}</text>
+        </label>
+      </view>
     </view>
   </view>
 
@@ -44,5 +44,5 @@
     </view>
   </view>
 
-  <button class="confirm-button" type="primary" bindtap="startQuiz" disabled="{{!selectedLessonFile}}">完成选择</button>
+  <button class="confirm-button" type="primary" bindtap="startQuiz" disabled="{{selectedLessonFiles.length === 0}}">完成选择</button>
 </view>

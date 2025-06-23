@@ -37,7 +37,8 @@ module.exports = {
             "description": "多邻国日语词汇",
             "lesson_files": [
                 "duolingguo/lesson1.js",
-                "duolingguo/lesson2.js"
+                "duolingguo/lesson2.js",
+                "duolingguo/lesson3.js"
             ]
         }
     ]
