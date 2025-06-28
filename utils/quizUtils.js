@@ -98,10 +98,10 @@ function generateOptions(correctWordData, optionType, allWordsInLesson) {
   // 确定正确答案和预设的干扰项来源
   if (optionType === 'chinese') {
     correctAnswerText = correctWord.中文;
-    predefinedDistractors = correctWord.中文测试词 || [];
+    predefinedDistractors = correctWord.中文干扰词 || [];
   } else {
     correctAnswerText = correctWord.汉字 || correctWord.假名;
-    predefinedDistractors = correctWord.日语测试词 || [];
+    predefinedDistractors = correctWord.日语干扰词 || [];
   }
 
   let options = [correctAnswerText];
