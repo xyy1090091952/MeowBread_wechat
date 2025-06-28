@@ -38,7 +38,8 @@ module.exports = {
             "lesson_files": [
                 "duolingguo/lesson1.js",
                 "duolingguo/lesson2.js",
-                "duolingguo/lesson3.js"
+                "duolingguo/lesson3.js",
+                "duolingguo/lesson5.js"
             ]
         }
     ]
