@@ -1,0 +1,14 @@
+<!--pages/quiz-details/quiz-details.wxml-->
+<view class="container">
+  <view class="header fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}">
+    <text class="page-title">答题详细数据</text>
+  </view>
+  
+  <view class="content fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
+    <view class="placeholder">
+      <image class="placeholder-icon" src="/images/icons/profile.png"></image>
+      <text class="placeholder-text">详细数据页面</text>
+      <text class="placeholder-subtitle">敬请期待...</text>
+    </view>
+  </view>
+</view> 

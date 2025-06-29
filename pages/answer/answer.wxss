@@ -30,6 +30,7 @@
 .sub-title {
   font-size: 28rpx; /* Figma 副标题字号 14px */
   color: #4440F4; /* Figma 副标题颜色 */
+  font-weight: bold; /* 字体加粗 */
 }
 
 .banner-container {
@@ -141,7 +142,7 @@
 
 .option-main-text {
   font-size: 32rpx; /* Figma 字体大小 16px */
-  font-weight: 500; /* Figma 字重 Medium */
+  font-weight: 800; /* 字重 Extra Bold */
 }
 
 .filter-card .option-main-text,
@@ -174,4 +175,13 @@
   width: 32rpx; /* Figma 图标尺寸 16px */
   height: 32rpx; /* Figma 图标尺寸 16px */
   margin-left: 20rpx; /* 图标与文字容器的间距 */
+}
+
+/* 箭头图标颜色控制 */
+.arrow-white {
+  filter: invert(100%); /* 白色箭头 */
+}
+
+.arrow-black {
+  filter: none; /* 黑色箭头，保持原色 */
 }

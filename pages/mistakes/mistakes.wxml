@@ -13,11 +13,17 @@
             <text class="type {{utils.mapPartOfSpeechToClassName(item.data['词性'])}}">{{item.data['词性']}}</text>
           </view>
           <view class="status-label {{item.statusClass}}">
-            <text>{{item.statusText}}</text>
+            <text class="status-text">{{item.statusText}}</text>
+            <view class="status-dot"></view>
           </view>
         </view>
         <view class="item-bottom">
-          <text>{{item.data['假名']}} | {{item.data['中文']}} | 例句：{{item.data['例句']}}</text>
+          <view class="basic-info">
+            <text>{{item.data['假名']}} | {{item.data['中文']}}</text>
+          </view>
+          <view class="example-sentence">
+            <text>例句：{{item.data['例句']}}</text>
+          </view>
         </view>
       </view>
     </scroll-view>

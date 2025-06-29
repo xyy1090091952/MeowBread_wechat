@@ -28,7 +28,7 @@
 
   <block wx:if="{{showQuestion}}" wx:key="{{currentQuestionIndex}}">
     <view class="content-card">
-      <!-- 问题区域 -->
+      <!-- 题目头部区域 - 首先出现，无动画延迟 -->
       <view class="question-header">
         <view class="question-stem-container">
           <text class="question-word">{{questions[currentQuestionIndex].wordToDisplay}}</text>
@@ -39,28 +39,42 @@
         </view>
       </view>
 
-      <!-- 选择题 -->
+      <!-- 选择题选项容器 -->
       <view class="options-container" wx:if="{{questions[currentQuestionIndex].type === 'choice'}}" wx:key="choice-{{currentQuestionIndex}}">
+        <!-- 
+          选项按钮动画延迟设置：
+          第1个选项：0.1s延迟
+          第2个选项：0.2s延迟  
+          第3个选项：0.3s延迟
+          第4个选项：0.4s延迟
+          实现自上而下的依次出现效果
+        -->
         <view 
           wx:for="{{questions[currentQuestionIndex].options}}" 
           wx:for-item="option"
           wx:key="index"
           class="option-button {{selectedOption === option ? (isCorrect && showAnswerCard ? 'correct' : (!isCorrect && showAnswerCard ? 'incorrect' : 'selected')) : ''}} {{showAnswerCard && option === questions[currentQuestionIndex].answer && option !== selectedOption ? 'correct-unselected' : ''}} {{showAnswerCard ? 'disabled' : ''}}"
-          style="animation-delay: {{index * 0.1}}s;"
+          style="animation-delay: {{0.1 + index * 0.1}}s;"
           bindtap="onOptionSelect"
           data-option="{{option}}">
-          {{option}}
+          <view class="option-content">
+            <text class="option-text">{{option}}</text>
+            <view class="correct-label" wx:if="{{showAnswerCard && option === questions[currentQuestionIndex].answer}}">正解</view>
+          </view>
         </view>
       </view>
 
-      <!-- 填空题 -->
+      <!-- 填空题输入框 -->
       <view wx:if="{{questions[currentQuestionIndex].type === 'fill'}}" wx:key="fill-{{currentQuestionIndex}}">
+        <!-- 填空题输入框延迟0.1s出现，在题目头部之后显示 -->
         <input 
           class="fill-input {{showAnswerCard ? (isCorrect ? 'correct-fill' : 'incorrect-fill') : ''}}" 
           placeholder="请输入答案"
           bindinput="handleAnswerInput" 
           value="{{userAnswer}}"
-          disabled="{{showAnswerCard}}"/>
+          disabled="{{showAnswerCard}}"
+          confirm-type="done"
+          bindconfirm="onInputConfirm"/>
 
       </view>
 

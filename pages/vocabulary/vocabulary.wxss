@@ -1,67 +1,28 @@
 /* pages/vocabulary/vocabulary.wxss */
 .container {
-  padding: 20rpx;
-}
-.search-bar {
-  margin-bottom: 20rpx;
-}
-.search-bar input {
-  border: 1rpx solid #dddddd;
-  padding: 10rpx;
-}
-.display-mode-selector {
-  margin-bottom: 20rpx;
-}
-.word-list .word-item,
-.word-cards .word-card {
-  background-color: #f8f8f8;
-  padding: 20rpx;
-  margin-bottom: 20rpx;
-  border-radius: 10rpx;
-}
-.word {
-  font-size: 36rpx;
-  font-weight: bold;
-}
-.reading, .meaning, .type, .sentence {
-  font-size: 28rpx;
-  color: #666666;
-}
-.progress-tag {
-  position: absolute;
-  /* 调整位置到图片左下角 */
-  /* 计算过程：图片底部位置 (32rpx margin-top + 512rpx height) - 标签自身高度 (48rpx) - 距离图片底部间距 (32rpx) = 464rpx */
-  top: 476rpx;
-  left: 48rpx; /* 24px: cover left 16px + offset 8px */
-  width: 150rpx; /* 92px */
-  height: 48rpx; /* 24px */
-  line-height: 48rpx;
-  text-align: left;
-  padding-left: 16rpx;
-  font-size: 20rpx;
-  border: 1rpx solid rgba(72,69,247,0.2);
-  border-radius: 24rpx;
-  background: #ffffff;
-  color: #000;
-}
-
-/* ———————— 之前被误删的样式恢复 ———————— */
-.page {
-  background: #ffffff;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  background-color: rgb(255, 255, 255); /* 与答题页面保持一致的背景色 */
+  min-height: 100vh;
+  padding: 0 0 220rpx 0; /* 调整底部padding为220rpx */
 }
 
 /* 顶部横幅 */
 .banner {
-  margin: 24rpx 48rpx 0 48rpx;
+  width: calc(100% - 96rpx); /* 减去左右各48rpx的边距 */
+  margin: 24rpx 48rpx 0 48rpx; /* 恢复左右边距 */
   height: 64rpx;
   background: linear-gradient(90deg,#f0f6fc 0%,#cfe2ff 100%);
   border-radius: 32rpx;
   display: flex;
   align-items: center;
-  padding: 0 48rpx; /* 24px */
 }
+
 .banner-text {
+  padding-left:48rpx;
   font-size: 24rpx;
   color: #4845f7;
   font-weight: 600;
@@ -69,17 +30,24 @@
 
 /* 分类标题 */
 .section-title {
-  margin: 48rpx 48rpx 24rpx;
+  width: calc(100% - 96rpx); /* 减去左右各48rpx的边距 */
+  margin: 48rpx 48rpx 24rpx 48rpx; /* 恢复左右边距 */
   font-size: 48rpx; /* 24px */
   font-weight: bold;
   font-family: 'Inter', sans-serif;
   color: #111111;
   line-height: 60rpx;
+  text-align: left; /* 确保文字左对齐 */
+}
+
+/* 第二个分类标题特殊样式 - fade-delay-4 */
+.section-title.fade-delay-4 {
+  margin-top: 0; /* 调整第二个分类标题距离顶部的高度为0 */
 }
 
 /* 词典滚动 */
 .dict-scroll-wrapper {
-  /* 让 scroll-view 占满整行宽度，不再需要左内边距 */
+  width: 100%; /* 占满全宽，不受container padding限制 */
   box-sizing: border-box;
 }
 
@@ -95,12 +63,11 @@
   overflow: visible;
   padding-bottom: 48rpx; /* 给阴影留空间 */
   /* 
-    为左右两边都留出 48rpx 的边距，与页面标题对齐。
-    padding-left: 48rpx; 直接设置左边距。
-    padding-right: 24rpx; 因为每个卡片都有 margin-right: 24rpx，所以这里只需要 24rpx 就能凑够 48rpx 的右边距。
+    现在在滚动区域内部设置左右padding，这样滚动时内容不会被裁剪
+    左边距48rpx，右边距48rpx+24rpx（最后一个卡片的margin-right）
   */
   padding-left: 48rpx;
-  padding-right: 24rpx;
+  padding-right: 72rpx; /* 48rpx + 24rpx，确保最后一个卡片右边也有48rpx的空间 */
 }
 
 /* 卡片 */
@@ -131,16 +98,390 @@
   right: 48rpx; /* 缩进 8px (16rpx) */
   display: flex;
   justify-content: space-between;
+  align-items: center; /* 垂直居中对齐 */
   font-size: 24rpx;
   color: #000;
 }
 
 .dict-name {
-  font-weight: 600;
+  font-size: 14px; /* 字号14px */
+  font-weight: bold; /* 加粗 */
 }
 
 .dict-count {
+  font-size: 12px; /* 字号12px */
+  font-weight: bold; /* 加粗 */
+  color: #666; /* 颜色#666 */
   text-align: right;
 }
 
-/* ———————— 恢复结束 ———————— */
+.progress-tag {
+  position: absolute;
+  /* 调整位置到图片左下角 */
+  /* 计算过程：图片底部位置 (32rpx margin-top + 512rpx height) - 标签自身高度 (48rpx) - 距离图片底部间距 (32rpx) = 464rpx */
+  top: 476rpx;
+  left: 48rpx; /* 24px: cover left 16px + offset 8px */
+  width: 168rpx; /* 84px */
+  height: 48rpx; /* 24px */
+  line-height: 48rpx;
+  text-align: center; /* 文字左右居中 */
+  font-size: 12px; /* 字号改为12px */
+  font-weight: bold; /* 字体加粗 */
+  border: 1rpx solid rgba(72,69,247,0.2);
+  border-radius: 24rpx;
+  background: #ffffff;
+  color: #000;
+}
+
+/* ===== 单词列表页面样式 ===== */
+
+/* 单词列表顶部导航栏 */
+.word-list-header {
+  width: calc(100% - 96rpx); /* 减去左右各48rpx的边距 */
+  margin: 24rpx 48rpx 0 48rpx;
+  height: 120rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+}
+
+.back-button {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+}
+
+.back-icon {
+  width: 24rpx;
+  height: 24rpx;
+  transform: rotate(180deg); /* 向左箭头 */
+  filter: none; /* 黑色箭头 */
+}
+
+.title-info-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.word-list-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #111111;
+  line-height: 48rpx;
+  text-align: left;
+}
+
+.word-count-info {
+  font-size: 24rpx;
+  color: #666666;
+  line-height: 32rpx;
+  margin-top: 4rpx;
+  text-align: left;
+}
+
+.filter-button {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 24rpx;
+}
+
+.filter-icon {
+  width: 24rpx;
+  height: 24rpx;
+}
+
+/* 单词列表滚动区域 */
+.word-list-scroll {
+  width: 100%;
+  flex: 1;
+  height: calc(100vh - 200rpx); /* 减去顶部导航栏高度 */
+}
+
+.word-list-container {
+  width: calc(100% - 96rpx);
+  margin: 0 48rpx;
+  padding-bottom: 40rpx;
+}
+
+/* 单词卡片 - 参考mistake-item样式 */
+.word-card {
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin: 0 0rpx 24rpx 0rpx; /* 修改margin为左右0边距 */
+  box-shadow: 8rpx 8rpx 32rpx rgba(0,0,0,0.08); /* 参考mistake-item的阴影 */
+  display: flex;
+  flex-direction: column;
+}
+
+.word-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.word-info {
+  display: flex;
+  align-items: center;
+}
+
+.word-main {
+  font-size: 16px; /* 参考mistake-item的word样式 */
+  font-weight: 600;
+  color: #1F2329;
+  margin-right: 16rpx;
+}
+
+/* 词性标签样式 - 参考mistake-item的type样式 */
+.word-type {
+  width: 84rpx; /* 42px */
+  height: 40rpx; /* 20px */
+  font-size: 10px; /* 10px字体 */
+  padding: 0; /* 清除原有padding */
+  border-radius: 20rpx; /* 改为10px圆角 */
+  color: white;
+  line-height: 40rpx; /* 垂直居中 */
+  text-align: center; /* 水平居中 */
+  display: inline-block;
+  background-color: #6c757d; /* 为未匹配词性提供默认背景色 */
+  margin-left: 16rpx; /* 左边距8px */
+}
+
+/* 词性颜色样式 - 复用mistake-item的词性颜色 */
+.word-type.verb {
+  background-color: #598BF1;
+}
+
+.word-type.intransitive-verb {
+  background-color: #39D763;
+}
+
+.word-type.transitive-verb {
+  background-color: #FAAD3A;
+}
+
+.word-type.noun {
+  background-color: #B79EFF;
+}
+
+.word-type.adjective {
+  background-color: #F56593;
+}
+
+.word-type.adverb {
+  background-color: #FF375C;
+}
+
+.word-type.particle {
+  background-color: #5bc0de;
+}
+
+.word-type.conjunction {
+  background-color: #aa66cc;
+}
+
+.word-type.adjectival-noun {
+  background-color: #17a2b8;
+}
+
+.word-type.pronoun {
+  background-color: #6f42c1;
+}
+
+.word-type.numeral {
+  background-color: #fd7e14;
+}
+
+.word-lesson {
+  font-size: 20rpx;
+  color: #999999;
+}
+
+.word-item-bottom {
+  font-size: 12px; /* 参考mistake-item的item-bottom */
+  color: #666666; /* 参考mistake-item的颜色 */
+  line-height: 32rpx; /* 调整行高 */
+}
+
+/* 第一行：假名和汉字 */
+.word-basic-info {
+  font-size: 12px;
+  color: #666666;
+  line-height: 40rpx; /* 改为20px高度 */
+  height: 40rpx; /* 设置固定高度20px */
+}
+
+/* 第二行：例句和课程号 */
+.word-example-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #666666;
+  line-height: 40rpx; /* 改为20px高度 */
+  height: 40rpx; /* 设置固定高度20px */
+  margin-top: 8rpx; /* 与上一行的间距 */
+}
+
+.word-example {
+  flex: 1;
+  font-size: 12px;
+  color: #666666;
+}
+
+/* 以下样式保持不变，用于兼容其他可能的功能 */
+.search-bar {
+  width: 100%;
+  padding: 20rpx;
+  background-color: #f0f0f0;
+  border-radius: 10rpx;
+  margin-bottom: 20rpx;
+  box-sizing: border-box;
+}
+.search-bar input {
+  border: 1rpx solid #dddddd;
+  padding: 10rpx;
+}
+.display-mode-selector {
+  margin-bottom: 20rpx;
+}
+.word-list .word-item,
+.word-cards .word-card {
+  background-color: #f8f8f8;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  border-radius: 10rpx;
+}
+.word {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+.reading, .meaning, .type, .sentence {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.book-selector {
+  width: 100%;
+  padding: 20rpx;
+  background-color: #e0e0e0;
+  border-radius: 10rpx;
+  margin-bottom: 20rpx;
+  box-sizing: border-box;
+}
+
+.lesson-selector {
+  width: 100%;
+  padding: 20rpx;
+  background-color: #d0d0d0;
+  border-radius: 10rpx;
+  margin-bottom: 20rpx;
+  box-sizing: border-box;
+}
+
+.word-list {
+  width: 100%;
+}
+
+/* 筛选弹窗样式 */
+.filter-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  z-index: 1000;
+}
+
+.filter-content {
+  width: 100%;
+  background-color: #ffffff;
+  border-top-left-radius: 24rpx;
+  border-top-right-radius: 24rpx;
+  padding: 48rpx 48rpx calc(48rpx + env(safe-area-inset-bottom));
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+
+.filter-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #111111;
+}
+
+.close-button {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  color: #666666;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.filter-option {
+  height: 88rpx;
+  padding: 0 32rpx;
+  border-radius: 24rpx;
+  border: 2rpx solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.filter-option.selected {
+  border-color: #4845f7;
+  background-color: #f0f6fc;
+}
+
+.filter-option text {
+  font-size: 32rpx;
+  color: #111111;
+}
+
+/* 底部白色渐变遮罩 */
+.bottom-gradient-mask {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 240rpx; /* 120px高度 */
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+  pointer-events: none; /* 不阻挡点击事件 */
+  z-index: 10; /* 确保在内容之上 */
+}

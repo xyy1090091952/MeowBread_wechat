@@ -1,37 +1,113 @@
 <!--pages/vocabulary/vocabulary.wxml-->
-<view class="page">
-  <!-- 顶部提示横幅 -->
-  <view class="banner">
-    <text class="banner-text">{{bannerText}}</text>
-  </view>
+<view class="container">
+  <!-- 词典选择页面 -->
+  <block wx:if="{{!showWordList}}">
+    <!-- 顶部提示横幅 -->
+    <view class="banner fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}">
+      <text class="banner-text">{{bannerText}}</text>
+    </view>
 
-  <!-- 分类循环 -->
-  <block wx:for="{{categories}}" wx:key="id">
-    <!-- 分类标题 -->
-    <view class="section-title">{{item.title}}</view>
+    <!-- 分类循环 -->
+    <block wx:for="{{categories}}" wx:key="id">
+      <!-- 分类标题 -->
+      <view class="section-title fade-in-element fade-delay-{{(index + 1) * 2}} {{pageLoaded ? 'show' : ''}}">{{item.title}}</view>
 
-    <!-- 横向滑动词典列表 -->
-    <view class="dict-scroll-wrapper">
-      <scroll-view scroll-x class="dict-scroll" enable-flex>
-        <view class="dict-row">
-          <block wx:for="{{item.dicts}}" wx:for-item="dict" wx:key="id">
-            <view class="dict-card" data-id="{{dict.id}}" bindtap="openDictionary">
-              <image class="cover-image" src="{{dict.cover}}" mode="aspectFill"></image>
-              <!-- 底部信息 -->
-              <view class="dict-info">
-                <text class="dict-name">{{dict.name}}</text>
-                <text class="dict-count">词汇量 {{dict.wordCount}}</text>
+      <!-- 横向滑动词典列表 -->
+      <view class="dict-scroll-wrapper fade-in-element fade-delay-{{(index + 1) * 2 + 1}} {{pageLoaded ? 'show' : ''}}">
+        <scroll-view scroll-x class="dict-scroll" enable-flex>
+          <view class="dict-row">
+            <block wx:for="{{item.dicts}}" wx:for-item="dict" wx:key="id">
+              <view class="dict-card" data-id="{{dict.id}}" bindtap="openDictionary">
+                <image class="cover-image" src="{{dict.cover}}" mode="aspectFill"></image>
+                <!-- 底部信息 -->
+                <view class="dict-info">
+                  <text class="dict-name">{{dict.name}}</text>
+                  <text class="dict-count">词汇量 {{dict.wordCount}}</text>
+                </view>
+                <!-- 进度标签 -->
+                <view class="progress-tag">单词进度{{dict.progress}}%</view>
               </view>
-              <!-- 进度标签 -->
-              <view class="progress-tag">单词进度 {{dict.progress}}%</view>
+            </block>
+          </view>
+        </scroll-view>
+      </view>
+    </block>
+  </block>
+
+  <!-- 单词列表页面 -->
+  <block wx:if="{{showWordList}}">
+    <!-- 顶部导航栏 -->
+    <view class="word-list-header fade-in-element fade-delay-1 {{wordListLoaded ? 'show' : ''}}">
+      <view class="back-button" bindtap="closeWordList">
+        <image src="../../images/icons/arrow_right.svg" class="back-icon"></image>
+      </view>
+      <view class="title-info-container">
+        <view class="word-list-title">{{currentDictName}}</view>
+        <view class="word-count-info">共 {{filteredWordList.length || wordList.length}} 个单词</view>
+      </view>
+      <view class="filter-button" bindtap="showFilterModal">
+        <image src="../../images/icons/change.png" class="filter-icon"></image>
+      </view>
+    </view>
+
+    <!-- 单词列表 -->
+    <scroll-view scroll-y class="word-list-scroll fade-in-element fade-delay-2 {{wordListLoaded ? 'show' : ''}}">
+      <view class="word-list-container">
+        <block wx:for="{{filteredWordList || wordList}}" wx:key="index">
+          <view class="word-card">
+            <!-- 顶部区域：主要单词信息 -->
+            <view class="word-item-top">
+              <view class="word-info">
+                <view class="word-main">{{item.kanji || item.kana}}</view>
+                <view class="word-type {{item.type}}">{{item.type}}</view>
+              </view>
             </view>
-          </block>
+            
+            <!-- 底部区域：详细信息 -->
+            <view class="word-item-bottom">
+              <!-- 第一行：假名和中文详细信息 -->
+              <view class="word-basic-info">
+                假名：{{item.kana}}{{item.meaning ? ' | 中文：' + item.meaning : ''}}
+              </view>
+              
+              <!-- 第二行：例句和课程号 -->
+              <view class="word-example-row">
+                <view class="word-example">
+                  {{item.example ? '例句：' + item.example : ''}}
+                </view>
+                <view class="word-lesson">第{{item.lesson}}课</view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </scroll-view>
+
+    <!-- 筛选弹窗 -->
+    <view class="filter-modal" wx:if="{{showFilterModal}}" bindtap="hideFilterModal">
+      <view class="filter-content" catchtap="stopPropagation">
+        <view class="filter-header">
+          <text class="filter-title">筛选单词</text>
+          <view class="close-button" bindtap="hideFilterModal">×</view>
         </view>
-      </scroll-view>
+        <view class="filter-options">
+          <view class="filter-option {{filterType === 'all' ? 'selected' : ''}}" bindtap="selectFilter" data-type="all">
+            <text>全部单词</text>
+          </view>
+          <view class="filter-option {{filterType === 'kana' ? 'selected' : ''}}" bindtap="selectFilter" data-type="kana">
+            <text>仅假名</text>
+          </view>
+          <view class="filter-option {{filterType === 'kanji' ? 'selected' : ''}}" bindtap="selectFilter" data-type="kanji">
+            <text>有汉字</text>
+          </view>
+          <view class="filter-option {{filterType === 'example' ? 'selected' : ''}}" bindtap="selectFilter" data-type="example">
+            <text>有例句</text>
+          </view>
+        </view>
+      </view>
     </view>
   </block>
 
-  <!-- 底部间距 -->
-  <view style="height:20vh;"></view>
-
+  <!-- 底部白色渐变遮罩 -->
+  <view class="bottom-gradient-mask"></view>
 </view>

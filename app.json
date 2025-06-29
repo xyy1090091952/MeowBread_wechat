@@ -8,7 +8,9 @@
     "pages/filter/filter",
     "pages/quiz/quiz",
     "pages/quiz-result/quiz-result",
-    "pages/mistakes/mistakes"
+    "pages/mistakes/mistakes",
+    "pages/quiz-details/quiz-details",
+    "pages/gashapon/gashapon"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -104,6 +104,14 @@ Page({
     });
   },
 
+  // 输入框确认按钮事件处理
+  onInputConfirm: function(e) {
+    // 如果用户答案不为空且未显示答案卡，则提交答案
+    if (!this.data.isUserAnswerEmpty && !this.data.showAnswerCard) {
+      this.submitAnswer();
+    }
+  },
+
   onOptionSelect: function(e) {
     const selected = e.currentTarget.dataset.option;
     this.setData({ 

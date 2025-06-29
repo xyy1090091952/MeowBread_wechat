@@ -3,7 +3,8 @@ Page({
   data: {
     // 根据Figma设计稿，一级页面主要是选项，不直接展示题目信息
     currentFilterDisplay: '', // 用于显示当前题库筛选范围
-    showTextbookSelector: false // 控制教材选择弹窗的显示
+    showTextbookSelector: false, // 控制教材选择弹窗的显示
+    pageLoaded: false // 控制页面渐显动画
   },
   onLoad: function (options) {
     // 页面加载时可以进行一些初始化操作
@@ -21,6 +22,10 @@ Page({
    */
   onReady() {
     console.log('Page ready');
+    // 页面渲染完成后，启动渐显动画
+    setTimeout(() => {
+      this.setData({ pageLoaded: true });
+    }, 100); // 延迟100ms开始动画，确保页面完全渲染
   },
 
   /**

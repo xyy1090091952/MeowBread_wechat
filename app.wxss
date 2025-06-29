@@ -5,6 +5,55 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 200rpx 0;
   box-sizing: border-box;
+} 
+
+/* ===== 全局加载动画样式 ===== */
+
+/* 渐显动画关键帧 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 基础渐显类 */
+.fade-in-element {
+  opacity: 0;
+  transform: translateY(30rpx);
+  transition: all 0.6s ease-out;
+}
+
+/* 显示状态 */
+.fade-in-element.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 不同延迟的渐显效果 */
+.fade-delay-1 { transition-delay: 0.1s; }
+.fade-delay-2 { transition-delay: 0.2s; }
+.fade-delay-3 { transition-delay: 0.3s; }
+.fade-delay-4 { transition-delay: 0.4s; }
+.fade-delay-5 { transition-delay: 0.5s; }
+.fade-delay-6 { transition-delay: 0.6s; }
+.fade-delay-7 { transition-delay: 0.7s; }
+.fade-delay-8 { transition-delay: 0.8s; }
+
+/* 加载状态类 - 页面加载时的占位 */
+.loading-placeholder {
+  background-color: #f8f9fa;
+  border-radius: 8rpx;
+  animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% { background-color: #f8f9fa; }
+  50% { background-color: #e9ecef; }
+  100% { background-color: #f8f9fa; }
 } 

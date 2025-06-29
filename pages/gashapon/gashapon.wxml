@@ -1,0 +1,14 @@
+<!--pages/gashapon/gashapon.wxml-->
+<view class="container">
+  <view class="header fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}">
+    <text class="page-title">扭蛋机</text>
+  </view>
+  
+  <view class="content fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
+    <view class="placeholder">
+      <image class="placeholder-icon" src="/images/icons/Coins.png"></image>
+      <text class="placeholder-text">扭蛋机页面</text>
+      <text class="placeholder-subtitle">精彩内容即将上线...</text>
+    </view>
+  </view>
+</view> 
