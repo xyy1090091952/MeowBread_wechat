@@ -38,7 +38,7 @@
   background-color: #FFFFFF;
   border-radius: 24rpx;
   padding: 32rpx;
-  margin: 0 48rpx 24rpx 48rpx; /* 左右各48rpx margin，底部24rpx margin */
+  margin: 0 24rpx 24rpx 24rpx; /* 左右各24rpx margin，底部24rpx margin */
   box-shadow: 8rpx 8rpx 32rpx rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
@@ -91,7 +91,7 @@
 }
 
 .status-error .status-text {
-  color: #FF1F74;
+  color: #000000;
   font-size: 10px;
 }
 
@@ -108,7 +108,7 @@
 }
 
 .word {
-  font-size: 14px; /* 改为14px */
+  font-size: 16px; 
   font-weight: 600;
   color: #1F2329;
   margin-right: 16rpx;
@@ -208,6 +208,8 @@
 
 .status-text {
   font-size: 24rpx;
+  font-weight: bold; /* 字体加粗 */
+  color: #000000; /* 黑色 */
   margin-right: 8rpx;
 }
 

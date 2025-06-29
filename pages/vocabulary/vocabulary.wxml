@@ -25,7 +25,7 @@
                   <text class="dict-count">词汇量 {{dict.wordCount}}</text>
                 </view>
                 <!-- 进度标签 -->
-                <view class="progress-tag">单词进度 {{dict.progress}}%</view>
+                <view class="progress-tag">单词进度{{dict.progress}}%</view>
               </view>
             </block>
           </view>
@@ -55,23 +55,29 @@
       <view class="word-list-container">
         <block wx:for="{{filteredWordList || wordList}}" wx:key="index">
           <view class="word-card">
-            <!-- 假名 -->
-            <view class="word-kana">{{item.kana}}</view>
+            <!-- 顶部区域：主要单词信息 -->
+            <view class="word-item-top">
+              <view class="word-info">
+                <view class="word-main">{{item.kanji || item.kana}}</view>
+                <view class="word-type {{item.type}}">{{item.type}}</view>
+              </view>
+            </view>
             
-            <!-- 汉字（如果有） -->
-            <view wx:if="{{item.kanji}}" class="word-kanji">{{item.kanji}}</view>
-            
-            <!-- 中文意思 -->
-            <view class="word-meaning">{{item.meaning}}</view>
-            
-            <!-- 词性 -->
-            <view class="word-type">{{item.type}}</view>
-            
-            <!-- 例句（如果有） -->
-            <view wx:if="{{item.example}}" class="word-example">{{item.example}}</view>
-            
-            <!-- 课程号 -->
-            <view class="word-lesson">第{{item.lesson}}课</view>
+            <!-- 底部区域：详细信息 -->
+            <view class="word-item-bottom">
+              <!-- 第一行：假名和中文详细信息 -->
+              <view class="word-basic-info">
+                假名：{{item.kana}}{{item.meaning ? ' | 中文：' + item.meaning : ''}}
+              </view>
+              
+              <!-- 第二行：例句和课程号 -->
+              <view class="word-example-row">
+                <view class="word-example">
+                  {{item.example ? '例句：' + item.example : ''}}
+                </view>
+                <view class="word-lesson">第{{item.lesson}}课</view>
+              </view>
+            </view>
           </view>
         </block>
       </view>

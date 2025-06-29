@@ -294,8 +294,8 @@
   left: 0;
   right: 0;
   z-index: 1001;
-  /* 应用名为 slideUp 的动画，持续时间0.3秒，并使用贝塞尔曲线实现快进慢出的效果 */
-  animation: slideUp 0.3s cubic-bezier(0.215, 0.610, 0.355, 1);
+  /* 应用名为 slideUp 的动画，持续时间0.4秒，使用非常轻微的弹性缓动曲线 */
+  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.05);
 }
 
 .answer-card {
