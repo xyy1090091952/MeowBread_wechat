@@ -22,13 +22,27 @@ module.exports = {
             "name": "梁老师的课",
             "description": "梁老师的课",
             "lesson_files": [
+                "liangs_class/lesson5.js",
+                "liangs_class/lesson6.js",
+                "liangs_class/lesson7.js",
+                "liangs_class/lesson8.js",
+                "liangs_class/lesson9.js",
+                "liangs_class/lesson10.js",
+                "liangs_class/lesson11.js",
+                "liangs_class/lesson12.js",
+                "liangs_class/lesson13.js",
+                "liangs_class/lesson14.js",
+                "liangs_class/lesson15.js",
+                "liangs_class/lesson16.js",
                 "liangs_class/lesson17.js",
                 "liangs_class/lesson18.js",
                 "liangs_class/lesson19.js",
                 "liangs_class/lesson20.js",
                 "liangs_class/lesson21.js",
                 "liangs_class/lesson22.js",
-                "liangs_class/lesson23.js"
+                "liangs_class/lesson23.js",
+                "liangs_class/lesson24.js",
+                "liangs_class/lesson25.js"
             ]
         },
         {
@@ -38,7 +52,8 @@ module.exports = {
             "lesson_files": [
                 "duolingguo/lesson1.js",
                 "duolingguo/lesson2.js",
-                "duolingguo/lesson3.js"
+                "duolingguo/lesson3.js",
+                "duolingguo/lesson5.js"
             ]
         }
     ]

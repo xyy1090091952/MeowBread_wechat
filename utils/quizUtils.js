@@ -93,36 +93,57 @@ function formatQuestion(wordData, questionTypeToGenerate, allWordsInLesson) {
 function generateOptions(correctWordData, optionType, allWordsInLesson) {
   const correctWord = correctWordData.data;
   let correctAnswerText = '';
+  let predefinedDistractors = [];
+
+  // 确定正确答案和预设的干扰项来源
   if (optionType === 'chinese') {
-      correctAnswerText = correctWord.中文;
+    correctAnswerText = correctWord.中文;
+    predefinedDistractors = correctWord.中文干扰词 || [];
   } else {
-      correctAnswerText = correctWord.汉字 || correctWord.假名;
+    correctAnswerText = correctWord.汉字 || correctWord.假名;
+    predefinedDistractors = correctWord.日语干扰词 || [];
   }
 
   let options = [correctAnswerText];
-  const distractorsPool = allWordsInLesson.filter(w => {
-      const wData = w.data;
-      if (optionType === 'chinese') {
-          return wData.中文 !== correctAnswerText && wData.中文;
-      } else {
-          return (wData.汉字 || wData.假名) !== correctAnswerText && (wData.汉字 || wData.假名);
-      }
-  });
 
-  while (options.length < 4 && distractorsPool.length > 0) {
-    const randomIndex = Math.floor(Math.random() * distractorsPool.length);
-    const distractorWord = distractorsPool.splice(randomIndex, 1)[0].data;
-    let distractorText = '';
-    if (optionType === 'chinese') {
-      distractorText = distractorWord.中文;
-    } else {
-      distractorText = distractorWord.汉字 || distractorWord.假名;
-    }
-    if (distractorText && !options.includes(distractorText)) {
-      options.push(distractorText);
+  // 优先使用预设干扰项
+  // 筛选出不与正确答案重复的有效干扰项
+  let validPredefinedDistractors = predefinedDistractors.filter(d => d && d !== correctAnswerText);
+  // 打乱顺序
+  validPredefinedDistractors.sort(() => 0.5 - Math.random());
+
+  // 从有效预设干扰项中提取最多3个，且不能与已有的选项重复
+  for (const distractor of validPredefinedDistractors) {
+    if (options.length >= 4) break;
+    if (!options.includes(distractor)) {
+      options.push(distractor);
     }
   }
 
+  // 如果选项不足4个，则使用备用逻辑从整个课程词库中补充
+  if (options.length < 4) {
+    const fallbackPool = allWordsInLesson.filter(w => {
+      const wData = w.data;
+      const wText = (optionType === 'chinese') ? wData.中文 : (wData.汉字 || wData.假名);
+      // 确保备用选项有效、不与正确答案重复、且不包含在已选的选项中
+      return wText && wText !== correctAnswerText && !options.includes(wText);
+    });
+
+    // 打乱备用池
+    fallbackPool.sort(() => 0.5 - Math.random());
+
+    // 补充选项直到满4个
+    while (options.length < 4 && fallbackPool.length > 0) {
+      const distractorWord = fallbackPool.shift().data;
+      const distractorText = (optionType === 'chinese') ? distractorWord.中文 : (distractorWord.汉字 || distractorWord.假名);
+      // 再次检查，避免在并发或复杂情况下加入重复项
+      if (distractorText && !options.includes(distractorText)) {
+        options.push(distractorText);
+      }
+    }
+  }
+
+  // 最后再次随机排序所有选项
   return options.sort(() => 0.5 - Math.random());
 }
 
