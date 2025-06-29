@@ -1,12 +1,53 @@
 <!--pages/knowledge/knowledge.wxml-->
 <view class="container">
-  <view class="category-list">
-    <view class="category-item" wx:for="{{categories}}" wx:key="id" bindtap="selectCategory" data-id="{{item.id}}">
-      {{item.name}}
-    </view>
+  <!-- 顶部分类滑动按钮 DIV -->
+  <view class="category-scroll-wrapper">
+    <scroll-view scroll-x class="category-scroll" enable-flex>
+      <view class="category-buttons">
+        <view 
+          class="category-button {{selectedCategory === item.id ? 'selected' : ''}}" 
+          wx:for="{{categories}}" 
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="selectCategory"
+        >
+          <view class="button-text-container">
+            <text class="button-main-text">{{item.name}}</text>
+            <text class="button-sub-text">共收录{{item.cardCount}}条知识点</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
   </view>
-  <view class="content-area" wx:if="{{currentCategory}}">
-    <text class="content-title">{{currentCategory.name}}</text>
-    <text class="content-text">{{content}}</text>
+
+  <!-- 内容区域 DIV2 -->
+  <view class="content-area fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
+    <!-- 第一个分类的内容 -->
+    <view wx:if="{{selectedCategory === 1}}" class="content-grid">
+      <view 
+        class="content-card slide-in-card {{contentLoaded ? 'show' : ''}}" 
+        wx:for="{{grammarCards}}" 
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="openCardDetail"
+      >
+        <!-- 上半部分 - 背景图片区域 -->
+        <view class="card-image-section" style="background-image: url('{{item.backgroundImage}}');">
+          <view class="card-labels">
+            <view class="card-label-primary">{{item.category}}</view>
+            <view class="card-label-secondary">{{item.subcategory}}</view>
+          </view>
+        </view>
+        <!-- 下半部分 - 标题区域 -->
+        <view class="card-title-section">
+          <text class="card-title">{{item.title}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 其他分类的空内容 -->
+    <view wx:elif="{{selectedCategory > 1}}" class="empty-content">
+      <text>该分类内容正在准备中...</text>
+    </view>
   </view>
 </view>

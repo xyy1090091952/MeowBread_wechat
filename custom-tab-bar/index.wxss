@@ -21,7 +21,7 @@
   bottom: 0; /* 紧贴tabbar底部 */
   width: 716rpx; /*≈358px*/
   height: 136rpx; /*≈68px*/
-  background: linear-gradient(90deg, #e8e8ff 0%, #fbfbff 100%);
+  background-color: rgba(255, 255, 255, 0.9); /* 90%透明度的白色背景 */
   border-radius: 68rpx;
   box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
 }
@@ -38,6 +38,11 @@
   z-index: 1;
 }
 
+/* 点击效果 - 使用hover-class替代:active */
+.tab-item-hover {
+  transform: scale(0.95);
+}
+
 /* 选中背景 */
 .tab-item.active::before {
   /* 已由统一 indicator 实现 */
@@ -47,12 +52,15 @@
 .indicator {
   position: absolute;
   top: 12rpx;
+  left: 0; /* 默认位置，会被内联样式覆盖 */
   width: 172rpx;
   height: 112rpx;
   background: #f7f6ff;
   border-radius: 68rpx;
   box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
   z-index: 0;
+  /* 添加平滑移动动画 - 减少回弹效果 */
+  transition: left 0.2s ease;
 }
 
 .icon {

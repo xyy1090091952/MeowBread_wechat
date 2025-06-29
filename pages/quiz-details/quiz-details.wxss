@@ -1,0 +1,51 @@
+/* pages/quiz-details/quiz-details.wxss */
+
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 0 24rpx;
+}
+
+.header {
+  padding: 40rpx 0;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 40rpx;
+}
+
+.placeholder-icon {
+  width: 120rpx;
+  height: 120rpx;
+  margin-bottom: 40rpx;
+  opacity: 0.6;
+}
+
+.placeholder-text {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 16rpx;
+}
+
+.placeholder-subtitle {
+  font-size: 24rpx;
+  color: #999;
+} 

@@ -168,9 +168,9 @@
   gap: 12px; /* 选项之间的间距 */
 }
 
-/* 选项按钮的基本样式 */
+/* 选择题选项按钮的基本样式 */
 .option-button {
-  animation: fadeInUp 0.3s ease-out both; /* 加快动画速度 */
+  animation: fadeInUp 0.3s ease-out both; /* 基础动画，延迟时间通过WXML内联样式设置为0.1s+index*0.1s */
   background-color: #FFFFFF; /* 白色背景 */
   color: #000000; /* 黑色文字 */
   border: none; /* 无边框 */
@@ -189,14 +189,48 @@
   box-shadow: 4px 4px 16px 0px rgba(0, 0, 0, 0.08); /* 阴影 */
 }
 
+/* 禁用状态的选项按钮 */
+.option-button.disabled {
+  pointer-events: none; /* 禁用点击事件 */
+  opacity: 1; /* 保持完全不透明，因为我们有其他视觉状态 */
+}
+
+/* 选项内容容器 */
+.option-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* 选项文字 */
+.option-text {
+  flex: 1;
+}
+
+/* 正解标签 */
+.correct-label {
+  width: 44px;
+  height: 24px;
+  background-color: rgba(255, 255, 255, 0.6); /* 60%透明度的白色 */
+  border-radius: 12px; /* 圆角 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
+}
+
 .option-button.selected {
   background-color: #F0F0F0;
   border-color: #F0F0F0;
   color: #000000;
 }
 
+/* 填空题输入框样式 */
 .fill-input {
-  animation: fadeInUp 0.3s ease-out 0.2s both; /* 动画加快，延迟也相应缩短 */
+  animation: fadeInUp 0.3s ease-out 0.1s both; /* 填空题延迟0.1s，在题目头部之后出现 */
 
   border-radius: 24rpx;
   padding: 20rpx;
@@ -209,10 +243,10 @@
 }
 
 .submit-button {
-  background-color: #4CAF50;
-  color: white;
+  background-color: #7DF303; /* 使用统一的绿色 */
+  color: black; /* 黑色文字在绿色背景上更清晰 */
   border: none;
-  border-radius: 8rpx;
+  border-radius: 24px;
   padding: 25rpx;
   font-size: 34rpx;
   width: 100%;
@@ -221,20 +255,27 @@
 }
 
 /* 动画定义 */
-/* 问题卡片元素入场动画 */
+/* 问题卡片元素入场动画 - 从下往上淡入效果 */
 @keyframes fadeInUp {
   from {
-    opacity: 0;
-    transform: translateY(20px);
+    opacity: 0; /* 初始透明度为0 */
+    transform: translateY(20px); /* 初始位置向下偏移20px */
   }
   to {
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 1; /* 最终透明度为1 */
+    transform: translateY(0); /* 最终位置回到原位 */
   }
 }
 
+/* 
+ * 容器模块加载动画顺序说明：
+ * 1. 题目头部(question-header): 0s延迟 - 首先出现
+ * 2. 选择题选项(option-button): 0.1s, 0.2s, 0.3s, 0.4s延迟 - 依次出现
+ * 3. 填空题输入框(fill-input): 0.1s延迟 - 在题目头部之后出现
+ */
+
 .question-header {
-  animation: fadeInUp 0.3s ease-out both; /* 为题干也加上动画，并加快速度 */
+  animation: fadeInUp 0.3s ease-out both; /* 题目头部首先出现，无延迟 */
 }
 
 @keyframes slideUp {
@@ -261,10 +302,21 @@
   background-color: #FFFFFF;
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
-  padding: 24px 48rpx calc(20rpx + env(safe-area-inset-bottom));
-  box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.08);
+  padding: 24px 48rpx calc(24rpx + env(safe-area-inset-bottom));
   width: 100%;
   box-sizing: border-box;
+}
+
+/* 答题正确时的渐变背景 - 从上到下 CFE2FF 到 F0F6FC */
+.answer-card.correct {
+  background: linear-gradient(to bottom, #CFE2FF 0%, #F0F6FC 100%);
+  border-top-left-radius: 48rpx; /* 左上角圆角 */
+  border-top-right-radius: 48rpx; /* 右上角圆角 */
+}
+
+/* 答题错误时的渐变背景 - 从上到下 FFBED6 到 FFDFF3 */
+.answer-card.incorrect {
+  background: linear-gradient(to bottom, #FFBED6 0%, #FFDFF3 100%);
 }
 
 .answer-card .next-button {
@@ -272,9 +324,9 @@
 }
 
 .next-button {
-  background-color: #007aff; /* 蓝色背景 */
+  background-color: #007aff; /* 默认蓝色背景 */
   color: white; /* 白色文字 */
-  border-radius: 24rpx; /* 大圆角 */
+  border-radius: 48rpx; /* 圆角48rpx，更圆润 */
   height: 45px; /* 固定高度 */
   display: flex;
   align-items: center;
@@ -283,30 +335,44 @@
   font-weight: 600;
 }
 
+/* 正确状态的按钮保持蓝色 */
+.answer-card.correct .next-button {
+  background-color: #007aff; /* 蓝色背景 */
+}
+
+/* 错误状态的按钮使用粉色 */
+.answer-card.incorrect .next-button {
+  background-color: #FF4E91; /* 粉色背景，使用全局颜色 */
+}
+
 .answer-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 40rpx;
   font-weight: bold;
-  margin-bottom: 20rpx;
+  margin-bottom: 32rpx;
   text-align: left;
+  color: #000000; /* 全局设置为黑色 */
 }
 
 .answer-card.correct .answer-header {
-  color: #28a745;
+  color: #000000; /* 正确时也是黑色 */
 }
 
 .answer-card.incorrect .answer-header {
-  color: #FF4D4F; /* 错误状态下的标题颜色 */
+  color: #000000; /* 错误时也是黑色 */
 }
 
 .highlight-toggle {
   display: flex;
   align-items: center;
-  background-color: #f0f0f0;
-  padding: 5rpx 15rpx;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.6); /* 60%透明度的白色 */
+  padding: 0;
   border-radius: 20rpx;
+  width: 92px;
+  height: 24px;
 }
 
 .highlight-icon {
@@ -331,8 +397,9 @@
 }
 
 .word-details {
-  font-size: 16px;
+  font-size: 14px;
   color: #333333;
+  font-weight: bold; /* 所有word-details内容加粗 */
 }
 
 .word-details text {
@@ -364,21 +431,21 @@
 }
 
 .option-button.correct {
-  background-color: #4CAF50; /* Green for correct */
-  color: white;
-  border-color: #388E3C;
+  background-color: #7DF303; /* 使用指定的绿色 */
+  color: black; /* 黑色文字在绿色背景上更清晰 */
+  border-color: #7DF303;
 }
 
 .option-button.incorrect {
-  background-color: #f44336; /* Red for incorrect */
+  background-color: #FF4E91; /* 使用全局粉色 */
   color: white;
-  border-color: #D32F2F;
+  border-color: #FF4E91;
 }
 
 .option-button.correct-unselected {
-  background-color: #a5d6a7; /* Lighter green for unselected correct answer */
-  color: #333;
-  border-color: #81c784;
+  background-color: #7DF303; /* 使用指定的绿色 */
+  color: black; /* 黑色文字在绿色背景上更清晰 */
+  border-color: #7DF303;
 }
 
 /* Styles for fill input feedback */
@@ -400,8 +467,7 @@
   right: 0;
   display: flex;
   justify-content: space-around;
-  padding: 20rpx 20rpx calc(20rpx + constant(safe-area-inset-bottom)) 20rpx; /* 适配 iPhone X 等底部安全区 */
-  padding: 20rpx 20rpx calc(20rpx + env(safe-area-inset-bottom)) 20rpx; /* 适配 iPhone X 等底部安全区 */
+  padding: 20rpx 48rpx calc(20rpx + env(safe-area-inset-bottom)) 48rpx; /* 适配 iPhone X 等底部安全区 */
   background-color: #fff; /* Add a background color to prevent content overlap */
   z-index: 1000; /* Ensure buttons are on top */
 }
@@ -419,12 +485,12 @@
   padding: 0; /* 移除上下padding，因为高度已固定 */
   font-size: 32rpx;
   text-align: center;
-  border-radius: 24rpx;
+  border-radius: 24px;
+  border: none;
   display: flex; /* 使用flex布局 */
   align-items: center; /* 内部文本垂直居中 */
   justify-content: center; /* 内部文本水平居中 */
   box-sizing: border-box; /* 确保padding和border不会增加元素实际宽高 */
-  /* border: 1px solid transparent;  暂时移除这个统一边框，看看是否是边框导致的问题 */
 }
 
 .full-width-button {
@@ -435,13 +501,14 @@
 .skip-button {
   background-color: #f0f0f0; /* Light grey, or choose another color */
   color: #333;
+  border: none;
 }
 
-.submit-button {
-  background-color: #4CAF50; /* Green, or choose another color */
-  color: white;
+.submit-button.half-width-button {
+  background-color: #7DF303; /* 使用统一的绿色 */
+  color: black; /* 黑色文字在绿色背景上更清晰 */
   box-shadow: none; /* 移除投影 */
-  border: 1px solid #ddd; /* 统一边框样式，与skip-button一致 */
+  border: none;
 }
 
 .next-button {
@@ -524,30 +591,114 @@
 /* 答案卡片中的词性标签和详情项目 */
 .answer-card .word-details {
   text-align: left; /* 详情左对齐 */
-  margin-top: 20rpx;
 }
 
 .detail-item {
   display: flex;
-  margin-bottom: 12px;
+  margin-bottom: 4px; /* 修改为4px */
+  height: 20px; /* 设置高度为20px */
+  align-items: center; /* 垂直居中对齐 */
 }
 
 .detail-label {
-  font-weight: normal;
   margin-right: 8px;
-  color: #888888;
-  width: 60px; /* 确保对齐 */
+  color: #000000; /* 修改为黑色 */
 }
 
 .detail-value {
-  color: #333333;
+  color: #000000; /* 修改为黑色 */
+  font-weight: bold; /* 添加加粗 */
   flex: 1;
 }
 
 /* 确保答案卡片中的词性标签样式也能正确应用，并且可以根据需要调整大小或边距 */
 .answer-card .part-of-speech-tag {
-  margin-left: 0; /* 在答案卡中，标签通常紧跟在“词性:”之后，不需要额外左边距 */
+  margin-left: 0; /* 在答案卡中，标签通常紧跟在"词性:"之后，不需要额外左边距 */
   /* 如果需要，可以调整字体大小或padding */
   /* font-size: 22rpx; */
   /* padding: 3rpx 10rpx; */
+}
+
+/* ===== 按钮点击加深效果 ===== */
+
+/* 蓝色按钮点击效果 (#007aff -> 非常轻微加深) */
+.next-button:active,
+.option-button.selected:active {
+  background-color: #0070ee !important; /* 蓝色非常轻微加深 */
+  transform: scale(0.98); /* 轻微缩放效果 */
+  transition: all 0.1s ease;
+}
+
+/* 绿色按钮点击效果 (#7DF303 -> 非常轻微加深) */
+.submit-button:active,
+.submit-button.half-width-button:active,
+.option-button.correct:active,
+.option-button.correct-unselected:active {
+  background-color: #75E902 !important; /* 绿色非常轻微加深 */
+  transform: scale(0.98);
+  transition: all 0.1s ease;
+}
+
+/* 粉色按钮点击效果 (#FF4E91 -> 非常轻微加深) */
+.option-button.incorrect:active,
+.answer-card.incorrect .next-button:active {
+  background-color: #F44788 !important; /* 粉色非常轻微加深 */
+  transform: scale(0.98);
+  transition: all 0.1s ease;
+}
+
+/* 灰色按钮点击效果 (#f0f0f0 -> 非常轻微加深) */
+.skip-button:active {
+  background-color: #EAEAEA !important; /* 灰色非常轻微加深 */
+  transform: scale(0.98);
+  transition: all 0.1s ease;
+}
+
+/* 白色按钮点击效果 (#FFFFFF -> 非常轻微加深) */
+.option-button:active {
+  background-color: #FAFAFA !important; /* 白色非常轻微加深 */
+  transform: scale(0.98);
+  transition: all 0.1s ease;
+}
+
+/* 高亮切换按钮点击效果 */
+.highlight-toggle:active {
+  background-color: rgba(255, 255, 255, 0.55) !important; /* 透明度非常轻微加深 */
+  transform: scale(0.98);
+  transition: all 0.1s ease;
+}
+
+/* 为所有按钮添加基础过渡效果 */
+.option-button,
+.submit-button,
+.next-button,
+.skip-button,
+.half-width-button,
+.highlight-toggle {
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+/* 确保已有状态的按钮优先级正确 */
+.option-button.selected {
+  background-color: #007aff;
+  color: white;
+  border-color: #007aff;
+}
+
+.option-button.correct {
+  background-color: #7DF303; /* 使用指定的绿色 */
+  color: black; /* 黑色文字在绿色背景上更清晰 */
+  border-color: #7DF303;
+}
+
+.option-button.incorrect {
+  background-color: #FF4E91; /* 使用全局粉色 */
+  color: white;
+  border-color: #FF4E91;
+}
+
+.option-button.correct-unselected {
+  background-color: #7DF303; /* 使用指定的绿色 */
+  color: black; /* 黑色文字在绿色背景上更清晰 */
+  border-color: #7DF303;
 }

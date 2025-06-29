@@ -1,30 +1,67 @@
 <!--pages/profile/profile.wxml-->
 <view class="container">
-  <view class="user-info">
+  <!-- 用户信息区域 -->
+  <view class="user-info-section fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}">
     <!-- 未登录时显示 -->
     <block wx:if="{{!isLoggedIn}}">
+      <!-- 显示用户头像，如果没有则显示默认头像 -->
       <image class="avatar" src="{{avatarUrl || '/images/icons/profile.png'}}"></image>
-      <button open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar" class="avatar-button"> 选择头像 </button>
-      <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:blur="onNicknameInput" value="{{nickname}}"/>
+      <button open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar" class="avatar-button">{{avatarUrl ? '更换头像' : '选择头像'}}</button>
+      <input type="nickname" class="nickname-input" placeholder="{{nickname || '请输入昵称'}}" bind:blur="onNicknameInput" value="{{nickname}}"/>
       <button bindtap="login" class="login-button">保存并登录</button>
     </block>
-    <!-- 登录后显示 -->
+    
+    <!-- 登录后显示用户信息 -->
     <block wx:if="{{isLoggedIn && userInfo}}">
+      <!-- 显示用户真实头像 -->
       <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-      <text class="nickname">{{userInfo.nickName}}</text>
-      <button bindtap="logout">退出登录</button>
+      <view class="user-text-container">
+        <!-- 显示用户昵称 -->
+        <view class="user-name">{{userInfo.nickName}}</view>
+        <!-- 显示用户称号（根据答题数量动态计算） -->
+        <view class="user-title">{{userTitle}}</view>
+      </view>
     </block>
   </view>
-  <view class="statistics" wx:if="{{isLoggedIn}}">
-    <text class="stat-title">答题统计</text>
-    <view class="stat-item">总题数：{{statistics.totalQuestions}}</view>
-    <view class="stat-item">正确答案：{{statistics.correctAnswers}}</view>
-    <view class="stat-item">平均正确率：{{statistics.averageAccuracy}}%</view>
-  </view>
-  <view class="menu-section" wx:if="{{isLoggedIn}}">
-    <view class="menu-item" bindtap="goToMistakes">
-      <text class="menu-text">错词库</text>
-      <image class="menu-arrow" src="/images/icons/arrow-right.svg"></image>
+
+  <!-- 登录后显示的功能模块 -->
+  <block wx:if="{{isLoggedIn}}">
+    <!-- 答题结果模块 -->
+    <view class="quiz-results-section fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
+      <!-- 内层答题准确率模块 -->
+      <view class="accuracy-module">
+        <text class="accuracy-label">答题准确率</text>
+        <text class="accuracy-value">{{statistics.averageAccuracy}}%</text>
+      </view>
+      <!-- 底部统计和详细数据区域 -->
+      <view class="bottom-stats-area">
+        <text class="stats-text">共答题{{statistics.totalQuestions}}道，答对{{statistics.correctAnswers}}道</text>
+                 <view class="detail-btn" bindtap="goToQuizDetails">
+           <text class="detail-text">查看详细数据</text>
+           <image class="detail-arrow" src="/images/icons/arrow_right.svg"></image>
+         </view>
+      </view>
     </view>
-  </view>
+
+    <!-- 扭蛋机模块 -->
+    <view class="gashapon-section fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}" bindtap="goToGashapon">
+      <image class="gashapon-background" src="/images/banner/gashapon.jpg"></image>
+      <view class="gashapon-text-overlay">
+        <text class="gashapon-title">扭蛋机</text>
+        <view class="gashapon-coins-info">
+          <image class="coins-icon" src="/images/icons/Coins.png"></image>
+          <text class="coins-count">300</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 错题库模块 -->
+    <view class="mistake-section fade-in-element fade-delay-4 {{pageLoaded ? 'show' : ''}}" bindtap="goToMistakes">
+      <view class="option-text-container">
+        <text class="option-main-text">错题库</text>
+        <text class="option-sub-text">{{mistakeCount}}个错误</text>
+      </view>
+      <image class="option-icon arrow-white" src="/images/icons/arrow_right.svg"></image>
+    </view>
+  </block>
 </view>

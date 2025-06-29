@@ -1,76 +1,283 @@
 /* pages/profile/profile.wxss */
 .container {
-  padding: 20rpx;
-}
-.user-info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 40rpx;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  min-height: 100vh;
+  padding: 20rpx 48rpx 40rpx 48rpx;
 }
+
+/* ==================== 用户信息区域 ==================== */
+.user-info-section {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 24rpx;
+  padding: 24rpx 0 24rpx 16rpx;
+  box-sizing: border-box;
+}
+
+/* 未登录状态样式 */
+.avatar-button {
+  margin-top: 20rpx;
+  background-color: #07c160;
+  color: white;
+  border-radius: 12rpx;
+  padding: 16rpx 32rpx;
+  font-size: 28rpx;
+  border: none;
+}
+
+.nickname-input {
+  margin-top: 20rpx;
+  border: 2rpx solid #e8e8e8;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  width: 80%;
+  text-align: center;
+  font-size: 28rpx;
+  background-color: #fafafa;
+}
+
+.login-button {
+  margin-top: 30rpx;
+  background-color: #4845F7;
+  color: white;
+  border-radius: 12rpx;
+  padding: 24rpx 40rpx;
+  font-size: 32rpx;
+  width: 80%;
+  border: none;
+}
+
+/* 已登录状态样式 */
 .avatar {
   width: 128rpx;
   height: 128rpx;
   border-radius: 50%;
 }
-.nickname {
-  margin-top: 20rpx;
-  font-size: 32rpx;
+
+/* 右侧文字容器 */
+.user-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 32rpx;
+  flex: 1;
+}
+
+.user-name {
+  font-size: 48rpx;
+  font-weight: bold;
   color: #333;
+  line-height: 1.2;
 }
 
-.avatar-button {
-  margin-top: 20rpx;
-  background-color: #07c160;
-  color: white;
-  border-radius: 8rpx;
-  padding: 10rpx 20rpx;
-  font-size: 28rpx;
+.user-title {
+  font-size: 24rpx;
+  color: #666666;
+  margin-top: 8rpx;
+  line-height: 1.2;
 }
 
-.nickname-input {
-  margin-top: 20rpx;
-  border: 1px solid #ddd;
-  border-radius: 8rpx;
-  padding: 15rpx;
-  width: 80%;
-  text-align: center;
-  font-size: 28rpx;
+/* ==================== 答题结果模块 ==================== */
+.quiz-results-section {
+  width: 100%;
+  height: 272rpx;
+  background: linear-gradient(to right, #F0F6FC, #CFE2FF);
+  border-radius: 48rpx;
+  margin-bottom: 24rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0px 8rpx 24rpx rgba(0, 0, 0, 0.05);
 }
 
-.login-button {
-  margin-top: 30rpx;
-  background-color: #07c160;
-  color: white;
-  border-radius: 8rpx;
-  padding: 15rpx 30rpx;
-  font-size: 30rpx;
-  width: 80%;
-}
-.menu-section {
-  margin-top: 40rpx;
+/* 内层答题准确率模块 */
+.accuracy-module {
+  width: 100%;
+  height: 176rpx;
   background-color: #fff;
-  border-radius: 16rpx;
-  padding: 0 30rpx;
-}
-
-.menu-item {
+  border-radius: 48rpx;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30rpx 0;
-  border-bottom: 1rpx solid #f0f0f0;
+  padding: 0 48rpx;
+  box-sizing: border-box;
 }
 
-.menu-item:last-child {
-  border-bottom: none;
-}
-
-.menu-text {
+.accuracy-label {
   font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
 }
 
-.menu-arrow {
-  width: 16rpx;
-  height: 28rpx;
+.accuracy-value {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #000;
+}
+
+/* 底部统计和详细数据区域 */
+.bottom-stats-area {
+  height: 96rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 48rpx;
+  box-sizing: border-box;
+}
+
+.stats-text {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.detail-btn {
+  display: flex;
+  align-items: center;
+}
+
+.detail-text {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #4845F7;
+  margin-right: 8rpx;
+}
+
+.detail-arrow {
+  width: 32rpx;
+  height: 32rpx;
+  filter: invert(27%) sepia(99%) saturate(3948%) hue-rotate(231deg) brightness(98%) contrast(96%);
+}
+
+/* ==================== 扭蛋机模块 ==================== */
+.gashapon-section {
+  width: 100%;
+  height: 320rpx;
+  border-radius: 48rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0px 8rpx 24rpx rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.gashapon-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.gashapon-text-overlay {
+  position: absolute;
+  top: 48rpx;
+  left: 48rpx;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+
+.gashapon-title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+.gashapon-coins-info {
+  display: flex;
+  align-items: center;
+}
+
+.coins-icon {
+  width: 48rpx;
+  height: 48rpx;
+  margin-right: 8rpx;
+}
+
+.coins-count {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: normal;
+}
+
+/* ==================== 错题库模块 ==================== */
+.mistake-section {
+  width: 100%;
+  background: linear-gradient(to right, #4845F7, #93CDFF);
+  border-radius: 48rpx;
+  padding: 40rpx 40rpx;
+  box-shadow: 0px 8rpx 24rpx rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mistake-section .option-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.mistake-section .option-main-text {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.mistake-section .option-sub-text {
+  font-size: 24rpx;
+  margin-top: 8rpx;
+  color: #FFFFFF;
+}
+
+.mistake-section .option-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-left: 20rpx;
+}
+
+/* 箭头图标颜色控制 */
+.arrow-white {
+  filter: invert(100%); /* 白色箭头 */
+}
+
+.arrow-black {
+  filter: none; /* 黑色箭头，保持原色 */
+}
+
+/* ==================== 通用样式 ==================== */
+
+/* 点击效果 */
+.quiz-results-section:active,
+.gashapon-section:active,
+.mistake-section:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/* 响应式调整 */
+@media (max-width: 350px) {
+  .container {
+    padding: 0 16rpx 40rpx 16rpx;
+  }
+  
+  .user-info-section,
+  .quiz-results-section,
+  .gashapon-section,
+  .mistake-section {
+    padding: 24rpx;
+  }
 }

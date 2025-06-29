@@ -1,0 +1,55 @@
+/* pages/gashapon/gashapon.wxss */
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #FFE066 0%, #FF6B6B 100%);
+  padding: 0 24rpx;
+}
+
+.header {
+  padding: 40rpx 0;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 40rpx;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+}
+
+.placeholder-icon {
+  width: 120rpx;
+  height: 120rpx;
+  margin-bottom: 40rpx;
+  opacity: 0.8;
+}
+
+.placeholder-text {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.placeholder-subtitle {
+  font-size: 24rpx;
+  color: #666;
+} 
