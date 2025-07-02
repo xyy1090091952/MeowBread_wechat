@@ -1,4 +1,12 @@
 /**app.wxss**/
+
+/* 设置页面背景色，让安全区域也有背景色 */
+page {
+  background-color: transparent; /* 透明背景，这样安全区域不会有白色 */
+  /* 或者使用: background-color: #000000; 黑色背景 */
+  /* 或者使用: background-color: #f8f9fa; 浅灰色背景 */
+}
+
 .container {
   height: 100%;
   display: flex;

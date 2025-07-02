@@ -19,7 +19,7 @@
 
 .result-card {
   text-align: center;
-  margin-top: 15vh; /* 与顶部的距离 */
+  margin-top: 100rpx; /* 改为100rpx，进一步向上移动 */
   margin-bottom: 5vh;
 }
 
@@ -140,7 +140,7 @@ button.done-button {
 .result-bubble{
   position:absolute;
   left:-40rpx; /* 向左溢出 40rpx */
-  top:50%;
+  top:calc(50% - 80rpx); /* 向上移动80rpx，调整到合适位置 */
   transform:translateY(-50%);
   z-index:1002;
   display:inline-block;

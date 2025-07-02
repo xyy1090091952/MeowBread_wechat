@@ -2,7 +2,7 @@
 <view class="container">
   <!-- Banner模块 -->
   <view class="banner-container fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
-    <image class="banner-image" src="/images/banner/banner1.png" mode="widthFix"></image>
+    <image class="banner-image" src="/images/banner/banner1.jpg" mode="widthFix"></image>
     <!-- 中央 Logo -->
     <image class="banner-logo" src="/images/banner/Meow Bread.svg" mode="widthFix" />
   </view>
@@ -37,7 +37,7 @@
     <!-- 错题重练按钮 -->
     <view class="option-card wrong-questions-card fade-in-element fade-delay-6 {{pageLoaded ? 'show' : ''}}" bindtap="practiceWrongQuestions">
       <view class="option-text-container">
-        <text class="option-main-text">错题重练</text>
+        <text class="option-main-text">错题重练 ({{mistakeCount}})</text>
         <text class="option-sub-text">巩固错误题目</text>
       </view>
       <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />

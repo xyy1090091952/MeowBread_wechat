@@ -643,7 +643,6 @@
 .next-button:active,
 .option-button.selected:active {
   background-color: #0070ee !important; /* 蓝色非常轻微加深 */
-  transform: scale(0.98); /* 轻微缩放效果 */
   transition: all 0.1s ease;
 }
 
@@ -653,7 +652,6 @@
 .option-button.correct:active,
 .option-button.correct-unselected:active {
   background-color: #75E902 !important; /* 绿色非常轻微加深 */
-  transform: scale(0.98);
   transition: all 0.1s ease;
 }
 
@@ -661,28 +659,24 @@
 .option-button.incorrect:active,
 .answer-card.incorrect .next-button:active {
   background-color: #F44788 !important; /* 粉色非常轻微加深 */
-  transform: scale(0.98);
   transition: all 0.1s ease;
 }
 
 /* 灰色按钮点击效果 (#f0f0f0 -> 非常轻微加深) */
 .skip-button:active {
   background-color: #EAEAEA !important; /* 灰色非常轻微加深 */
-  transform: scale(0.98);
   transition: all 0.1s ease;
 }
 
 /* 白色按钮点击效果 (#FFFFFF -> 非常轻微加深) */
 .option-button:active {
   background-color: #FAFAFA !important; /* 白色非常轻微加深 */
-  transform: scale(0.98);
   transition: all 0.1s ease;
 }
 
 /* 高亮切换按钮点击效果 */
 .highlight-toggle:active {
   background-color: rgba(255, 255, 255, 0.55) !important; /* 透明度非常轻微加深 */
-  transform: scale(0.98);
   transition: all 0.1s ease;
 }
 

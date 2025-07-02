@@ -5,6 +5,7 @@
  */
 const quizService = require('../../utils/quiz.service.js');
 const mistakeManager = require('../../utils/mistakeManager.js');
+const learnedManager = require('../../utils/learnedManager.js');
 
 Page({
   /**
@@ -25,6 +26,7 @@ Page({
     isCorrect: false, // 当前答案是否正确
     score: 0, // 得分
     totalQuestions: 0, // 总题数 (快速答题模式)
+    actualAnsweredQuestions: 0, // 实际回答的题目数（不包括跳过的题目）
     timeSpent: 0, // 用时
     formattedTime: '00:00', // 格式化后的时间
     timer: null, // 计时器
@@ -61,6 +63,7 @@ Page({
       ...initialState,
       score: 0,
       currentQuestionIndex: 0,
+      actualAnsweredQuestions: 0, // 初始化实际回答题数
       userAnswer: '',
       isUserAnswerEmpty: true,
       selectedOption: null,
@@ -127,16 +130,25 @@ Page({
     const currentQ = this.data.questions[this.data.currentQuestionIndex];
     const isCorrect = quizService.checkAnswer(currentQ, this.data.userAnswer);
 
+    // 只有提交答案才算实际回答了题目（跳过不算）
+    const newAnsweredCount = this.data.actualAnsweredQuestions + 1;
+
     if (isCorrect) {
+      // 答对了：更新错题记录 + 标记为已背
       mistakeManager.correctMistake(currentQ.wordInfo);
+      
+      // 标记单词为已背（需要获取词典ID）
+      this.markWordAsLearned(currentQ.wordInfo);
     } else {
+      // 答错了：添加到错题库
       mistakeManager.addMistake(currentQ.wordInfo);
     }
 
     this.setData({
       isCorrect: isCorrect,
       showAnswerCard: true,
-      score: this.data.score + (isCorrect ? 1 : 0)
+      score: this.data.score + (isCorrect ? 1 : 0),
+      actualAnsweredQuestions: newAnsweredCount // 更新实际回答题数
     }, () => {
       // 在setData回调中处理高亮，确保UI已更新
       this.processHighlight();
@@ -145,7 +157,13 @@ Page({
 
 
 
+  /**
+   * 跳过题目 - 不计入任何统计数据
+   */
   skipQuestion: function() {
+    // 跳过题目不做任何学习状态更新，不计入答题统计
+    // 直接进入下一题，不更新score和actualAnsweredQuestions
+    console.log('跳过题目，不计入统计数据');
     this.nextQuestion();
   },
 
@@ -176,17 +194,22 @@ Page({
 
   endQuiz: function() {
     this.clearTimer();
-    const displayedTotalQuestions = this.data.quizMode === 'quick' ? this.data.totalQuestions : this.data.questions.length;
-    const { score, timeSpent } = this.data;
-    const accuracy = displayedTotalQuestions > 0 ? (score / displayedTotalQuestions) : 0;
+    
+    // 使用实际回答的题目数计算统计（不包括跳过的题目）
+    const { score, actualAnsweredQuestions, timeSpent } = this.data;
+    
+    // 如果没有回答任何题目，避免除零错误
+    const accuracy = actualAnsweredQuestions > 0 ? (score / actualAnsweredQuestions) : 0;
 
     let resultLevel = '';
     if (accuracy <= 0.2) resultLevel = 'noob';
     else if (accuracy <= 0.8) resultLevel = 'normal';
     else resultLevel = 'perfect';
 
+    console.log(`答题结束统计: 实际回答${actualAnsweredQuestions}题，答对${score}题，准确率${(accuracy * 100).toFixed(1)}%`);
+
     wx.redirectTo({
-      url: `/pages/quiz-result/quiz-result?score=${score}&totalQuestions=${displayedTotalQuestions}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}&fromMistakes=${this.data.fromMistakes || false}`
+      url: `/pages/quiz-result/quiz-result?score=${score}&totalQuestions=${actualAnsweredQuestions}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}&fromMistakes=${this.data.fromMistakes || false}`
     });
   },
 
@@ -225,10 +248,42 @@ Page({
   onUnload: function() {
     this.clearTimer();
   },
+  /**
+   * 标记单词为已背
+   * @param {object} wordInfo - 单词信息对象
+   */
+  markWordAsLearned: function(wordInfo) {
+    try {
+      // 获取词典ID，优先使用当前词典ID，如果是'all'则尝试从单词来源获取
+      let dictionaryId = this.data.dictionaryId;
+      
+      // 如果是混合模式('all')，尝试从单词的sourceDictionary字段获取
+      if (dictionaryId === 'all' && wordInfo.sourceDictionary) {
+        dictionaryId = wordInfo.sourceDictionary;
+      }
+      
+      // 如果仍然无法确定词典ID，记录警告但不阻止程序运行
+      if (!dictionaryId || dictionaryId === 'all') {
+        console.warn('无法确定单词所属词典，将使用默认词典标记:', wordInfo);
+        dictionaryId = 'everyones_japanese'; // 使用默认词典
+      }
+      
+      // 调用学习进度管理器标记为已背
+      const success = learnedManager.markWordAsLearned(wordInfo, dictionaryId);
+      
+      if (success) {
+        console.log(`单词已标记为已背: ${wordInfo['假名'] || wordInfo['汉字']} (${dictionaryId})`);
+      }
+    } catch (error) {
+      console.error('标记单词为已背时出错:', error);
+    }
+  },
+
   resetQuizState: function() {
     this.clearTimer();
     this.setData({
       currentQuestionIndex: 0,
+      actualAnsweredQuestions: 0, // 重置实际回答题数
       userAnswer: '',
       isUserAnswerEmpty: true,
       selectedOption: null,

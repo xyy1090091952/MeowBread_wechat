@@ -1,6 +1,6 @@
 .word-card {
   background-color: #FFFFFF;
-  border-radius: 24rpx;
+  border-radius: 48rpx;
   padding: 32rpx;
   margin: 0 48rpx 24rpx 48rpx; /* 左右各48rpx，下24rpx */
   box-shadow: 8rpx 8rpx 32rpx rgba(0,0,0,0.08);
@@ -30,18 +30,23 @@
   align-items:center;
   padding:0 12rpx;
 }
-.status-text {margin-right:8rpx;}
+.status-text {margin-right:8rpx;font-weight:bold;}
 .status-dot {width:24rpx;height:24rpx;border-radius:50%;}
-.status-unseen {color:#8A8A8A;background:#F0F0F0;}
+.status-unseen {border:1px solid #CFE2FF;background:transparent;}
+.status-unseen .status-text{color:#000;}
+.status-unseen .status-dot{background:linear-gradient(to right,#F0F6FC,#CFE2FF);}
 .status-corrected {border:1px solid #FFCA1D;background:transparent;}
 .status-corrected .status-text{color:#000;}
 .status-corrected .status-dot{background:linear-gradient(to right,#FFCA1D,#FFEB12);}
 .status-error {border:1px solid #FF1F74;background:transparent;}
 .status-error .status-text{color:#000;}
 .status-error .status-dot{background:linear-gradient(to right,#FF1F74,#FF4E91);}
-.item-bottom{font-size:24rpx;color:#666;line-height:32rpx;}
-.basic-info{line-height:40rpx;}
-.example-sentence{margin-top:8rpx;}
+.status-memorized {border:1px solid #7DF303;background:transparent;}
+.status-memorized .status-text{color:#000;}
+.status-memorized .status-dot{background:linear-gradient(to right,#33E6B7,#7DF303);}
+.item-bottom{font-size:24rpx;color:#666;line-height:32rpx;height:auto;} /* 高度自适应 */
+.basic-info{line-height:40rpx;font-weight:bold;} /* 文字加粗 */
+.example-sentence{margin-top:8rpx;font-weight:bold;} /* 文字加粗 */
 
 /* -------- 通用标签样式 -------- */
 .label {
@@ -53,13 +58,14 @@
   text-align: center;
   line-height: 40rpx;
   margin-left: 16rpx;
+  font-weight: bold; /* 所有词性标签文字统一加粗 */
 }
 
 /* 使用 label + 变体类控制颜色 */
 .label.adverb {background-color:#FF375C;}
 .label.verb {background-color:#598BF1;}
 .label.intransitive-verb {background-color:#39D763;}
-.label.transitive-verb {background-color:#FAAD3A;}
+.label.transitive-verb {background-color:#FAAD3A;} /* 移除单独的font-weight，使用通用样式 */
 .label.noun {background-color:#B79EFF;}
 .label.adjective {background-color:#F56593;}
 .label.particle {background-color:#5bc0de;}
@@ -67,6 +73,18 @@
 .label.adjectival-noun {background-color:#17a2b8;}
 .label.pronoun {background-color:#6f42c1;}
 .label.numeral {background-color:#fd7e14;}
+
+/* 新增缺失词性的样式 */
+.label.suffix {background-color:#795548;} /* 接尾词 - 棕色 */
+.label.greeting {background-color:#e91e63;} /* 寒暄语 - 粉红色 */
+.label.interjection {background-color:#ff5722;} /* 感叹词 - 深橙色 */
+.label.idiom {background-color:#607d8b;} /* 惯用语 - 蓝灰色 */
+.label.attributive {background-color:#3f51b5;} /* 连体词 - 靛蓝色 */
+.label.quantifier {background-color:#009688;} /* 数量词 - 青色 */
+.label.noun-suru-verb {background-color:#9c27b0;} /* 名词/サ变动词 - 紫色 */
+.label.adverb-adjectival-noun {background-color:#ff9800;} /* 副词/形容动词 - 橙色 */
+.label.noun-adjectival-noun {background-color:#8bc34a;} /* 名词/形容动词 - 浅绿色 */
+.label.unknown {background-color:#9e9e9e;} /* 未知词性 - 灰色 */
 
 /* 兼容旧 class="type xxx" 写法（渐进迁移）*/
 .type, .label {

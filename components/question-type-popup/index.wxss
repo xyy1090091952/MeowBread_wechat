@@ -5,31 +5,68 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+}
+
+/* 弹窗动画样式 */
+.modal-fade-in {
+  animation: modalFadeIn 0.2s ease-out forwards;
+}
+
+.modal-fade-out {
+  animation: modalFadeOut 0.2s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .popup-container {
   position: fixed;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background-color: #FFFFFF;
-  border-top-left-radius: 24rpx;
-  border-top-right-radius: 24rpx;
   transform: translateY(100%);
-  transition: transform 0.3s ease-in-out;
-  z-index: 1000;
-  padding:40rpx;
-  box-sizing: border-box;
+  transition: transform 0.3s ease-out;
+  z-index: 1001;
 }
 
-.popup-show {
+.popup-container.popup-show {
   transform: translateY(0);
 }
 
 .popup-content {
-  /* 内容区域不再需要独立的背景和边距，由 container 控制 */
+  background-color: #ffffff;
+  border-top-left-radius: 24rpx;
+  border-top-right-radius: 24rpx;
+  padding: 48rpx 48rpx calc(48rpx + env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform 0.3s ease-out;
+}
+
+/* 弹窗内容动画 - 修复双重动画问题 */
+.modal-mask.modal-fade-in + .popup-container .popup-content {
+  transform: translateY(0);
+}
+
+.modal-mask.modal-fade-out + .popup-container .popup-content {
+  transform: translateY(100%);
 }
 
 .popup-header {

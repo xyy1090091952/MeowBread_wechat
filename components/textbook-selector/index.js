@@ -11,8 +11,18 @@ Component({
   },
 
   observers: {
-    'visible': function(isVisible) {
-      console.log('TextbookSelector visibility changed to:', isVisible);
+    'visible': function(newVal, oldVal) {
+      if (newVal && !oldVal) {
+        // 弹窗显示时添加渐显动画
+        this.setData({
+          modalAnimationClass: ''
+        });
+        setTimeout(() => {
+          this.setData({
+            modalAnimationClass: 'modal-fade-in'
+          });
+        }, 50);
+      }
     }
   },
 
@@ -21,7 +31,9 @@ Component({
    */
   data: {
     textbooks: [],
-    selectedBookId: null // 用于暂存用户选择的课本ID
+    selectedBookId: null, // 用于暂存用户选择的课本ID
+    dictionaries: [],
+    modalAnimationClass: '' // 弹窗动画类名
   },
 
   lifetimes: {
@@ -61,7 +73,18 @@ Component({
     },
 
     handleClose() {
-      this.triggerEvent('close');
+      // 添加渐隐动画
+      this.setData({
+        modalAnimationClass: 'modal-fade-out'
+      });
+      
+      // 动画完成后关闭弹窗
+      setTimeout(() => {
+        this.setData({
+          modalAnimationClass: ''
+        });
+        this.triggerEvent('close');
+      }, 200);
     },
 
     // 用户点击课本卡片，暂存选择

@@ -8,7 +8,7 @@ Page({
     isLoggedIn: false, // 初始化登录状态为false
     avatarUrl: '', // 用于存储临时头像路径（用户选择的头像）
     nickname: '', // 用于存储用户输入的昵称
-    userTitle: '新人さん', // 用户称号（根据答题数量动态变化）
+    userTitle: '菜鸡 🐣', // 用户称号（根据答题数量动态变化）
     statistics: {
       totalQuestions: 0,   // 总答题数量
       correctAnswers: 0,   // 正确答题数量
@@ -153,7 +153,7 @@ Page({
     this.setData({
       isLoggedIn: false,
       userInfo: null, // 清空用户信息
-      userTitle: '新人さん', // 重置称号
+      userTitle: '菜鸡 🐣', // 重置称号
       statistics: { // 重置统计数据显示
         totalQuestions: 0,
         correctAnswers: 0,
@@ -187,30 +187,31 @@ Page({
 
   // 根据答题数量更新用户称号
   updateUserTitle: function(totalQuestions) {
-    let title = '新人さん 🌱'; // 默认称号（0-49题）
+    let title = '菜鸡 🐣'; // 默认称号（0-49题）
     
-    // 10个进阶称号，一个比一个厉害！ ✨
-    if (totalQuestions >= 50000) {
-      title = '言葉の神 ⚡'; // 50000+ 单词之神
-    } else if (totalQuestions >= 20000) {
-      title = '辞書マスター 📜'; // 20000+ 辞典大师
-    } else if (totalQuestions >= 10000) {
-      title = '語彙王 👑'; // 10000+ 词汇之王
-    } else if (totalQuestions >= 5000) {
-      title = '単語仙人 🧙‍♂️'; // 5000+ 单词仙人
-    } else if (totalQuestions >= 2000) {
-      title = '言語達人 🎯'; // 2000+ 语言达人
-    } else if (totalQuestions >= 1000) {
-      title = '記憶武士 ⚔️'; // 1000+ 记忆武士
-    } else if (totalQuestions >= 500) {
-      title = '単語忍者 🥷'; // 500+ 单词忍者
+    // 10个进阶称号，中日结合的幽默称号设计 ✨
+    if (totalQuestions >= 6000) {
+      title = '日语之神 ⚡'; // 6000+ 传说级存在
+    } else if (totalQuestions >= 4500) {
+      title = '单词の鬼 👹'; // 4500+ 单词之鬼
+    } else if (totalQuestions >= 3200) {
+      title = '词汇マスター 👑'; // 3200+ 词汇大师
+    } else if (totalQuestions >= 2200) {
+      title = '学霸さん 🤓'; // 2200+ 学霸同学
+    } else if (totalQuestions >= 1500) {
+      title = '前辈 😎'; // 1500+ 前辈
+    } else if (totalQuestions >= 800) {
+      title = '老司机 🚗'; // 800+ 老司机
+    } else if (totalQuestions >= 400) {
+      title = '小有所成 🚀'; // 400+ 小有所成
     } else if (totalQuestions >= 200) {
-      title = '学習者 📖'; // 200+ 学习者
+      title = '努力中 📚'; // 200+ 努力中
     } else if (totalQuestions >= 100) {
-      title = '背単語生 📚'; // 100+ 背单词学生
+      title = '新手君 🌱'; // 100+ 新手君
     } else if (totalQuestions >= 50) {
-      title = '初心者 🌸'; // 50+ 初心者
+      title = '小白兔 🐰'; // 50+ 小白兔
     }
+    // 0-49题保持菜鸡称号
     
     console.log(`用户答题数: ${totalQuestions}, 获得称号: ${title}`); // 调试信息
     

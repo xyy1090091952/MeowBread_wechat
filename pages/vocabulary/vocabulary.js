@@ -1,4 +1,6 @@
 // pages/vocabulary/vocabulary.js
+const learnedManager = require('../../utils/learnedManager.js');
+
 Page({
   data: {
     bannerText: 'Meow Bread 会记录你每一次的学习进度',
@@ -43,12 +45,14 @@ Page({
         }
       });
 
-      // 从本地存储读取已学习数量，计算进度百分比
-      const learnedKey = `learned_${dict.id}`;
-      const learnedCount = wx.getStorageSync(learnedKey) || 0;
-      const progress = wordCount ? Math.floor((learnedCount / wordCount) * 100) : 0;
+      // 使用学习进度管理器获取准确的学习进度
+      const learningProgress = learnedManager.getLearningProgress(dict.id);
+      const progress = learningProgress.progress;
+      
+      // 如果学习进度管理器返回的总数与计算的不同，使用计算的数量（更准确）
+      const finalWordCount = learningProgress.totalCount || wordCount;
 
-      return { ...dict, wordCount, progress, cover: coverMap[dict.id] || '' };
+      return { ...dict, wordCount: finalWordCount, progress, cover: coverMap[dict.id] || '' };
     });
 
     // 获取用户选择的课本ID，用于优先排序
@@ -108,7 +112,7 @@ Page({
 
 
 
-  /** 页面展示时更新底部导航选中状态 */
+  /** 页面展示时更新底部导航选中状态并重新加载进度数据 */
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       const page = getCurrentPages().pop();
@@ -119,5 +123,8 @@ Page({
         this.getTabBar().updateSelected(index);
       }
     }
+    
+    // 重新加载数据以更新学习进度（用户可能刚完成答题）
+    this.prepareData();
   }
 });

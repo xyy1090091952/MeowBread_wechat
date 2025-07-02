@@ -27,10 +27,10 @@
 /* 自定义全屏用户区域 */
 .fullscreen-user-section {
   width: 100vw; /* 完整视口宽度 */
-  margin: 200rpx -48rpx 0 -48rpx; /* 增加顶部边距，补偿隐藏导航栏的空间 */
+  margin: 200rpx -48rpx 32rpx -48rpx; /* 增加顶部边距，补偿隐藏导航栏的空间，底部边距32rpx(16px) */
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row; /* 改为水平排列 */
+  align-items: center; /* 垂直居中对齐 */
   padding: 0 48rpx; /* 内部左右边距 */
   box-sizing: border-box;
 }
@@ -76,8 +76,8 @@
 
 /* 已登录状态样式 */
 .avatar {
-  width: 200rpx;
-  height: 200rpx;
+  width: 128rpx; /* 64px转换为小程序单位 */
+  height: 128rpx; /* 64px转换为小程序单位 */
   border-radius: 50%;
   object-fit: cover;
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
@@ -85,15 +85,16 @@
 
 /* 右侧文字容器 */
 .user-text-container {
-  margin-top: 24rpx;
-  align-items: center;
+  margin-left: 24rpx; /* 改为左边距，与头像保持间距 */
+  align-items: flex-start; /* 文字左对齐 */
   display: flex;
   flex-direction: column;
+  flex: 1; /* 占据剩余空间 */
 }
 
 .user-name {
-  font-size: 36rpx;
-  font-weight: 600;
+  font-size: 48rpx; /* 24px转换为小程序单位 */
+  font-weight: bold; /* 设置为加粗 */
   color: #111;
 }
 
@@ -280,13 +281,7 @@
 
 /* ==================== 通用样式 ==================== */
 
-/* 点击效果 */
-.quiz-results-section:active,
-.gashapon-section:active,
-.mistake-section:active {
-  transform: scale(0.98);
-  transition: transform 0.1s ease;
-}
+/* 移除点击缩小效果，保持统一 */
 
 /* 响应式调整 */
 @media (max-width: 350px) {
@@ -393,7 +388,6 @@
 
 /* 点击态效果 - 自定义 */
 .avatar-btn:active {
-  transform: scale(0.98) !important;
   opacity: 0.8 !important;
 }
 /* 完全自定义的昵称输入框 - 微信推荐方式 */

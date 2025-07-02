@@ -1,6 +1,6 @@
 <view class="tabbar" wx:if="{{show !== false}}">
   <view class="bg"></view>
-  <view class="indicator" wx:if="{{selected >= 0}}" style="left: {{indicatorLeft}}px;"></view>
+  <view class="indicator {{animationDisabled ? 'no-animation' : ''}}" wx:if="{{selected >= 0}}" style="left: {{indicatorLeft}}px; transition-duration: {{animationDuration}}ms;"></view>
   <block wx:for="{{tabList}}" wx:key="index">
     <view class="tab-item {{index===selected ? 'active' : ''}}" data-index="{{index}}" bindtap="switchTab" hover-class="tab-item-hover" hover-stay-time="100">
       <image class="icon" src="{{index===selected ? item.selectedIconPath : item.iconPath}}"></image>

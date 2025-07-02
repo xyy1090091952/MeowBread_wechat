@@ -10,7 +10,18 @@ var mapClassNameToPartOfSpeech = function(className) {
     'conjunction': '连词',
     'adjectival-noun': '形容动词',
     'pronoun': '代词',
-    'numeral': '数词'
+    'numeral': '数词',
+    // 新增缺失的词性映射
+    'suffix': '接尾词',
+    'greeting': '寒暄语',
+    'interjection': '感叹词',
+    'idiom': '惯用语',
+    'attributive': '连体词',
+    'quantifier': '数量词',
+    'noun-suru-verb': '名词/サ变动词',
+    'adverb-adjectival-noun': '副词/形容动词',
+    'noun-adjectival-noun': '名词/形容动词',
+    'unknown': '未知'
   };
   return mapping[className] || className;
 };
@@ -27,9 +38,19 @@ var mapPartOfSpeechToClassName = function(partOfSpeech) {
     '连词': 'conjunction',
     '形容动词': 'adjectival-noun',
     '代词': 'pronoun',
-    '数词': 'numeral'
+    '数词': 'numeral',
+    // 新增缺失的词性映射
+    '接尾词': 'suffix',
+    '寒暄语': 'greeting',
+    '感叹词': 'interjection',
+    '惯用语': 'idiom',
+    '连体词': 'attributive',
+    '数量词': 'quantifier',
+    '名词/サ变动词': 'noun-suru-verb',
+    '副词/形容动词': 'adverb-adjectival-noun',
+    '名词/形容动词': 'noun-adjectival-noun'
   };
-  return mapping[partOfSpeech] || partOfSpeech;
+  return mapping[partOfSpeech] || 'unknown';
 };
 
 module.exports = {

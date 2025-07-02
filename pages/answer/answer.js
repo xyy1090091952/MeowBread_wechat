@@ -1,10 +1,13 @@
 // pages/answer/answer.js
+const mistakeManager = require('../../utils/mistakeManager.js'); // 引入错题管理器
+
 Page({
   data: {
     // 根据Figma设计稿，一级页面主要是选项，不直接展示题目信息
     currentFilterDisplay: '', // 用于显示当前题库筛选范围
     showTextbookSelector: false, // 控制教材选择弹窗的显示
     pageLoaded: false, // 控制页面渐显动画
+    mistakeCount: 0, // 错题数量
     // 元素位置信息（用于碰撞检测）
     elementPositions: []
   },
@@ -246,8 +249,12 @@ Page({
       }
     }
 
+    // 获取错题数量
+    const mistakeCount = mistakeManager.getMistakeList().length;
+
     this.setData({
-      currentFilterDisplay: currentFilterDisplay
+      currentFilterDisplay: currentFilterDisplay,
+      mistakeCount: mistakeCount // 更新错题数量
     });
 
     // 更新自定义底部导航的选中状态

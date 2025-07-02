@@ -6,8 +6,12 @@
       <view class="word-list-title">{{currentDictName}}</view>
       <view class="word-count-info">共 {{filteredWordList.length || wordList.length}} 个单词</view>
     </view>
-    <view class="filter-button" bindtap="showFilterModal">
-      <image src="../../images/icons/change.png" class="filter-icon"></image>
+    <view class="right-controls" bindtap="showFilterModal">
+      <!-- 课程选择显示字段 -->
+      <view class="course-selector">{{selectedCourseName}}</view>
+      <view class="filter-button">
+        <image src="../../images/icons/change.png" class="filter-icon"></image>
+      </view>
     </view>
   </view>
 
@@ -15,55 +19,29 @@
   <scroll-view scroll-y class="word-list-scroll fade-in-element fade-delay-2 {{wordListLoaded ? 'show' : ''}}">
     <view class="word-list-container">
       <block wx:for="{{filteredWordList || wordList}}" wx:key="index">
-        <view class="word-card">
-          <!-- 顶部区域：主要单词信息 -->
-          <view class="word-item-top">
-            <view class="word-info">
-              <view class="word-main">{{item.kanji || item.kana}}</view>
-              <view class="word-type {{item.type}}">{{item.type}}</view>
-            </view>
-          </view>
-          
-          <!-- 底部区域：详细信息 -->
-          <view class="word-item-bottom">
-            <!-- 第一行：假名和中文详细信息 -->
-            <view class="word-basic-info">
-              假名：{{item.kana}}{{item.meaning ? ' | 中文：' + item.meaning : ''}}
-            </view>
-            
-            <!-- 第二行：例句和课程号 -->
-            <view class="word-example-row">
-              <view class="word-example">
-                {{item.example ? '例句：' + item.example : ''}}
-              </view>
-              <view class="word-lesson">第{{item.lesson}}课</view>
-            </view>
-          </view>
-        </view>
+        <!-- 使用word-card组件，传入适配后的数据 -->
+        <word-card item="{{item}}" />
       </block>
     </view>
   </scroll-view>
 
   <!-- 筛选弹窗 -->
-  <view class="filter-modal" wx:if="{{showFilterModal}}" bindtap="hideFilterModal">
+  <view class="filter-modal {{modalAnimationClass}}" wx:if="{{showFilterModal}}" bindtap="hideFilterModal" catchtouchmove="stopPropagation">
     <view class="filter-content" catchtap="stopPropagation">
       <view class="filter-header">
-        <text class="filter-title">筛选单词</text>
+        <text class="filter-title">选择课程</text>
         <view class="close-button" bindtap="hideFilterModal">×</view>
       </view>
       <view class="filter-options">
-        <view class="filter-option {{filterType === 'all' ? 'selected' : ''}}" bindtap="selectFilter" data-type="all">
-          <text>全部单词</text>
+        <view class="filter-option {{selectedCourse === 'all' ? 'selected' : ''}}" bindtap="selectCourse" data-course="all">
+          <text>全部课程</text>
         </view>
-        <view class="filter-option {{filterType === 'kana' ? 'selected' : ''}}" bindtap="selectFilter" data-type="kana">
-          <text>仅假名</text>
-        </view>
-        <view class="filter-option {{filterType === 'kanji' ? 'selected' : ''}}" bindtap="selectFilter" data-type="kanji">
-          <text>有汉字</text>
-        </view>
-        <view class="filter-option {{filterType === 'example' ? 'selected' : ''}}" bindtap="selectFilter" data-type="example">
-          <text>有例句</text>
-        </view>
+        <block wx:for="{{courseGroups}}" wx:key="id">
+          <view class="filter-option {{selectedCourse === item.id ? 'selected' : ''}}" bindtap="selectCourse" data-course="{{item.id}}">
+            <text>{{item.name}}</text>
+            <text class="course-range">（第{{item.lessons[0]}}-{{item.lessons[item.lessons.length-1]}}课）</text>
+          </view>
+        </block>
       </view>
     </view>
   </view>

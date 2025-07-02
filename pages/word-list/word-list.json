@@ -2,5 +2,7 @@
   "navigationBarTitleText": "单词列表",
   "navigationBarBackgroundColor": "#ffffff",
   "navigationBarTextStyle": "black",
-  "usingComponents": {}
+  "usingComponents": {
+    "word-card": "../../components/word-card/index"
+  }
 } 
