@@ -111,7 +111,6 @@
   font-size: 16px; 
   font-weight: 600;
   color: #1F2329;
-  margin-right: 16rpx;
 }
 
 /* 词性标签样式重新设计 */
@@ -222,7 +221,7 @@
 }
 
 .status-text.corrected {
-  color: #1F2329;
+  color: #000000;
 }
 
 .status-toggle.error {
@@ -230,7 +229,7 @@
 }
 
 .status-text.error {
-  color: #1F2329;
+  color: #000000;
 }
 
 .footer {
@@ -250,7 +249,7 @@
   background-color: #4845F7;
   color: white;
   text-align: center;
-  border-radius: 24rpx;
+  border-radius: 48rpx;
   font-size: 32rpx;
   font-weight: 600;
   box-shadow: 0px 8rpx 16rpx 0px rgba(72, 69, 247, 0.2);

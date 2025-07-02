@@ -3,8 +3,13 @@
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
-  min-height: 100vh;
-  padding: 0 0 400rpx 0;
+  height: 100vh; /* 固定高度为视口高度，不允许滚动 */
+  width: 100%; /* 确保容器不超出屏幕宽度 */
+  overflow: hidden; /* 完全禁止页面级别的滚动 */
+  padding: 0 0 0 0; /* 精确控制padding */
+  touch-action: manipulation; /* 禁用双击缩放和页面拖动，但保留点击 */
+  overscroll-behavior: contain; /* 防止过度滚动 */
+  box-sizing: border-box; /* 确保padding计算正确 */
 }
 
 /* 顶部分类滑动按钮区域 */
@@ -41,14 +46,14 @@
 }
 
 .category-button {
-  width: 480rpx; /* 240px */
-  height: 128rpx; /* 64px */
+  width: 280rpx; /* 调整按钮宽度为280rpx */
+  height: 112rpx; /* 调整所有按钮高度为56px = 112rpx */
   margin-right: 24rpx; /* 按钮间距 */
-  border-radius: 48rpx; /* 24px圆角 */
+  border-radius: 56rpx; /* 调整圆角为高度的一半，更美观 */
   display: flex;
   align-items: center;
   justify-content: flex-start; /* 改为左对齐 */
-  padding-left: 48rpx; /* 左边距24px */
+  padding-left: 32rpx; /* 调整左边距适应窄按钮 */
   flex-shrink: 0;
   transition: all 0.3s ease;
   /* 未选中状态：白色底 + 投影效果 */
@@ -66,14 +71,14 @@
 }
 
 .button-main-text {
-  font-size: 48rpx; /* 24px */
+  font-size: 48rpx; /* 24px，恢复原来的字体大小 */
   font-weight: bold;
   color: #111111; /* 未选中：黑色文字 */
   line-height: 1.2;
 }
 
 .button-sub-text {
-  font-size: 24rpx; /* 12px */
+  font-size: 24rpx; /* 12px，保持原来的字体大小 */
   color: #666666; /* 未选中：#666 */
   line-height: 1.2;
   margin-left: 16rpx; /* 右间距8px */
@@ -89,23 +94,40 @@
   color: #ffffff; /* 选中：白色文字 */
 }
 
+
+
 .category-button.selected .button-sub-text {
   color: #ffffff; /* 选中：白色文字 */
 }
 
 /* 内容区域 DIV2 */
 .content-area {
-  width: calc(100% - 96rpx); /* 总宽度减去左右边距 */
-  height: 960rpx; /* 固定高度480px */
-  margin: 48rpx 48rpx 0 48rpx; /* 上边距调整为48rpx，左右边距48rpx，下边距0 */
+  width: 100%; /* 使用100%宽度 */
+  flex: 1; /* 使用剩余空间，自动适应高度 */
+  margin-top: 32rpx; /* 恢复合理的上边距 */
+  padding-left: 48rpx; /* 使用padding设置左边距，与category-scroll-wrapper保持一致 */
   position: relative; /* 确保内部绝对定位的卡片相对于此容器定位 */
+  overflow-x: scroll; /* 允许水平滚动 */
+  overflow-y: hidden; /* 禁止垂直滚动 */
+  white-space: nowrap; /* 防止换行 */
+  -webkit-overflow-scrolling: touch; /* iOS平滑滚动 */
+  /* 隐藏滚动条 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.content-area::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/WebKit */
 }
 
 /* 内容网格布局 */
 .content-grid {
   position: relative;
   height: 100%;
-  /* 移除flex布局，改为相对定位 */
+  width: 880rpx; /* 精确计算：最后一张卡片位置(480rpx) + 卡片宽度(400rpx) = 880rpx */
+  padding-right: 48rpx; /* 右边距48rpx，与category-scroll-wrapper保持一致 */
+  display: inline-block; /* 支持水平滚动 */
+  vertical-align: top; /* 顶部对齐 */
 }
 
 /* 内容卡片 DIV3 */
@@ -135,13 +157,13 @@
 
 .content-card:nth-child(2) {
   top: 0rpx; /* 0px */
-  left: 240rpx; /* 120px，向右偏移120px */
+  left: 240rpx; /* 120px，恢复到合适的偏移距离 */
   z-index: 2;
 }
 
 .content-card:nth-child(3) {
   top: 160rpx; /* 80px */
-  left: 480rpx; /* 240px，向右偏移240px（120px*2） */
+  left: 480rpx; /* 240px，现在有足够空间可以放置 */
   z-index: 3;
 }
 
@@ -149,18 +171,28 @@
 .card-image-section {
   width: 100%;
   height: 512rpx; /* 256px */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   position: relative;
   padding: 48rpx; /* 距离边缘24px */
   box-sizing: border-box;
+  overflow: hidden; /* 确保图片不溢出 */
+}
+
+/* 背景图片样式 */
+.card-background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* 确保图片在背景层 */
 }
 
 .card-labels {
   display: flex;
   flex-direction: column;
   gap: 8rpx;
+  position: relative;
+  z-index: 2; /* 确保标签在图片上方 */
 }
 
 .card-label-primary {

@@ -67,15 +67,16 @@
       <!-- 填空题输入框 -->
       <view wx:if="{{questions[currentQuestionIndex].type === 'fill'}}" wx:key="fill-{{currentQuestionIndex}}">
         <!-- 填空题输入框延迟0.1s出现，在题目头部之后显示 -->
-        <input 
-          class="fill-input {{showAnswerCard ? (isCorrect ? 'correct-fill' : 'incorrect-fill') : ''}}" 
-          placeholder="请输入答案"
-          bindinput="handleAnswerInput" 
-          value="{{userAnswer}}"
-          disabled="{{showAnswerCard}}"
-          confirm-type="done"
-          bindconfirm="onInputConfirm"/>
-
+        <view class="fill-input-wrapper">
+          <input
+            class="fill-input {{showAnswerCard ? (isCorrect ? 'correct-fill' : 'incorrect-fill') : ''}}"
+            placeholder="请输入答案_"
+            bindinput="handleAnswerInput"
+            value="{{userAnswer}}"
+            disabled="{{showAnswerCard}}"
+            confirm-type="done"
+            bindconfirm="onInputConfirm"/>
+        </view>
       </view>
 
     </view>
@@ -125,7 +126,7 @@
         <button 
           class="skip-button half-width-button" 
           bindtap="skipQuestion">
-          跳过本题
+          <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
         </button>
         <button 
           class="submit-button half-width-button" 

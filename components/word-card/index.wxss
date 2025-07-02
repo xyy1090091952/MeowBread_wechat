@@ -1,0 +1,74 @@
+.word-card {
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin: 0 48rpx 24rpx 48rpx; /* 左右各48rpx，下24rpx */
+  box-shadow: 8rpx 8rpx 32rpx rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+}
+.item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+.word-info {
+  display: flex;
+  align-items: center;
+}
+.word {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1F2329;
+}
+.status-label {
+  height: 40rpx;
+  border-radius: 20rpx;
+  font-size: 20rpx;
+  display:flex;
+  align-items:center;
+  padding:0 12rpx;
+}
+.status-text {margin-right:8rpx;}
+.status-dot {width:24rpx;height:24rpx;border-radius:50%;}
+.status-unseen {color:#8A8A8A;background:#F0F0F0;}
+.status-corrected {border:1px solid #FFCA1D;background:transparent;}
+.status-corrected .status-text{color:#000;}
+.status-corrected .status-dot{background:linear-gradient(to right,#FFCA1D,#FFEB12);}
+.status-error {border:1px solid #FF1F74;background:transparent;}
+.status-error .status-text{color:#000;}
+.status-error .status-dot{background:linear-gradient(to right,#FF1F74,#FF4E91);}
+.item-bottom{font-size:24rpx;color:#666;line-height:32rpx;}
+.basic-info{line-height:40rpx;}
+.example-sentence{margin-top:8rpx;}
+
+/* -------- 通用标签样式 -------- */
+.label {
+  width: 84rpx;
+  height: 40rpx;
+  font-size: 20rpx;
+  border-radius: 20rpx;
+  color: #FFFFFF;
+  text-align: center;
+  line-height: 40rpx;
+  margin-left: 16rpx;
+}
+
+/* 使用 label + 变体类控制颜色 */
+.label.adverb {background-color:#FF375C;}
+.label.verb {background-color:#598BF1;}
+.label.intransitive-verb {background-color:#39D763;}
+.label.transitive-verb {background-color:#FAAD3A;}
+.label.noun {background-color:#B79EFF;}
+.label.adjective {background-color:#F56593;}
+.label.particle {background-color:#5bc0de;}
+.label.conjunction {background-color:#aa66cc;}
+.label.adjectival-noun {background-color:#17a2b8;}
+.label.pronoun {background-color:#6f42c1;}
+.label.numeral {background-color:#fd7e14;}
+
+/* 兼容旧 class="type xxx" 写法（渐进迁移）*/
+.type, .label {
+  /* 空，仅用来占位 */
+} 

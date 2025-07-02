@@ -19,8 +19,8 @@ module.exports = {
         },
         {
             "id": "liangs_class",
-            "name": "梁老师的课",
-            "description": "梁老师的课",
+            "name": "梁老师初级",
+            "description": "梁老师初级",
             "lesson_files": [
                 "liangs_class/lesson5.js",
                 "liangs_class/lesson6.js",

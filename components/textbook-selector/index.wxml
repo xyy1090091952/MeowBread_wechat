@@ -17,7 +17,7 @@
       </view>
     </scroll-view>
     <view class="confirm-button-container">
-      <button class="confirm-button" bind:tap="onConfirm">确认</button>
+      <view class="confirm-button" bindtap="onConfirm" wx:class="{{!selectedBookId ? 'disabled' : ''}}">确认</view>
     </view>
   </view>
 </view>

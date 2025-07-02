@@ -1,14 +1,27 @@
 <!--pages/profile/profile.wxml-->
-<view class="container">
-  <!-- 用户信息区域 -->
-  <view class="user-info-section fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}">
+<view class="container {{!isLoggedIn ? 'login-mode' : ''}}">
+  <!-- 用户信息区域 - 自定义全屏容器 -->
+  <view class="fullscreen-user-section">
     <!-- 未登录时显示 -->
     <block wx:if="{{!isLoggedIn}}">
-      <!-- 显示用户头像，如果没有则显示默认头像 -->
-      <image class="avatar" src="{{avatarUrl || '/images/icons/profile.png'}}"></image>
-      <button open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar" class="avatar-button">{{avatarUrl ? '更换头像' : '选择头像'}}</button>
-      <input type="nickname" class="nickname-input" placeholder="{{nickname || '请输入昵称'}}" bind:blur="onNicknameInput" value="{{nickname}}"/>
-      <button bindtap="login" class="login-button">保存并登录</button>
+      <view class="login-card shadow">
+        <text class="login-title">始めましょう</text>
+        <text class="login-subtitle">在Meow Bread开心得背单词吧！</text>
+
+        <!-- 头像占位渐变圆 - 支持显示选中的头像 -->
+        <view class="avatar-placeholder">
+          <image wx:if="{{avatarUrl && avatarUrl !== '/images/icons/profile.png'}}" class="avatar-preview" src="{{avatarUrl}}" mode="aspectFill"></image>
+        </view>
+
+        <!-- 选头像按钮 -->
+        <button class="avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">{{avatarUrl ? '更换头像' : '选择头像'}}</button>
+
+        <!-- 昵称输入框 - 微信推荐方式 -->
+        <input class="nickname-input {{nickname ? 'has-nickname' : ''}}" type="nickname" placeholder="请输入昵称" bind:input="onNicknameInput" value="{{nickname}}" />
+
+        <!-- 登录按钮 -->
+        <view class="login-btn" bindtap="login">保存并登录</view>
+      </view>
     </block>
     
     <!-- 登录后显示用户信息 -->
@@ -46,13 +59,10 @@
     <!-- 扭蛋机模块 -->
     <view class="gashapon-section fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}" bindtap="goToGashapon">
       <image class="gashapon-background" src="/images/banner/gashapon.jpg"></image>
-      <view class="gashapon-text-overlay">
-        <text class="gashapon-title">扭蛋机</text>
-        <view class="gashapon-coins-info">
-          <image class="coins-icon" src="/images/icons/Coins.png"></image>
-          <text class="coins-count">300</text>
-        </view>
+      <view class="option-text-container">
+        <text class="option-main-text">单词扭蛋机</text>
       </view>
+      <image class="option-icon arrow-gashapon" src="/images/icons/arrow_right.svg"></image>
     </view>
 
     <!-- 错题库模块 -->

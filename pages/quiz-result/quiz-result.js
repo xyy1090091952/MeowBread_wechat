@@ -1,4 +1,6 @@
 // pages/quiz-result/quiz-result.js
+const statisticsManager = require('../../utils/statisticsManager.js');
+
 Page({
   data: {
     score: 0,
@@ -9,7 +11,9 @@ Page({
     resultText: '',
     resultImage: '',
     formattedTime: '00:00',
-    fromMistakes: false // 默认不是从错题库来
+    fromMistakes: false, // 默认不是从错题库来
+    bubbleText: '',
+    bubbleColor: ''
   },
 
   onLoad: function (options) {
@@ -17,17 +21,23 @@ Page({
 
     const resultInfo = {
       noob: {
-        text: '菜就多练？',
+        text: '菜逼 Noob',
         image: '/images/result/noob.png'
       },
       normal: {
-        text: '无事发生~',
+        text: '平平无奇 Normal',
         image: '/images/result/normal.png'
       },
       perfect: {
-        text: '太牛逼了！',
+        text: '完美 Perfect',
         image: '/images/result/perfect.png'
       }
+    };
+
+    const bubbleInfo = {
+      noob: { text: '菜就多练？', color: '#CFFFF0' },
+      normal: { text: '无事发生~', color: '#FFCFE6' },
+      perfect: { text: '太牛逼了！', color: '#FFFF00' }
     };
 
     const accuracyPercentage = (parseFloat(accuracy) * 100).toFixed(0);
@@ -43,9 +53,28 @@ Page({
       resultText: resultInfo[resultLevel]?.text || resultInfo.normal.text,
       resultImage: resultInfo[resultLevel]?.image || resultInfo.normal.image,
       formattedTime: this.formatTime(parseInt(timeSpent, 10) || 0),
+      bubbleText: bubbleInfo[resultLevel]?.text,
+      bubbleColor: bubbleInfo[resultLevel]?.color,
     });
 
+    // 保存答题统计数据到本地存储
+    this.saveQuizStatistics();
+    
     this.triggerAnimations();
+  },
+
+  // 保存答题统计数据
+  saveQuizStatistics: function() {
+    const quizResult = {
+      score: this.data.score,
+      totalQuestions: this.data.totalQuestions,
+      timeSpent: this.data.timeSpent,
+      accuracy: this.data.accuracy
+    };
+    
+    // 使用统计管理器保存数据
+    statisticsManager.saveQuizResult(quizResult);
+    console.log('答题结果已保存到统计数据:', quizResult);
   },
 
   triggerAnimations: function () {
@@ -71,6 +100,10 @@ Page({
     setTimeout(() => {
       this.setData({ 'animationClass.doneButton': 'animate-fade-in-up' });
     }, animationInterval * 5);
+
+    setTimeout(() => {
+      this.setData({ 'animationClass.bubble': 'animate-float-up' });
+    }, animationInterval * 6);
   },
 
   formatTime: function (seconds) {

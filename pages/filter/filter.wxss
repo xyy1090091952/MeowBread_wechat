@@ -121,7 +121,7 @@
   color: white;
   font-size: 32rpx;
   font-weight: bold;
-  border-radius: 16rpx; /* 圆角调整为 8px (16rpx) */
+  border-radius: 48rpx; /* 圆角调整为 24px (48rpx) */
   padding: 25rpx 0;
   text-align: center;
   box-shadow: 0 4rpx 12rpx rgba(152, 207, 63, 0.3);

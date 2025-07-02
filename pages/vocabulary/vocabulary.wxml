@@ -17,16 +17,7 @@
         <scroll-view scroll-x class="dict-scroll" enable-flex>
           <view class="dict-row">
             <block wx:for="{{item.dicts}}" wx:for-item="dict" wx:key="id">
-              <view class="dict-card" data-id="{{dict.id}}" bindtap="openDictionary">
-                <image class="cover-image" src="{{dict.cover}}" mode="aspectFill"></image>
-                <!-- 底部信息 -->
-                <view class="dict-info">
-                  <text class="dict-name">{{dict.name}}</text>
-                  <text class="dict-count">词汇量 {{dict.wordCount}}</text>
-                </view>
-                <!-- 进度标签 -->
-                <view class="progress-tag">单词进度{{dict.progress}}%</view>
-              </view>
+              <book dict="{{dict}}" data-id="{{dict.id}}" bindtap="openDictionary" />
             </block>
           </view>
         </scroll-view>
@@ -38,9 +29,6 @@
   <block wx:if="{{showWordList}}">
     <!-- 顶部导航栏 -->
     <view class="word-list-header fade-in-element fade-delay-1 {{wordListLoaded ? 'show' : ''}}">
-      <view class="back-button" bindtap="closeWordList">
-        <image src="../../images/icons/arrow_right.svg" class="back-icon"></image>
-      </view>
       <view class="title-info-container">
         <view class="word-list-title">{{currentDictName}}</view>
         <view class="word-count-info">共 {{filteredWordList.length || wordList.length}} 个单词</view>

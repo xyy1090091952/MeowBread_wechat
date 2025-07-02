@@ -15,21 +15,21 @@ Page({
         category: 'GRAMMAR',
         subcategory: '接续',
         title: '动词变化表',
-        backgroundImage: '../../images/card/N5-card1.png'
+        backgroundImage: '/images/card/N5-Card1.jpg'
       },
       {
         id: 2,
         category: 'GRAMMAR',
         subcategory: '语法',
         title: '形容词变位',
-        backgroundImage: '../../images/card/N5-card1.png'
+        backgroundImage: '/images/card/N5-Card2.jpg'
       },
       {
         id: 3,
         category: 'GRAMMAR',
         subcategory: '句型',
         title: '基本句型',
-        backgroundImage: '../../images/card/N5-card1.png'
+        backgroundImage: '/images/card/N5-Card3.jpg'
       }
     ],
     pageLoaded: false, // 控制页面渐显动画

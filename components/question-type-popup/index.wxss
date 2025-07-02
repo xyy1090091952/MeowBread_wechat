@@ -80,7 +80,7 @@
   width: 100%;
   background-color: #4845F7;
   color: white;
-  border-radius: 24rpx;
+  border-radius: 48rpx;
   padding: 24rpx;
   text-align: center;
   font-size: 32rpx;

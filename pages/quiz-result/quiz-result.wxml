@@ -1,9 +1,13 @@
 <!--pages/quiz-result/quiz-result.wxml-->
 <view class="container">
   <view class="result-container">
-    <view class="result-card {{resultLevel}} {{animationClass.resultCard}}">
-      <image class="result-image" src="{{resultImage}}" mode="aspectFit"></image>
-      <view class="result-text">{{resultText}}</view>
+    <view class="result-card-wrapper">
+      <view class="result-card {{resultLevel}} {{animationClass.resultCard}}">
+        <image class="result-image" src="{{resultImage}}" mode="aspectFit"></image>
+        <view class="result-text">{{resultText}}</view>
+      </view>
+      <!-- 动态气泡 -->
+      <view class="result-bubble {{animationClass.bubble}}" style="background-color: {{bubbleColor}};">{{bubbleText}}</view>
     </view>
 
     <view class="stats-grid">

@@ -1,13 +1,10 @@
 <!--pages/answer/answer.wxml-->
 <view class="container">
-  <!-- 页面标题 -->
-  <view class="page-title-container fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}">
-    <text class="main-title">MEOW BREAD</text>
-    <text class="sub-title">記憶の面包</text>
-  </view>
   <!-- Banner模块 -->
   <view class="banner-container fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
-    <image class="banner-image" src="/images/banner/banner1.jpg" mode="widthFix"></image>
+    <image class="banner-image" src="/images/banner/banner1.png" mode="widthFix"></image>
+    <!-- 中央 Logo -->
+    <image class="banner-logo" src="/images/banner/Meow Bread.svg" mode="widthFix" />
   </view>
   <view class="content">
     <!-- 题库筛选按钮 -->

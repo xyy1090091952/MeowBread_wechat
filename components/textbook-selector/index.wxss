@@ -1,4 +1,6 @@
 /* components/textbook-selector/index.wxss */
+/* 规范色值 */
+/* bule: #4845F7 */
 .modal-mask {
   position: fixed;
   top: 0;
@@ -69,7 +71,7 @@
   width: 400rpx;
   height: 640rpx;
   background: #ffffff;
-  border-radius: 24rpx;
+  border-radius: 48rpx;
   box-shadow: 8rpx 8rpx 32rpx rgba(0,0,0,0.08);
   position: relative;
   margin-right: 24rpx; /* 卡片间距12px */
@@ -112,7 +114,7 @@
 }
 
 .confirm-button-container {
-  padding: 20px 24px;
+  padding: 20px 48rpx; /* 与modal-title保持一致的左右边距 */
   background-color: #FAFAFA;
   width: 100%;
   box-sizing: border-box;
@@ -120,16 +122,20 @@
 
 .confirm-button {
   width: 100%;
-  height: 48px;
-  line-height: 48px;
-  background-color: #4d55ff;
-  color: #fff;
-  border: none;
-  border-radius: 24rpx;
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
-  display: flex; /* 使用flex布局来居中 */
-  justify-content: center; /* 水平居中 */
-  align-items: center; /* 垂直居中 */
+  height: 88rpx; /* 与 submit-button 高度一致 */
+  background-color: #4845F7;
+  color: white;
+  border-radius: 48rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.confirm-button.disabled {
+  opacity: 0.4;
+  pointer-events: none;
 }
