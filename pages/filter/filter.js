@@ -16,7 +16,8 @@ Page({
     questionTypeOptions: [],
     selectedQuestionTypes: [],
     isSelectorVisible: false,
-    isQuestionTypePopupVisible: false
+    isQuestionTypePopupVisible: false,
+    areAllLessonsSelected: false, // 新增：是否全选
   },
 
   /**
@@ -24,7 +25,9 @@ Page({
    */
   onLoad(options) {
     const initialState = filterService.initializeFilterState(options);
-    this.setData(initialState);
+    this.setData(initialState, () => {
+      this.checkIfAllLessonsSelected();
+    });
   },
 
   /**
@@ -87,18 +90,23 @@ Page({
     const { selectedDictionary } = e.detail;
     const dictionaryIndex = this.data.dictionaries.findIndex(dict => dict.id === selectedDictionary.id);
 
-    // 切换词典时，默认全选所有课程
-    const allLessonsFile = `DICTIONARY_${selectedDictionary.id}_ALL_LESSONS`;
-    const newSelectedLessonFiles = selectedDictionary.id === 'all' ? [] : [allLessonsFile];
-    const newLessons = filterService.getLessonsForDictionary(selectedDictionary, newSelectedLessonFiles);
+    // 切换词典时，获取新课程列表，但不立即全选
+    const newLessons = filterService.getLessonsForDictionary(selectedDictionary, []); // 初始不选中任何课程
+
+    // 默认全选所有课程（除了“全部课程”）
+    const lessonsWithSelection = newLessons.map(l => ({ ...l, checked: l.name !== '全部课程' }));
+    const newSelectedLessonFiles = lessonsWithSelection
+      .filter(l => l.checked)
+      .map(l => l.file);
 
     this.setData({
       selectedDictionaryIndex: dictionaryIndex,
-      lessons: newLessons,
+      lessons: lessonsWithSelection,
       selectedLessonFiles: newSelectedLessonFiles,
       isSelectorVisible: false
     }, () => {
       this.saveFilterSettings();
+      this.checkIfAllLessonsSelected();
     });
   },
 
@@ -153,11 +161,58 @@ Page({
 
   onLessonCheckboxChange(e) {
     const clickedFile = e.currentTarget.dataset.file;
-    const { lessons, selectedLessonFiles } = filterService.handleLessonCheckboxChange(this.data.lessons, clickedFile);
+    // 直接在这里处理逻辑，不再依赖 filterService
+    let { lessons, selectedLessonFiles } = this.data;
+
+    const newLessons = lessons.map(lesson => {
+      if (lesson.file === clickedFile) {
+        return { ...lesson, checked: !lesson.checked };
+      }
+      return lesson;
+    });
+
+    const newSelectedLessonFiles = newLessons
+      .filter(lesson => lesson.checked && lesson.name !== '全部课程') // 过滤掉“全部课程”
+      .map(lesson => lesson.file);
 
     this.setData({
-      lessons,
-      selectedLessonFiles
+      lessons: newLessons,
+      selectedLessonFiles: newSelectedLessonFiles
+    }, () => {
+      this.saveFilterSettings();
+      this.checkIfAllLessonsSelected();
+    });
+  },
+
+  // 检查是否所有课程都被选中
+  checkIfAllLessonsSelected() {
+    // 过滤掉“全部课程”选项后再检查
+    const actualLessons = this.data.lessons.filter(lesson => lesson.name !== '全部课程');
+    const areAllSelected = actualLessons.length > 0 && actualLessons.every(lesson => lesson.checked);
+    this.setData({ areAllLessonsSelected: areAllSelected });
+  },
+
+  // 全选/取消全选
+  toggleSelectAll() {
+    const { lessons, areAllLessonsSelected } = this.data;
+    const selectAll = !areAllLessonsSelected;
+    
+    const newLessons = lessons.map(lesson => {
+      // “全部课程”选项的状态保持不变，不参与全选切换
+      if (lesson.name === '全部课程') {
+        return lesson;
+      }
+      return { ...lesson, checked: selectAll };
+    });
+
+    const newSelectedLessonFiles = newLessons
+      .filter(lesson => lesson.checked && lesson.name !== '全部课程')
+      .map(lesson => lesson.file);
+
+    this.setData({
+      lessons: newLessons,
+      selectedLessonFiles: newSelectedLessonFiles,
+      areAllLessonsSelected: selectAll
     }, () => {
       this.saveFilterSettings();
     });
