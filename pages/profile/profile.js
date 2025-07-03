@@ -1,5 +1,6 @@
 // pages/profile/profile.js
 const mistakeManager = require('../../utils/mistakeManager.js');
+const statisticsManager = require('../../utils/statisticsManager.js');
 
 Page({
   data: {
@@ -7,7 +8,7 @@ Page({
     isLoggedIn: false, // 初始化登录状态为false
     avatarUrl: '', // 用于存储临时头像路径（用户选择的头像）
     nickname: '', // 用于存储用户输入的昵称
-    userTitle: '初来背词', // 用户称号（根据答题数量动态变化）
+    userTitle: '菜鸡 🐣', // 用户称号（根据答题数量动态变化）
     statistics: {
       totalQuestions: 0,   // 总答题数量
       correctAnswers: 0,   // 正确答题数量
@@ -50,11 +51,44 @@ Page({
     });
   },
 
-  // 用户选择头像时的回调函数
+  // 用户选择头像时的回调函数（原微信API方式）
   onChooseAvatar: function (e) {
     const { avatarUrl } = e.detail; // 获取用户选择的头像路径
+    console.log('用户选择的头像路径:', avatarUrl); // 调试信息
     this.setData({
       avatarUrl: avatarUrl, // 更新头像路径到页面数据
+    });
+    
+    // 显示选择成功提示
+    wx.showToast({
+      title: '头像选择成功',
+      icon: 'success',
+      duration: 1500
+    });
+  },
+
+  // 手动选择头像方法（自定义按钮使用）
+  chooseAvatarManually: function() {
+    const that = this;
+    wx.chooseMedia({
+      count: 1, // 只选择一张图片
+      mediaType: ['image'], // 只选择图片
+      sourceType: ['album', 'camera'], // 可以从相册选择或拍照
+      maxDuration: 30,
+      camera: 'back',
+      success(res) {
+        // 选择成功后更新头像
+        that.setData({
+          avatarUrl: res.tempFiles[0].tempFilePath
+        });
+      },
+      fail(err) {
+        console.log('选择头像失败：', err);
+        wx.showToast({
+          title: '选择头像失败',
+          icon: 'none'
+        });
+      }
     });
   },
 
@@ -76,7 +110,7 @@ Page({
       return;
     }
     // 检查是否已输入昵称
-    if (!this.data.nickname) {
+    if (!this.data.nickname || this.data.nickname.trim() === '') {
       wx.showToast({
         title: '请输入昵称',
         icon: 'none'
@@ -112,11 +146,15 @@ Page({
   logout: function () {
     // 登出逻辑
     wx.removeStorageSync('userInfo'); // 清除本地缓存的用户信息
+    // 注意：这里不清除统计数据，保留用户的答题记录
+    // 如果需要清除统计数据，可以取消注释下一行
+    // statisticsManager.clearAllStatistics();
+    
     this.setData({
       isLoggedIn: false,
       userInfo: null, // 清空用户信息
-      userTitle: '初来背词', // 重置称号
-      statistics: { // 重置统计数据
+      userTitle: '菜鸡 🐣', // 重置称号
+      statistics: { // 重置统计数据显示
         totalQuestions: 0,
         correctAnswers: 0,
         averageAccuracy: 0
@@ -130,36 +168,52 @@ Page({
   },
 
   loadStatistics: function () {
-    // 加载统计信息
-    // 这里应该从后端或本地存储加载实际的统计数据
-    // 模拟数据，实际应该从API获取
-    const mockStatistics = {
-      totalQuestions: 150,
-      correctAnswers: 120,
-      averageAccuracy: 80
-    };
+    // 加载真实的统计信息
+    const realStatistics = statisticsManager.getOverallStatistics();
     
     // 获取错题数量
     const mistakeCount = mistakeManager.getMistakeList().length;
     
+    console.log('加载的真实统计数据:', realStatistics); // 调试信息
+    
     this.setData({
-      statistics: mockStatistics,
+      statistics: realStatistics,
       mistakeCount: mistakeCount
     });
     
     // 更新用户称号
-    this.updateUserTitle(mockStatistics.totalQuestions);
+    this.updateUserTitle(realStatistics.totalQuestions);
   },
 
   // 根据答题数量更新用户称号
   updateUserTitle: function(totalQuestions) {
-    let title = '初来背词'; // 默认称号
+    let title = '菜鸡 🐣'; // 默认称号（0-49题）
     
-    if (totalQuestions >= 1000) {
-      title = '单词大师';
+    // 10个进阶称号，中日结合的幽默称号设计 ✨
+    if (totalQuestions >= 6000) {
+      title = '日语之神 ⚡'; // 6000+ 传说级存在
+    } else if (totalQuestions >= 4500) {
+      title = '单词の鬼 👹'; // 4500+ 单词之鬼
+    } else if (totalQuestions >= 3200) {
+      title = '词汇マスター 👑'; // 3200+ 词汇大师
+    } else if (totalQuestions >= 2200) {
+      title = '学霸さん 🤓'; // 2200+ 学霸同学
+    } else if (totalQuestions >= 1500) {
+      title = '前辈 😎'; // 1500+ 前辈
+    } else if (totalQuestions >= 800) {
+      title = '老司机 🚗'; // 800+ 老司机
+    } else if (totalQuestions >= 400) {
+      title = '小有所成 🚀'; // 400+ 小有所成
+    } else if (totalQuestions >= 200) {
+      title = '努力中 📚'; // 200+ 努力中
     } else if (totalQuestions >= 100) {
-      title = '背了一点';
+      title = '新手君 🌱'; // 100+ 新手君
+    } else if (totalQuestions >= 50) {
+      title = '小白兔 🐰'; // 50+ 小白兔
     }
+    // 0-49题保持菜鸡称号
+    
+    console.log(`用户答题数: ${totalQuestions}, 获得称号: ${title}`); // 调试信息
     
     this.setData({
       userTitle: title

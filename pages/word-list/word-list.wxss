@@ -1,0 +1,239 @@
+/* pages/word-list/word-list.wxss */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  background-color: rgb(255, 255, 255); /* 与答题页面保持一致的背景色 */
+  min-height: 100vh;
+  padding: 0 0 220rpx 0; /* 调整底部padding为220rpx */
+}
+
+/* ===== 单词列表页面样式 ===== */
+
+/* 单词列表顶部导航栏 */
+.word-list-header {
+  width: calc(100% - 96rpx); /* 减去左右各48rpx的边距 */
+  margin: 32rpx 48rpx 0 48rpx;
+  height: 120rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+}
+
+.title-info-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 16rpx;
+}
+
+.word-list-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+/* 新增：右侧控件区域样式 */
+.right-controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16rpx;
+}
+
+/* 修改：课程选择显示字段样式，现在在右侧 */
+.course-selector {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.word-count-info {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.filter-button {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-icon {
+  width: 24rpx;
+  height: 24rpx;
+}
+
+/* 单词列表滚动区域 */
+.word-list-scroll {
+  width: 100%;
+  flex: 1;
+  height: calc(100vh - 200rpx); /* 减去顶部导航栏高度 */
+}
+
+.word-list-container {
+  width: 100%; /* word-card组件自己会处理margin */
+  padding-bottom: 40rpx;
+}
+
+/* 移除旧的word-card样式，现在使用word-card组件的样式 */
+
+/* 筛选弹窗样式 */
+.filter-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  z-index: 1000;
+  opacity: 0;
+}
+
+/* 弹窗动画样式 */
+.modal-fade-in {
+  animation: modalFadeIn 0.2s ease-out forwards;
+}
+
+.modal-fade-out {
+  animation: modalFadeOut 0.2s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.filter-content {
+  width: 100%;
+  background-color: #ffffff;
+  border-top-left-radius: 24rpx;
+  border-top-right-radius: 24rpx;
+  padding: 48rpx 48rpx calc(48rpx + env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform 0.3s ease-out;
+}
+
+/* 弹窗内容动画 - 修复双重动画问题 */
+.filter-modal.modal-fade-in .filter-content {
+  transform: translateY(0);
+}
+
+.filter-modal.modal-fade-out .filter-content {
+  transform: translateY(100%);
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+
+.filter-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #111111;
+}
+
+.close-button {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  color: #666666;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.filter-option {
+  padding: 24rpx 40rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-option:last-child {
+  border-bottom: none;
+}
+
+.filter-option.selected {
+  background-color: #f5f5ff;
+  color: #4845F7;
+}
+
+.filter-option text {
+  font-size: 32rpx;
+}
+
+/* 新增：课程范围显示样式 */
+.course-range {
+  font-size: 24rpx;
+  color: #999;
+  margin-left: 16rpx;
+}
+
+.filter-option.selected .course-range {
+  color: #4845F7;
+}
+
+/* 底部白色渐变遮罩 */
+.bottom-gradient-mask {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 240rpx; /* 120px高度 */
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+  pointer-events: none; /* 不阻挡点击事件 */
+  z-index: 10; /* 确保在内容之上 */
+}
+
+/* 渐显动画相关样式 */
+.fade-in-element {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.fade-in-element.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-delay-1 {
+  transition-delay: 0.1s;
+}
+
+.fade-delay-2 {
+  transition-delay: 0.2s;
+} 

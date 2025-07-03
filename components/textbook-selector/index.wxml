@@ -1,23 +1,22 @@
 <!--components/textbook-selector/index.wxml-->
-<view class="modal-mask" wx:if="{{visible}}" bindtap="handleClose"></view>
+<view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="handleClose" catchtouchmove="stopPropagation"></view>
 <view class="modal-container {{visible ? 'modal-show' : ''}}">
   <view class="modal-content">
     <view class="modal-title">课本选择</view>
-    <scroll-view scroll-x class="dict-scroll" enable-flex>
-      <view class="dict-list">
-        <block wx:for="{{textbooks}}" wx:for-item="dict" wx:key="id">
-          <view class="dict-card {{selectedBookId === dict.id ? 'selected' : ''}}" data-id="{{dict.id}}" bindtap="onBookTap">
-            <image class="cover-image" src="{{dict.cover}}" mode="aspectFill"></image>
-            <view class="dict-info">
-              <text class="dict-name">{{dict.name}}</text>
-              <text class="dict-count">词汇量 {{dict.wordCount}}</text>
-            </view>
+    <view class="book-list">
+      <block wx:for="{{textbooks}}" wx:key="id">
+        <view class="book-card {{selectedBookId === item.id ? 'selected' : ''}}" data-id="{{item.id}}" bindtap="onBookTap">
+          <image class="book-cover" src="{{item.cover}}" mode="aspectFill" />
+          <view class="book-info">
+            <view class="book-name">{{item.name}}</view>
+            <view class="book-word-count">词汇量 {{item.wordCount}}</view>
           </view>
-        </block>
-      </view>
-    </scroll-view>
-    <view class="confirm-button-container">
-      <button class="confirm-button" bind:tap="onConfirm">确认</button>
+          <view class="progress-tag" wx:if="{{item.progress !== undefined}}">单词进度{{item.progress}}%</view>
+        </view>
+      </block>
+    </view>
+    <view class="modal-buttons">
+      <view class="btn btn-confirm {{!selectedBookId ? 'disabled' : ''}}" bindtap="onConfirm">确认</view>
     </view>
   </view>
 </view>

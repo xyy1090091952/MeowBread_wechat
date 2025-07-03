@@ -1,0 +1,17 @@
+<!--pages/webview/webview.wxml-->
+<view class="container">
+  <!-- 如果有URL就显示webview，否则显示加载中 -->
+  <web-view wx:if="{{webviewUrl}}" 
+            src="{{webviewUrl}}" 
+            bindload="onWebViewLoad"
+            binderror="onWebViewError">
+  </web-view>
+  
+  <!-- 加载中状态 -->
+  <view wx:else class="loading-container">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">正在加载网页...</text>
+    </view>
+  </view>
+</view> 

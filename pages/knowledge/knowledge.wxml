@@ -13,7 +13,7 @@
         >
           <view class="button-text-container">
             <text class="button-main-text">{{item.name}}</text>
-            <text class="button-sub-text">共收录{{item.cardCount}}条知识点</text>
+            <text class="button-sub-text">{{item.cardCount}}条知识点</text>
           </view>
         </view>
       </view>
@@ -32,7 +32,8 @@
         bindtap="openCardDetail"
       >
         <!-- 上半部分 - 背景图片区域 -->
-        <view class="card-image-section" style="background-image: url('{{item.backgroundImage}}');">
+        <view class="card-image-section">
+          <image class="card-background-image" src="{{item.backgroundImage}}" mode="aspectFill" />
           <view class="card-labels">
             <view class="card-label-primary">{{item.category}}</view>
             <view class="card-label-secondary">{{item.subcategory}}</view>

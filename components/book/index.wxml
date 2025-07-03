@@ -1,0 +1,8 @@
+<view class="dict-card" bindtap="onTap">
+  <image class="cover-image" src="{{dict.cover}}" mode="aspectFill" />
+  <view class="dict-info">
+    <text class="dict-name">{{dict.name}}</text>
+    <text class="dict-count">词汇量 {{dict.wordCount}}</text>
+  </view>
+  <view class="progress-tag">单词进度{{dict.progress}}%</view>
+</view> 

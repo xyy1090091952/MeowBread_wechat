@@ -11,8 +11,18 @@ Component({
   },
 
   observers: {
-    'visible': function(isVisible) {
-      console.log('TextbookSelector visibility changed to:', isVisible);
+    'visible': function(newVal, oldVal) {
+      if (newVal && !oldVal) {
+        // 弹窗显示时添加渐显动画
+        this.setData({
+          modalAnimationClass: ''
+        });
+        setTimeout(() => {
+          this.setData({
+            modalAnimationClass: 'modal-fade-in'
+          });
+        }, 50);
+      }
     }
   },
 
@@ -21,7 +31,9 @@ Component({
    */
   data: {
     textbooks: [],
-    selectedBookId: null // 用于暂存用户选择的课本ID
+    selectedBookId: null, // 用于暂存用户选择的课本ID
+    dictionaries: [],
+    modalAnimationClass: '' // 弹窗动画类名
   },
 
   lifetimes: {
@@ -61,7 +73,18 @@ Component({
     },
 
     handleClose() {
-      this.triggerEvent('close');
+      // 添加渐隐动画
+      this.setData({
+        modalAnimationClass: 'modal-fade-out'
+      });
+      
+      // 动画完成后关闭弹窗
+      setTimeout(() => {
+        this.setData({
+          modalAnimationClass: ''
+        });
+        this.triggerEvent('close');
+      }, 200);
     },
 
     // 用户点击课本卡片，暂存选择
@@ -75,12 +98,6 @@ Component({
       if (this.data.selectedBookId) {
         const selectedDictionary = this.data.textbooks.find(book => book.id === this.data.selectedBookId);
         this.triggerEvent('select', { selectedDictionary });
-      } else {
-        // 如果用户未选择任何课本就点击确认，可以给一个提示
-        wx.showToast({
-          title: '请先选择一本课本',
-          icon: 'none'
-        });
       }
     }
   }

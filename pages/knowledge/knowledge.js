@@ -15,21 +15,24 @@ Page({
         category: 'GRAMMAR',
         subcategory: '接续',
         title: '动词变化表',
-        backgroundImage: '../../images/card/N5-card1.png'
+        backgroundImage: '/images/card/N5-Card1.jpg',
+        webUrl: 'https://www.wolai.com/4zQnf4R4DP2FyZtA4gRvQc' // 为每个card添加对应的网页URL
       },
       {
         id: 2,
         category: 'GRAMMAR',
         subcategory: '语法',
         title: '形容词变位',
-        backgroundImage: '../../images/card/N5-card1.png'
+        backgroundImage: '/images/card/N5-Card2.jpg',
+        webUrl: 'https://www.wolai.com/4zQnf4R4DP2FyZtA4gRvQc' // 临时使用相同URL，可以后续修改
       },
       {
         id: 3,
         category: 'GRAMMAR',
         subcategory: '句型',
         title: '基本句型',
-        backgroundImage: '../../images/card/N5-card1.png'
+        backgroundImage: '/images/card/N5-Card3.jpg',
+        webUrl: 'https://www.wolai.com/4zQnf4R4DP2FyZtA4gRvQc' // 临时使用相同URL，可以后续修改
       }
     ],
     pageLoaded: false, // 控制页面渐显动画
@@ -67,15 +70,46 @@ Page({
   },
 
   /**
-   * 打开卡片详情页面
+   * 打开卡片详情页面 - 跳转到webview页面显示内嵌网页
    */
   openCardDetail: function (e) {
-    const cardId = e.currentTarget.dataset.id;
+    const cardId = parseInt(e.currentTarget.dataset.id);
     console.log('打开卡片详情:', cardId);
-    // 这里可以跳转到详情页面
-    // wx.navigateTo({
-    //   url: `/pages/knowledge-detail/knowledge-detail?id=${cardId}`
-    // });
+    
+    // 根据cardId找到对应的卡片数据
+    const selectedCard = this.data.grammarCards.find(card => card.id === cardId);
+    
+    if (selectedCard && selectedCard.webUrl) {
+      // 对URL进行编码以确保安全传递
+      const encodedUrl = encodeURIComponent(selectedCard.webUrl);
+      const cardTitle = selectedCard.title || '知识详情';
+      
+      console.log('即将打开网页:', selectedCard.webUrl);
+      console.log('卡片标题:', cardTitle);
+      
+      // 跳转到webview页面，传递URL和标题参数
+      wx.navigateTo({
+        url: `/pages/webview/webview?url=${encodedUrl}&title=${cardTitle}`,
+        success: () => {
+          console.log('跳转webview页面成功');
+        },
+        fail: (err) => {
+          console.error('跳转webview页面失败:', err);
+          wx.showToast({
+            title: '页面跳转失败',
+            icon: 'none',
+            duration: 2000
+          });
+        }
+      });
+    } else {
+      // 如果找不到对应的卡片或URL，显示提示
+      wx.showToast({
+        title: '暂无相关内容',
+        icon: 'none',
+        duration: 2000
+      });
+    }
   },
   /**
    * 生命周期函数--监听页面显示

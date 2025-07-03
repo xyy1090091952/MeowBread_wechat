@@ -1,10 +1,15 @@
 // pages/answer/answer.js
+const mistakeManager = require('../../utils/mistakeManager.js'); // 引入错题管理器
+
 Page({
   data: {
     // 根据Figma设计稿，一级页面主要是选项，不直接展示题目信息
     currentFilterDisplay: '', // 用于显示当前题库筛选范围
     showTextbookSelector: false, // 控制教材选择弹窗的显示
-    pageLoaded: false // 控制页面渐显动画
+    pageLoaded: false, // 控制页面渐显动画
+    mistakeCount: 0, // 错题数量
+    // 元素位置信息（用于碰撞检测）
+    elementPositions: []
   },
   onLoad: function (options) {
     // 页面加载时可以进行一些初始化操作
@@ -29,6 +34,200 @@ Page({
   },
 
   /**
+   * 设置动画监听器
+   */
+  setupAnimationListeners() {
+    // 开始碰撞检测
+    this.startCollisionDetection();
+    
+    // 延迟设置监听器，确保动画已开始
+    setTimeout(() => {
+      for (let i = 1; i <= 5; i++) {
+        // 模拟动画结束事件，因为无法直接监听CSS动画
+        const elementInfo = this.data.elementPositions.find(pos => pos.id === i);
+        if (elementInfo) {
+          const totalTime = (elementInfo.delay + elementInfo.duration) * 1000; // 转换到毫秒
+          setTimeout(() => {
+            const positions = this.data.elementPositions;
+            const updatedPositions = positions.map(pos => 
+              pos.id === i ? { ...pos, settled: true } : pos
+            );
+            this.setData({ elementPositions: updatedPositions });
+            console.log(`元素 ${i} 动画完成，已静止`);
+          }, totalTime);
+        }
+      }
+    }, 100);
+  },
+
+  /**
+   * 开始碰撞检测
+   */
+  startCollisionDetection() {
+    // 每隔100ms检测一次碰撞
+    this.collisionTimer = setInterval(() => {
+      this.checkAndResolveCollisions();
+    }, 100);
+    
+    // 4秒后停止碰撞检测（匹配中等动画速度）
+    setTimeout(() => {
+      if (this.collisionTimer) {
+        clearInterval(this.collisionTimer);
+        this.collisionTimer = null;
+        console.log('碰撞检测已停止');
+      }
+    }, 4000);
+  },
+
+  /**
+   * 检测和解决碰撞
+   */
+  checkAndResolveCollisions() {
+    const query = wx.createSelectorQuery().in(this);
+    const positions = [];
+    
+    // 获取所有元素的当前位置
+    for (let i = 1; i <= 5; i++) {
+      query.select(`#falling-item-${i}`).boundingClientRect();
+    }
+    
+    query.exec((res) => {
+      if (!res || res.length !== 5) return;
+      
+      // 检测每对元素之间的碰撞
+      for (let i = 0; i < res.length; i++) {
+        for (let j = i + 1; j < res.length; j++) {
+          const element1 = res[i];
+          const element2 = res[j];
+          
+          if (element1 && element2 && this.isColliding(element1, element2)) {
+            console.log(`检测到碰撞：元素${i+1} 和 元素${j+1}`);
+            this.resolveCollision(i + 1, j + 1, element1, element2);
+          }
+        }
+      }
+    });
+  },
+
+  /**
+   * 检测两个元素是否碰撞
+   */
+  isColliding(element1, element2) {
+    if (!element1 || !element2) return false;
+    
+    const iconSize = 230; // 230rpx图标大小
+    const pixelRatio = wx.getSystemInfoSync().pixelRatio || 2;
+    const iconSizePx = iconSize / pixelRatio; // 转换为px
+    
+    // 计算中心点距离
+    const centerX1 = element1.left + element1.width / 2;
+    const centerY1 = element1.top + element1.height / 2;
+    const centerX2 = element2.left + element2.width / 2;
+    const centerY2 = element2.top + element2.height / 2;
+    
+    const distance = Math.sqrt(
+      Math.pow(centerX2 - centerX1, 2) + Math.pow(centerY2 - centerY1, 2)
+    );
+    
+    // 如果距离小于图标直径的80%，认为发生碰撞
+    return distance < iconSizePx * 0.8;
+  },
+
+  /**
+   * 解决碰撞
+   */
+  resolveCollision(id1, id2, element1, element2) {
+    const elementInfo1 = this.data.elementPositions.find(pos => pos.id === id1);
+    const elementInfo2 = this.data.elementPositions.find(pos => pos.id === id2);
+    
+    if (!elementInfo1 || !elementInfo2) return;
+    
+    // 计算推开的方向和距离
+    const centerX1 = element1.left + element1.width / 2;
+    const centerX2 = element2.left + element2.width / 2;
+    
+    // 水平推开距离
+    const pushDistance = 20; // px
+    
+    // 确定推开方向
+    let newLeft1 = elementInfo1.left;
+    let newLeft2 = elementInfo2.left;
+    
+    if (centerX1 < centerX2) {
+      // 元素1在左侧，向左推开元素1，向右推开元素2
+      newLeft1 = Math.max(5, elementInfo1.left - 3); // 最小5%
+      newLeft2 = Math.min(85, elementInfo2.left + 3); // 最大85%
+    } else {
+      // 元素1在右侧，向右推开元素1，向左推开元素2
+      newLeft1 = Math.min(85, elementInfo1.left + 3);
+      newLeft2 = Math.max(5, elementInfo2.left - 3);
+    }
+    
+    // 更新元素位置
+    const updatedPositions = this.data.elementPositions.map(pos => {
+      if (pos.id === id1) return { ...pos, left: newLeft1 };
+      if (pos.id === id2) return { ...pos, left: newLeft2 };
+      return pos;
+    });
+    
+    this.setData({ elementPositions: updatedPositions });
+    
+    // 更新样式
+    const updateStyles = {};
+    updateStyles[`fallingStyle${id1}`] = `left: ${newLeft1}%; animation-delay: ${elementInfo1.delay.toFixed(1)}s; animation-duration: ${elementInfo1.duration.toFixed(1)}s; transform: translateX(-50%);`;
+    updateStyles[`fallingStyle${id2}`] = `left: ${newLeft2}%; animation-delay: ${elementInfo2.delay.toFixed(1)}s; animation-duration: ${elementInfo2.duration.toFixed(1)}s; transform: translateX(-50%);`;
+    
+    this.setData(updateStyles);
+    
+    console.log(`碰撞解决：元素${id1}移动到${newLeft1.toFixed(1)}%，元素${id2}移动到${newLeft2.toFixed(1)}%`);
+  },
+
+  /**
+   * 检查位置是否与已有位置冲突
+   */
+  checkPositionCollision(newPosition, usedPositions, minDistance = 18) {
+    return usedPositions.some(pos => Math.abs(pos - newPosition) < minDistance);
+  },
+
+  /**
+   * 处理元素触摸事件
+   */
+  handleElementTouch(e) {
+    const elementId = e.currentTarget.dataset.id;
+    console.log(`触摸了元素 ${elementId}`);
+    
+    // 直接操作元素样式实现弹跳效果
+    const query = wx.createSelectorQuery().in(this);
+    query.select(`#falling-item-${elementId}`).node((res) => {
+      if (res && res.node) {
+        const element = res.node;
+        
+        // 保存原始的margin-top值
+        const originalMarginTop = element.style.marginTop || '0px';
+        
+        // 设置向上弹跳
+        element.style.marginTop = '-30px';
+        
+        // 150ms后开始回弹
+        setTimeout(() => {
+          element.style.marginTop = '-5px';
+        }, 150);
+        
+        // 300ms后回到原位
+        setTimeout(() => {
+          element.style.marginTop = originalMarginTop;
+        }, 300);
+      }
+    });
+    query.exec();
+    
+    // 添加触觉反馈
+    wx.vibrateShort({
+      type: 'light' // 轻微震动
+    });
+  },
+
+  /**
    * 生命周期函数--监听页面显示
    */
   onShow() {
@@ -50,8 +249,12 @@ Page({
       }
     }
 
+    // 获取错题数量
+    const mistakeCount = mistakeManager.getMistakeList().length;
+
     this.setData({
-      currentFilterDisplay: currentFilterDisplay
+      currentFilterDisplay: currentFilterDisplay,
+      mistakeCount: mistakeCount // 更新错题数量
     });
 
     // 更新自定义底部导航的选中状态
@@ -152,8 +355,6 @@ Page({
     });
   },
 
-  
-
   /**
    * 生命周期函数--监听页面隐藏
    */
@@ -166,6 +367,12 @@ Page({
    */
   onUnload() {
     console.log('Page unload');
+    
+    // 清理碰撞检测定时器
+    if (this.collisionTimer) {
+      clearInterval(this.collisionTimer);
+      this.collisionTimer = null;
+    }
   },
 
   /**

@@ -19,7 +19,8 @@ Component({
    */
   data: {
     // 内部维护一份临时的选项状态，以便用户可以取消操作
-    internalOptions: []
+    internalOptions: [],
+    modalAnimationClass: '' // 弹窗动画类名
   },
 
   observers: {
@@ -28,6 +29,19 @@ Component({
       this.setData({
         internalOptions: JSON.parse(JSON.stringify(newOptions))
       });
+    },
+    'visible': function(newVal, oldVal) {
+      if (newVal && !oldVal) {
+        // 弹窗显示时添加渐显动画
+        this.setData({
+          modalAnimationClass: ''
+        });
+        setTimeout(() => {
+          this.setData({
+            modalAnimationClass: 'modal-fade-in'
+          });
+        }, 50);
+      }
     }
   },
 
@@ -36,7 +50,18 @@ Component({
    */
   methods: {
     closePopup() {
-      this.triggerEvent('close');
+      // 添加渐隐动画
+      this.setData({
+        modalAnimationClass: 'modal-fade-out'
+      });
+      
+      // 动画完成后关闭弹窗
+      setTimeout(() => {
+        this.setData({
+          modalAnimationClass: ''
+        });
+        this.triggerEvent('close');
+      }, 200);
     },
 
     preventPropagation() {

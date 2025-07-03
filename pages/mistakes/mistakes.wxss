@@ -20,7 +20,7 @@
   font-size: 48rpx;
   font-weight: 600;
   color: #1F2329;
-  /* 移除margin-left，使用header的padding控制 */
+  margin-left: 16rpx;
 }
 
 .mistake-count {
@@ -29,9 +29,35 @@
   /* 移除margin-right，使用header的padding控制 */
 }
 
+.container {
+  position: relative; /* 为遮罩定位提供基准 */
+}
+
 .mistake-list-scroll {
-  height: calc(100vh - 300rpx); /* 减去头部和底部按钮的高度 */
-  /* 去掉padding，避免嵌套层级遮挡投影 */
+  /* 减去头部和底部按钮的高度，并增加一些额外的padding-bottom为遮罩留出空间 */
+  height: calc(100vh - 160rpx); 
+  padding-bottom: 0rpx; /* 增加底部内边距 */
+  box-sizing: border-box;
+}
+
+.mistake-list-scroll::after {
+  content: '';
+  position: absolute;
+  bottom: 0rpx; /* 遮罩的位置，与底部按钮高度一致 */
+  left: 0;
+  right: 0;
+  height: 200rpx; /* 遮罩的高度 */
+  background: linear-gradient(to top, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none; /* 确保遮罩不会影响滚动等交互 */
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 500rpx); /* 调整高度使文字上移 */
+  color: #8A8A8A;
+  font-size: 28rpx;
 }
 
 .mistake-item {
@@ -64,8 +90,20 @@
 }
 
 .status-unseen {
-  color: #8A8A8A;
-  background-color: #F0F0F0;
+  border: 1px solid #CFE2FF; /* 蓝色描边 */
+  background-color: transparent;
+}
+
+.status-unseen .status-text {
+  color: #000000;
+  font-size: 10px;
+}
+
+.status-unseen .status-dot {
+  width: 24rpx; /* 12px */
+  height: 24rpx; /* 12px */
+  border-radius: 50%;
+  background: linear-gradient(to right, #F0F6FC 0%, #CFE2FF 100%);
 }
 
 .status-corrected {
@@ -102,6 +140,23 @@
   background: linear-gradient(to right, #FF1F74 0%, #FF4E91 100%);
 }
 
+.status-memorized {
+  border: 1px solid #7DF303; /* 绿色描边 */
+  background-color: transparent;
+}
+
+.status-memorized .status-text {
+  color: #000000;
+  font-size: 10px;
+}
+
+.status-memorized .status-dot {
+  width: 24rpx; /* 12px */
+  height: 24rpx; /* 12px */
+  border-radius: 50%;
+  background: linear-gradient(to right, #33E6B7 0%, #7DF303 100%);
+}
+
 .word-info {
   display: flex;
   align-items: center;
@@ -111,7 +166,6 @@
   font-size: 16px; 
   font-weight: 600;
   color: #1F2329;
-  margin-right: 16rpx;
 }
 
 /* 词性标签样式重新设计 */
@@ -127,6 +181,7 @@
   display: inline-block;
   background-color: #6c757d; /* 为未匹配词性提供默认背景色 */
   margin-left: 16rpx; /* 左边距8px */
+  font-weight: bold; /* 所有词性标签文字统一加粗 */
 }
 
 .type.verb {
@@ -171,6 +226,47 @@
 
 .type.numeral {
   background-color: #fd7e14;
+}
+
+/* 新增缺失词性的样式 */
+.type.suffix {
+  background-color: #795548; /* 接尾词 - 棕色 */
+}
+
+.type.greeting {
+  background-color: #e91e63; /* 寒暄语 - 粉红色 */
+}
+
+.type.interjection {
+  background-color: #ff5722; /* 感叹词 - 深橙色 */
+}
+
+.type.idiom {
+  background-color: #607d8b; /* 惯用语 - 蓝灰色 */
+}
+
+.type.attributive {
+  background-color: #3f51b5; /* 连体词 - 靛蓝色 */
+}
+
+.type.quantifier {
+  background-color: #009688; /* 数量词 - 青色 */
+}
+
+.type.noun-suru-verb {
+  background-color: #9c27b0; /* 名词/サ变动词 - 紫色 */
+}
+
+.type.adverb-adjectival-noun {
+  background-color: #ff9800; /* 副词/形容动词 - 橙色 */
+}
+
+.type.noun-adjectival-noun {
+  background-color: #8bc34a; /* 名词/形容动词 - 浅绿色 */
+}
+
+.type.unknown {
+  background-color: #9e9e9e; /* 未知词性 - 灰色 */
 }
 
 .item-bottom {
@@ -222,7 +318,7 @@
 }
 
 .status-text.corrected {
-  color: #1F2329;
+  color: #000000;
 }
 
 .status-toggle.error {
@@ -230,7 +326,7 @@
 }
 
 .status-text.error {
-  color: #1F2329;
+  color: #000000;
 }
 
 .footer {
@@ -250,7 +346,7 @@
   background-color: #4845F7;
   color: white;
   text-align: center;
-  border-radius: 24rpx;
+  border-radius: 48rpx;
   font-size: 32rpx;
   font-weight: 600;
   box-shadow: 0px 8rpx 16rpx 0px rgba(72, 69, 247, 0.2);

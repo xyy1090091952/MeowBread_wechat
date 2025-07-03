@@ -1,5 +1,5 @@
 <!--components/question-type-popup/index.wxml-->
-<view class="modal-mask" wx:if="{{visible}}" bindtap="closePopup"></view>
+<view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="closePopup" catchtouchmove="stopPropagation"></view>
 <view class="popup-container {{visible ? 'popup-show' : ''}}">
   <view class="popup-content">
     <view class="popup-header">

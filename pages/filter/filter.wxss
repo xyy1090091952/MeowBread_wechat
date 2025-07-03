@@ -1,134 +1,141 @@
 /* pages/filter/filter.wxss */
+/* 底部白色渐变遮罩 */
+.bottom-gradient-mask {
+  position: fixed;
+  bottom: 0rpx; /* 遮罩的底部位置，需要高于确认按钮 */
+  left: 0;
+  right: 0;
+  height: 240rpx; /* 120px高度 */
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+  pointer-events: none; /* 不阻挡点击事件 */
+  z-index: 10; /* 确保在内容之上，但在按钮之下 */
+}
+
 .page-container {
-  background-color: #F8F8F8; /* 页面背景色，比卡片浅一点 */
-  padding: 30rpx 30rpx 120rpx; /* 底部留出按钮空间 */
+  background-color:rgb(255, 255, 255);
+  padding: 30rpx 30rpx 160rpx; /* 增加底部 padding, 为按钮留出空间 */
   min-height: 100vh;
   box-sizing: border-box;
 }
 
 .section-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: #FFFFFF;
-  border-radius: 20rpx;
-  padding: 30rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  border-radius: 48rpx;
+  padding: 40rpx 48rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 4rpx 4rpx 40rpx 0px rgba(0, 0, 0, 0.12);
+  position: relative; /* 提升层级准备 */
+  z-index: 10; /* 确保卡片在上方 */
+}
+
+.section-content {
+  display: flex;
+  align-items: center;
 }
 
 .section-title {
   font-size: 32rpx;
   font-weight: bold;
   color: #333333;
-  margin-bottom: 30rpx;
+  margin-right: 20rpx;
 }
 
-.filter-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24rpx 0;
-  border-bottom: 1rpx solid #F0F0F0; /* 分割线颜色更浅 */
-}
-
-.filter-item-column {
-  display: flex;
-  flex-direction: column;
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #eee;
-}
-
-.filter-item:last-child,
-.filter-item-column:last-child {
-  border-bottom: none;
-}
-
-.filter-item-label {
-  font-size: 28rpx;
-  color: #333333;
-  margin-bottom: 10rpx; /* for column layout */
-}
-
-.picker-display {
-  font-size: 28rpx;
-  color: #666666;
-  display: flex;
-  align-items: center;
-}
-
-.picker-display.disabled {
-  color: #AAAAAA;
-}
-
-.picker-arrow {
-  width: 24rpx;
-  height: 24rpx;
-  margin: 0 0 0 20rpx;
-}
-
-.lesson-checkbox-group {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.lesson-checkbox-item {
-  display: flex;
-  align-items: center;
-  padding: 15rpx 0;
-}
-
-.lesson-checkbox-item text {
-  margin-left: 10rpx;
-  font-size: 28rpx;
-}
-
-.question-type-group {
-  margin-bottom: 20rpx;
-}
-
-.question-type-group:last-child {
-  margin-bottom: 0;
-}
-
-.question-type-group-title {
-  font-size: 26rpx;
+.section-value {
+  font-size: 24rpx;
   color: #888888;
-  margin-bottom: 20rpx;
 }
 
-.switch-item {
+.change-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.lesson-count {
+  font-size: 24rpx; /* 减小副标题字号 */
+  color: #888888;
+  margin-left: 0; /* 移除左边距 */
+}
+
+.lesson-list {
+  /* 根据Figma设计稿更新背景为渐变色 */
+  background: linear-gradient(180deg, #ECF5FF 0%, #ECF5FF 100%);
+  /* 根据Figma设计稿更新圆角 */
+  border-radius: 48rpx;
+  padding: 110rpx 48rpx 30rpx; /* 增加顶部内边距，为层叠效果留出空间 */
+  margin-top: -128rpx; /* 负外边距，实现层叠效果 */
+  margin-bottom: 30rpx;
+  position: relative; /* 创建新的层叠上下文 */
+  z-index: 1; /* 确保列表在卡片下方 */
+}
+
+.lesson-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 25rpx 0;
-  border-bottom: 1rpx solid #F0F0F0;
+  padding: 24rpx 0;
+  /* 移除课程之间的分割线，以匹配Figma设计 */
+  /* border-bottom: 1rpx solid #E8E8E8; */
 }
 
-.switch-item:last-child {
+.lesson-item:last-child {
   border-bottom: none;
 }
 
-.switch-label {
+.lesson-name {
   font-size: 28rpx;
   color: #333333;
+}
+
+.custom-radio {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 1px solid #4845F7;
+  box-sizing: border-box;
+  position: relative; /* 添加相对定位，为伪元素定位提供基准 */
+}
+
+.custom-radio.checked {
+  background-color: #4845F7; /* 选中时背景色 */
+  border-color: #4845F7; /* 选中时边框颜色 */
+}
+
+/* 使用 ::after 伪元素创建中心圆点 */
+.custom-radio.checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16rpx; /* 中心圆点的宽度 */
+  height: 16rpx; /* 中心圆点的高度 */
+  background-color: white; /* 中心圆点的颜色 */
+  border-radius: 50%;
 }
 
 .confirm-button {
   position: fixed;
-  bottom: 60rpx; /* 增加底部距离，保留安全区 */
-  left: 30rpx; /* 左右保持原有边距，实现通栏效果 */
-  right: 30rpx;
-  background-color: #4845F7; /* 主题绿色 */
+  bottom: 60rpx;
+  left: 60rpx;
+  right: 60rpx;
+  background-color: #4845F7;
   color: white;
   font-size: 32rpx;
   font-weight: bold;
-  border-radius: 16rpx; /* 圆角调整为 8px (16rpx) */
-  padding: 25rpx 0;
+  border-radius: 48rpx;
+  padding: 0; /* 移除垂直内边距 */
   text-align: center;
-  box-shadow: 0 4rpx 12rpx rgba(152, 207, 63, 0.3);
+  box-shadow: 0 8rpx 16rpx rgba(72, 69, 247, 0.2);
+  z-index: 100;
+  height: 96rpx; /* 设置固定高度 */
+  line-height: 96rpx; /* 设置行高与高度一致，实现文字垂直居中 */
 }
 
-.confirm-button[disabled] {
+.confirm-button.disabled {
   background-color: #E0E0E0;
-  color: #AAAAAA;
+  color:rgb(255, 255, 255);
   box-shadow: none;
 }

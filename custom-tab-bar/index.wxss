@@ -2,9 +2,13 @@
   position: fixed;
   left: 0;
   right: 0;
-  /* 使导航栏紧贴安全区域上方 */
-  bottom: constant(safe-area-inset-bottom);
+  /* 选项1：tabbar紧贴安全区域上方（默认） */
   bottom: env(safe-area-inset-bottom);
+  
+  /* 选项2：tabbar延伸到安全区域内（如果要覆盖整个底部，取消下面的注释）*/
+  /* bottom: 0; */
+  /* padding-bottom: env(safe-area-inset-bottom); */
+  
   height: 136rpx; /* 与渐变背景一致 */
   display: flex;
   justify-content: center;
@@ -38,9 +42,8 @@
   z-index: 1;
 }
 
-/* 点击效果 - 使用hover-class替代:active */
+/* 移除点击缩小效果，保持统一 */
 .tab-item-hover {
-  transform: scale(0.95);
 }
 
 /* 选中背景 */
@@ -59,8 +62,13 @@
   border-radius: 68rpx;
   box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
   z-index: 0;
-  /* 添加平滑移动动画 - 减少回弹效果 */
-  transition: left 0.2s ease;
+  /* 添加平滑移动动画 - 使用动态时长 */
+  transition: left ease;
+}
+
+/* 禁用动画状态 */
+.indicator.no-animation {
+  transition: none !important;
 }
 
 .icon {

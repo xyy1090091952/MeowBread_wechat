@@ -8,41 +8,118 @@
   box-sizing: border-box;
   background-color:rgb(255, 255, 255); /* Figma 页面背景色 */
   min-height: 100vh;
-  padding: 0 48rpx 40rpx 48rpx; /* Figma 左右内边距 24px, 对应图片中按钮两侧留白 */
+  padding: 0 48rpx 40rpx 48rpx; /* 移除顶部安全区域padding，避免白色空隙 */
+  border-radius: 48rpx 48rpx 0 0; /* 添加左上角和右上角圆角，24px = 48rpx */
 }
 
-.page-title-container {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  padding: 10rpx 0 30rpx 0; /* Figma 上下内边距 */
-}
 
-.main-title {
-  font-size: 48rpx; /* Figma 主标题字号 24px */
-  color: #4440F4; /* Figma 主标题颜色 */
-  margin-right: 16rpx; /* Figma 主副标题间距 8px */
-  margin-left: 24rpx;
-  font-weight: bold;
-}
-
-.sub-title {
-  font-size: 28rpx; /* Figma 副标题字号 14px */
-  color: #4440F4; /* Figma 副标题颜色 */
-  font-weight: bold; /* 字体加粗 */
-}
 
 .banner-container {
-  width: 100%;
-  margin-bottom: 24rpx; /* Figma Banner与下方内容间距 24px */
-  border-radius: 48rpx; /* Figma Banner圆角 12px */
+  width: 100vw; /* 使用视窗宽度，不受container限制 */
+  margin-left: -48rpx; /* 向左偏移，抵消container的左边距 */
+  margin-right: -48rpx; /* 向右偏移，抵消container的右边距 */
+  border-radius: 0; /* 去掉圆角，因为要占满全宽 */
   overflow: hidden;
+  position: relative; /* 为伪元素提供定位基准 */
 }
 
+.banner-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48rpx; /* 白色圆角区域的高度 */
+  background-color: #ffffff;
+  border-radius: 48rpx 48rpx 0 0; /* 上方圆角，创造过渡效果 */
+  z-index: 2; /* 确保在banner图片之上 */
+}
+
+
+
+/* 掉落元素容器 */
+.falling-elements-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1; /* 在banner图片之上，白色圆角之下 */
+  pointer-events: none; /* 容器本身不阻挡交互 */
+  overflow: hidden; /* 隐藏超出容器的元素 */
+}
+
+/* 掉落元素样式 */
+.falling-element {
+  position: absolute;
+  width: 230rpx; /* 调整到合适大小 */
+  height: 230rpx;
+  top: -230rpx; /* 从顶部上方开始 */
+  animation: realistic-fall 1.15s cubic-bezier(0.25, 0.1, 0.25, 1) forwards; /* 中等速度：原来1.4s和0.9s的中间值 */
+  object-fit: contain; /* 保持图片比例，避免拉伸 */
+  cursor: pointer; /* 鼠标悬停时显示手型 */
+  pointer-events: auto; /* 允许触摸事件 */
+  user-select: none; /* 防止长按选择 */
+  transition: margin-top 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* 触摸弹跳的平滑过渡 */
+}
+
+
+
+/* 位置和时间由JavaScript动态设置 */
+
+/* 真实物理掉落动画 - 快速掉落，慢回弹 */
+@keyframes realistic-fall {
+  /* 开始掉落 */
+  0% {
+    top: -230rpx; /* 适配230rpx图标大小 */
+    transform: translateX(-50%) rotate(0deg);
+    animation-timing-function: ease-in; /* 重力加速开始，越来越快 */
+  }
+  
+  /* 快速掉落到底部 - 压缩掉落时间，加快速度 */
+  65% {
+    top: calc(100% - 195rpx); /* 适配230rpx图标：白色圆角48rpx + PNG边距32rpx + 图标实际内容115rpx */
+    transform: translateX(-50%) rotate(280deg);
+    animation-timing-function: ease-out; /* 弹起阶段：快速开始，重力减速 */
+  }
+  
+  /* 第一次弹跳 - 保持慢回弹，延长时间 */
+  80% {
+    top: calc(100% - 250rpx); /* 强回弹55rpx，比原来的30rpx更强 */
+    transform: translateX(-50%) rotate(320deg);
+    animation-timing-function: ease-in; /* 落下阶段：重力加速，越来越快 */
+  }
+  
+  /* 第二次落下 - 慢一些的落下 */
+  90% {
+    top: calc(100% - 195rpx);
+    transform: translateX(-50%) rotate(350deg);
+    animation-timing-function: ease-out; /* 第二次弹起：快速开始，重力减速 */
+  }
+  
+  /* 第二次小弹跳 - 保持慢节奏 */
+  95% {
+    top: calc(100% - 225rpx); /* 小弹跳30rpx，比原来的12rpx更强 */
+    transform: translateX(-50%) rotate(365deg);
+    animation-timing-function: ease-in; /* 最后落下：重力加速 */
+  }
+  
+  /* 最终静止 */
+  100% {
+    top: calc(100% - 195rpx);
+    transform: translateX(-50%) rotate(370deg);
+    animation-timing-function: linear; /* 保持静止 */
+  }
+}
+
+
+
 .banner-image {
-  width: 100%;
-  display: block;
+  width: 100% !important; /* 强制覆盖微信默认样式 */
+  height: 648rpx !important; /* 明确设置固定高度348rpx并强制应用 */
+  display: block !important;
+  object-fit: cover !important; /* 保持比例，裁剪多余部分 */
+  box-sizing: border-box !important; /* 确保盒模型计算正确 */
 }
 
 .content {
@@ -184,4 +261,14 @@
 
 .arrow-black {
   filter: none; /* 黑色箭头，保持原色 */
+}
+
+.banner-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400rpx; /* 调整为400rpx */
+  height: 400rpx;
+  z-index: 3; /* 位于banner图片之上 */
 }

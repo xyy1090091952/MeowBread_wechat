@@ -10,7 +10,9 @@
     "pages/quiz-result/quiz-result",
     "pages/mistakes/mistakes",
     "pages/quiz-details/quiz-details",
-    "pages/gashapon/gashapon"
+    "pages/gashapon/gashapon",
+    "pages/word-list/word-list",
+    "pages/webview/webview"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -50,6 +52,7 @@
       }
     ]
   },
+
   "style": "v2",
   "sitemapLocation": "sitemap.json"
 }

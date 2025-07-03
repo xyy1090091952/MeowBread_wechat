@@ -75,7 +75,7 @@
   width: 400rpx;
   height: 640rpx;
   background: #ffffff;
-  border-radius: 24rpx;
+  border-radius: 48rpx;
   box-shadow: 8rpx 8rpx 32rpx rgba(0,0,0,0.08);
   position: relative;
   margin-right: 24rpx; /* 卡片间距12px */
@@ -138,7 +138,7 @@
 /* 单词列表顶部导航栏 */
 .word-list-header {
   width: calc(100% - 96rpx); /* 减去左右各48rpx的边距 */
-  margin: 24rpx 48rpx 0 48rpx;
+  margin: 48rpx 48rpx 0 48rpx;
   height: 120rpx;
   display: flex;
   flex-direction: row;

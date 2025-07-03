@@ -2,5 +2,5 @@
   "usingComponents": {
     "textbook-selector": "../../components/textbook-selector/index"
   },
-  "navigationBarTitleText": "MeowBread"
+  "navigationStyle": "custom"
 }

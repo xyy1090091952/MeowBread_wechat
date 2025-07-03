@@ -146,7 +146,7 @@
   font-size: 36rpx;
   font-weight: bold;
   color: #333;
-  margin-right: 10rpx; /* 与词性标签的间距 */
+  margin-right: 0;
 }
 
 .question-stem-remainder {
@@ -174,7 +174,7 @@
   background-color: #FFFFFF; /* 白色背景 */
   color: #000000; /* 黑色文字 */
   border: none; /* 无边框 */
-  border-radius: 24px; /* 圆角 */
+  border-radius: 48rpx; /* 圆角 */
   padding: 0 24px; /* 左右内边距 */
   text-align: left; /* 文字左对齐 */
   font-size: 16px; /* 字体大小 */
@@ -229,12 +229,15 @@
 }
 
 /* 填空题输入框样式 */
+.fill-input-wrapper {
+  /* 移除外边距，如需间距可自行调整 */
+}
+
 .fill-input {
   animation: fadeInUp 0.3s ease-out 0.1s both; /* 填空题延迟0.1s，在题目头部之后出现 */
-
-  border-radius: 24rpx;
+  border-radius: 48rpx; /* 圆角 48rpx */
   padding: 20rpx;
-  font-size: 32rpx;
+  font-size: 16px;
   width: calc(100% - 40rpx);
   height: 200rpx;
   text-align: center;
@@ -246,7 +249,7 @@
   background-color: #7DF303; /* 使用统一的绿色 */
   color: black; /* 黑色文字在绿色背景上更清晰 */
   border: none;
-  border-radius: 24px;
+  border-radius: 48rpx;
   padding: 25rpx;
   font-size: 34rpx;
   width: 100%;
@@ -314,9 +317,9 @@
   border-top-right-radius: 48rpx; /* 右上角圆角 */
 }
 
-/* 答题错误时的渐变背景 - 从上到下 FFBED6 到 FFDFF3 */
+/* 答题错误时的渐变背景 - 从上到下 FFDBE8 到 FFFF */
 .answer-card.incorrect {
-  background: linear-gradient(to bottom, #FFBED6 0%, #FFDFF3 100%);
+  background: linear-gradient(to bottom, #FFDBE8 0%, #FFFFFF 100%);
 }
 
 .answer-card .next-button {
@@ -324,7 +327,7 @@
 }
 
 .next-button {
-  background-color: #007aff; /* 默认蓝色背景 */
+  background-color: #4845F7; /* Blue, or choose another color */
   color: white; /* 白色文字 */
   border-radius: 48rpx; /* 圆角48rpx，更圆润 */
   height: 45px; /* 固定高度 */
@@ -337,7 +340,7 @@
 
 /* 正确状态的按钮保持蓝色 */
 .answer-card.correct .next-button {
-  background-color: #007aff; /* 蓝色背景 */
+  background-color: #4845F7; /* 蓝色背景 */
 }
 
 /* 错误状态的按钮使用粉色 */
@@ -425,9 +428,9 @@
 
 /* Styles for correct/incorrect options */
 .option-button.selected {
-  background-color: #007aff;
+  background-color: #4845F7;
   color: white;
-  border-color: #007aff;
+  border-color: #4845F7;
 }
 
 .option-button.correct {
@@ -475,22 +478,34 @@
 .button-group {
   display: flex;
   width: 100%;
-  gap: 20rpx; /* Space between skip and submit buttons */
-  align-items: center; /* 恢复为 center, 确保按钮垂直居中对齐 */
+  gap: 16rpx; /* 间距 16rpx (≈8px) */
+  align-items: center;
 }
 
+/* 统一按钮基础样式 */
 .half-width-button {
-  flex: 1; /* 让按钮平分宽度 */
-  height: 88rpx; /* 固定高度为44px (@1x) */
+  height: 88rpx; /* 固定高度 */
   padding: 0; /* 移除上下padding，因为高度已固定 */
   font-size: 32rpx;
   text-align: center;
-  border-radius: 24px;
+  border-radius: 48rpx;
   border: none;
   display: flex; /* 使用flex布局 */
   align-items: center; /* 内部文本垂直居中 */
   justify-content: center; /* 内部文本水平居中 */
   box-sizing: border-box; /* 确保padding和border不会增加元素实际宽高 */
+}
+
+/* 左侧跳过按钮固定 192rpx */
+.skip-button.half-width-button {
+  flex: 0 0 192rpx; /* 96px = 192rpx */
+  width: 192rpx;
+}
+
+/* 右侧提交按钮自动占剩余宽度 (总宽减去左按钮宽与间隙) */
+.submit-button.half-width-button {
+  flex: 1 1 auto;
+  width: calc(100% - 192rpx - 16rpx);
 }
 
 .full-width-button {
@@ -512,7 +527,7 @@
 }
 
 .next-button {
-  background-color: #007bff; /* Blue, or choose another color */
+  background-color: #4845F7; /* Blue, or choose another color */
   color: white;
   border: none; /* 下一题按钮通常不需要边框 */
 }
@@ -534,14 +549,16 @@
 }
 
 .part-of-speech-tag {
-  font-size: 10px; /* 调小字体 */
-  padding: 2px 4px; /* 减小内边距 */
-  border-radius: 4px;
-  color: white;
-  line-height: normal; /* 确保行高正常，避免影响垂直对齐 */
-  display: inline-block; /* 或者 inline-flex，确保能和其他文本元素良好配合 */
-  vertical-align: baseline; /* 尝试基线对齐 */
-  background-color: #6c757d; /* 为未匹配词性提供默认背景色 */
+  width: 84rpx;
+  height: 40rpx;
+  font-size: 20rpx;
+  border-radius: 20rpx;
+  color: #FFFFFF;
+  text-align: center;
+  line-height: 40rpx;
+  display: inline-block;
+  margin-left: 16rpx;
+  background-color: #6c757d;
 }
 
 .part-of-speech-tag.verb {
@@ -562,6 +579,7 @@
 
 .part-of-speech-tag.adjective {
   background-color: #F56593;
+  margin-left: 0; /* 去掉左边距 */
 }
 
 .part-of-speech-tag.adverb {
@@ -625,17 +643,15 @@
 .next-button:active,
 .option-button.selected:active {
   background-color: #0070ee !important; /* 蓝色非常轻微加深 */
-  transform: scale(0.98); /* 轻微缩放效果 */
   transition: all 0.1s ease;
 }
 
 /* 绿色按钮点击效果 (#7DF303 -> 非常轻微加深) */
-.submit-button:active,
-.submit-button.half-width-button:active,
+.submit-button:not([disabled]):active,
+.submit-button.half-width-button:not([disabled]):active,
 .option-button.correct:active,
 .option-button.correct-unselected:active {
   background-color: #75E902 !important; /* 绿色非常轻微加深 */
-  transform: scale(0.98);
   transition: all 0.1s ease;
 }
 
@@ -643,28 +659,24 @@
 .option-button.incorrect:active,
 .answer-card.incorrect .next-button:active {
   background-color: #F44788 !important; /* 粉色非常轻微加深 */
-  transform: scale(0.98);
   transition: all 0.1s ease;
 }
 
 /* 灰色按钮点击效果 (#f0f0f0 -> 非常轻微加深) */
 .skip-button:active {
   background-color: #EAEAEA !important; /* 灰色非常轻微加深 */
-  transform: scale(0.98);
   transition: all 0.1s ease;
 }
 
 /* 白色按钮点击效果 (#FFFFFF -> 非常轻微加深) */
 .option-button:active {
   background-color: #FAFAFA !important; /* 白色非常轻微加深 */
-  transform: scale(0.98);
   transition: all 0.1s ease;
 }
 
 /* 高亮切换按钮点击效果 */
 .highlight-toggle:active {
   background-color: rgba(255, 255, 255, 0.55) !important; /* 透明度非常轻微加深 */
-  transform: scale(0.98);
   transition: all 0.1s ease;
 }
 
@@ -680,9 +692,9 @@
 
 /* 确保已有状态的按钮优先级正确 */
 .option-button.selected {
-  background-color: #007aff;
+  background-color: #4845F7;
   color: white;
-  border-color: #007aff;
+  border-color: #4845F7;
 }
 
 .option-button.correct {
@@ -701,4 +713,14 @@
   background-color: #7DF303; /* 使用指定的绿色 */
   color: black; /* 黑色文字在绿色背景上更清晰 */
   border-color: #7DF303;
+}
+
+/* icon style */
+.option-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.arrow-black {
+  filter: none;
 }

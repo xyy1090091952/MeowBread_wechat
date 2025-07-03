@@ -14,17 +14,18 @@
   box-sizing: border-box;
   background-color:rgb(255, 255, 255); /* 轻微的背景色 */
   min-height: 100vh;
+  position: relative; /* 让结果容器成为定位上下文 */
 }
 
 .result-card {
   text-align: center;
-  margin-top: 15vh; /* 与顶部的距离 */
+  margin-top: 100rpx; /* 改为100rpx，进一步向上移动 */
   margin-bottom: 5vh;
 }
 
 .result-image {
-  width: 150px; /* 根据设计稿调整图片宽度 */
-  height: 150px; /* 根据设计稿调整图片高度 */
+  width: 225px; /* 1.5倍放大 */
+  height: 225px;
   margin-bottom: 15px;
 }
 
@@ -38,27 +39,34 @@
   display: flex;
   justify-content: space-between;
   width: 90%;
-  gap: 10px; /* 使用gap来创建间距 */
+  gap: 20rpx; /* 10px → 20rpx */
   margin-bottom: 8vh;
 }
 
 .stat-item {
-  flex: 1;
+  width: 212rpx; /* 106px */
+  height: 228rpx; /* 114px */
   text-align: center;
-  padding: 10px 10px 20px 10px;
-  border-radius: 16px; /* 设计稿中的圆角 */
+  border-radius: 48rpx;
+  box-shadow: 0px 8rpx 24rpx rgba(0,0,0,0.05);
+  overflow: hidden;
 }
 
 .stat-label {
-  font-size: 14px;
-  color: rgba(0, 0, 0, 0.6);
+  height: 76rpx; /* 38px */
+  line-height: 76rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #000;
 }
 
 .stat-value {
-  font-size: 28px;
-  font-weight: bolder;
+  background: #FFFFFF;
+  height: 152rpx; /* 228-76 */
+  line-height: 152rpx;
+  font-size: 48rpx;
+  font-weight: bold;
   color: #000;
-  margin-top: 14px;
 }
 
 /* 为每个统计项设置不同的渐变背景 */
@@ -106,7 +114,7 @@ button.done-button {
   padding: 15px 0;
   background: #4845F7;
   color: white;
-  border-radius: 24rpx; /* 大圆角 */
+  border-radius: 48rpx; /* 大圆角 */
   text-align: center;
   font-size: 16px;
   font-weight: bold;
@@ -117,3 +125,33 @@ button.done-button {
   align-items: center; /* 垂直居中 */
   justify-content: center; /* 水平居中 */
 }
+
+@keyframes float-up{
+  from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}
+}
+
+.result-card-wrapper{
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.result-bubble{
+  position:absolute;
+  left:-40rpx; /* 向左溢出 40rpx */
+  top:calc(50% - 80rpx); /* 向上移动80rpx，调整到合适位置 */
+  transform:translateY(-50%);
+  z-index:1002;
+  display:inline-block;
+  height:76rpx;
+  line-height:76rpx;
+  padding:0 40rpx;
+  border-radius:38rpx;
+  font-size:28rpx;
+  font-weight:600;
+  color:#000;
+  opacity:0;
+}
+
+.animate-float-up{animation:float-up 0.5s ease-out forwards;}

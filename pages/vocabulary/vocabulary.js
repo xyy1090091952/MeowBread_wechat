@@ -1,20 +1,12 @@
 // pages/vocabulary/vocabulary.js
+const learnedManager = require('../../utils/learnedManager.js');
+
 Page({
   data: {
     bannerText: 'Meow Bread 会记录你每一次的学习进度',
     categories: [], // [{id,title,dicts:[{id,name,wordCount,progress}] }]
-    // 单词列表相关数据
-    showWordList: false, // 是否显示单词列表
-    currentDictionary: null, // 当前选中的词典
-    wordList: [], // 单词列表数据
-    filteredWordList: null, // 筛选后的单词列表
-    currentDictName: '', // 当前词典名称
-    // 筛选相关数据
-    showFilterModal: false, // 是否显示筛选弹窗
-    filterType: 'all', // 筛选类型：all, kana, kanji, example
     // 加载动画控制
-    pageLoaded: false, // 控制词典选择页面渐显动画
-    wordListLoaded: false // 控制单词列表页面渐显动画
+    pageLoaded: false // 控制词典选择页面渐显动画
   },
 
   onLoad() {
@@ -53,13 +45,32 @@ Page({
         }
       });
 
-      // 从本地存储读取已学习数量，计算进度百分比
-      const learnedKey = `learned_${dict.id}`;
-      const learnedCount = wx.getStorageSync(learnedKey) || 0;
-      const progress = wordCount ? Math.floor((learnedCount / wordCount) * 100) : 0;
+      // 使用学习进度管理器获取准确的学习进度
+      const learningProgress = learnedManager.getLearningProgress(dict.id);
+      const progress = learningProgress.progress;
+      
+      // 如果学习进度管理器返回的总数与计算的不同，使用计算的数量（更准确）
+      const finalWordCount = learningProgress.totalCount || wordCount;
 
-      return { ...dict, wordCount, progress, cover: coverMap[dict.id] || '' };
+      return { ...dict, wordCount: finalWordCount, progress, cover: coverMap[dict.id] || '' };
     });
+
+    // 获取用户选择的课本ID，用于优先排序
+    // 从本地存储中读取用户之前选择的课本，如果没有选择则为空
+    const selectedDictionaryId = wx.getStorageSync('selectedDictionary');
+    
+    // 自定义排序函数：用户选择的课本排在前面
+    // 这个函数会让用户选择的课本在列表中显示在最前面，提供更好的用户体验
+    const sortDictsBySelection = (dictsArray) => {
+      return dictsArray.sort((a, b) => {
+        // 如果a是用户选择的课本，则a排在前面（返回-1）
+        if (a.id === selectedDictionaryId) return -1;
+        // 如果b是用户选择的课本，则b排在前面（返回1）
+        if (b.id === selectedDictionaryId) return 1;
+        // 如果都不是用户选择的课本，保持原有顺序（返回0）
+        return 0;
+      });
+    };
 
     // 简单分类：教材放 textbook, 其他放 software
     // 这里将词典数据 `dicts` 分成不同的类别 `categories` 以便在界面上展示
@@ -70,200 +81,38 @@ Page({
         title: '课本Textbook', // 分类标题
         // 使用 Array.prototype.filter 方法筛选出所有 id 不等于 'duolingguo' 的词典
         // 这些词典将被归类到"课本"这个类别下
-        dicts: dicts.filter(d => d.id !== 'duolingguo')
+        // 同时应用自定义排序，让用户选择的课本排在前面
+        dicts: sortDictsBySelection(dicts.filter(d => d.id !== 'duolingguo'))
       },
       {
         id: 'software',
         title: '其他Other',
         // 这里同样使用 filter 方法，筛选出 id 等于 'duolingguo' 的词典
         // 将 'duolingguo' 这个词典单独归类到"其他"类别下
-        dicts: dicts.filter(d => d.id === 'duolingguo')
+        // 虽然这个分类只有一个词典，但为了保持代码一致性，也应用排序函数
+        dicts: sortDictsBySelection(dicts.filter(d => d.id === 'duolingguo'))
       }
     ];
 
     this.setData({ categories });
   },
 
-  /** 跳转到详情或筛选页面 */
+  /** 跳转到单词列表页面 */
   openDictionary(e) {
     const { id } = e.currentTarget.dataset;
     if (!id) {
       return; // 无效点击
     }
     
-    // 显示单词列表而不是跳转到其他页面
-    this.showWordList(id);
-  },
-
-  /**
-   * 显示单词列表
-   * @param {string} dictionaryId - 词典ID
-   */
-  showWordList(dictionaryId) {
-    const db = require('../../database/dictionaries.js').dictionaries;
-    const dictionary = db.find(dict => dict.id === dictionaryId);
-    
-    if (!dictionary) {
-      wx.showToast({
-        title: '词典不存在',
-        icon: 'error'
-      });
-      return;
-    }
-
-    // 加载该词典的所有单词
-    let allWords = [];
-    dictionary.lesson_files.forEach(filePath => {
-      try {
-        const lesson = require('../../database/' + filePath);
-        if (Array.isArray(lesson)) {
-          // 处理每个单词，添加课程信息，并将中文字段名转换为英文字段名
-          lesson.forEach(item => {
-            if (item.data) {
-              allWords.push({
-                kana: item.data['假名'] || '',        // 假名
-                kanji: item.data['汉字'] || '',       // 汉字
-                meaning: item.data['中文'] || '',     // 中文意思
-                type: item.data['词性'] || '',        // 词性
-                example: item.data['例句'] || '',     // 例句
-                lesson: item.lesson || 0             // 课程号
-              });
-            }
-          });
-        } else if (Array.isArray(lesson.words)) {
-          // 如果是words数组格式，也进行字段转换
-          lesson.words.forEach(word => {
-            allWords.push({
-              kana: word['假名'] || '',
-              kanji: word['汉字'] || '',
-              meaning: word['中文'] || '',
-              type: word['词性'] || '',
-              example: word['例句'] || '',
-              lesson: word.lesson || 0
-            });
-          });
-        }
-      } catch (err) {
-        console.warn('无法加载课时文件', filePath, err);
-      }
-    });
-
-    // 隐藏tabbar
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({
-        show: false
-      });
-    }
-
-    // 更新页面数据，显示单词列表
-    this.setData({
-      showWordList: true,
-      currentDictionary: dictionary,
-      currentDictName: dictionary.name,
-      wordList: allWords,
-      filteredWordList: null, // 重置筛选列表
-      filterType: 'all', // 重置筛选类型
-      wordListLoaded: false // 重置单词列表动画状态
-    });
-
-    // 启动单词列表页面的渐显动画
-    setTimeout(() => {
-      this.setData({ wordListLoaded: true });
-    }, 100);
-  },
-
-  /**
-   * 关闭单词列表，返回词典选择页面
-   */
-  closeWordList() {
-    // 显示tabbar
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({
-        show: true
-      });
-    }
-
-    this.setData({
-      showWordList: false,
-      currentDictionary: null,
-      currentDictName: '',
-      wordList: [],
-      filteredWordList: null,
-      showFilterModal: false,
-      filterType: 'all',
-      wordListLoaded: false // 重置单词列表动画状态
+    // 跳转到独立的单词列表页面
+    wx.navigateTo({
+      url: `/pages/word-list/word-list?dictionaryId=${id}`
     });
   },
 
-  /**
-   * 显示筛选弹窗
-   */
-  showFilterModal() {
-    this.setData({
-      showFilterModal: true
-    });
-  },
 
-  /**
-   * 隐藏筛选弹窗
-   */
-  hideFilterModal() {
-    this.setData({
-      showFilterModal: false
-    });
-  },
 
-  /**
-   * 阻止事件冒泡
-   */
-  stopPropagation() {
-    // 空函数，用于阻止事件冒泡
-  },
-
-  /**
-   * 选择筛选类型
-   */
-  selectFilter(e) {
-    const { type } = e.currentTarget.dataset;
-    this.setData({
-      filterType: type,
-      showFilterModal: false
-    });
-    
-    // 执行筛选
-    this.filterWordList(type);
-  },
-
-  /**
-   * 筛选单词列表
-   */
-  filterWordList(type) {
-    const { wordList } = this.data;
-    let filteredList = null;
-
-    switch (type) {
-      case 'all':
-        filteredList = null; // 显示全部
-        break;
-      case 'kana':
-        filteredList = wordList.filter(word => word.kana && !word.kanji);
-        break;
-      case 'kanji':
-        filteredList = wordList.filter(word => word.kanji);
-        break;
-      case 'example':
-        filteredList = wordList.filter(word => word.example);
-        break;
-      default:
-        filteredList = null;
-    }
-
-    this.setData({
-      filteredWordList: filteredList
-    });
-  },
-
-  /** 页面展示时更新底部导航选中状态 */
+  /** 页面展示时更新底部导航选中状态并重新加载进度数据 */
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       const page = getCurrentPages().pop();
@@ -274,5 +123,8 @@ Page({
         this.getTabBar().updateSelected(index);
       }
     }
+    
+    // 重新加载数据以更新学习进度（用户可能刚完成答题）
+    this.prepareData();
   }
 });
