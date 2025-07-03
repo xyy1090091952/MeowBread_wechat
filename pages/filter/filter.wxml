@@ -33,7 +33,7 @@
   <view class="section-card" bindtap="toggleSelectAll">
     <view class="section-content">
       <view class="section-title">课程选择</view>
-      <view class="lesson-count">共{{lessons.length}}课</view>
+      <view class="lesson-count">共{{displayedLessonsCount}}课</view>
     </view>
     <view class="custom-radio {{areAllLessonsSelected ? 'checked' : ''}}"></view>
   </view>

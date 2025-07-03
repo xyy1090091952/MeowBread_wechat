@@ -8,7 +8,7 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  z-index: 9999; /* 提高z-index以确保在tab-bar之上 */
   opacity: 0;
 }
 
@@ -46,7 +46,7 @@
   right: 0;
   transform: translateY(100%);
   transition: transform 0.3s ease-out;
-  z-index: 1001;
+  z-index: 10000; /* 提高z-index以确保在tab-bar之上 */
 }
 
 .modal-container.modal-show {
@@ -186,4 +186,9 @@
 .btn-confirm {
   background-color: #4845F7;
   color: #ffffff;
+}
+
+.btn-confirm.disabled {
+  background-color: #E3E3E3;
+  color: #FFFFFF;
 }

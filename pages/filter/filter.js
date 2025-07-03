@@ -18,6 +18,7 @@ Page({
     isSelectorVisible: false,
     isQuestionTypePopupVisible: false,
     areAllLessonsSelected: false, // 新增：是否全选
+    displayedLessonsCount: 0,
   },
 
   /**
@@ -26,7 +27,7 @@ Page({
   onLoad(options) {
     const initialState = filterService.initializeFilterState(options);
     this.setData(initialState, () => {
-      this.checkIfAllLessonsSelected();
+      this.updateLessonState();
     });
   },
 
@@ -79,6 +80,22 @@ Page({
 
   },
 
+  // 新增：根据课程列表和选中的词典，获取更新后的 selectedLessonFiles
+  getUpdatedSelectedLessonFiles(lessons, selectedDict) {
+    const actualLessons = lessons.filter(lesson => lesson.name !== '全部课程');
+    const areAllSelected = actualLessons.length > 0 && actualLessons.every(lesson => lesson.checked);
+
+    if (areAllSelected) {
+      // 如果所有课程都被选中，则返回一个代表“全部课程”的特殊文件标识
+      return [`DICTIONARY_${selectedDict.id}_ALL_LESSONS`];
+    } else {
+      // 否则，返回被选中的课程文件列表
+      return actualLessons
+        .filter(lesson => lesson.checked)
+        .map(lesson => lesson.file);
+    }
+  },
+
   // 显示教材选择弹窗
   showTextbookSelector() {
     console.log('showTextbookSelector called. Setting isSelectorVisible to true.');
@@ -90,14 +107,14 @@ Page({
     const { selectedDictionary } = e.detail;
     const dictionaryIndex = this.data.dictionaries.findIndex(dict => dict.id === selectedDictionary.id);
 
-    // 切换词典时，获取新课程列表，但不立即全选
-    const newLessons = filterService.getLessonsForDictionary(selectedDictionary, []); // 初始不选中任何课程
+    // 切换词典时，获取新课程列表
+    const newLessons = filterService.getLessonsForDictionary(selectedDictionary, []);
 
     // 默认全选所有课程（除了“全部课程”）
     const lessonsWithSelection = newLessons.map(l => ({ ...l, checked: l.name !== '全部课程' }));
-    const newSelectedLessonFiles = lessonsWithSelection
-      .filter(l => l.checked)
-      .map(l => l.file);
+    
+    // 使用新方法计算 selectedLessonFiles
+    const newSelectedLessonFiles = this.getUpdatedSelectedLessonFiles(lessonsWithSelection, selectedDictionary);
 
     this.setData({
       selectedDictionaryIndex: dictionaryIndex,
@@ -106,7 +123,7 @@ Page({
       isSelectorVisible: false
     }, () => {
       this.saveFilterSettings();
-      this.checkIfAllLessonsSelected();
+      this.updateLessonState();
     });
   },
 
@@ -156,13 +173,15 @@ Page({
       selectedDictionaryIndex: index,
       lessons: newLessons,
       selectedLessonFiles: newSelectedLessonFiles
+    }, () => {
+      this.updateLessonState();
     });
   },
 
   onLessonCheckboxChange(e) {
     const clickedFile = e.currentTarget.dataset.file;
     // 直接在这里处理逻辑，不再依赖 filterService
-    let { lessons, selectedLessonFiles } = this.data;
+    let { lessons } = this.data;
 
     const newLessons = lessons.map(lesson => {
       if (lesson.file === clickedFile) {
@@ -171,25 +190,25 @@ Page({
       return lesson;
     });
 
-    const newSelectedLessonFiles = newLessons
-      .filter(lesson => lesson.checked && lesson.name !== '全部课程') // 过滤掉“全部课程”
-      .map(lesson => lesson.file);
+    const newSelectedLessonFiles = this.getUpdatedSelectedLessonFiles(newLessons, this.data.dictionaries[this.data.selectedDictionaryIndex]);
 
     this.setData({
       lessons: newLessons,
       selectedLessonFiles: newSelectedLessonFiles
     }, () => {
       this.saveFilterSettings();
-      this.checkIfAllLessonsSelected();
+      this.updateLessonState();
     });
   },
 
-  // 检查是否所有课程都被选中
-  checkIfAllLessonsSelected() {
-    // 过滤掉“全部课程”选项后再检查
+  // 更新课程状态，包括是否全选和显示的课程数量
+  updateLessonState() {
     const actualLessons = this.data.lessons.filter(lesson => lesson.name !== '全部课程');
     const areAllSelected = actualLessons.length > 0 && actualLessons.every(lesson => lesson.checked);
-    this.setData({ areAllLessonsSelected: areAllSelected });
+    this.setData({
+      areAllLessonsSelected: areAllSelected,
+      displayedLessonsCount: actualLessons.length
+    });
   },
 
   // 全选/取消全选
@@ -205,9 +224,7 @@ Page({
       return { ...lesson, checked: selectAll };
     });
 
-    const newSelectedLessonFiles = newLessons
-      .filter(lesson => lesson.checked && lesson.name !== '全部课程')
-      .map(lesson => lesson.file);
+    const newSelectedLessonFiles = this.getUpdatedSelectedLessonFiles(newLessons, this.data.dictionaries[this.data.selectedDictionaryIndex]);
 
     this.setData({
       lessons: newLessons,
@@ -215,6 +232,7 @@ Page({
       areAllLessonsSelected: selectAll
     }, () => {
       this.saveFilterSettings();
+      this.updateLessonState();
     });
   },
 

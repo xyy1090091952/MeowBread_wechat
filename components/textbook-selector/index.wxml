@@ -16,7 +16,7 @@
       </block>
     </view>
     <view class="modal-buttons">
-      <view class="btn btn-confirm" bindtap="onConfirm">确认</view>
+      <view class="btn btn-confirm {{!selectedBookId ? 'disabled' : ''}}" bindtap="onConfirm">确认</view>
     </view>
   </view>
 </view>
