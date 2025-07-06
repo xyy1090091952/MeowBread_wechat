@@ -11,34 +11,41 @@
   bind:confirm="onConfirmQuestionTypePopup"
 />
 <view class="page-container">
+  <!-- 题型选择 -->
   <view class="section-card" bindtap="showQuestionTypePopup">
-    <view class="section-title">题型选择</view>
-    <view class="filter-item">
-      <view class="filter-item-label">当前已选 {{selectedQuestionTypes.length}} 种</view>
-      <image class="picker-arrow" src="/images/icons/change.png" />
+    <view class="section-content">
+      <view class="section-title">题型选择</view>
+      <view class="section-value">{{selectedQuestionTypes.length === questionTypeOptions.length ? '所有题型' : '当前已选 ' + selectedQuestionTypes.length + ' 种'}}</view>
     </view>
+    <image class="change-icon" src="/images/icons/change.png" />
   </view>
 
-  <view class="section-card">
-    <view class="section-title">词库选择</view>
-    <view class="filter-item">
-      <view class="filter-item-label">选择教材：</view>
-      <view class="picker-display" bindtap="showTextbookSelector">
-        {{dictionaries[selectedDictionaryIndex].name || '请选择教材'}}
-        <image class="picker-arrow" src="/images/icons/change.png" />
-      </view>
+  <!-- 词库选择 -->
+  <view class="section-card" bindtap="showTextbookSelector">
+    <view class="section-content">
+      <view class="section-title">词库选择</view>
+      <view class="section-value">{{dictionaries[selectedDictionaryIndex].name || '请选择教材'}}</view>
     </view>
-
-    <view class="filter-item-column">
-      <view class="filter-item-label">选择课程：</view>
-      <view class="lesson-checkbox-group">
-        <label class="lesson-checkbox-item" wx:for="{{lessons}}" wx:key="file" catch:tap="onLessonCheckboxChange" data-file="{{item.file}}">
-          <checkbox value="{{item.file}}" checked="{{item.checked}}" />
-          <text>{{item.name}}</text>
-        </label>
-      </view>
-    </view>
+    <image class="change-icon" src="/images/icons/change.png" />
   </view>
 
-  <button class="confirm-button" type="primary" bindtap="startQuiz" disabled="{{selectedLessonFiles.length === 0}}">完成选择</button>
-</view>
+  <!-- 课程选择 -->
+  <view class="section-card" bindtap="toggleSelectAll">
+    <view class="section-content">
+      <view class="section-title">课程选择</view>
+      <view class="lesson-count">共{{displayedLessonsCount}}课</view>
+    </view>
+    <view class="custom-radio {{areAllLessonsSelected ? 'checked' : ''}}"></view>
+  </view>
+
+  <!-- 课程列表 -->
+  <view class="lesson-list">
+    <view class="lesson-item {{item.checked ? 'checked' : ''}}" wx:for="{{lessons}}" wx:key="file" bindtap="onLessonCheckboxChange" data-file="{{item.file}}" wx:if="{{item.name !== '全部课程'}}">
+      <text class="lesson-name">{{item.name}}</text>
+      <view class="custom-radio {{item.checked ? 'checked' : ''}}"></view>
+    </view>
+  </view><!-- 底部白色渐变遮罩 -->
+  <view class="bottom-gradient-mask"></view>
+
+  <!-- 底部确认按钮 -->
+  <view class="confirm-button {{selectedLessonFiles.length === 0 ? 'disabled' : ''}}" bindtap="startQuiz">选择完毕</view></view>

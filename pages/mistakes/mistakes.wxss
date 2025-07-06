@@ -47,9 +47,35 @@
   /* 移除margin-right，使用header的padding控制 */
 }
 
+.container {
+  position: relative; /* 为遮罩定位提供基准 */
+}
+
 .mistake-list-scroll {
-  height: calc(100vh - 300rpx); /* 减去头部和底部按钮的高度 */
-  /* 去掉padding，避免嵌套层级遮挡投影 */
+  /* 减去头部和底部按钮的高度，并增加一些额外的padding-bottom为遮罩留出空间 */
+  height: calc(100vh - 160rpx); 
+  padding-bottom: 0rpx; /* 增加底部内边距 */
+  box-sizing: border-box;
+}
+
+.mistake-list-scroll::after {
+  content: '';
+  position: absolute;
+  bottom: 0rpx; /* 遮罩的位置，与底部按钮高度一致 */
+  left: 0;
+  right: 0;
+  height: 200rpx; /* 遮罩的高度 */
+  background: linear-gradient(to top, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none; /* 确保遮罩不会影响滚动等交互 */
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 500rpx); /* 调整高度使文字上移 */
+  color: #8A8A8A;
+  font-size: 28rpx;
 }
 
 .mistake-item {

@@ -98,12 +98,6 @@ Component({
       if (this.data.selectedBookId) {
         const selectedDictionary = this.data.textbooks.find(book => book.id === this.data.selectedBookId);
         this.triggerEvent('select', { selectedDictionary });
-      } else {
-        // 如果用户未选择任何课本就点击确认，可以给一个提示
-        wx.showToast({
-          title: '请先选择一本课本',
-          icon: 'none'
-        });
       }
     }
   }

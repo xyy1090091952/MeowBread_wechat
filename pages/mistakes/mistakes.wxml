@@ -1,13 +1,16 @@
 <view class="page">
   <view class="container">
-    <view class="header fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}">
-      <text class="title">错词库</text>
+    <view class="header">
+      <text class="title">错题库</text>
       <text class="mistake-count">错误单词 {{mistakeCount}}</text>
     </view>
-
-    <scroll-view scroll-y class="mistake-list-scroll fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
+    <scroll-view scroll-y class="mistake-list-scroll" wx:if="{{mistakeList.length > 0}}">
       <word-card wx:for="{{mistakeList}}" wx:key="index" item="{{item}}" />
     </scroll-view>
+
+    <view class="empty-state" wx:else>
+      <text>这里还没有任何记录</text>
+    </view>
   </view>
 
   <view class="footer fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}">
