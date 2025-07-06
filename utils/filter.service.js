@@ -168,6 +168,7 @@ const service = {
       selectedLessonFiles: data.selectedLessonFiles,
       selectedDictionaryName: selectedDict.name,
       selectedLessonName: lessonName,
+      selectedDictionaryKey: selectedDict.id, // 添加这个字段用于course-mode识别
       dictionaryId: selectedDict.id,
       basePath: selectedDict.base_path || '',
       quizMode: data.quizMode,

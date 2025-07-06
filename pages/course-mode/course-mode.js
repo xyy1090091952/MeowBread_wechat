@@ -39,11 +39,15 @@ Page({
    */
   onShow() {
     console.log('Course mode page show');
+    
+    // 调试：输出当前筛选条件
+    const filter = filterManager.getFilter();
+    console.log('Current filter in course-mode onShow:', filter);
+    
     // 页面显示时重新加载数据，以防用户在filter页面更改了教材选择
     this.loadCourseData();
     
     // 更新显示的筛选信息
-    const filter = filterManager.getFilter();
     const currentFilterDisplay = filter ? 
       `${filter.selectedDictionaryName} - ${filter.selectedLessonName}` : 
       '请先选择题库';
@@ -81,19 +85,25 @@ Page({
     try {
       // 获取当前筛选的教材
       const filter = filterManager.getFilter();
+      console.log('Filter in loadCourseData:', filter);
+      
       let textbook = 'liangs_class'; // 默认教材
       
       // 如果有筛选条件，使用筛选的教材
       if (filter && filter.selectedDictionaryKey) {
         textbook = filter.selectedDictionaryKey;
+        console.log('Using textbook from filter.selectedDictionaryKey:', textbook);
+      } else {
+        console.log('No selectedDictionaryKey found, using default:', textbook);
       }
       
       // 如果选择的是"全部辞典"，则使用默认教材
       if (textbook === 'all') {
         textbook = 'liangs_class';
+        console.log('Changed from "all" to default textbook:', textbook);
       }
 
-      console.log('Loading courses for textbook:', textbook);
+      console.log('Final textbook to load:', textbook);
 
       // 根据教材加载课程数据
       const courseList = courseDataManager.getAllCourseDetails(textbook);
