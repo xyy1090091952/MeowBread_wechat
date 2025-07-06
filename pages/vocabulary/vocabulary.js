@@ -3,7 +3,7 @@ const learnedManager = require('../../utils/learnedManager.js');
 
 Page({
   data: {
-    bannerText: '切换课程,Meow Bread也会记录你的单词进度',
+    bannerText: '切换课本 Meow Bread 会保留你之前的进度',
     categories: [], // [{id,title,dicts:[{id,name,wordCount,progress}] }]
     // 加载动画控制
     pageLoaded: false // 控制词典选择页面渐显动画

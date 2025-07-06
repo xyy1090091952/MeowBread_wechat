@@ -47,37 +47,144 @@
   font-weight: 500; /* 稍微加粗，增强可读性 */
 }
 
-/* ==================== 时间线内容样式 ==================== */
+/* ==================== 筛选器模块样式 ==================== */
 
-.timeline-content {
+.filter-module {
+  width: 100%;
+  height: 128rpx;
+  background-color: #f8f9fa;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32rpx;
+  border: 2rpx solid #e9ecef;
+}
+
+.filter-placeholder {
+  font-size: 28rpx;
+  color: #666666;
+  font-weight: 400;
+}
+
+/* ==================== 课程模块样式 ==================== */
+
+.course-list {
   width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  gap: 24rpx;
 }
 
-.timeline-placeholder {
+.course-item {
+  width: 100%;
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  padding: 0 24rpx;
+  box-shadow: 0px 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+/* 课程节数区域 */
+.course-number {
+  width: 120rpx;
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f2f5;
+  border-radius: 16rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.course-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #333333;
+}
+
+/* 已完成课程的节数样式 */
+.course-number-completed {
+  background-color: #e6f7ff;
+}
+
+.course-number-completed .course-num {
+  color: #1890ff;
+}
+
+/* 课程信息区域 */
+.course-info {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 80rpx 40rpx;
+  margin-right: 24rpx;
 }
 
-.placeholder-text {
+.course-name {
   font-size: 32rpx;
-  color: #333333;
   font-weight: 600;
-  margin-bottom: 16rpx;
+  color: #000000;
+  margin-bottom: 8rpx;
 }
 
-.placeholder-subtitle {
-  font-size: 24rpx;
+.course-name-completed {
+  color: #1890ff;
+}
+
+/* 进度信息 */
+.course-progress {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.progress-text {
+  font-size: 20rpx;
   color: #666666;
   font-weight: 400;
+  min-width: 60rpx;
+}
+
+.progress-text-completed {
+  color: #1890ff;
+}
+
+/* 进度条 */
+.progress-bar {
+  width: 240rpx;
+  height: 16rpx;
+  background-color: #f0f2f5;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #d9d9d9;
+  border-radius: 8rpx;
+  transition: width 0.3s ease;
+}
+
+.progress-fill-completed {
+  background-color: #1890ff;
+}
+
+/* 箭头图标 */
+.course-arrow {
+  width: 48rpx;
+  height: 48rpx;
+  flex-shrink: 0;
+  filter: none; /* 默认黑色 */
+}
+
+.course-arrow-completed {
+  filter: invert(30%) sepia(100%) saturate(2000%) hue-rotate(200deg) brightness(100%); /* 蓝色箭头 */
 }
 
 /* ==================== 加载状态样式 ==================== */

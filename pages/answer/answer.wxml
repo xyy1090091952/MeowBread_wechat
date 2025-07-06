@@ -23,7 +23,7 @@
     <!-- 时间线模式按钮 -->
     <view class="option-card timeline-mode-card fade-in-element fade-delay-4 {{pageLoaded ? 'show' : ''}}" bindtap="startTimelineMode">
       <view class="option-text-container">
-        <text class="option-main-text">时间线模式</text>
+        <text class="option-main-text">📖 课程模式</text>
         <text class="option-sub-text">根据课程时间线背单词</text>
       </view>
       <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />

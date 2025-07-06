@@ -62,8 +62,7 @@
   border-radius: 68rpx;
   box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
   z-index: 0;
-  /* 添加平滑移动动画 - 使用线性动画避免闪烁 */
-  transition: left linear;
+  /* 删除切换动画效果 */
 }
 
 /* 禁用动画状态 */

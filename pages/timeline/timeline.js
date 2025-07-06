@@ -1,4 +1,4 @@
-// pages/timeline/timeline.js
+// pages/timeline/timeline.js - 课程模式页面
 const filterManager = require('../../utils/filterManager.js');
 
 Page({
@@ -9,7 +9,7 @@ Page({
   data: {
     currentFilterDisplay: '', // 当前筛选显示文本
     pageLoaded: false, // 控制页面渐显动画
-    timelineData: [], // 时间线数据
+    courseData: [], // 课程数据
     isLoading: true // 加载状态
   },
 
@@ -17,15 +17,15 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    console.log('Timeline page loaded with options:', options);
-    this.initializeTimelinePage();
+    console.log('Course mode page loaded with options:', options);
+    this.initializeCoursePage();
   },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() {
-    console.log('Timeline page ready');
+    console.log('Course mode page ready');
     // 页面渲染完成后，启动渐显动画
     setTimeout(() => {
       this.setData({ pageLoaded: true });
@@ -33,9 +33,9 @@ Page({
   },
 
   /**
-   * 初始化时间线页面
+   * 初始化课程模式页面
    */
-  initializeTimelinePage() {
+  initializeCoursePage() {
     // 获取当前筛选配置
     const filter = filterManager.getFilter();
     const currentFilterDisplay = filter ? 
@@ -47,22 +47,23 @@ Page({
       isLoading: false
     });
 
-    // TODO: 加载时间线数据
-    this.loadTimelineData();
+    // TODO: 加载课程数据
+    this.loadCourseData();
   },
 
   /**
-   * 加载时间线数据
+   * 加载课程数据
    */
-  loadTimelineData() {
-    // TODO: 实现时间线数据加载逻辑
-    console.log('Loading timeline data...');
+  loadCourseData() {
+    // TODO: 实现课程数据加载逻辑
+    console.log('Loading course data...');
     
     // 模拟数据加载
     setTimeout(() => {
       this.setData({
-        timelineData: [
-          // 这里将来会加载真实的时间线数据
+        courseData: [
+          // 这里将来会加载真实的课程数据
+          // 包含课程号、课程名、已学单词数、总单词数等信息
         ],
         isLoading: false
       });
