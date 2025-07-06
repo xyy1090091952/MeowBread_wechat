@@ -94,7 +94,7 @@ const quizService = {
   /**
    * 为测验选择单词并生成问题
    * @param {Array} allWords - 所有单词
-   * @param {string} mode - 测验模式 ('quick' 或 'endless')
+   * @param {string} mode - 测验模式 ('quick', 'endless', 或 'course')
    * @param {Array} selectedQuestionTypes - 选择的题型
    * @returns {Array} - 最终的问题列表
    */
@@ -117,7 +117,8 @@ const quizService = {
 
     finalQuestions.sort(() => 0.5 - Math.random());
 
-    if (mode === 'quick') {
+    // 快速模式和课程模式都限制为30道题
+    if (mode === 'quick' || mode === 'course') {
       return finalQuestions.slice(0, Math.min(finalQuestions.length, 30));
     }
     return finalQuestions;

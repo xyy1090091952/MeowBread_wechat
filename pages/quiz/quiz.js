@@ -194,6 +194,7 @@ Page({
 
     wx.nextTick(() => {
       if ((this.data.quizMode === 'quick' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1) ||
+        (this.data.quizMode === 'course' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1) ||
         (this.data.quizMode === 'endless' && this.data.currentQuestionIndex >= this.data.questions.length - 1)) {
         this.endQuiz();
       } else {
@@ -257,7 +258,7 @@ Page({
 
   onReady: function() {},
   onShow: function() {
-    if (!this.data.timer && this.data.questions.length > 0 && !this.data.showAnswerCard && this.data.currentQuestionIndex < (this.data.quizMode === 'quick' ? this.data.totalQuestions : this.data.questions.length)) {
+    if (!this.data.timer && this.data.questions.length > 0 && !this.data.showAnswerCard && this.data.currentQuestionIndex < (this.data.quizMode === 'quick' || this.data.quizMode === 'course' ? this.data.totalQuestions : this.data.questions.length)) {
       this.startTimer();
     }
   },

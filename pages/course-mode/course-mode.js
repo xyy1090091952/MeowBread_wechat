@@ -35,6 +35,25 @@ Page({
   },
 
   /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow() {
+    console.log('Course mode page show');
+    // 页面显示时重新加载数据，以防用户在filter页面更改了教材选择
+    this.loadCourseData();
+    
+    // 更新显示的筛选信息
+    const filter = filterManager.getFilter();
+    const currentFilterDisplay = filter ? 
+      `${filter.selectedDictionaryName} - ${filter.selectedLessonName}` : 
+      '请先选择题库';
+    
+    this.setData({
+      currentFilterDisplay
+    });
+  },
+
+  /**
    * 初始化课程模式页面
    */
   initializeCoursePage() {
@@ -62,19 +81,32 @@ Page({
     try {
       // 获取当前筛选的教材
       const filter = filterManager.getFilter();
-      if (!filter || !filter.selectedDictionaryKey) {
-        console.log('No filter selected, using default textbook');
+      let textbook = 'liangs_class'; // 默认教材
+      
+      // 如果有筛选条件，使用筛选的教材
+      if (filter && filter.selectedDictionaryKey) {
+        textbook = filter.selectedDictionaryKey;
+      }
+      
+      // 如果选择的是"全部辞典"，则使用默认教材
+      if (textbook === 'all') {
+        textbook = 'liangs_class';
+      }
+
+      console.log('Loading courses for textbook:', textbook);
+
+      // 根据教材加载课程数据
+      const courseList = courseDataManager.getAllCourseDetails(textbook);
+      
+      if (!courseList || courseList.length === 0) {
+        console.warn(`No courses found for textbook: ${textbook}, falling back to default`);
         this.loadDefaultCourseData();
         return;
       }
-
-      // 根据筛选的教材加载课程数据
-      const textbook = filter.selectedDictionaryKey;
-      const courseList = courseDataManager.getAllCourseDetails(textbook);
       
       // 为每个课程添加学习进度信息
       const courseDataWithProgress = courseList.map(course => {
-        const learnedWords = learnedManager.getLearnedWords(textbook, course.courseNumber);
+        const learnedWords = learnedManager.getLearnedWordsForCourse(textbook, course.lessonFile);
         const learnedCount = learnedWords.length;
         const totalWords = course.wordCount;
         const progress = totalWords > 0 ? Math.round((learnedCount / totalWords) * 100) : 0;
@@ -111,7 +143,7 @@ Page({
     const courseList = courseDataManager.getAllCourseDetails('liangs_class');
     
     const courseDataWithProgress = courseList.map(course => {
-      const learnedWords = learnedManager.getLearnedWords('liangs_class', course.courseNumber);
+      const learnedWords = learnedManager.getLearnedWordsForCourse('liangs_class', course.lessonFile);
       const learnedCount = learnedWords.length;
       const totalWords = course.wordCount;
       const progress = totalWords > 0 ? Math.round((learnedCount / totalWords) * 100) : 0;
@@ -143,17 +175,26 @@ Page({
     const courseData = e.currentTarget.dataset.course;
     console.log('Course item tapped:', courseData);
 
+    // 获取教材名称
+    const textbookInfo = courseDataManager.getTextbookInfo(courseData.textbook);
+    const textbookName = textbookInfo ? textbookInfo.textbookName : courseData.textbook;
+
     // 设置筛选器为当前课程
-    filterManager.setFilter({
+    filterManager.saveFilter({
       selectedDictionaryKey: courseData.textbook,
-      selectedDictionaryName: courseData.textbook === 'liangs_class' ? '梁老师的日语课' : courseData.textbook,
+      selectedDictionaryName: textbookName,
       selectedLessonKey: courseData.lessonFile,
-      selectedLessonName: `第${courseData.courseNumber}课 ${courseData.courseTitle}`
+      selectedLessonName: `第${courseData.courseNumber}课 ${courseData.courseTitle}`,
+      selectedLessonFiles: [`${courseData.textbook}_${courseData.lessonFile}`],
+      dictionaryId: courseData.textbook,
+      basePath: courseData.textbook,
+      quizMode: 'course', // 新增课程模式
+      selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill']
     });
 
-    // 跳转到答题页面
+    // 直接跳转到quiz页面，进行课程专项练习
     wx.navigateTo({
-      url: '/pages/answer/answer'
+      url: '/pages/quiz/quiz?mode=course'
     });
   },
 

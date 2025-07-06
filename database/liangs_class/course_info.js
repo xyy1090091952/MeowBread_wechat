@@ -5,6 +5,24 @@ module.exports = {
   textbook: "liangs_class",
   textbookName: "梁老师的日语课",
   
+  // 课程分册信息
+  volumes: [
+    {
+      volumeKey: "upper",
+      volumeName: "初级上",
+      description: "基础日语课程",
+      courseRange: [5, 16], // 第5课到第16课
+      courses: []
+    },
+    {
+      volumeKey: "lower", 
+      volumeName: "初级下",
+      description: "进阶日语课程",
+      courseRange: [17, 25], // 第17课到第25课
+      courses: []
+    }
+  ],
+  
   // 课程列表
   courses: [
     {
@@ -123,15 +141,15 @@ module.exports = {
     },
     {
       courseNumber: 24,
-      courseTitle: "日本の弁当文化",
+      courseTitle: "ランチ",
       lessonFile: "lesson24",
-      description: "日本的便当文化"
+      description: "午餐相关的日语表达"
     },
     {
       courseNumber: 25,
-      courseTitle: "综合练习",
+      courseTitle: "日本の弁当文化",
       lessonFile: "lesson25",
-      description: "综合练习和复习"
+      description: "日本的便当文化"
     }
   ],
   
@@ -153,5 +171,44 @@ module.exports = {
   // 获取课程总数
   getTotalCourses: function() {
     return this.courses.length;
+  },
+
+  // 初始化分册课程数据
+  initializeVolumes: function() {
+    this.volumes.forEach(volume => {
+      volume.courses = this.courses.filter(course => 
+        course.courseNumber >= volume.courseRange[0] && 
+        course.courseNumber <= volume.courseRange[1]
+      );
+    });
+  },
+
+  // 获取所有分册信息
+  getVolumes: function() {
+    if (this.volumes[0].courses.length === 0) {
+      this.initializeVolumes();
+    }
+    return this.volumes;
+  },
+
+  // 根据分册key获取分册信息
+  getVolumeByKey: function(volumeKey) {
+    const volumes = this.getVolumes();
+    return volumes.find(volume => volume.volumeKey === volumeKey);
+  },
+
+  // 根据课程编号获取所属分册
+  getVolumeForCourse: function(courseNumber) {
+    const volumes = this.getVolumes();
+    return volumes.find(volume => 
+      courseNumber >= volume.courseRange[0] && 
+      courseNumber <= volume.courseRange[1]
+    );
+  },
+
+  // 获取指定分册的课程列表
+  getCoursesByVolume: function(volumeKey) {
+    const volume = this.getVolumeByKey(volumeKey);
+    return volume ? volume.courses : [];
   }
 }; 
