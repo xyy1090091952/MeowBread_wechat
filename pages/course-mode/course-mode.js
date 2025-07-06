@@ -101,11 +101,19 @@ Page({
       let textbook = 'liangs_class'; // 默认教材
       
       // 如果有筛选条件，使用筛选的教材
-      if (filter && filter.selectedDictionaryKey) {
-        textbook = filter.selectedDictionaryKey;
-        console.log('Using textbook from filter.selectedDictionaryKey:', textbook);
+      if (filter) {
+        // 优先使用 selectedDictionaryKey，如果没有则使用 dictionaryId
+        if (filter.selectedDictionaryKey) {
+          textbook = filter.selectedDictionaryKey;
+          console.log('Using textbook from filter.selectedDictionaryKey:', textbook);
+        } else if (filter.dictionaryId) {
+          textbook = filter.dictionaryId;
+          console.log('Using textbook from filter.dictionaryId:', textbook);
+        } else {
+          console.log('No dictionary identifier found, using default:', textbook);
+        }
       } else {
-        console.log('No selectedDictionaryKey found, using default:', textbook);
+        console.log('No filter found, using default:', textbook);
       }
       
       // 如果选择的是"全部辞典"，则使用默认教材
