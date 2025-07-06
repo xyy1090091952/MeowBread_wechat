@@ -42,7 +42,15 @@ Page({
     
     // 调试：输出当前筛选条件
     const filter = filterManager.getFilter();
+    console.log('=== Course Mode Debug ===');
     console.log('Current filter in course-mode onShow:', filter);
+    
+    if (filter) {
+      console.log('Filter keys:', Object.keys(filter));
+      console.log('selectedDictionaryKey:', filter.selectedDictionaryKey);
+      console.log('selectedDictionaryName:', filter.selectedDictionaryName);
+      console.log('dictionaryId:', filter.dictionaryId);
+    }
     
     // 页面显示时重新加载数据，以防用户在filter页面更改了教材选择
     this.loadCourseData();
@@ -63,6 +71,9 @@ Page({
   initializeCoursePage() {
     // 获取当前筛选配置
     const filter = filterManager.getFilter();
+    console.log('=== Initialize Course Page ===');
+    console.log('Filter in initializeCoursePage:', filter);
+    
     const currentFilterDisplay = filter ? 
       `${filter.selectedDictionaryName} - ${filter.selectedLessonName}` : 
       '请先选择题库';
@@ -72,7 +83,7 @@ Page({
       isLoading: false
     });
 
-    // TODO: 加载课程数据
+    // 加载课程数据
     this.loadCourseData();
   },
 
@@ -213,5 +224,29 @@ Page({
    */
   goBack() {
     wx.navigateBack();
+  },
+
+  /**
+   * 测试方法：手动设置筛选条件
+   */
+  testSetFilter() {
+    console.log('=== 测试设置筛选条件 ===');
+    
+    // 手动设置一个大家的日语的筛选条件
+    const testFilter = {
+      selectedDictionaryKey: 'everyones_japanese',
+      selectedDictionaryName: '大家的日语',
+      selectedLessonName: '全部课程',
+      dictionaryId: 'everyones_japanese',
+      selectedLessonFiles: ['DICTIONARY_everyones_japanese_ALL_LESSONS'],
+      quizMode: 'quick',
+      selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice']
+    };
+    
+    filterManager.saveFilter(testFilter);
+    console.log('测试筛选条件已保存:', testFilter);
+    
+    // 重新加载课程数据
+    this.loadCourseData();
   }
 }); 
