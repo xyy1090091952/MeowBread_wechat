@@ -1,0 +1,49 @@
+<!--pages/course-mode/course-mode.wxml - 课程模式页面-->
+<view class="container">
+  <!-- 筛选显示区域 - 与quiz页面保持一致 -->
+  <view class="current-filter-display fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}" wx:if="{{currentFilterDisplay}}">
+    <text>你当前选择了: {{currentFilterDisplay}}</text>
+  </view>
+
+  <!-- 筛选器模块 -->
+  <view class="filter-module fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
+    <text class="filter-placeholder">筛选器模块 - 内容待定</text>
+  </view>
+
+  <!-- 课程模块列表 -->
+  <view class="course-list fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}" wx:if="{{!isLoading && courseData.length > 0}}">
+    <view class="course-item {{item.isCompleted ? 'course-completed' : ''}}" 
+          wx:for="{{courseData}}" 
+          wx:key="courseNumber"
+          data-course="{{item}}"
+          bindtap="onCourseItemTap">
+      <view class="course-number {{item.isCompleted ? 'course-number-completed' : ''}}">
+        <text class="course-num">{{item.courseNumber}}</text>
+      </view>
+      <view class="course-info">
+        <text class="course-name {{item.isCompleted ? 'course-name-completed' : ''}}">{{item.courseTitle}}</text>
+        <view class="course-progress">
+          <text class="progress-text {{item.isCompleted ? 'progress-text-completed' : ''}}">单词进度{{item.learnedCount}}/{{item.totalWords}}</text>
+          <view class="progress-bar">
+            <view class="progress-fill {{item.isCompleted ? 'progress-fill-completed' : ''}}" style="width: {{item.progress}}%;"></view>
+          </view>
+        </view>
+      </view>
+      <image class="course-arrow {{item.isCompleted ? 'course-arrow-completed' : ''}}" 
+             src="{{item.isCompleted ? '/images/icons/complete.svg' : '/images/icons/arrow_right.svg'}}" 
+             mode="aspectFit"></image>
+    </view>
+  </view>
+
+  <!-- 无数据状态 -->
+  <view class="no-data-container" wx:if="{{!isLoading && courseData.length === 0}}">
+    <text class="no-data-text">暂无课程数据</text>
+    <text class="no-data-subtitle">请先选择教材或检查数据配置</text>
+  </view>
+
+  <!-- 加载中状态 -->
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <text class="loading-text">正在加载课程模式数据...</text>
+  </view>
+</view> 
+</view> 

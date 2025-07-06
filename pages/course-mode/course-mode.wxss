@@ -1,9 +1,9 @@
-/* pages/timeline/timeline.wxss */
+/* pages/course-mode/course-mode.wxss - 课程模式页面样式 */
 
-/* ==================== Timeline页面专用动画样式 ==================== */
+/* ==================== 课程模式页面专用动画样式 ==================== */
 /* 与quiz页面保持一致的动画效果 */
 
-/* Timeline页面全局动画优化 - 只覆盖必要属性，保留全局fade-delay延迟 */
+/* 课程模式页面全局动画优化 - 只覆盖必要属性，保留全局fade-delay延迟 */
 .fade-in-element {
   transform: translateY(30rpx); /* 与其他页面保持一致的移动幅度 */
   transition-duration: 0.8s; /* 只覆盖动画时长，不影响延迟时间 */
@@ -74,7 +74,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 24rpx;
+  gap: 48rpx;
 }
 
 .course-item {
@@ -83,10 +83,14 @@
   display: flex;
   align-items: center;
   background-color: #ffffff;
-  border-radius: 24rpx;
-  padding: 0 24rpx;
+  border-radius: 48rpx;
   box-shadow: 0px 4rpx 12rpx rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
+}
+
+/* 已完成课程的背景色 */
+.course-completed {
+  background-color: #F6FFED;
 }
 
 /* 课程节数区域 */
@@ -96,25 +100,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f0f2f5;
-  border-radius: 16rpx;
+  background-color: #4845F7;
+  border-radius: 60rpx;
   margin-right: 24rpx;
   flex-shrink: 0;
 }
 
 .course-num {
-  font-size: 36rpx;
-  font-weight: 700;
-  color: #333333;
+  font-size: 48rpx;
+  font-weight: 900;
+  color: #ffffff;
 }
 
 /* 已完成课程的节数样式 */
 .course-number-completed {
-  background-color: #e6f7ff;
+  background-color: #7DF303;
 }
 
 .course-number-completed .course-num {
-  color: #1890ff;
+  color: #5DB700;
 }
 
 /* 课程信息区域 */
@@ -123,7 +127,6 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-right: 24rpx;
 }
 
 .course-name {
@@ -134,7 +137,7 @@
 }
 
 .course-name-completed {
-  color: #1890ff;
+  color: #000000;
 }
 
 /* 进度信息 */
@@ -148,11 +151,11 @@
   font-size: 20rpx;
   color: #666666;
   font-weight: 400;
-  min-width: 60rpx;
+  min-width: 160rpx;
 }
 
 .progress-text-completed {
-  color: #1890ff;
+  color: #000000;
 }
 
 /* 进度条 */
@@ -166,25 +169,26 @@
 
 .progress-fill {
   height: 100%;
-  background-color: #d9d9d9;
+  background: linear-gradient(to right, #93CDFF, #4845F7);
   border-radius: 8rpx;
   transition: width 0.3s ease;
 }
 
-.progress-fill-completed {
-  background-color: #1890ff;
+.progress-fill.progress-fill-completed {
+  background: #7DF303 !important;
 }
 
 /* 箭头图标 */
 .course-arrow {
-  width: 48rpx;
-  height: 48rpx;
+  width: 32rpx;
+  height: 32rpx;
   flex-shrink: 0;
   filter: none; /* 默认黑色 */
+  margin-right: 48rpx;
 }
 
 .course-arrow-completed {
-  filter: invert(30%) sepia(100%) saturate(2000%) hue-rotate(200deg) brightness(100%); /* 蓝色箭头 */
+  filter: none; /* 保持原本颜色 */
 }
 
 /* ==================== 加载状态样式 ==================== */
@@ -200,6 +204,31 @@
 
 .loading-text {
   font-size: 28rpx;
+  color: #666666;
+  font-weight: 400;
+}
+
+/* ==================== 无数据状态样式 ==================== */
+
+.no-data-container {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 40rpx;
+}
+
+.no-data-text {
+  font-size: 32rpx;
+  color: #333333;
+  font-weight: 500;
+  margin-bottom: 16rpx;
+}
+
+.no-data-subtitle {
+  font-size: 24rpx;
   color: #666666;
   font-weight: 400;
 } 

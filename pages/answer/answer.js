@@ -496,7 +496,7 @@ Page({
     console.log('Start Timeline Mode');
     // 跳转到时间线页面
     wx.navigateTo({
-      url: '/pages/timeline/timeline'
+      url: '/pages/course-mode/course-mode'
     });
   },
 
