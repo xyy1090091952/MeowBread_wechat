@@ -2,23 +2,23 @@
 <view class="container">
 
   <!-- 主要统计数据卡片 - 3个等分 -->
-  <view class="main-stats-container">
-    <view class="stat-card">
+  <view class="main-stats-container fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}">
+    <view class="stat-card stat-card-total">
       <text class="stat-value">{{statistics.totalQuestions}}</text>
       <text class="stat-label">总答题数</text>
     </view>
-    <view class="stat-card">
+    <view class="stat-card stat-card-correct">
       <text class="stat-value">{{statistics.correctAnswers}}</text>
       <text class="stat-label">正确数</text>
     </view>
-    <view class="stat-card">
+    <view class="stat-card stat-card-accuracy">
       <text class="stat-value">{{statistics.averageAccuracy}}%</text>
       <text class="stat-label">正确率</text>
     </view>
   </view>
 
   <!-- 详细数据表单 -->
-  <view class="detail-forms">
+  <view class="detail-forms fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
     <view class="form-item-wrapper">
       <view class="form-item-container">
         <view class="form-item-left">
@@ -60,7 +60,7 @@
   </view>
 
   <!-- 综合评级 -->
-  <view class="rating-section">
+  <view class="rating-section fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}">
     <view class="rating-card">
       <view class="rating-header">
         <text class="rating-title">综合评级</text>
@@ -74,7 +74,7 @@
 </view>
 
 <!-- 重置数据按钮 - 置底 -->
-<view class="reset-section">
+<view class="reset-section fade-in-element fade-delay-4 {{pageLoaded ? 'show' : ''}}">
   <view class="reset-button" bindtap="onResetData">
     <text class="reset-button-text">重置数据</text>
   </view>

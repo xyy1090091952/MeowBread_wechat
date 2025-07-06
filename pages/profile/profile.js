@@ -15,30 +15,85 @@ Page({
       averageAccuracy: 0   // 平均准确率
     },
     mistakeCount: 0, // 错题数量
-    pageLoaded: false // 控制页面渐显动画
+    pageLoaded: false, // 控制页面渐显动画
+    breadBouncing: false // 控制面包弹跳动画状态
   },
 
   // 页面加载时的初始化逻辑
   onLoad: function (options) {
-    // 尝试从本地缓存获取已保存的用户信息
+    // 检查用户登录状态
+    this.checkLoginStatus();
+    
+    // 获取错题数量
+    this.getMistakeCount();
+    
+    // 获取用户统计数据
+    this.getUserStatistics();
+  },
+
+  // 检查用户登录状态
+  checkLoginStatus: function() {
     const userInfo = wx.getStorageSync('userInfo');
-    
     if (userInfo) {
-      // 如果找到缓存的用户信息，说明用户之前已经登录过
       this.setData({
-        userInfo: userInfo,    // 设置用户信息
-        isLoggedIn: true       // 设置为已登录状态
+        isLoggedIn: true,
+        userInfo: userInfo
       });
-      this.loadStatistics(); // 加载用户的答题统计信息
+      
+      // 只有在登录后才触发加载动画
+      this.triggerLoadAnimation();
+      
+      // 加载统计数据
+      this.loadStatistics();
     } else {
-      // 如果没有缓存的用户信息，初始化为未登录状态
-      this.getUserProfile(); // 设置默认头像
+      this.setData({
+        isLoggedIn: false,
+        userInfo: null,
+        pageLoaded: false // 登录前不显示动画
+      });
+      
+      // 设置默认头像
+      this.getUserProfile();
     }
+  },
+
+  // 触发加载动画 - 只在登录后调用
+  triggerLoadAnimation: function() {
+    // 重置动画状态
+    this.setData({
+      pageLoaded: false
+    });
     
-    // 延迟启动页面渐显动画，提升用户体验
+    // 延迟触发动画，确保页面渲染完成
     setTimeout(() => {
-      this.setData({ pageLoaded: true });
+      this.setData({
+        pageLoaded: true
+      });
     }, 100);
+  },
+
+  // 获取错题数量
+  getMistakeCount: function() {
+    const mistakeCount = mistakeManager.getMistakeList().length;
+    this.setData({
+      mistakeCount: mistakeCount
+    });
+  },
+
+  // 获取用户统计数据
+  getUserStatistics: function() {
+    const statistics = statisticsManager.getOverallStatistics();
+    this.setData({
+      statistics: statistics
+    });
+  },
+
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function() {
+    console.log('Profile page ready'); // 调试信息
+    // 不再在这里统一触发动画，而是根据登录状态来决定是否播放动画
   },
 
   // 获取用户信息（微信头像和昵称）
@@ -132,6 +187,9 @@ Page({
       userInfo: userInfo,
       isLoggedIn: true
     });
+    
+    // 登录成功后触发加载动画
+    this.triggerLoadAnimation();
     
     // 登录成功后加载用户的答题统计信息
     this.loadStatistics();
@@ -241,10 +299,39 @@ Page({
     });
   },
 
+  // 面包点击事件 - 触发Q弹动画
+  onBreadTap: function() {
+    // 如果动画正在进行中，则不重复触发
+    if (this.data.breadBouncing) {
+      return;
+    }
+    
+    // 触发弹跳动画
+    this.setData({
+      breadBouncing: true
+    });
+    
+    // 动画播放完成后重置状态（动画持续0.8秒）
+    setTimeout(() => {
+      this.setData({
+        breadBouncing: false
+      });
+    }, 800);
+    
+    // 添加点击反馈
+    wx.vibrateShort({
+      type: 'light' // 轻微震动反馈
+    });
+  },
+
   /**
    * 生命周期函数--监听页面显示
    */
   onShow() {
+    // 每次显示页面时重新检查登录状态
+    this.checkLoginStatus();
+    
+    // 更新TabBar选中状态
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       const page = getCurrentPages().pop();
       const route = page.route;
@@ -253,11 +340,6 @@ Page({
       if (index !== -1) {
         this.getTabBar().updateSelected(index);
       }
-    }
-    
-    // 页面显示时重新加载统计信息
-    if (this.data.isLoggedIn) {
-      this.loadStatistics();
     }
   }
 })

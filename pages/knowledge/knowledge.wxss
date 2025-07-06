@@ -10,6 +10,8 @@
   touch-action: manipulation; /* 禁用双击缩放和页面拖动，但保留点击 */
   overscroll-behavior: contain; /* 防止过度滚动 */
   box-sizing: border-box; /* 确保padding计算正确 */
+  /* 确保左滑时不出现额外的白色遮挡 */
+  position: relative;
 }
 
 /* 顶部分类滑动按钮区域 */
@@ -19,6 +21,7 @@
   padding-left: 48rpx; /* 与content-area保持一致的左边距 */
   overflow: visible; /* 确保投影不被裁剪 */
   min-height: 180rpx; /* 确保有足够高度容纳按钮和投影 */
+  background-color: transparent; /* 确保背景透明，避免左滑时出现白色块 */
 }
 
 .category-scroll {
@@ -27,6 +30,9 @@
   overflow-x: scroll;
   overflow-y: visible; /* 确保垂直方向投影不被裁剪 */
   -webkit-overflow-scrolling: touch; /* iOS平滑滚动 */
+  background-color: transparent; /* 确保背景透明，避免左滑时出现白色块 */
+  /* 防止滚动边界出现白色块 */
+  overscroll-behavior-x: contain;
   /* 确保滚动条不遮挡投影 */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
@@ -43,6 +49,7 @@
   padding-bottom: 32rpx; /* 为投影留出更多空间 */
   padding-top: 16rpx; /* 为投影留出更多空间 */
   position: relative; /* 为indicator提供定位基准 */
+  background-color: transparent; /* 确保背景透明，避免左滑时出现白色块 */
 }
 
 .category-button {

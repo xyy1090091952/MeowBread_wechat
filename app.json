@@ -12,7 +12,9 @@
     "pages/quiz-details/quiz-details",
     "pages/gashapon/gashapon",
     "pages/word-list/word-list",
-    "pages/webview/webview"
+    "pages/webview/webview",
+    "pages/grammar/grammar",
+    "pages/timeline/timeline"
   ],
   "window": {
     "backgroundTextStyle": "light",

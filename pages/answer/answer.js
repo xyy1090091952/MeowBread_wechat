@@ -7,9 +7,11 @@ Page({
     currentFilterDisplay: '', // 用于显示当前题库筛选范围
     showTextbookSelector: false, // 控制教材选择弹窗的显示
     pageLoaded: false, // 控制页面渐显动画
-    mistakeCount: 0, // 错题数量
+    mistakeCount: 0, // 错题数量显示（超过99显示∞）
     // 元素位置信息（用于碰撞检测）
-    elementPositions: []
+    elementPositions: [],
+    breadBouncing: false, // 控制面包弹跳动画状态
+    autoBounceTimer: null // 自动弹跳定时器
   },
   onLoad: function (options) {
     // 页面加载时可以进行一些初始化操作
@@ -20,6 +22,9 @@ Page({
     if (!selectedDict) {
       this.setData({ showTextbookSelector: true });
     }
+
+    // 启动自动弹跳效果
+    this.startAutoBounce();
   },
 
   /**
@@ -251,10 +256,12 @@ Page({
 
     // 获取错题数量
     const mistakeCount = mistakeManager.getMistakeList().length;
+    // 当错题数量超过99时显示∞符号
+    const mistakeCountDisplay = mistakeCount > 99 ? '∞' : mistakeCount;
 
     this.setData({
       currentFilterDisplay: currentFilterDisplay,
-      mistakeCount: mistakeCount // 更新错题数量
+      mistakeCount: mistakeCountDisplay // 更新错题数量显示
     });
 
     // 更新自定义底部导航的选中状态
@@ -373,6 +380,11 @@ Page({
       clearInterval(this.collisionTimer);
       this.collisionTimer = null;
     }
+
+    // 清理自动弹跳定时器
+    if (this.data.autoBounceTimer) {
+      clearTimeout(this.data.autoBounceTimer);
+    }
   },
 
   /**
@@ -475,5 +487,77 @@ Page({
     wx.navigateTo({
       url: '/pages/mistakes/mistakes'
     });
+  },
+
+  /**
+   * 开始时间线模式
+   */
+  startTimelineMode() {
+    console.log('Start Timeline Mode');
+    // 跳转到时间线页面
+    wx.navigateTo({
+      url: '/pages/timeline/timeline'
+    });
+  },
+
+  /**
+   * 面包点击事件 - 触发Q弹动画
+   */
+  onBreadTap: function() {
+    console.log('Bread tap triggered');
+    // 如果动画正在进行中，则不重复触发
+    if (this.data.breadBouncing) {
+      return;
+    }
+    
+    // 触发弹跳动画
+    this.setData({
+      breadBouncing: true
+    });
+    
+    // 动画播放完成后重置状态（动画持续0.8秒）
+    setTimeout(() => {
+      this.setData({
+        breadBouncing: false
+      });
+    }, 800);
+    
+    // 添加点击反馈
+    wx.vibrateShort({
+      type: 'light' // 轻微震动反馈
+    });
+  },
+
+  /**
+   * 启动自动弹跳效果
+   */
+  startAutoBounce: function() {
+    const scheduleNextBounce = () => {
+      // 随机间隔时间：8-15秒
+      const randomDelay = Math.random() * 7000 + 8000; // 8000-15000ms
+      
+      this.data.autoBounceTimer = setTimeout(() => {
+        // 如果页面还在显示且没有手动点击动画，则触发自动弹跳
+        if (!this.data.breadBouncing) {
+          console.log('Auto bounce triggered');
+          this.setData({
+            breadBouncing: true
+          });
+          
+          // 动画播放完成后重置状态
+          setTimeout(() => {
+            this.setData({
+              breadBouncing: false
+            });
+          }, 800);
+        }
+        
+        // 安排下一次自动弹跳
+        scheduleNextBounce();
+      }, randomDelay);
+    };
+    
+    // 启动第一次自动弹跳
+    scheduleNextBounce();
   }
 })

@@ -1,0 +1,21 @@
+<!--pages/timeline/timeline.wxml-->
+<view class="container">
+  <!-- 筛选显示区域 - 与quiz页面保持一致 -->
+  <view class="current-filter-display fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}" wx:if="{{currentFilterDisplay}}">
+    <text>你当前选择了: {{currentFilterDisplay}}</text>
+  </view>
+
+  <!-- 时间线内容区域 -->
+  <view class="timeline-content fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}" wx:if="{{!isLoading}}">
+    <!-- 时间线内容将在这里展示 -->
+    <view class="timeline-placeholder">
+      <text class="placeholder-text">时间线内容正在开发中...</text>
+      <text class="placeholder-subtitle">敬请期待！</text>
+    </view>
+  </view>
+
+  <!-- 加载中状态 -->
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <text class="loading-text">正在加载时间线数据...</text>
+  </view>
+</view> 

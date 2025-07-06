@@ -47,5 +47,5 @@
   </view>
 
   <!-- 底部白色渐变遮罩 -->
-  <view class="bottom-gradient-mask"></view>
+  <view class="bottom-gradient-mask fade-in-element fade-delay-3 {{wordListLoaded ? 'show' : ''}}"></view>
 </view> 
