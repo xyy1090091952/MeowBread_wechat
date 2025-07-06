@@ -33,7 +33,8 @@ Page({
     isLoading: true, // 加载状态
     showQuestion: true, // 用于控制题目显示/隐藏以触发动画
     highlightParticles: true, // 新增：是否高亮助词
-    processedExampleSentence: '' // 新增：处理后的例句
+    processedExampleSentence: '', // 新增：处理后的例句
+    pageLoaded: false // 控制页面加载动画
   },
 
   /**
@@ -74,6 +75,24 @@ Page({
     });
 
     this.startTimer();
+    
+    // 触发加载动画
+    this.triggerLoadAnimation();
+  },
+
+  // 触发加载动画
+  triggerLoadAnimation: function() {
+    // 重置动画状态
+    this.setData({
+      pageLoaded: false
+    });
+    
+    // 延迟触发动画，确保页面渲染完成
+    setTimeout(() => {
+      this.setData({
+        pageLoaded: true
+      });
+    }, 100);
   },
 
   // 新增：切换助词高亮状态

@@ -1,10 +1,30 @@
 /* pages/quiz-details/quiz-details.wxss */
 
+/* ==================== Quiz-Details页面专用动画样式 ==================== */
+/* 与profile页面保持一致的动画效果 */
+
+/* Quiz-Details页面全局动画优化 - 只覆盖必要属性，保留全局fade-delay延迟 */
+.fade-in-element {
+  transform: translateY(30rpx); /* 与answer和profile页面保持一致的移动幅度 */
+  transition-duration: 0.8s; /* 只覆盖动画时长，不影响延迟时间 */
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 只覆盖缓动曲线 */
+}
+
+.fade-in-element.show {
+  transform: translateY(0);
+}
+
+/* ==================== 原有样式 ==================== */
+
 .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  background-color: #ffffff;
   min-height: 100vh;
-  background-color: #FAFAFA;
-  padding: 0 48rpx;
-  padding-bottom: calc(176rpx + env(safe-area-inset-bottom));
+  padding: 20rpx 48rpx 40rpx 48rpx;
 }
 
 /* 页面标题 */
@@ -24,7 +44,7 @@
   display: flex;
   justify-content: space-between;
   gap: 24rpx;
-  margin: 48rpx 0;
+  margin: 48rpx 0 0 0; /* 去掉bottom margin */
   width: 100vw;
   padding-left: 48rpx;
   padding-right: 48rpx;
@@ -34,25 +54,41 @@
 .stat-card {
   flex: 1;
   height: 180rpx;
-  background: linear-gradient(135deg, #4845F7 0%, #7B68EE 100%);
   border-radius: 48rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 8rpx 8rpx 32rpx rgba(72, 69, 247, 0.15);
+}
+
+/* 总答题数卡片 - 青绿色渐变 */
+.stat-card-total {
+  background: linear-gradient(to bottom, #CFFFF0 0%, #F0FCFB 100%);
+  box-shadow: 8rpx 8rpx 32rpx rgba(207, 255, 240, 0.3);
+}
+
+/* 正确数卡片 - 粉色渐变 */
+.stat-card-correct {
+  background: linear-gradient(to bottom, #FFCFE6 0%, #FCF0F1 100%);
+  box-shadow: 8rpx 8rpx 32rpx rgba(255, 207, 230, 0.3);
+}
+
+/* 正确率卡片 - 蓝色渐变 */
+.stat-card-accuracy {
+  background: linear-gradient(to bottom, #CFEBFF 0%, #F0F7FC 100%);
+  box-shadow: 8rpx 8rpx 32rpx rgba(207, 235, 255, 0.3);
 }
 
 .stat-value {
   font-size: 48rpx;
   font-weight: 700;
-  color: #FFFFFF;
+  color: #1F2329; /* 改为深色文字适配浅色背景 */
   margin-bottom: 8rpx;
 }
 
 .stat-label {
   font-size: 22rpx;
-  color: rgba(255, 255, 255, 0.9);
+  color: #666666; /* 改为深色文字适配浅色背景 */
   font-weight: 500;
 }
 
@@ -203,7 +239,7 @@
   width: 100%;
   padding: 24rpx 48rpx;
   padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
-  background-color: #FAFAFA;
+  background-color: #FFFFFF;
   box-sizing: border-box;
   z-index: 1000;
 }

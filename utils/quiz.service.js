@@ -155,8 +155,27 @@ const quizService = {
     if (!sentence) return '';
     if (highlight) {
       const particles = ['は', 'が', 'を', 'に', 'で', 'と', 'から', 'まで', 'より', 'の', 'へ', 'や', 'か', 'も', 'ば', 'ながら', 'たり', 'たら', 'なら'];
-      const regex = new RegExp(`(${particles.join('|')})`, 'g');
-      return sentence.replace(regex, '<span class="highlight">$1</span>');
+      
+      let processedSentence = sentence;
+      
+      // 只处理最常见的误判情况
+      // 1. です中的で不高亮
+      processedSentence = processedSentence.replace(/です/g, '__TEMP_DESU__');
+      
+      // 2. では中的で和は不高亮（では作为一个整体的助词）
+      processedSentence = processedSentence.replace(/では/g, '__TEMP_DEWA__');
+      
+      // 对剩余部分进行助词高亮
+      particles.forEach(particle => {
+        const regex = new RegExp(particle, 'g');
+        processedSentence = processedSentence.replace(regex, `<span class="highlight">${particle}</span>`);
+      });
+      
+      // 恢复被替换的内容
+      processedSentence = processedSentence.replace(/__TEMP_DESU__/g, 'です');
+      processedSentence = processedSentence.replace(/__TEMP_DEWA__/g, 'では');
+      
+      return processedSentence;
     }
     return sentence;
   },

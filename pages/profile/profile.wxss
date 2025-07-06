@@ -1,4 +1,19 @@
 /* pages/profile/profile.wxss */
+
+/* ==================== Profile页面专用动画样式 ==================== */
+/* 学习answer页面的动画效果 - 统一参数，减少移动幅度，增加缓动 */
+
+/* Profile页面全局动画优化 - 只覆盖必要属性，保留全局fade-delay延迟 */
+.fade-in-element {
+  transform: translateY(30rpx); /* 与answer页面保持一致的移动幅度 */
+  transition-duration: 0.8s; /* 只覆盖动画时长，不影响延迟时间 */
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 只覆盖缓动曲线 */
+}
+
+.fade-in-element.show {
+  transform: translateY(0);
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -15,6 +30,163 @@
   background: linear-gradient(to bottom, #CFE2FF, #F0F6FC); /* 从CFE2FF渐变到F0F6FC */
 }
 
+/* 登录背景图片 */
+.login-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1; /* 在背景层 */
+}
+
+/* 装饰素材样式 */
+.small-bread-decoration {
+  position: fixed;
+  left: 360rpx; /* 调整到360rpx */
+  top: 272rpx; /* y136*2 */
+  width: 380rpx; /* 190px = 380rpx */
+  height: 380rpx; /* 保持正方形 */
+  z-index: 5; /* 在login-card后面，但在背景图片前面 */
+  cursor: pointer; /* 显示可点击状态 */
+  transition: transform 0.1s ease; /* 添加过渡效果 */
+}
+
+/* 面包弹跳动画 */
+.bread-bounce {
+  animation: breadBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes breadBounce {
+  0% {
+    transform: translateY(0);
+  }
+  15% {
+    transform: translateY(20rpx); /* 向下 */
+  }
+  30% {
+    transform: translateY(-30rpx); /* 向上弹起 */
+  }
+  45% {
+    transform: translateY(15rpx); /* 向下 */
+  }
+  60% {
+    transform: translateY(-20rpx); /* 向上弹起 */
+  }
+  75% {
+    transform: translateY(8rpx); /* 向下 */
+  }
+  90% {
+    transform: translateY(-5rpx); /* 轻微向上 */
+  }
+  100% {
+    transform: translateY(0); /* 回到原位 */
+  }
+}
+
+/* Arrow动画 - 包含移动和快速点击旋转（无缩放） */
+@keyframes arrowMovement {
+  0%, 8% {
+    transform: translate(0, 0) rotate(0deg); /* 面包右边起始位置 */
+  }
+  12%, 18% {
+    transform: translate(-100rpx, -30rpx) rotate(0deg); /* 温和移动到面包左上方 */
+  }
+  22%, 22.2% {
+    transform: translate(-100rpx, -30rpx) rotate(-35deg); /* 快速点击：卡塔一下 */
+  }
+  22.4%, 24% {
+    transform: translate(-100rpx, -30rpx) rotate(0deg); /* 直接回到正常 */
+  }
+  28%, 35% {
+    transform: translate(-20rpx, -80rpx) rotate(0deg); /* 小距离移动到面包正上方 */
+  }
+  40%, 48% {
+    transform: translate(70rpx, -50rpx) rotate(0deg); /* 温和移动到面包右上角 */
+  }
+  52%, 52.2% {
+    transform: translate(70rpx, -50rpx) rotate(-25deg); /* 快速点击：卡塔一下 */
+  }
+  52.4%, 54% {
+    transform: translate(70rpx, -50rpx) rotate(0deg); /* 直接回到正常 */
+  }
+  58%, 68% {
+    transform: translate(-110rpx, 20rpx) rotate(0deg); /* 温和移动到面包左边 */
+  }
+  72%, 80% {
+    transform: translate(-30rpx, 100rpx) rotate(0deg); /* 中等距离移动到面包下方 */
+  }
+  84%, 84.2% {
+    transform: translate(-30rpx, 100rpx) rotate(-50deg); /* 快速点击：卡塔一下 */
+  }
+  84.4%, 86% {
+    transform: translate(-30rpx, 100rpx) rotate(0deg); /* 直接回到正常 */
+  }
+  90%, 96% {
+    transform: translate(15rpx, 50rpx) rotate(0deg); /* 短距离移动 */
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg); /* 回到起始位置 */
+  }
+}
+
+/* Click动画 - 只有移动，无旋转无缩放 */
+@keyframes clickMovement {
+  0%, 8% {
+    transform: translate(0, 0); /* 面包右边起始位置 */
+  }
+  12%, 18% {
+    transform: translate(-100rpx, -30rpx); /* 跟随arrow移动到面包左上方 */
+  }
+  22%, 24% {
+    transform: translate(-100rpx, -30rpx); /* 跟随arrow停留在点击位置 */
+  }
+  28%, 35% {
+    transform: translate(-20rpx, -80rpx); /* 跟随到面包正上方 */
+  }
+  40%, 48% {
+    transform: translate(70rpx, -50rpx); /* 跟随到面包右上角 */
+  }
+  52%, 54% {
+    transform: translate(70rpx, -50rpx); /* 跟随arrow停留在点击位置 */
+  }
+  58%, 68% {
+    transform: translate(-110rpx, 20rpx); /* 跟随到面包左边 */
+  }
+  72%, 80% {
+    transform: translate(-30rpx, 100rpx); /* 跟随到面包下方 */
+  }
+  84%, 86% {
+    transform: translate(-30rpx, 100rpx); /* 跟随arrow停留在点击位置 */
+  }
+  90%, 96% {
+    transform: translate(15rpx, 50rpx); /* 跟随短距离移动 */
+  }
+  100% {
+    transform: translate(0, 0); /* 回到起始位置 */
+  }
+}
+
+.arrow-decoration {
+  position: fixed;
+  left: 560rpx; /* 向左移动：580rpx - 20rpx = 560rpx */
+  top: 405rpx; /* 向上移动：420rpx - 15rpx = 405rpx */
+  width: 48rpx; /* 24px = 48rpx */
+  height: 48rpx; /* 保持正方形 */
+  z-index: 51; /* 最高层级，确保arrow在click前面 */
+  animation: arrowMovement 12s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite; /* 弹性缓动效果 */
+}
+
+.click-decoration {
+  position: fixed;
+  left: 624rpx; /* arrow右边16rpx：560rpx + 48rpx + 16rpx = 624rpx */
+  top: 373rpx; /* 垂直居中：405rpx - (112rpx-48rpx)/2 = 373rpx */
+  width: 112rpx; /* 56px = 112rpx */
+  height: 112rpx; /* 保持正方形 */
+  z-index: 50; /* 超高层级，确保在面包前面 */
+  animation: clickMovement 12s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite; /* 弹性缓动效果 */
+}
+
 /* ==================== 用户信息区域 ==================== */
 .user-info-section {
   width: 100%; /* 设置满屏宽度 */
@@ -27,12 +199,18 @@
 /* 自定义全屏用户区域 */
 .fullscreen-user-section {
   width: 100vw; /* 完整视口宽度 */
-  margin: 200rpx -48rpx 32rpx -48rpx; /* 增加顶部边距，补偿隐藏导航栏的空间，底部边距32rpx(16px) */
+  margin: 186rpx -48rpx 32rpx -48rpx; /* 已登录状态：186rpx顶部距离 */
   display: flex;
   flex-direction: row; /* 改为水平排列 */
   align-items: center; /* 垂直居中对齐 */
   padding: 0 48rpx; /* 内部左右边距 */
   box-sizing: border-box;
+  z-index: 10; /* 确保在装饰素材之上 */
+}
+
+/* 未登录状态下的用户区域 - 需要在login-card下面 */
+.container.login-mode .fullscreen-user-section {
+  margin: 500rpx -48rpx 32rpx -48rpx; /* 未登录状态：在login-card下面 */
 }
 
 /* 未登录状态样式 */
@@ -134,7 +312,7 @@
 .accuracy-label {
   font-size: 32rpx;
   font-weight: bold;
-  color: #333;
+  color: #111;
 }
 
 .accuracy-value {
@@ -216,7 +394,7 @@
 .gashapon-section .option-main-text {
   font-size: 40rpx; /* 20px转换为小程序单位约为40rpx */
   font-weight: 800;
-  color: #333;
+  color: #111;
 }
 
 .gashapon-section .option-icon {
@@ -311,9 +489,25 @@
   flex-direction: column;
   align-items: center; /* 内容居中对齐 */
   box-sizing: border-box;
+  position: relative;
+  z-index: 8; /* 确保在装饰素材之上 */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 使用统一shadow */
 }
-.login-title{font-size:48rpx;font-weight:600;color:#111;align-self:flex-start;} /* 标题左对齐 */
-.login-subtitle{font-size:24rpx;color:#666;margin:16rpx 0 40rpx 0;align-self:flex-start;} /* 副标题左对齐 */
+
+/* 登录卡片内的文字样式 */
+.login-title{
+  font-size: 48rpx;
+  font-weight: 800;
+  color: #111;
+  align-self: flex-start;
+}
+
+.login-subtitle{
+  font-size: 24rpx;
+  color: #4845F7;
+  margin: 16rpx 0 40rpx 0;
+  align-self: flex-start;
+}
 .avatar-placeholder{
   width:200rpx;
   height:200rpx;
@@ -339,100 +533,112 @@
   left: 0;
   z-index: 1; /* 确保头像在渐变背景之上 */
 }
-/* 完全自定义的头像按钮 - 重置所有微信button默认样式 */
+/* 头像按钮 - 统一样式 */
 .avatar-btn{
-  width: calc(100% - 0rpx) !important; /* 按钮占满可用宽度 */
-  margin: 0 !important; /* 去掉所有边距 */
-  height: 88rpx !important;
-  border: 2rpx solid #4845F7 !important;
-  border-radius: 44rpx !important;
-  color: #4845F7 !important;
-  font-size: 32rpx !important;
-  font-weight: 600 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  padding: 0 !important;
-  box-sizing: border-box !important;
+  width: 100% !important; /* 强制覆盖微信默认宽度 */
+  margin: 0 !important; /* 强制覆盖微信默认margin */
+  margin-left: 0 !important; /* 强制覆盖微信默认margin-left: auto */
+  margin-right: 0 !important; /* 强制覆盖微信默认margin-right: auto */
+  height: 88rpx;
+  border: none;
+  border-radius: 44rpx;
+  color: #111 !important; /* 强制覆盖微信默认样式 */
+  font-size: 32rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  padding: 0 !important; /* 强制覆盖微信默认padding */
+  box-sizing: border-box;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 使用统一shadow */
   
-  /* 重置微信button的所有默认样式 */
-  position: relative !important;
-  text-align: center !important;
-  text-decoration: none !important;
-  overflow: visible !important;
-  transform: none !important;
-  
-  /* 移除微信button的默认阴影和边框 */
-  box-shadow: none !important;
-  outline: none !important;
-  -webkit-appearance: none !important;
-  -webkit-tap-highlight-color: transparent !important;
+  /* 重置微信button默认样式 */
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  overflow: visible;
+  transform: none;
+  outline: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* 移除微信button的伪元素边框 */
-.avatar-btn::after {
-  border: none !important;
-  background: none !important;
-  content: none !important;
-  display: none !important;
-}
-
-/* 移除微信button的伪元素背景 */
+/* 移除微信button的伪元素 */
+.avatar-btn::after,
 .avatar-btn::before {
-  background: none !important;
-  content: none !important;
-  display: none !important;
+  border: none;
+  background: none;
+  content: none;
+  display: none;
 }
 
-/* 点击态效果 - 自定义 */
+/* 点击态效果 */
 .avatar-btn:active {
-  opacity: 0.8 !important;
+  opacity: 0.8;
 }
-/* 完全自定义的昵称输入框 - 微信推荐方式 */
+/* 昵称输入框 - 统一样式 */
 .nickname-input{
-  width: calc(100% - 0rpx) !important; /* 输入框占满可用宽度 */
-  margin: 40rpx 0 0 0 !important;
-  height: 96rpx !important;
-  border: 2rpx solid #E0E0E0 !important;
-  border-radius: 48rpx !important;
-  color: #333333 !important;
-  font-size: 32rpx !important;
-  font-weight: 600 !important;
-  background: #ffffff !important;
-  padding: 0 32rpx !important;
-  box-sizing: border-box !important;
-  text-align: center !important;
+  width: 100%;
+  margin: 40rpx 0 0 0;
+  height: 88rpx;
+  border: none;
+  border-radius: 44rpx;
+  color: #111 !important; /* 强制覆盖微信默认样式 */
+  font-size: 32rpx !important; /* 强制覆盖字体大小 */
+  font-weight: 600;
+  background: #ffffff !important; /* 强制覆盖背景 */
+  padding: 0 32rpx;
+  box-sizing: border-box;
+  text-align: center !important; /* 强制覆盖对齐方式 */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 使用统一shadow */
   
-  /* 移除小程序input的默认样式 */
-  outline: none !important;
-  -webkit-appearance: none !important;
-  -webkit-tap-highlight-color: transparent !important;
+  /* 移除小程序input默认样式 */
+  outline: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  /* 微信小程序特有的样式覆盖 */
+  -webkit-text-fill-color: #111 !important;
+  caret-color: #111 !important; /* 光标颜色 */
 }
 
 /* 输入框聚焦状态 */
 .nickname-input:focus {
-  border-color: #4845F7 !important;
-  box-shadow: 0 0 0 4rpx rgba(72, 69, 247, 0.1) !important;
+  box-shadow: 0 8rpx 24rpx rgba(72, 69, 247, 0.15);
 }
 
 /* placeholder样式 */
 .nickname-input::-webkit-input-placeholder {
   color: #999999 !important;
-  text-align: center !important;
+  text-align: center;
+}
+
+/* 兼容性placeholder样式 */
+.nickname-input::-moz-placeholder {
+  color: #999999 !important;
+  text-align: center;
+}
+
+.nickname-input:-ms-input-placeholder {
+  color: #999999 !important;
+  text-align: center;
+}
+
+.nickname-input::placeholder {
+  color: #999999 !important;
+  text-align: center;
 }
 
 /* 已输入昵称的状态 */
 .nickname-input.has-nickname {
-  border-color: #4CAF50 !important;
-  background-color: #F1F8E9 !important;
+  box-shadow: 0 8rpx 24rpx rgba(76, 175, 80, 0.15);
 }
+/* 登录按钮 - 统一样式 */
 .login-btn{
-  width: calc(100% - 0rpx); /* 登录按钮占满可用宽度 */
+  width: 100%;
   margin: 48rpx 0 0 0;
-  height: 96rpx;
-  border-radius: 48rpx;
+  height: 88rpx; /* 统一高度 */
+  border-radius: 44rpx; /* 统一圆角 */
   background: #4845F7;
   color: #FFF;
   font-size: 32rpx;
@@ -441,4 +647,5 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+  box-shadow: 0 8rpx 24rpx rgba(72, 69, 247, 0.3); /* 品牌色投影 */
 }

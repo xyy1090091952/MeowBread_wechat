@@ -1,20 +1,50 @@
 /* pages/quiz/quiz.wxss */
-.current-filter-display {
-  width: 100%;
-  text-align: center; /* 文本居中 */
-  margin-bottom: 10rpx; /* 和下方元素的间距 */
-  color: #888; /* 文本颜色，可以根据主题调整 */
+
+/* ==================== Quiz页面专用动画样式 ==================== */
+/* 与profile页面保持一致的动画效果 */
+
+/* Quiz页面全局动画优化 - 只覆盖必要属性，保留全局fade-delay延迟 */
+.fade-in-element {
+  transform: translateY(30rpx); /* 与answer和profile页面保持一致的移动幅度 */
+  transition-duration: 0.8s; /* 只覆盖动画时长，不影响延迟时间 */
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 只覆盖缓动曲线 */
 }
 
-.current-filter-display text {
-  font-size: 24rpx; /* 调小字号 */
+.fade-in-element.show {
+  transform: translateY(0);
 }
+
+/* ==================== 原有样式 ==================== */
+
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20rpx 48rpx;
-  font-family: Arial, sans-serif;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  min-height: 100vh;
+  padding: 20rpx 48rpx 40rpx 48rpx;
+}
+
+/* 筛选显示区域样式 */
+.current-filter-display {
+  width: 100%; /* 100%屏幕宽度 */
+  height: 64rpx; /* 高度64rpx */
+  background: linear-gradient(to right, #CFE2FF, #F0F6FC); /* 左到右渐变背景 */
+  border-radius: 48rpx; /* 圆角48rpx */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* 改为左对齐 */
+  padding-left: 48rpx; /* 左边距48rpx */
+  margin-bottom: 32rpx; /* 与其他元素保持间距 */
+  box-sizing: border-box; /* 确保padding不影响总宽度 */
+}
+
+.current-filter-display text {
+  font-size: 24rpx; /* 文字字号24rpx */
+  color: #000000; /* 黑色文字 */
+  font-weight: 500; /* 稍微加粗，增强可读性 */
 }
 
 /* 新增：进度条和计时器容器 */
@@ -22,7 +52,6 @@
   display: flex;
   align-items: center;
   width: 100%;
-  margin: 15px 0 0 0;
 }
 
 /* 进度条包裹器 */
@@ -49,6 +78,7 @@
 .progress-bar-foreground {
   background: linear-gradient(to right, #F0F7FC, #4845F7); /* Figma: 渐变 */
   height: 100%;
+  min-width: 16px; /* 最小宽度等于高度，保持圆形效果 */
   border-radius: 24px;
   transition: width 0.3s ease-in-out;
 }
@@ -75,8 +105,8 @@
 }
 
 .progress-node-circle {
-    width: 24px; /* Figma: 24px */
-    height: 24px;
+    width: 48rpx;
+    height: 48rpx;
     background-color: #EEEEEE; /* Figma: #EEEEEE */
     border-radius: 50%;
     position: absolute;
@@ -136,7 +166,6 @@
 .content-card {
   background-color: #fff;
   border-radius: 24px;
-  padding: 24px 0rpx; /* 上下24px，左右48rpx的内边距 */
   margin-bottom: 24px;
   width: 100%;
   box-sizing: border-box; /* 确保padding不会影响总宽度 */
@@ -153,7 +182,7 @@
   font-size: 36rpx;
   font-weight: bold;
   color: #333;
-  margin-left: 10rpx; /* 与词性标签的间距 */
+  margin-left: 16rpx; 
 }
 
 .question-stem-container {
@@ -517,6 +546,16 @@
   background-color: #f0f0f0; /* Light grey, or choose another color */
   color: #333;
   border: none;
+  display: flex; /* 使用flex布局 */
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+}
+
+/* 跳过按钮箭头图标 */
+.skip-arrow-icon {
+  width: 32rpx; /* 图标宽度 */
+  height: 32rpx; /* 图标高度 */
+  filter: brightness(0); /* 将图标变为黑色 */
 }
 
 .submit-button.half-width-button {
@@ -537,7 +576,8 @@
   animation: fadeInUp 0.5s ease-out both;
   display: flex;
   justify-content: center; /* 水平居中 */
-  margin-bottom: 40rpx;
+  margin-bottom: 72rpx;
+  margin-top: 96rpx;
   text-align: center; /* 确保容器内文本也居中，以防单词过长换行 */
 }
 
@@ -557,7 +597,6 @@
   text-align: center;
   line-height: 40rpx;
   display: inline-block;
-  margin-left: 16rpx;
   background-color: #6c757d;
 }
 

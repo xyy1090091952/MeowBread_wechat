@@ -58,12 +58,11 @@
   left: 0; /* 默认位置，会被内联样式覆盖 */
   width: 172rpx;
   height: 112rpx;
-  background: #f7f6ff;
+  background: #FFF;
   border-radius: 68rpx;
   box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
   z-index: 0;
-  /* 添加平滑移动动画 - 使用动态时长 */
-  transition: left ease;
+  /* 删除切换动画效果 */
 }
 
 /* 禁用动画状态 */

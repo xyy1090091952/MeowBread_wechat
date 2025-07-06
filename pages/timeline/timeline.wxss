@@ -1,0 +1,205 @@
+/* pages/timeline/timeline.wxss */
+
+/* ==================== Timeline页面专用动画样式 ==================== */
+/* 与quiz页面保持一致的动画效果 */
+
+/* Timeline页面全局动画优化 - 只覆盖必要属性，保留全局fade-delay延迟 */
+.fade-in-element {
+  transform: translateY(30rpx); /* 与其他页面保持一致的移动幅度 */
+  transition-duration: 0.8s; /* 只覆盖动画时长，不影响延迟时间 */
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 只覆盖缓动曲线 */
+}
+
+.fade-in-element.show {
+  transform: translateY(0);
+}
+
+/* ==================== 页面布局样式 ==================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  min-height: 100vh;
+  padding: 20rpx 48rpx 40rpx 48rpx;
+}
+
+/* 筛选显示区域样式 - 与quiz页面完全一致 */
+.current-filter-display {
+  width: 100%; /* 100%屏幕宽度 */
+  height: 64rpx; /* 高度64rpx */
+  background: linear-gradient(to right, #CFE2FF, #F0F6FC); /* 左到右渐变背景 */
+  border-radius: 48rpx; /* 圆角48rpx */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* 改为左对齐 */
+  padding-left: 48rpx; /* 左边距48rpx */
+  margin-bottom: 32rpx; /* 与其他元素保持间距 */
+  box-sizing: border-box; /* 确保padding不影响总宽度 */
+}
+
+.current-filter-display text {
+  font-size: 24rpx; /* 文字字号24rpx */
+  color: #000000; /* 黑色文字 */
+  font-weight: 500; /* 稍微加粗，增强可读性 */
+}
+
+/* ==================== 筛选器模块样式 ==================== */
+
+.filter-module {
+  width: 100%;
+  height: 128rpx;
+  background-color: #f8f9fa;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32rpx;
+  border: 2rpx solid #e9ecef;
+}
+
+.filter-placeholder {
+  font-size: 28rpx;
+  color: #666666;
+  font-weight: 400;
+}
+
+/* ==================== 课程模块样式 ==================== */
+
+.course-list {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.course-item {
+  width: 100%;
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  padding: 0 24rpx;
+  box-shadow: 0px 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+/* 课程节数区域 */
+.course-number {
+  width: 120rpx;
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f2f5;
+  border-radius: 16rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.course-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #333333;
+}
+
+/* 已完成课程的节数样式 */
+.course-number-completed {
+  background-color: #e6f7ff;
+}
+
+.course-number-completed .course-num {
+  color: #1890ff;
+}
+
+/* 课程信息区域 */
+.course-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-right: 24rpx;
+}
+
+.course-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 8rpx;
+}
+
+.course-name-completed {
+  color: #1890ff;
+}
+
+/* 进度信息 */
+.course-progress {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.progress-text {
+  font-size: 20rpx;
+  color: #666666;
+  font-weight: 400;
+  min-width: 60rpx;
+}
+
+.progress-text-completed {
+  color: #1890ff;
+}
+
+/* 进度条 */
+.progress-bar {
+  width: 240rpx;
+  height: 16rpx;
+  background-color: #f0f2f5;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #d9d9d9;
+  border-radius: 8rpx;
+  transition: width 0.3s ease;
+}
+
+.progress-fill-completed {
+  background-color: #1890ff;
+}
+
+/* 箭头图标 */
+.course-arrow {
+  width: 48rpx;
+  height: 48rpx;
+  flex-shrink: 0;
+  filter: none; /* 默认黑色 */
+}
+
+.course-arrow-completed {
+  filter: invert(30%) sepia(100%) saturate(2000%) hue-rotate(200deg) brightness(100%); /* 蓝色箭头 */
+}
+
+/* ==================== 加载状态样式 ==================== */
+
+.loading-container {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 40rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #666666;
+  font-weight: 400;
+} 

@@ -4,7 +4,6 @@
       <text class="title">错题库</text>
       <text class="mistake-count">错误单词 {{mistakeCount}}</text>
     </view>
-
     <scroll-view scroll-y class="mistake-list-scroll" wx:if="{{mistakeList.length > 0}}">
       <word-card wx:for="{{mistakeList}}" wx:key="index" item="{{item}}" />
     </scroll-view>
@@ -14,7 +13,7 @@
     </view>
   </view>
 
-  <view class="footer">
+  <view class="footer fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}">
     <view class="review-button" bindtap="startReview">开始复习</view>
   </view>
 </view>

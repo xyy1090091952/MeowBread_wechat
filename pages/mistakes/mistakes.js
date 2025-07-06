@@ -9,7 +9,8 @@ const mistakeManager = require('../../utils/mistakeManager.js');
 Page({
   data: {
     mistakeCount: 0,
-    mistakeList: []
+    mistakeList: [],
+    pageLoaded: false // 控制页面加载动画
   },
 
     /**
@@ -18,6 +19,22 @@ Page({
    */
   onShow: function () {
     this.loadMistakes();
+    this.triggerLoadAnimation();
+  },
+
+  // 触发加载动画
+  triggerLoadAnimation: function() {
+    // 重置动画状态
+    this.setData({
+      pageLoaded: false
+    });
+    
+    // 延迟触发动画，确保页面渲染完成
+    setTimeout(() => {
+      this.setData({
+        pageLoaded: true
+      });
+    }, 100);
   },
 
     /**

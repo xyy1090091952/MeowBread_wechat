@@ -25,15 +25,31 @@ Page({
     // 加载统计数据
     this.loadStatistics();
     
-    // 页面加载完成后启动渐显动画
-    setTimeout(() => {
-      this.setData({ pageLoaded: true });
-    }, 100);
+    // 触发加载动画
+    this.triggerLoadAnimation();
   },
 
   onShow: function () {
     // 每次显示页面时重新加载数据
     this.loadStatistics();
+    
+    // 每次显示页面时都触发动画
+    this.triggerLoadAnimation();
+  },
+
+  // 触发加载动画
+  triggerLoadAnimation: function() {
+    // 重置动画状态
+    this.setData({
+      pageLoaded: false
+    });
+    
+    // 延迟触发动画，确保页面渲染完成
+    setTimeout(() => {
+      this.setData({
+        pageLoaded: true
+      });
+    }, 100);
   },
 
   /**

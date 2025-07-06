@@ -1,10 +1,10 @@
 <!--pages/quiz/quiz.wxml-->
 <view class="container" wx:if="{{questions.length > 0}}">
-  <view class="current-filter-display" wx:if="{{currentFilterDisplay}}">
-    <text>当前范围: {{currentFilterDisplay}}</text>
+  <view class="current-filter-display fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}" wx:if="{{currentFilterDisplay}}">
+    <text>你当前选择了: {{currentFilterDisplay}}</text>
   </view>
     <!-- 新增的进度条和计时器容器 -->
-    <view class="progress-timer-container" wx:if="{{quizMode === 'quick'}}">
+    <view class="progress-timer-container fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}" wx:if="{{quizMode === 'quick'}}">
       <!-- 进度条 -->
       <view class="progress-bar-wrapper">
         <view class="progress-bar-background">
@@ -27,7 +27,7 @@
     </view>
 
   <block wx:if="{{showQuestion}}" wx:key="{{currentQuestionIndex}}">
-    <view class="content-card">
+    <view class="content-card fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}">
       <!-- 题目头部区域 - 首先出现，无动画延迟 -->
       <view class="question-header">
         <view class="question-stem-container">
@@ -119,13 +119,13 @@
       </view>
     </view>
 
-    <view class="action-buttons-fixed" wx:if="{{!showAnswerCard}}">
+    <view class="action-buttons-fixed fade-in-element fade-delay-4 {{pageLoaded ? 'show' : ''}}" wx:if="{{!showAnswerCard}}">
       <!-- 提交答案和跳过本题按钮 -->
       <view class="button-group">
         <button 
           class="skip-button half-width-button" 
           bindtap="skipQuestion">
-          跳过本题
+          <image class="skip-arrow-icon" src="/images/icons/arrow_right.svg"></image>
         </button>
         <button 
           class="submit-button half-width-button" 

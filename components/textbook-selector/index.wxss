@@ -10,6 +10,9 @@
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 9999; /* 提高z-index以确保在tab-bar之上 */
   opacity: 0;
+  /* 禁用背后页面的交互 */
+  pointer-events: auto;
+  touch-action: none;
 }
 
 /* 弹窗动画样式 */

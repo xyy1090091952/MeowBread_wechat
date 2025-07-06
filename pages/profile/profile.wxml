@@ -1,12 +1,15 @@
 <!--pages/profile/profile.wxml-->
 <view class="container {{!isLoggedIn ? 'login-mode' : ''}}">
-  <!-- 用户信息区域 - 自定义全屏容器 -->
+  <!-- 登录背景图片 - 仅在未登录时显示，无动画 -->
+  <image wx:if="{{!isLoggedIn}}" class="login-background" src="/images/banner/login background.jpg" mode="aspectFill"></image>
+  
+  <!-- 用户信息区域 -->
   <view class="fullscreen-user-section">
-    <!-- 未登录时显示 -->
+    <!-- 未登录时显示 - 无动画效果 -->
     <block wx:if="{{!isLoggedIn}}">
       <view class="login-card shadow">
         <text class="login-title">始めましょう</text>
-        <text class="login-subtitle">在Meow Bread开心得背单词吧！</text>
+        <text class="login-subtitle">吃片记忆面包，在Meow Bread开心得背单词吧！</text>
 
         <!-- 头像占位渐变圆 - 支持显示选中的头像 -->
         <view class="avatar-placeholder">
@@ -14,21 +17,21 @@
         </view>
 
         <!-- 选头像按钮 -->
-        <button class="avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">{{avatarUrl ? '更换头像' : '选择头像'}}</button>
+        <button class="avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">{{avatarUrl ? '选择头像' : '选择头像'}}</button>
 
         <!-- 昵称输入框 - 微信推荐方式 -->
         <input class="nickname-input {{nickname ? 'has-nickname' : ''}}" type="nickname" placeholder="请输入昵称" bind:input="onNicknameInput" value="{{nickname}}" />
 
         <!-- 登录按钮 -->
-        <view class="login-btn" bindtap="login">保存并登录</view>
+        <view class="login-btn" bindtap="login">登录</view>
       </view>
     </block>
     
-    <!-- 登录后显示用户信息 -->
+    <!-- 登录后显示用户信息 - 每个元素独立动画 -->
     <block wx:if="{{isLoggedIn && userInfo}}">
       <!-- 显示用户真实头像 -->
-      <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-      <view class="user-text-container">
+      <image class="avatar fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}" src="{{userInfo.avatarUrl}}"></image>
+      <view class="user-text-container fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
         <!-- 显示用户昵称 -->
         <view class="user-name">{{userInfo.nickName}}</view>
         <!-- 显示用户称号（根据答题数量动态计算） -->
@@ -37,10 +40,17 @@
     </block>
   </view>
 
-  <!-- 登录后显示的功能模块 -->
+  <!-- 装饰素材 - 仅在未登录时显示，无动画效果 -->
+  <block wx:if="{{!isLoggedIn}}">
+    <image class="small-bread-decoration {{breadBouncing ? 'bread-bounce' : ''}}" src="/images/banner/small bread.png" mode="aspectFit" bindtap="onBreadTap"></image>
+    <image class="click-decoration" src="/images/banner/click.svg" mode="aspectFit"></image>
+    <image class="arrow-decoration" src="/images/banner/arrow.svg" mode="aspectFit"></image>
+  </block>
+
+  <!-- 登录后显示的功能模块 - 每个模块独立动画 -->
   <block wx:if="{{isLoggedIn}}">
     <!-- 答题结果模块 -->
-    <view class="quiz-results-section fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
+    <view class="quiz-results-section fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}">
       <!-- 内层答题准确率模块 -->
       <view class="accuracy-module">
         <text class="accuracy-label">答题准确率</text>
@@ -57,7 +67,7 @@
     </view>
 
     <!-- 扭蛋机模块 -->
-    <view class="gashapon-section fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}" bindtap="goToGashapon">
+    <view class="gashapon-section fade-in-element fade-delay-4 {{pageLoaded ? 'show' : ''}}" bindtap="goToGashapon">
       <image class="gashapon-background" src="/images/banner/gashapon.jpg"></image>
       <view class="option-text-container">
         <text class="option-main-text">单词扭蛋机</text>
@@ -66,7 +76,7 @@
     </view>
 
     <!-- 错题库模块 -->
-    <view class="mistake-section fade-in-element fade-delay-4 {{pageLoaded ? 'show' : ''}}" bindtap="goToMistakes">
+    <view class="mistake-section fade-in-element fade-delay-5 {{pageLoaded ? 'show' : ''}}" bindtap="goToMistakes">
       <view class="option-text-container">
         <text class="option-main-text">错题库</text>
         <text class="option-sub-text">{{mistakeCount}}个错误</text>

@@ -5,6 +5,10 @@
     <image class="banner-image" src="/images/banner/banner1.jpg" mode="widthFix"></image>
     <!-- 中央 Logo -->
     <image class="banner-logo" src="/images/banner/Meow Bread.svg" mode="widthFix" />
+    <!-- 中央 Banner -->
+    <image class="banner-title" src="/images/banner/Meow Bread banner.svg" mode="widthFix" />
+    <!-- 大面包装饰图片 -->
+    <image class="banner-bigbread {{breadBouncing ? 'bread-bounce' : ''}}" src="/images/banner/bigbread.png" mode="widthFix" bindtap="onBreadTap" />
   </view>
   <view class="content">
     <!-- 题库筛选按钮 -->
@@ -16,31 +20,43 @@
       <image class="option-icon arrow-white" src="/images/icons/arrow_right.svg" />
     </view>
 
+    <!-- 时间线模式按钮 -->
+    <view class="option-card timeline-mode-card fade-in-element fade-delay-4 {{pageLoaded ? 'show' : ''}}" bindtap="startTimelineMode">
+      <view class="option-text-container">
+        <text class="option-main-text">📖 课程模式</text>
+        <text class="option-sub-text">根据课程时间线背单词</text>
+      </view>
+      <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
+    </view>
+
     <!-- 标准模式按钮 -->
-    <view class="option-card standard-mode-card fade-in-element fade-delay-4 {{pageLoaded ? 'show' : ''}}" bindtap="startQuickQuiz">
+    <view class="option-card standard-mode-card fade-in-element fade-delay-5 {{pageLoaded ? 'show' : ''}}" bindtap="startQuickQuiz">
       <view class="option-text-container">
         <text class="option-main-text">标准模式</text>
-        <text class="option-sub-text">30道题目，没有时间限制</text>
+        <text class="option-sub-text">选择课本30题随机抽答</text>
       </view>
       <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
     </view>
 
-    <!-- 无尽模式按钮 -->
-    <view class="option-card endless-mode-card fade-in-element fade-delay-5 {{pageLoaded ? 'show' : ''}}" bindtap="startEndlessQuiz">
-      <view class="option-text-container">
-        <text class="option-main-text">无尽模式</text>
-        <text class="option-sub-text">选中题库的所有题目，10次错误后结束</text>
+    <!-- 无尽模式和错题重练合并行 -->
+    <view class="dual-card-row fade-in-element fade-delay-6 {{pageLoaded ? 'show' : ''}}">
+      <!-- 无尽模式按钮 -->
+      <view class="option-card endless-mode-card dual-card-left" bindtap="startEndlessQuiz">
+        <view class="option-text-container">
+          <text class="option-main-text">无尽模式</text>
+          <text class="option-sub-text">单词的无尽测试</text>
+        </view>
+        <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
       </view>
-      <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
-    </view>
 
-    <!-- 错题重练按钮 -->
-    <view class="option-card wrong-questions-card fade-in-element fade-delay-6 {{pageLoaded ? 'show' : ''}}" bindtap="practiceWrongQuestions">
-      <view class="option-text-container">
-        <text class="option-main-text">错题重练 ({{mistakeCount}})</text>
-        <text class="option-sub-text">巩固错误题目</text>
+      <!-- 错题重练按钮 -->
+      <view class="option-card wrong-questions-card dual-card-right" bindtap="practiceWrongQuestions">
+        <view class="option-text-container">
+          <text class="option-main-text">错题重练({{mistakeCount}})</text>
+          <text class="option-sub-text">练习错误题目</text>
+        </view>
+        <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
       </view>
-      <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
     </view>
   </view>
 
