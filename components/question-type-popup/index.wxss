@@ -51,13 +51,13 @@
   transform: translateY(0);
 }
 
+/* components/question-type-popup/index.wxss */
 .popup-content {
-  background-color: #ffffff;
-  border-top-left-radius: 24rpx;
-  border-top-right-radius: 24rpx;
-  padding: 48rpx 48rpx calc(48rpx + env(safe-area-inset-bottom));
-  transform: translateY(100%);
-  transition: transform 0.3s ease-out;
+  background-color: #FAFAFA; /* Figma: fill_IA1QXY */
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  padding: 24px 24px calc(0px + env(safe-area-inset-bottom)); /* 根据Figma调整内边距 */
+  box-shadow: 0px -4px 40px rgba(0, 0, 0, 0.08); /* 增加一些阴影效果 */
 }
 
 /* 弹窗内容动画 - 修复双重动画问题 */
@@ -71,56 +71,68 @@
 
 .popup-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start; /* 标题左对齐 */
   align-items: center;
-  margin-bottom: 40rpx;
+  margin-bottom: 24px; /* Figma: 间距 */
 }
 
 .popup-title {
-  font-size: 36rpx;
-  font-weight: bold;
+  font-size: 24px; /* Figma: style_1BP8OV */
+  font-weight: 700; /* Figma: style_1BP8OV */
+  color: #111111; /* Figma: fill_BGAJ49 */
 }
 
-.close-button {
-  font-size: 48rpx;
-  color: #999;
-  cursor: pointer;
-}
+
 
 .question-type-group {
-  margin-bottom: 30rpx;
+  margin-bottom: 24px; /* Figma: 间距 */
 }
 
 .question-type-group-title {
-  font-size: 28rpx;
-  color: #666;
-  margin-bottom: 20rpx;
+  font-size: 16px; /* Figma: style_20OPMN */
+  font-weight: 700; /* Figma: style_20OPMN */
+  color: #000000; /* Figma: fill_G1F9SM */
+  margin-bottom: 12px; /* Figma: 间距 */
 }
+
+
 
 .switch-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24rpx 0;
-  border-bottom: 1rpx solid #f0f0f0;
+  padding: 0 18px; /* Figma: 左右边距 */
+  height: 64px; /* Figma: layout_DQ3DHD */
+  background-color: #FFFFFF; /* Figma: fill_OCQRG9 */
+  border-radius: 24px; /* Figma: borderRadius */
+  box-shadow: 0px 4px 40px rgba(0, 0, 0, 0.08); /* Figma: effect_46B5TJ, 调整透明度 */
+  margin-bottom: 16px; /* Figma: 间距 */
 }
 
 .switch-item:last-child {
   border-bottom: none;
+  margin-bottom: 0;
 }
 
 .switch-label {
-  font-size: 32rpx;
+  font-size: 16px; /* Figma: style_70PDHT */
+  font-weight: 600; /* Figma: style_70PDHT */
 }
 
 .confirm-button {
   width: 100%;
-  background-color: #4845F7;
+  height: 48px; /* Figma: 按钮高度 */
+  line-height: 48px; /* 使文字垂直居中 */
+  background-color: #4845F7; /* 设置期望的背景色 */
   color: white;
-  border-radius: 48rpx;
-  padding: 24rpx;
+  border-radius: 24px; /* Figma: borderRadius */
+  padding: 0; /* 移除内边距，由height和line-height控制 */
   text-align: center;
-  font-size: 32rpx;
-  margin-top: 40rpx;
-  margin-bottom: 40rpx;
+  font-size: 16px; /* Figma: style_IA2TSB */
+  font-weight: 600; /* Figma: style_IA2TSB */
+  margin-top: 30px;
+  margin-left: 0; /* 覆盖微信默认的 margin-left: auto */
+  margin-right: 0; /* 覆盖微信默认的 margin-right: auto */
+  box-sizing: border-box; /* 确保宽度计算正确 */
+  border: none; /* 关键：移除 plain="true" 带来的默认边框 */
 }
