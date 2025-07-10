@@ -1,0 +1,30 @@
+<!--pages/gashapon-inventory/gashapon-inventory.wxml-->
+<view class="container">
+  <!-- 主展示区域的 Swiper -->
+  <swiper class="prize-swiper" circular="true" bindchange="onSwiperChange" current="{{currentSwiperIndex}}">
+    <block wx:for="{{allPrizes}}" wx:key="id">
+      <swiper-item>
+        <view class="prize-item {{item.unlocked ? '' : 'locked'}}">
+          <image class="prize-image" src="{{item.image}}" mode="aspectFit"></image>
+          <view class="prize-info">
+            <view class="prize-rarity rarity-{{item.rarity}}">{{item.rarity}}</view>
+            <view class="prize-name">{{item.unlocked ? item.name : '???'}}</view>
+            <view class="prize-quote">{{item.unlocked ? '“' + item.quote + '”' : '“???”'}}</view>
+          </view>
+        </view>
+      </swiper-item>
+    </block>
+  </swiper>
+
+  <!-- 缩略图导航 -->
+  <scroll-view class="thumbnail-nav" scroll-x="true" scroll-left="{{scrollLeft}}" scroll-with-animation="true">
+    <block wx:for="{{allPrizes}}" wx:key="id">
+      <!-- 包装层，用于处理布局和点击 -->
+      <view class="thumbnail-wrapper" id="thumb-{{index}}" bindtap="switchSwiper" data-index="{{index}}">
+        <view class="thumbnail-item {{index === currentSwiperIndex ? 'active' : ''}}">
+          <image class="thumbnail-image {{item.unlocked ? '' : 'locked'}}" src="{{item.image}}" mode="aspectFill"></image>
+        </view>
+      </view>
+    </block>
+  </scroll-view>
+</view>

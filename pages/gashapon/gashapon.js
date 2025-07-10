@@ -71,9 +71,8 @@ Page({
 
   // 跳转到库存页面
   onInventory() {
-    wx.showToast({
-      title: '功能开发中',
-      icon: 'none'
+    wx.navigateTo({
+      url: '/pages/gashapon-inventory/gashapon-inventory'
     });
   },
 

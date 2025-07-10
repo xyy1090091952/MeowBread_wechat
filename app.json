@@ -15,7 +15,8 @@
     "pages/webview/webview",
     "pages/grammar/grammar",
     "pages/timeline/timeline",
-    "pages/gashapon-result/gashapon-result"
+    "pages/gashapon-result/gashapon-result",
+    "pages/gashapon-inventory/gashapon-inventory"
   ],
   "window": {
     "backgroundTextStyle": "light",

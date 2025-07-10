@@ -31,6 +31,8 @@ Page({
       // prizeData 是一个 JSON 字符串，需要解析
       const prize = JSON.parse(decodeURIComponent(options.prizeData));
       this.setData({ prize });
+      // 解锁奖品
+      this.unlockPrize(prize.id);
       // 播放入场动画
       this.playAnimation();
     } else {
@@ -61,6 +63,21 @@ Page({
     setTimeout(() => {
       this.setData({ isAnimating: true });
     }, 100);
+  },
+
+  /**
+   * @description 解锁奖品，将奖品ID存入全局变量
+   * @param {string} prizeId 要解锁的奖品ID
+   */
+  unlockPrize(prizeId) {
+    const unlocked = app.globalData.unlockedPrizes;
+    // 检查是否已经解锁，避免重复添加
+    if (!unlocked.includes(prizeId)) {
+      unlocked.push(prizeId);
+      // 在实际应用中，这里可能需要将解锁状态持久化存储
+      console.log('Unlocked new prize:', prizeId);
+      console.log('Current unlocked prizes:', app.globalData.unlockedPrizes);
+    }
   },
 
   /**
@@ -110,6 +127,8 @@ Page({
       this.setData({
         prize: newPrize
       });
+      // 解锁新品种
+      this.unlockPrize(newPrize.id);
       // 重新播放动画
       this.playAnimation();
     } else {

@@ -7,6 +7,10 @@ App({
   },
   globalData: {
     // 全局共享的数据
-    userInfo: null
+    userInfo: null,
+    // 初始化用户金币，用于测试
+    coins: 1000,
+    // 用于存储用户已解锁的奖品ID
+    unlockedPrizes: [], 
   }
 })

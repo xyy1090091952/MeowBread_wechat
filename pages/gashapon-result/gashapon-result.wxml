@@ -17,7 +17,7 @@
 
     <!-- 奖品信息 -->
     <view class="prize-info">
-      <view class="prize-rarity {{isAnimating ? 'rarity-animation' : ''}}">{{prize.rarity}}</view>
+      <view class="prize-rarity {{isAnimating ? 'rarity-animation' : ''}} rarity-{{prize.rarity}}">{{prize.rarity}}</view>
       <view class="prize-name {{isAnimating ? 'name-animation' : ''}}">{{prize.name}}</view>
       <view class="prize-desc {{isAnimating ? 'desc-animation' : ''}}">“{{prize.quote}}”</view>
     </view>

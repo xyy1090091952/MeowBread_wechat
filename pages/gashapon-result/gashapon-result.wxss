@@ -33,17 +33,17 @@ page {
 /* 光效背景 */
 .shinning-bg {
   position: absolute;
-  width: 800rpx;   /* 放大，原为600rpx */
-  height: 800rpx;  /* 放大，原为600rpx */
-  top: 250rpx;     /* 定位到奖品图中心，原为50% */
+  width: 800rpx;   
+  height: 800rpx;  
+  top: 200rpx;     /* 定位到奖品图中心，原为50% */
   left: 50%;
   transform: translate(-50%, -50%);
   opacity: 0; /* 初始透明 */
 }
 
 .prize-image {
-  width: 400rpx;   /* 放大1.5倍，原为400rpx */
-  height: 400rpx;  /* 放大1.5倍，原为400rpx */
+  width: 400rpx;   
+  height: 400rpx;  
   margin-bottom: 100rpx;
   /* 将图片置于光效之上 */
   z-index: 2; 
@@ -139,12 +139,25 @@ page {
 .prize-rarity {
   display: inline-block;
   padding: 8rpx 20rpx;
-  background-color: #000;
+  background-color: #000; /* 默认背景色 */
   color: #fff;
   border-radius: 20rpx;
   font-size: 28rpx;
   font-weight: bold;
   margin-bottom: 20rpx;
+}
+
+/* 根据稀有度设置不同颜色 */
+.rarity-R {
+  background-color: #3AD4E5;
+}
+
+.rarity-SR {
+  background-color: #BFD100;
+}
+
+.rarity-SSR {
+  background-color: #FF8623;
 }
 
 .prize-name {
