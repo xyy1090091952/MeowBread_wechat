@@ -11,6 +11,7 @@ Page({
   data: {
     prize: null, // 当前展示的奖品信息
     poolId: null, // 当前奖品所属的奖池ID
+    isAnimating: false, // 控制动画播放的状态
   },
 
   /**
@@ -30,6 +31,8 @@ Page({
       // prizeData 是一个 JSON 字符串，需要解析
       const prize = JSON.parse(decodeURIComponent(options.prizeData));
       this.setData({ prize });
+      // 播放入场动画
+      this.playAnimation();
     } else {
       // 如果没有奖品数据，这是一个异常情况
       // 提示用户并自动返回上一页
@@ -46,12 +49,27 @@ Page({
   },
 
   /**
+   * @description 播放出场动画
+   * 通过重置 isAnimating 状态来确保动画可以重复触发
+   */
+  playAnimation() {
+    // 1. 先将动画状态设置为false，移除动画类
+    this.setData({ isAnimating: false });
+    
+    // 2. 使用 setTimeout 延迟一小段时间（例如100毫秒）
+    //    目的是确保WXML渲染更新完毕，然后再将 isAnimating 设置为 true，从而重新添加动画类，触发动画播放。
+    setTimeout(() => {
+      this.setData({ isAnimating: true });
+    }, 100);
+  },
+
+  /**
    * @description “再抽一次”按钮的点击事件
    * 1. 检查奖池信息是否存在
    * 2. 根据奖池信息获取抽奖成本，并检查用户金币是否足够
    * 3. 扣除金币
    * 4. 从当前奖池中随机抽取一个新奖品（暂不考虑权重）
-   * 5. 刷新当前页面的奖品信息
+   * 5. 刷新当前页面的奖品信息，并重新播放动画
    */
   onDrawAgain() {
     // 1. 检查奖池ID是否存在
@@ -87,15 +105,13 @@ Page({
     const prizes = pool.prizes;
     const newPrize = prizes[Math.floor(Math.random() * prizes.length)];
 
-    // 5. 刷新页面数据
+    // 5. 刷新页面数据并触发动画
     if (newPrize) {
       this.setData({
         prize: newPrize
       });
-      wx.showToast({
-        title: '抽奖成功！',
-        icon: 'success'
-      });
+      // 重新播放动画
+      this.playAnimation();
     } else {
       // 理论上在当前简单随机逻辑下，这里不会执行
       wx.showToast({

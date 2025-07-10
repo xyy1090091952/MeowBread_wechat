@@ -7,6 +7,7 @@ page {
   flex-direction: column;
   justify-content: space-between; /* 将内容推向两端 */
   align-items: center;
+  overflow: hidden; /* 防止旋转动画溢出 */
 }
 
 .prize-container {
@@ -24,19 +25,117 @@ page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 100rpx;
+  margin-top: 20rpx; /* 向上移动，原为100rpx */
+}
+
+/* --- 动画相关 --- */
+
+/* 光效背景 */
+.shinning-bg {
+  position: absolute;
+  width: 800rpx;   /* 放大，原为600rpx */
+  height: 800rpx;  /* 放大，原为600rpx */
+  top: 250rpx;     /* 定位到奖品图中心，原为50% */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0; /* 初始透明 */
 }
 
 .prize-image {
-  width: 400rpx;
-  height: 400rpx;
-  margin-bottom: 40rpx;
+  width: 400rpx;   /* 放大1.5倍，原为400rpx */
+  height: 400rpx;  /* 放大1.5倍，原为400rpx */
+  margin-bottom: 100rpx;
+  /* 将图片置于光效之上 */
+  z-index: 2; 
+  /* 初始状态：缩小且全白 */
+  transform: scale(0.5);
+  filter: brightness(100);
+  opacity: 0;
 }
 
 .prize-info {
   text-align: center;
+  /* 将信息置于光效之上 */
+  z-index: 2;
 }
 
+/* 为每个文本元素设置初始透明 */
+.prize-rarity, .prize-name, .prize-desc {
+  opacity: 0;
+}
+
+/* 光效动画：旋转与淡入 */
+.shinning-animation {
+  animation: shinning-rotate 10s linear infinite, fade-in 1s ease-out forwards;
+}
+
+/* 奖品动画：放大、变色 */
+.prize-animation {
+  animation: prize-appear 2s ease-out forwards;
+}
+
+/* 信息动画：分别定义延迟，实现依次入场 */
+.rarity-animation {
+  animation: info-fade-in 0.5s ease-out 1s forwards; /* 延迟1s */
+}
+
+.name-animation {
+  animation: info-fade-in 0.5s ease-out 1.3s forwards; /* 延迟1.3s */
+}
+
+.desc-animation {
+  animation: info-fade-in 0.5s ease-out 1.6s forwards; /* 延迟1.6s */
+}
+
+@keyframes shinning-rotate {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes prize-appear {
+  0% {
+    transform: scale(0.5);
+    filter: brightness(10); /* 纯白高亮 */
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1); /* 放大超过目标尺寸 */
+    filter: brightness(1.5); /* 亮度降低 */
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1); /* 恢复正常大小 */
+    filter: brightness(1); /* 恢复正常颜色 */
+    opacity: 1;
+  }
+}
+
+@keyframes info-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* --- 奖品信息样式 --- */
 .prize-rarity {
   display: inline-block;
   padding: 8rpx 20rpx;
