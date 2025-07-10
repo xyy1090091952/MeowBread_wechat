@@ -50,10 +50,25 @@ Page({
       const learningProgress = learnedManager.getLearningProgress(dict.id);
       const progress = learningProgress.progress;
       
+      // 调试信息：输出每个课本的学习进度
+      console.log(`=== ${dict.name} 学习进度调试 ===`);
+      console.log('课本ID:', dict.id);
+      console.log('学习进度对象:', learningProgress);
+      console.log('进度百分比:', progress);
+      console.log('已学单词数:', learningProgress.learnedCount);
+      console.log('总单词数:', learningProgress.totalCount);
+      
       // 如果学习进度管理器返回的总数与计算的不同，使用计算的数量（更准确）
       const finalWordCount = learningProgress.totalCount || wordCount;
 
-      return { ...dict, wordCount: finalWordCount, progress, cover: coverMap[dict.id] || '' };
+      return { 
+        ...dict, 
+        wordCount: finalWordCount, 
+        progress, 
+        learnedCount: learningProgress.learnedCount, // 添加已学单词数
+        totalCount: learningProgress.totalCount, // 添加总单词数
+        cover: coverMap[dict.id] || '' 
+      };
     });
 
     // 获取用户选择的课本ID，用于优先排序

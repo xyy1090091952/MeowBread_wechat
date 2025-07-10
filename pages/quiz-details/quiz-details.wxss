@@ -83,7 +83,7 @@
   font-size: 48rpx;
   font-weight: 700;
   color: #1F2329; /* 改为深色文字适配浅色背景 */
-  margin-bottom: 8rpx;
+  margin-top: 8rpx;
 }
 
 .stat-label {
@@ -149,8 +149,8 @@
 }
 
 .form-value {
-  font-size: 36rpx;
-  color: #1F2329;
+  font-size: 32rpx;
+  color: #999999;
   font-weight: 700;
 }
 
