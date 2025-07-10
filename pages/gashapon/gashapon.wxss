@@ -1,55 +1,176 @@
 /* pages/gashapon/gashapon.wxss */
+page {
+  height: 100%;
+}
 
-.container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #FFE066 0%, #FF6B6B 100%);
+.gashapon-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/* 自定义导航栏 */
+.custom-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 0 24rpx;
+  height: 88rpx; /* 默认导航栏高度 */
+  z-index: 100;
 }
 
-.header {
-  padding: 40rpx 0;
-  text-align: center;
+.nav-back-icon {
+  width: 48rpx;
+  height: 48rpx;
 }
 
-.page-title {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+.nav-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #000;
 }
 
-.content {
-  flex: 1;
+.nav-capsule {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 174rpx;
+  height: 60rpx;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 30rpx;
 }
 
-.placeholder {
+.capsule-dot {
+  width: 12rpx;
+  height: 12rpx;
+  background-color: #000;
+  border-radius: 50%;
+  margin: 0 6rpx;
+}
+
+/* 右侧功能按钮 */
+.side-buttons {
+  position: fixed;
+  right: 24rpx;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.side-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120rpx;
+  height: 64rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 扭蛋机主体 */
+.gashapon-machine {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  z-index: 10;
+}
+
+/* 底部操作区域 */
+.bottom-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border-radius: 48rpx 48rpx 0 0;
+  padding: 32rpx;
+  padding-bottom: 68rpx; /* 为底部安全区留出空间 */
+  box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.08);
+}
+
+.sheet-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 24rpx;
+}
+
+/* 系列选择 */
+.series-selector {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 32rpx;
+}
+
+.series-card {
+  width: 200rpx;
+  height: 240rpx;
+  border-radius: 24rpx;
+  background-color: #f7f7f7;
+  border: 2px solid transparent;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 80rpx 40rpx;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 24rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+  justify-content: center;
+  transition: all 0.3s ease;
 }
 
-.placeholder-icon {
+.series-card.active {
+  border-color: #4d7cff;
+  background-color: #e6f0ff;
+}
+
+.series-image {
   width: 120rpx;
   height: 120rpx;
-  margin-bottom: 40rpx;
-  opacity: 0.8;
+  margin-bottom: 8rpx;
 }
 
-.placeholder-text {
+.series-name {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.series-progress {
+  font-size: 24rpx;
+  color: #888;
+}
+
+/* 抽奖按钮 */
+.draw-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 96rpx;
+  background-color: #4d7cff;
+  border-radius: 48rpx;
+  color: #fff;
   font-size: 32rpx;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 16rpx;
 }
 
-.placeholder-subtitle {
-  font-size: 24rpx;
-  color: #666;
-} 
+.coin-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 16rpx;
+}

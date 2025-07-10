@@ -1,14 +1,54 @@
 <!--pages/gashapon/gashapon.wxml-->
-<view class="container">
-  <view class="header fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}">
-    <text class="page-title">扭蛋机</text>
-  </view>
-  
-  <view class="content fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
-    <view class="placeholder">
-      <image class="placeholder-icon" src="/images/icons/Coins.png"></image>
-      <text class="placeholder-text">扭蛋机页面</text>
-      <text class="placeholder-subtitle">精彩内容即将上线...</text>
+<view class="gashapon-container">
+  <!-- 背景图 -->
+  <image class="background-image" src="/images/gashapon/gashapon_background.png" mode="aspectFill"></image>
+
+  <!-- 自定义导航栏 -->
+  <view class="custom-nav" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-back" bindtap="onBack">
+      <image src="/images/icons/arrow_left.svg" class="nav-back-icon"></image>
+    </view>
+    <view class="nav-title">Meow Bread</view>
+    <view class="nav-capsule">
+      <view class="capsule-dot"></view>
+      <view class="capsule-dot"></view>
+      <view class="capsule-dot"></view>
     </view>
   </view>
-</view> 
+
+  <!-- 右侧功能按钮 -->
+  <view class="side-buttons" style="top: {{menuButtonTop}}px;">
+    <view class="side-button" bindtap="onInventory">
+      <text>库存</text>
+    </view>
+    <view class="side-button" bindtap="onRedeem">
+      <text>兑换</text>
+    </view>
+  </view>
+
+  <!-- 扭蛋机主体 -->
+  <image class="gashapon-machine" src="/images/gashapon/gashapon_machine.png" mode="widthFix"></image>
+
+  <!-- 底部操作区域 -->
+  <view class="bottom-sheet">
+    <!-- 标题 -->
+    <view class="sheet-title">扭蛋系列</view>
+
+    <!-- 系列选择 -->
+    <view class="series-selector">
+      <block wx:for="{{seriesList}}" wx:key="id">
+        <view class="series-card {{item.id === currentSeriesId ? 'active' : ''}}" bindtap="onSelectSeries" data-id="{{item.id}}">
+          <image class="series-image" src="{{item.image}}" mode="aspectFit"></image>
+          <view class="series-name">{{item.name}}</view>
+          <view class="series-progress">{{item.progress}}%</view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 抽奖按钮 -->
+    <view class="draw-button" bindtap="onDraw">
+      <image class="coin-icon" src="/images/gashapon/gashapon_coin_icon.png"></image>
+      <text>{{drawCost}}金币 抽一次</text>
+    </view>
+  </view>
+</view>
