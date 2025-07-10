@@ -1,0 +1,21 @@
+<!--pages/gashapon-result/gashapon-result.wxml-->
+<view class="prize-container">
+  <!-- 奖品展示 -->
+  <view class="prize-display" wx:if="{{prize}}">
+    <!-- 奖品图片 -->
+    <image class="prize-image" src="{{prize.image}}" mode="aspectFit"></image>
+
+    <!-- 奖品信息 -->
+    <view class="prize-info">
+      <view class="prize-rarity">{{prize.rarity}}</view>
+      <view class="prize-name">{{prize.name}}</view>
+      <view class="prize-desc">“{{prize.quote}}”</view>
+    </view>
+  </view>
+</view>
+
+<!-- 底部按钮 -->
+<view class="button-container">
+  <button class="btn btn-draw-again" bindtap="onDrawAgain">再抽一次</button>
+  <button class="btn btn-confirm" bindtap="onConfirm">好耶</button>
+</view>

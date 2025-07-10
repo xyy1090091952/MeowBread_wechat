@@ -24,11 +24,10 @@ page {
 }
 
 .nav-back-icon {
-  width: 40rpx;
-  height: 40rpx;
+  width: 64rpx;
+  height: 64rpx;
   position: absolute; /* 使用绝对定位，方便控制位置 */
   left: 24rpx;
-  transform: rotate(180deg); /* 水平翻转图标 */
   /* top, right, bottom, left 和 transform 会在 align-items: center; 作用下失效，因此无需设置 */
 }
 

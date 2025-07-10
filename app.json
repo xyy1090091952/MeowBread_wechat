@@ -14,7 +14,8 @@
     "pages/word-list/word-list",
     "pages/webview/webview",
     "pages/grammar/grammar",
-    "pages/timeline/timeline"
+    "pages/timeline/timeline",
+    "pages/gashapon-result/gashapon-result"
   ],
   "window": {
     "backgroundTextStyle": "light",

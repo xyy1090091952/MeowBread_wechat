@@ -4,7 +4,7 @@
 
   <!-- 自定义导航栏 -->
   <view class="custom-nav" style="height: {{navBarHeight}}px; padding-top: {{statusBarHeight}}px;">
-    <image class="nav-back-icon" src="/images/icons/arrow_right.svg" bindtap="onBack"></image>
+    <image class="nav-back-icon" src="/images/icons/normal_arrow.svg" bindtap="onBack"></image>
     <view class="nav-title">{{pageTitle}}</view>
   </view>
 

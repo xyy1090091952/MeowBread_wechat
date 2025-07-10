@@ -100,66 +100,56 @@ Page({
 
   // 单次抽奖
   onDraw() {
+    console.log('--- 开始抽奖流程 ---');
+    console.log(`当前金币: ${this.data.userCoins}, 本次消耗: ${this.data.drawCost}`);
+
     if (this.data.userCoins < this.data.drawCost) {
+      console.log('金币不足，中断抽奖');
       wx.showToast({
         title: '金币不足',
         icon: 'none'
       });
       return;
     }
+
+    console.log('金币充足，准备扣除...');
     // 扣除金币
     this.setData({
       userCoins: this.data.userCoins - this.data.drawCost
     });
+    console.log(`金币扣除完毕，剩余金币: ${this.data.userCoins}`);
 
     // 根据当前系列ID从 gashaponData 获取对应的奖池
+    console.log(`正在为系列ID ${this.data.currentSeriesId} 查找奖池...`);
     const currentSeries = gashaponData.find(series => series.id === this.data.currentSeriesId);
-    if (!currentSeries) return; // 如果找不到系列，则不继续
+    
+    if (!currentSeries) {
+      console.error('错误：找不到对应的奖池！');
+      return; 
+    }
+    console.log('成功找到奖池，准备抽奖...');
     
     // 抽奖
     const result = drawPrize(currentSeries.prizes);
+    console.log('抽奖成功！获得奖品:', result);
 
-    // 显示抽奖结果
-    wx.showModal({
-      title: '恭喜你！',
-      content: `抽中了 ${result.rarity} - ${result.name}`,
-      showCancel: false,
+    // 将抽奖结果对象转换为JSON字符串，并进行URI编码
+    const prizeData = encodeURIComponent(JSON.stringify(result));
+    console.log('奖品数据已打包，准备跳转...');
+
+    // 跳转到抽奖结果页面，并携带奖品数据和奖池ID
+    wx.navigateTo({
+      url: `/pages/gashapon-result/gashapon-result?prizeData=${prizeData}&poolId=${this.data.currentSeriesId}`,
+      success: function(res) {
+        console.log('页面跳转成功！', res);
+      },
+      fail: function(err) {
+        console.error('页面跳转失败！', err);
+      }
     });
   },
 
-  // 十连抽
-  onDrawTen() {
-    const totalCost = this.data.drawCost * 10;
-    if (this.data.userCoins < totalCost) {
-      wx.showToast({
-        title: '金币不足',
-        icon: 'none'
-      });
-      return;
-    }
-    // 扣除金币
-    this.setData({
-      userCoins: this.data.userCoins - totalCost
-    });
 
-    // 根据当前系列ID从 gashaponData 获取对应的奖池
-    const currentSeries = gashaponData.find(series => series.id === this.data.currentSeriesId);
-    if (!currentSeries) return;
-
-    let results = [];
-    // 进行十次抽奖
-    for (let i = 0; i < 10; i++) {
-      results.push(drawPrize(currentSeries.prizes));
-    }
-
-    // 格式化显示十连抽结果
-    const resultContent = results.map(r => `${r.rarity} - ${r.name}`).join('\n');
-    wx.showModal({
-      title: '十连抽结果',
-      content: resultContent,
-      showCancel: false,
-    });
-  },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
