@@ -2,7 +2,7 @@
 <view class="container">
   <!-- 筛选显示区域 - 与quiz页面保持一致 -->
   <view class="current-filter-display fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}" wx:if="{{currentFilterDisplay}}">
-    <text>你当前选择了: {{currentFilterDisplay}}</text>
+    <text>{{currentFilterDisplay}}</text>
   </view>
 
   <!-- 筛选器模块 -->
@@ -14,9 +14,7 @@
   <view class="course-list fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}" wx:if="{{!isLoading && courseData.length > 0}}">
     <view class="course-item {{item.isCompleted ? 'course-completed' : ''}}" 
           wx:for="{{courseData}}" 
-          wx:key="courseNumber"
-          data-course="{{item}}"
-          bindtap="onCourseItemTap">
+          wx:key="courseNumber">
       <view class="course-number {{item.isCompleted ? 'course-number-completed' : ''}}">
         <text class="course-num">{{item.courseNumber}}</text>
       </view>
@@ -29,9 +27,16 @@
           </view>
         </view>
       </view>
-      <image class="course-arrow {{item.isCompleted ? 'course-arrow-completed' : ''}}" 
-             src="{{item.isCompleted ? '/images/icons/complete.svg' : '/images/icons/arrow_right.svg'}}" 
-             mode="aspectFit"></image>
+      <view class="course-actions">
+        <view class="action-card" data-course="{{item}}" bindtap="onCardStudyTap">
+          <image class="action-icon" src="/images/icons/card.svg" mode="aspectFit"></image>
+          <text class="action-text">卡片</text>
+        </view>
+        <view class="action-quiz" data-course="{{item}}" bindtap="onQuizTap">
+          <image class="action-icon" src="{{item.isCompleted ? '/images/icons/complete.svg' : '/images/icons/arrow_right.svg'}}" mode="aspectFit"></image>
+          <text class="action-text">答题</text>
+        </view>
+      </view>
     </view>
   </view>
 

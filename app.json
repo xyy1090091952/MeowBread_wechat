@@ -14,7 +14,8 @@
     "pages/word-list/word-list",
     "pages/webview/webview",
     "pages/grammar/grammar",
-    "pages/course-mode/course-mode"
+    "pages/course-mode/course-mode",
+    "pages/card-study/card-study"
   ],
   "window": {
     "backgroundTextStyle": "light",

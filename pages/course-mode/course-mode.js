@@ -57,7 +57,7 @@ Page({
     
     // 更新显示的筛选信息
     const currentFilterDisplay = filter ? 
-      `${filter.selectedDictionaryName} - ${filter.selectedLessonName}` : 
+      `你当前的课本：${filter.selectedDictionaryName}` : 
       '请先选择题库';
     
     this.setData({
@@ -75,7 +75,7 @@ Page({
     console.log('Filter in initializeCoursePage:', filter);
     
     const currentFilterDisplay = filter ? 
-      `${filter.selectedDictionaryName} - ${filter.selectedLessonName}` : 
+      `你当前的课本：${filter.selectedDictionaryName}` : 
       '请先选择题库';
     
     this.setData({
@@ -198,11 +198,11 @@ Page({
   },
 
   /**
-   * 点击课程项目，进入学习
+   * 点击卡片学习按钮
    */
-  onCourseItemTap(e) {
+  onCardStudyTap(e) {
     const courseData = e.currentTarget.dataset.course;
-    console.log('Course item tapped:', courseData);
+    console.log('Card study tapped:', courseData);
 
     // 获取教材名称
     const textbookInfo = courseDataManager.getTextbookInfo(courseData.textbook);
@@ -213,7 +213,44 @@ Page({
       selectedDictionaryKey: courseData.textbook,
       selectedDictionaryName: textbookName,
       selectedLessonKey: courseData.lessonFile,
-      selectedLessonName: `第${courseData.courseNumber}课 ${courseData.courseTitle}`,
+      selectedLessonName: `第${courseData.courseNumber}课`,
+      selectedLessonFiles: [`${courseData.textbook}_${courseData.lessonFile}`],
+      dictionaryId: courseData.textbook,
+      basePath: courseData.textbook,
+      quizMode: 'course',
+      selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill']
+    });
+
+    // 跳转到卡片学习页面
+    wx.navigateTo({
+      url: '/pages/card-study/card-study?mode=course'
+    });
+  },
+
+  /**
+   * 点击答题按钮
+   */
+  onQuizTap(e) {
+    const courseData = e.currentTarget.dataset.course;
+    console.log('Quiz tapped:', courseData);
+
+    // 获取教材名称
+    const textbookInfo = courseDataManager.getTextbookInfo(courseData.textbook);
+    const textbookName = textbookInfo ? textbookInfo.textbookName : courseData.textbook;
+
+    // 在设置临时课程选择之前，先保存用户的原始选择
+    const currentFilter = filterManager.getFilter();
+    if (currentFilter && currentFilter.quizMode !== 'course') {
+      // 只有当前筛选不是course模式时，才保存为原始选择
+      wx.setStorageSync('originalUserFilter', currentFilter);
+    }
+
+    // 设置筛选器为当前课程（临时选择）
+    filterManager.saveFilter({
+      selectedDictionaryKey: courseData.textbook,
+      selectedDictionaryName: textbookName,
+      selectedLessonKey: courseData.lessonFile,
+      selectedLessonName: `第${courseData.courseNumber}课`,
       selectedLessonFiles: [`${courseData.textbook}_${courseData.lessonFile}`],
       dictionaryId: courseData.textbook,
       basePath: courseData.textbook,

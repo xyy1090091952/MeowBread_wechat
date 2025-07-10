@@ -47,6 +47,18 @@ Page({
   onLoad: function(options) {
     const initialState = quizService.initializeQuiz(options);
 
+    // 添加调试信息，显示题目生成情况
+    console.log('=== Quiz 页面初始化 ===');
+    console.log('答题模式:', initialState.quizMode);
+    console.log('生成题目数量:', initialState.questions?.length || 0);
+    console.log('是否有补充题目:', initialState.questions?.some(q => q.isSupplementary) || false);
+    
+    // 统计补充题目数量
+    const supplementaryCount = initialState.questions?.filter(q => q.isSupplementary).length || 0;
+    if (supplementaryCount > 0) {
+      console.log('补充题目数量:', supplementaryCount);
+    }
+
     if (!initialState.questions || initialState.questions.length === 0) {
       wx.showModal({
         title: '提示',

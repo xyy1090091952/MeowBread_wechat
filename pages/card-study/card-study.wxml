@@ -1,0 +1,149 @@
+<!--pages/card-study/card-study.wxml-->
+<wxs module="utils" src="../../utils/utils.wxs"></wxs>
+<view class="container" wx:if="{{allWords.length > 0}}">
+  <!-- 筛选条件显示 -->
+  <view class="current-filter-display fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}" wx:if="{{currentFilterDisplay}}">
+    <text>你当前选择了: {{currentFilterDisplay}}</text>
+  </view>
+  
+  <!-- 进度条和计时器容器 -->
+  <view class="progress-timer-container fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
+    <!-- 进度条 -->
+    <view class="progress-bar-wrapper">
+      <view class="progress-bar-background">
+        <view class="progress-bar-foreground" style="width: {{((currentWordIndex + 1) / totalWords) * 100}}%;"></view>
+      </view>
+      <!-- 进度文字 -->
+      <view class="progress-text">
+        <text>{{currentWordIndex + 1}} / {{totalWords}}</text>
+      </view>
+    </view>
+
+    <!-- 计时器 -->
+    <view class="timer-box">
+      <image class="timer-icon" src="/images/icons/timericon.png"></image>
+      <text class="timer-text">{{formattedTime}}</text>
+    </view>
+  </view>
+
+  <!-- 卡片容器 -->
+  <view class="card-container fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}">
+    <!-- 下一张卡片（背景卡片） -->
+    <view class="study-card background-card" wx:if="{{nextCard}}">
+      <view class="card-header">
+        <view class="word-main">
+          <text class="word-text">{{nextCard['汉字'] ? nextCard['汉字'] : nextCard['假名']}}</text>
+          <view class="part-of-speech-tag {{utils.mapPartOfSpeechToClassName(nextCard['词性'])}}">
+            {{nextCard['词性']}}
+          </view>
+        </view>
+      </view>
+      <view class="card-content">
+        <view class="word-details">
+          <view class="detail-row" wx:if="{{nextCard['假名']}}">
+            <text class="detail-label">假名</text>
+            <text class="detail-value">{{nextCard['假名']}}</text>
+          </view>
+          <view class="detail-row" wx:if="{{nextCard['汉字']}}">
+            <text class="detail-label">汉字</text>
+            <text class="detail-value">{{nextCard['汉字']}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">中文</text>
+            <text class="detail-value">{{nextCard['中文']}}</text>
+          </view>
+          <view class="detail-row example-row" wx:if="{{nextCard['例句']}}">
+            <text class="detail-label">例句</text>
+            <text class="detail-value example-text">{{nextCard['例句']}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 当前卡片（前景卡片） -->
+    <view 
+      class="study-card current-card {{isCardAnimating ? 'animating' : ''}}" 
+      wx:if="{{currentCard}}"
+      style="transform: {{cardTransform}}; transition: {{isCardAnimating ? 'transform 0.3s ease-out' : 'none'}};"
+      bindtouchstart="onTouchStart"
+      bindtouchmove="onTouchMove"
+      bindtouchend="onTouchEnd">
+      
+      <view class="card-header">
+        <view class="word-main">
+          <text class="word-text">{{currentCard['汉字'] ? currentCard['汉字'] : currentCard['假名']}}</text>
+          <view class="part-of-speech-tag {{utils.mapPartOfSpeechToClassName(currentCard['词性'])}}">
+            {{currentCard['词性']}}
+          </view>
+        </view>
+      </view>
+      
+      <view class="card-content">
+        <view class="word-details">
+          <view class="detail-row" wx:if="{{currentCard['假名']}}">
+            <text class="detail-label">假名</text>
+            <text class="detail-value">{{currentCard['假名']}}</text>
+          </view>
+          <view class="detail-row" wx:if="{{currentCard['汉字']}}">
+            <text class="detail-label">汉字</text>
+            <text class="detail-value">{{currentCard['汉字']}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">中文</text>
+            <text class="detail-value">{{currentCard['中文']}}</text>
+          </view>
+          <view class="detail-row example-row" wx:if="{{currentCard['例句']}}">
+            <text class="detail-label">例句</text>
+            <text class="detail-value example-text">{{currentCard['例句']}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 滑动提示 -->
+      <view class="swipe-hints">
+        <view class="hint-left">
+          <text>没记住</text>
+        </view>
+        <view class="hint-right">
+          <text>记住了</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons fade-in-element fade-delay-4 {{pageLoaded ? 'show' : ''}}" wx:if="{{!isCardAnimating}}">
+    <button class="action-button forget-button" bindtap="onForgetClick">
+      <text>没记住</text>
+    </button>
+    <button class="action-button remember-button" bindtap="onRememberClick">
+      <text>记住了</text>
+    </button>
+  </view>
+
+  <!-- 学习统计 -->
+  <view class="study-stats fade-in-element fade-delay-5 {{pageLoaded ? 'show' : ''}}">
+    <view class="stat-item">
+      <text class="stat-number">{{rememberedCount}}</text>
+      <text class="stat-label">记住</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{forgottenCount}}</text>
+      <text class="stat-label">忘记</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{studiedCount}}</text>
+      <text class="stat-label">总计</text>
+    </view>
+  </view>
+</view>
+
+<!-- 加载状态 -->
+<view class="loading-container" wx:if="{{isLoading}}">
+  <text>正在加载单词...</text>
+</view>
+
+<!-- 无数据状态 -->
+<view class="empty-container" wx:if="{{!isLoading && allWords.length === 0}}">
+  <text>没有可学习的单词</text>
+</view> 

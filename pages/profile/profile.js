@@ -299,6 +299,15 @@ Page({
     });
   },
 
+  // 跳转到陈列馆
+  goToGallery: function() {
+    wx.showToast({
+      title: '陈列馆功能开发中',
+      icon: 'none',
+      duration: 2000
+    });
+  },
+
   // 面包点击事件 - 触发Q弹动画
   onBreadTap: function() {
     // 如果动画正在进行中，则不重复触发

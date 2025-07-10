@@ -14,6 +14,10 @@ const service = {
   // 初始化筛选器状态
   initializeFilterState(options) {
     const savedFilter = filterManager.getFilter();
+    // 优先读取用户的原始选择，如果当前是course模式的话
+    const originalUserFilter = wx.getStorageSync('originalUserFilter');
+    const userFilter = (savedFilter && savedFilter.quizMode === 'course' && originalUserFilter) ? originalUserFilter : savedFilter;
+    
     let state = {
       dictionaries: [ALL_DICTIONARIES_OPTION, ...dictionariesData.dictionaries],
       selectedDictionaryIndex: 0,
@@ -24,11 +28,11 @@ const service = {
       lessons: [],
     };
 
-    if (savedFilter) {
-      state.selectedDictionaryIndex = savedFilter.selectedDictionaryIndex !== undefined ? savedFilter.selectedDictionaryIndex : 0;
-      state.selectedLessonFiles = savedFilter.selectedLessonFiles || [];
-      state.quizMode = savedFilter.quizMode || options.mode || 'quick';
-      state.selectedQuestionTypes = savedFilter.selectedQuestionTypes || this.getDefaultSelectedQuestionTypes();
+    if (userFilter) {
+      state.selectedDictionaryIndex = userFilter.selectedDictionaryIndex !== undefined ? userFilter.selectedDictionaryIndex : 0;
+      state.selectedLessonFiles = userFilter.selectedLessonFiles || [];
+      state.quizMode = userFilter.quizMode || options.mode || 'quick';
+      state.selectedQuestionTypes = userFilter.selectedQuestionTypes || this.getDefaultSelectedQuestionTypes();
     } else {
       state.selectedQuestionTypes = this.getDefaultSelectedQuestionTypes();
     }
@@ -175,6 +179,16 @@ const service = {
       selectedQuestionTypes: data.selectedQuestionTypes
     };
     filterManager.saveFilter(filterToSave);
+    
+    // 同时保存用户的原始选择，用于answer页面显示
+    wx.setStorageSync('originalUserFilter', filterToSave);
+    
+    // 确保selectedDictionary也被正确保存，用于vocabulary页面排序
+    if (selectedDict.id !== 'all') {
+      wx.setStorageSync('selectedDictionary', selectedDict.id);
+      console.log('已保存用户选择的课本ID到selectedDictionary:', selectedDict.id);
+    }
+    
     console.log('Filter settings saved:', filterToSave);
   }
 };

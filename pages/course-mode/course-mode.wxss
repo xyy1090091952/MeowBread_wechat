@@ -45,6 +45,11 @@
   font-size: 24rpx; /* 文字字号24rpx */
   color: #000000; /* 黑色文字 */
   font-weight: 500; /* 稍微加粗，增强可读性 */
+  /* 限制只显示一行，超过时显示省略号 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /* ==================== 筛选器模块样式 ==================== */
@@ -134,6 +139,11 @@
   font-weight: 600;
   color: #000000;
   margin-bottom: 8rpx;
+  /* 限制只显示一行，超过时显示省略号 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 336rpx;
 }
 
 .course-name-completed {
@@ -151,7 +161,7 @@
   font-size: 20rpx;
   color: #666666;
   font-weight: 400;
-  min-width: 160rpx;
+  min-width: 144rpx;
 }
 
 .progress-text-completed {
@@ -160,7 +170,7 @@
 
 /* 进度条 */
 .progress-bar {
-  width: 240rpx;
+  width: 160rpx;
   height: 16rpx;
   background-color: #f0f2f5;
   border-radius: 8rpx;
@@ -178,17 +188,32 @@
   background: #7DF303 !important;
 }
 
-/* 箭头图标 */
-.course-arrow {
-  width: 32rpx;
-  height: 32rpx;
-  flex-shrink: 0;
-  filter: none; /* 默认黑色 */
+/* 课程操作按钮区域 */
+.course-actions {
+  display: flex;
+  align-items: center;
+  gap: 48rpx;
   margin-right: 48rpx;
 }
 
-.course-arrow-completed {
-  filter: none; /* 保持原本颜色 */
+.action-card,
+.action-quiz {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.action-icon {
+  width: 32rpx;
+  height: 32rpx;
+  filter: none;
+}
+
+.action-text {
+  display: none; /* 隐藏文字，保持原始图标样式 */
 }
 
 /* ==================== 加载状态样式 ==================== */

@@ -44,7 +44,7 @@
   display: flex;
   justify-content: space-between;
   gap: 24rpx;
-  margin: 48rpx 0 0 0; /* 去掉bottom margin */
+  margin: 48rpx 0 48rpx 0;
   width: 100vw;
   padding-left: 48rpx;
   padding-right: 48rpx;
@@ -56,7 +56,7 @@
   height: 180rpx;
   border-radius: 48rpx;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   align-items: center;
   justify-content: center;
 }
@@ -87,9 +87,9 @@
 }
 
 .stat-label {
-  font-size: 22rpx;
-  color: #666666; /* 改为深色文字适配浅色背景 */
-  font-weight: 500;
+  font-size: 32rpx;
+  color: #000000;
+  font-weight: 700;
 }
 
 /* 详细数据表单 */
@@ -97,6 +97,7 @@
   width: 100vw;
   padding-left: 48rpx;
   padding-right: 48rpx;
+  margin-bottom: 24rpx;
   box-sizing: border-box;
 }
 
@@ -183,15 +184,16 @@
 
 .rating-display {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   flex-direction: column;
   margin-bottom: 40rpx;
+  margin-left: 80rpx;
   flex: 1;
 }
 
 .rating-grade {
-  font-size: 120rpx;
+  font-size: 160rpx;
   font-weight: 800;
   margin-bottom: 16rpx;
   text-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.1);
@@ -199,7 +201,7 @@
 
 /* 评级颜色 */
 .rating-C {
-  color: #9E9E9E;
+  color: #FF4E91;
 }
 
 .rating-B {
@@ -225,9 +227,10 @@
 }
 
 .rating-description {
-  font-size: 32rpx;
+  font-size: 24rpx;
   color: #666666;
   font-weight: 500;
+  margin-left: 16rpx;
 }
 
 /* 重置数据按钮区域 - 置底 */

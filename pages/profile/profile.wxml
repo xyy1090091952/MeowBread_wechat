@@ -71,17 +71,27 @@
       <image class="gashapon-background" src="/images/banner/gashapon.jpg"></image>
       <view class="option-text-container">
         <text class="option-main-text">单词扭蛋机</text>
+        <text class="option-points-text">积分 300/次</text>
+        <text class="option-rule-text">每答对1个单词增加1分</text>
       </view>
       <image class="option-icon arrow-gashapon" src="/images/icons/arrow_right.svg"></image>
     </view>
 
-    <!-- 错题库模块 -->
-    <view class="mistake-section fade-in-element fade-delay-5 {{pageLoaded ? 'show' : ''}}" bindtap="goToMistakes">
-      <view class="option-text-container">
-        <text class="option-main-text">错题库</text>
-        <text class="option-sub-text">{{mistakeCount}}个错误</text>
+    <!-- 错题库和陈列馆模块 -->
+    <view class="mistake-gallery-container fade-in-element fade-delay-5 {{pageLoaded ? 'show' : ''}}">
+      <!-- 错题库模块 -->
+      <view class="mistake-section" bindtap="goToMistakes">
+        <view class="option-text-container">
+          <text class="option-main-text">错题库</text>
+          <text class="option-sub-text">{{mistakeCount}}个错误</text>
+        </view>
+        <image class="option-icon arrow-white" src="/images/icons/arrow_right.svg"></image>
       </view>
-      <image class="option-icon arrow-white" src="/images/icons/arrow_right.svg"></image>
+      
+      <!-- 陈列馆模块 -->
+      <view class="gallery-section" bindtap="goToGallery">
+        <text class="gallery-text">陈列馆</text>
+      </view>
     </view>
   </block>
 </view>
