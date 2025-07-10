@@ -11,6 +11,32 @@ page {
   overflow: hidden;
 }
 
+/* 金币显示 */
+.coin-display {
+  position: fixed;
+  left: 24rpx;
+  display: flex;
+  align-items: center;
+  height: 64rpx;
+  padding: 0 24rpx;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 32rpx;
+  z-index: 101; /* 比导航栏高一级 */
+  backdrop-filter: blur(10px);
+}
+
+.coin-icon-display {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 12rpx;
+}
+
+.coin-text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
 /* 自定义导航栏 */
 .custom-nav {
   position: fixed;

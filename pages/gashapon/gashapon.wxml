@@ -1,6 +1,11 @@
 <!--pages/gashapon/gashapon.wxml-->
 <view class="gashapon-container">
 
+  <!-- 金币显示 -->
+  <view class="coin-display" style="top: {{statusBarHeight + navBarHeight + 16}}px;">
+    <image class="coin-icon-display" src="/images/icons/Coins.png"></image>
+    <text class="coin-text">{{userCoins}}</text>
+  </view>
 
   <!-- 自定义导航栏 -->
   <view class="custom-nav" style="height: {{navBarHeight}}px; padding-top: {{statusBarHeight}}px;">
