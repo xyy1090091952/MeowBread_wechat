@@ -126,6 +126,35 @@ button.done-button {
   justify-content: center; /* 水平居中 */
 }
 
+/* 新增：金币获取容器样式 */
+.coins-earned-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #FFF8E1; /* 淡黄色背景，突出显示 */
+  border-radius: 20px;
+  border: 1px solid #FFD180;
+}
+
+.coin-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.coins-text {
+  font-size: 16px;
+  color: #5D4037; /* 深棕色字体 */
+}
+
+.coins-value {
+  font-weight: bold;
+  color: #FF8F00; /* 橙色，突出显示金币数量 */
+  margin: 0 4px;
+}
+
 @keyframes float-up{
   from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}
 }

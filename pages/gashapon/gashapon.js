@@ -27,23 +27,19 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    // ... (onLoad 中其他代码保持不变)
-    const systemInfo = wx.getSystemInfoSync();
+    // 设置导航栏高度
+    const windowInfo = wx.getWindowInfo();
     const menuButtonInfo = wx.getMenuButtonBoundingClientRect();
-    const seriesList = gashaponData.map(series => ({
-      id: series.id,
-      name: series.name,
-      cost: series.cost,
-      image: series.image,
-      gradientType: series.gradientType
-    }));
-    const currentSeries = gashaponData.find(series => series.id === this.data.currentSeriesId);
-
     this.setData({
-      statusBarHeight: systemInfo.statusBarHeight,
-      navBarHeight: menuButtonInfo.height + (menuButtonInfo.top - systemInfo.statusBarHeight) * 2,
+      statusBarHeight: windowInfo.statusBarHeight,
+      navBarHeight: menuButtonInfo.height + (menuButtonInfo.top - windowInfo.statusBarHeight) * 2,
       menuButtonTop: menuButtonInfo.bottom + 8,
-      seriesList: seriesList,
+    });
+
+    // 初始化时更新系列进度和抽奖价格
+    this.updateSeriesProgress();
+    const currentSeries = gashaponData.find(series => series.id === this.data.currentSeriesId);
+    this.setData({
       drawCost: currentSeries ? currentSeries.cost : 0,
     });
   },
@@ -52,9 +48,34 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-    // 每次页面显示时，都从 coinManager 更新金币数量
+    // 每次页面显示时，都更新金币数量和系列进度
     this.setData({
       userCoins: coinManager.getCoins()
+    });
+    this.updateSeriesProgress();
+  },
+
+  /**
+   * 更新扭蛋系列解锁进度
+   */
+  updateSeriesProgress() {
+    const unlockedPrizes = coinManager.getUnlockedPrizes();
+    const seriesListWithProgress = gashaponData.map(series => {
+      const unlockedCount = series.prizes.filter(prize => unlockedPrizes.includes(prize.id)).length;
+      const totalPrizes = series.prizes.length;
+      const progress = totalPrizes > 0 ? Math.floor((unlockedCount / totalPrizes) * 100) : 0;
+      return {
+        id: series.id,
+        name: series.name,
+        cost: series.cost,
+        image: series.image,
+        gradientType: series.gradientType,
+        progress: progress, // 新增进度字段
+      };
+    });
+
+    this.setData({
+      seriesList: seriesListWithProgress,
     });
   },
 

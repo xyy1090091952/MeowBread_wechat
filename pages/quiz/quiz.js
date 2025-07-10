@@ -6,6 +6,7 @@
 const quizService = require('../../utils/quiz.service.js');
 const mistakeManager = require('../../utils/mistakeManager.js');
 const learnedManager = require('../../utils/learnedManager.js');
+const coinManager = require('../../utils/coinManager.js'); // 引入金币管理器
 
 Page({
   /**
@@ -27,6 +28,7 @@ Page({
     score: 0, // 得分
     totalQuestions: 0, // 总题数 (快速答题模式)
     actualAnsweredQuestions: 0, // 实际回答的题目数（不包括跳过的题目）
+    coinsEarned: 0, // 本次答题获得的金币数
     timeSpent: 0, // 用时
     formattedTime: '00:00', // 格式化后的时间
     timer: null, // 计时器
@@ -158,6 +160,9 @@ Page({
       
       // 标记单词为已背（需要获取词典ID）
       this.markWordAsLearned(currentQ.wordInfo);
+      
+      // 回答正确，增加1个金币
+      coinManager.addCoins(1);
     } else {
       // 答错了：添加到错题库
       mistakeManager.addMistake(currentQ.wordInfo);
@@ -167,6 +172,7 @@ Page({
       isCorrect: isCorrect,
       showAnswerCard: true,
       score: this.data.score + (isCorrect ? 1 : 0),
+      coinsEarned: this.data.coinsEarned + (isCorrect ? 1 : 0), // 如果正确，金币+1
       actualAnsweredQuestions: newAnsweredCount // 更新实际回答题数
     }, () => {
       // 在setData回调中处理高亮，确保UI已更新
@@ -213,22 +219,17 @@ Page({
 
   endQuiz: function() {
     this.clearTimer();
-    
-    // 使用实际回答的题目数计算统计（不包括跳过的题目）
-    const { score, actualAnsweredQuestions, timeSpent } = this.data;
-    
-    // 如果没有回答任何题目，避免除零错误
-    const accuracy = actualAnsweredQuestions > 0 ? (score / actualAnsweredQuestions) : 0;
+    const { score, actualAnsweredQuestions, timeSpent, quizMode, fromMistakes, coinsEarned } = this.data;
+    const accuracy = actualAnsweredQuestions > 0 ? score / actualAnsweredQuestions : 0;
+    const resultLevel = quizService.calculateResultLevel(accuracy);
 
-    let resultLevel = '';
-    if (accuracy <= 0.2) resultLevel = 'noob';
-    else if (accuracy <= 0.8) resultLevel = 'normal';
-    else resultLevel = 'perfect';
+    let url = `/pages/quiz-result/quiz-result?score=${score}&totalQuestions=${actualAnsweredQuestions}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}&coinsEarned=${coinsEarned}`;
+    if (quizMode === 'mistakes') {
+      url += `&fromMistakes=true`;
+    }
 
-    console.log(`答题结束统计: 实际回答${actualAnsweredQuestions}题，答对${score}题，准确率${(accuracy * 100).toFixed(1)}%`);
-
-    wx.redirectTo({
-      url: `/pages/quiz-result/quiz-result?score=${score}&totalQuestions=${actualAnsweredQuestions}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}&fromMistakes=${this.data.fromMistakes || false}`
+    wx.reLaunch({
+      url: url
     });
   },
 

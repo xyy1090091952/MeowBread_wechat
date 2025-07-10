@@ -191,6 +191,17 @@ const quizService = {
     const formattedMinutes = String(minutes).padStart(2, '0');
     const formattedSeconds = String(remainingSeconds).padStart(2, '0');
     return `${formattedMinutes}:${formattedSeconds}`;
+  },
+
+  /**
+   * 根据准确率计算结果等级
+   * @param {number} accuracy - 准确率 (0到1之间)
+   * @returns {string} - 结果等级 ('noob', 'normal', 'perfect')
+   */
+  calculateResultLevel(accuracy) {
+    if (accuracy <= 0.2) return 'noob';
+    if (accuracy <= 0.8) return 'normal';
+    return 'perfect';
   }
 };
 

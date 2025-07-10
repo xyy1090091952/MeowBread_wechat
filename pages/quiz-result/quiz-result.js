@@ -13,11 +13,12 @@ Page({
     formattedTime: '00:00',
     fromMistakes: false, // 默认不是从错题库来
     bubbleText: '',
-    bubbleColor: ''
+    bubbleColor: '',
+    coinsEarned: 0, // 新增：本次获得的金币数
   },
 
   onLoad: function (options) {
-    const { score, totalQuestions, timeSpent, accuracy, resultLevel } = options;
+    const { score, totalQuestions, timeSpent, accuracy, resultLevel, coinsEarned } = options; // 新增：获取金币数量
 
     const resultInfo = {
       noob: {
@@ -55,6 +56,7 @@ Page({
       formattedTime: this.formatTime(parseInt(timeSpent, 10) || 0),
       bubbleText: bubbleInfo[resultLevel]?.text,
       bubbleColor: bubbleInfo[resultLevel]?.color,
+      coinsEarned: parseInt(coinsEarned, 10) || 0, // 新增：设置金币数量
     });
 
     // 保存答题统计数据到本地存储

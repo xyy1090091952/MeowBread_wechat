@@ -83,7 +83,7 @@ Page({
    */
   centerActiveThumbnail() {
     const query = wx.createSelectorQuery().in(this);
-    const screenWidth = wx.getSystemInfoSync().windowWidth;
+    const windowWidth = wx.getWindowInfo().windowWidth;
     
     query.select(`#thumb-${this.data.currentSwiperIndex}`).boundingClientRect();
     query.select('.thumbnail-nav').scrollOffset();
@@ -91,7 +91,7 @@ Page({
     query.exec((res) => {
       if (res[0] && res[1]) {
         const thumbCenter = res[0].left + res[0].width / 2;
-        const navCenter = screenWidth / 2;
+        const navCenter = windowWidth / 2;
         const targetScrollLeft = res[1].scrollLeft + thumbCenter - navCenter;
         
         this.setData({
