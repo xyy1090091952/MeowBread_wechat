@@ -9,7 +9,9 @@ Page({
   data: {
     // 自定义导航栏所需的高度信息
     statusBarHeight: 0,
-    navBarHeight: 0, 
+    navBarHeight: 0,
+    menuButtonTop: 0, // 胶囊按钮顶部距离
+    pageTitle: '扭蛋机', // 页面标题
     // 用户金币数量
     userCoins: 1200, 
     // 扭蛋系列列表（将从 gashaponData 动态加载）
@@ -35,6 +37,7 @@ Page({
       name: series.name,
       cost: series.cost,
       image: series.image,
+      gradientType: series.gradientType
     }));
     
     // 根据默认的 currentSeriesId 找到当前系列
@@ -45,11 +48,20 @@ Page({
       statusBarHeight: systemInfo.statusBarHeight,
       // 导航栏高度 = 胶囊按钮高度 + (胶囊按钮上边界 - 状态栏高度) * 2
       navBarHeight: menuButtonInfo.height + (menuButtonInfo.top - systemInfo.statusBarHeight) * 2,
+      // 胶囊按钮顶部距离, 设置为胶囊按钮底部 + 8px的间距
+      menuButtonTop: menuButtonInfo.bottom + 8,
       // 设置系列列表
       seriesList: seriesList,
       // 设置初始抽奖消耗
       drawCost: currentSeries ? currentSeries.cost : 0,
     });
+  },
+
+  /**
+   * 用户点击返回按钮
+   */
+  onBack() {
+    wx.navigateBack();
   },
 
   // 返回上一页

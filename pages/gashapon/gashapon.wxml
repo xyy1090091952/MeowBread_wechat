@@ -1,19 +1,11 @@
 <!--pages/gashapon/gashapon.wxml-->
 <view class="gashapon-container">
-  <!-- 背景图 -->
-  <image class="background-image" src="/images/gashapon/gashapon_background.png" mode="aspectFill"></image>
+
 
   <!-- 自定义导航栏 -->
-  <view class="custom-nav" style="padding-top: {{statusBarHeight}}px;">
-    <view class="nav-back" bindtap="onBack">
-      <image src="/images/icons/arrow_left.svg" class="nav-back-icon"></image>
-    </view>
-    <view class="nav-title">Meow Bread</view>
-    <view class="nav-capsule">
-      <view class="capsule-dot"></view>
-      <view class="capsule-dot"></view>
-      <view class="capsule-dot"></view>
-    </view>
+  <view class="custom-nav" style="height: {{navBarHeight}}px; padding-top: {{statusBarHeight}}px;">
+    <image class="nav-back-icon" src="/images/icons/arrow_right.svg" bindtap="onBack"></image>
+    <view class="nav-title">{{pageTitle}}</view>
   </view>
 
   <!-- 右侧功能按钮 -->
@@ -37,9 +29,11 @@
     <!-- 系列选择 -->
     <view class="series-selector">
       <block wx:for="{{seriesList}}" wx:key="id">
-        <view class="series-card {{item.id === currentSeriesId ? 'active' : ''}}" bindtap="onSelectSeries" data-id="{{item.id}}">
-          <image class="series-image" src="{{item.image}}" mode="aspectFit"></image>
+        <view class="series-card series-gradient-{{item.gradientType}} {{item.id === currentSeriesId ? 'active' : ''}}" bindtap="onSelectSeries" data-id="{{item.id}}">
           <view class="series-name">{{item.name}}</view>
+          <view class="series-image-container">
+            <image class="series-image" src="{{item.image}}" mode="scaleToFill"></image>
+          </view>
           <view class="series-progress">{{item.progress}}%</view>
         </view>
       </block>
@@ -47,7 +41,7 @@
 
     <!-- 抽奖按钮 -->
     <view class="draw-button" bindtap="onDraw">
-      <image class="coin-icon" src="/images/gashapon/gashapon_coin_icon.png"></image>
+      <image class="coin-icon" src="/images/icons/Coins.png"></image>
       <text>{{drawCost}}金币 抽一次</text>
     </view>
   </view>

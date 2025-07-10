@@ -7,7 +7,7 @@ const gashaponData = [
     name: '特效扭蛋',
     cost: 100,
     // 卡片背景渐变色
-    gradient: 'linear-gradient(180deg, rgb(198, 232, 255) 0%, rgb(229, 244, 255) 100%)',
+    gradientType: 'blue',
     // 卡片装饰图片
     image: '/images/gashapon/prizes/FX-SSR-01.png',
     prizes: [
@@ -24,7 +24,7 @@ const gashaponData = [
     name: '人类口粮',
     cost: 120,
     // 卡片背景渐变色
-    gradient: 'linear-gradient(180deg, rgb(255, 232, 198) 0%, rgb(255, 244, 229) 100%)',
+    gradientType: 'orange',
     // 卡片装饰图片
     image: '/images/gashapon/prizes/FOOD-SSR-01.png',
     prizes: [
@@ -41,7 +41,7 @@ const gashaponData = [
     name: '猫咪口粮',
     cost: 150,
     // 卡片背景渐变色
-    gradient: 'linear-gradient(180deg, rgb(229, 255, 198) 0%, rgb(244, 255, 229) 100%)',
+    gradientType: 'green',
     // 卡片装饰图片
     image: '/images/gashapon/prizes/CAT-SSR-01.png',
     prizes: [
