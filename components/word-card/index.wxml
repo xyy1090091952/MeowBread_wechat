@@ -1,6 +1,6 @@
 <wxs module="utils" src="../../utils/utils.wxs"></wxs>
 <view class="word-card">
-  <view class="word-card-item {{item.statusClass}}" bind:longpress="onLongPress">
+  <view class="word-card-item" bind:longpress="onLongPress">
     <view class="item-top">
       <view class="word-info">
         <text class="word">{{item.data['汉字'] || item.data['假名']}}</text>
