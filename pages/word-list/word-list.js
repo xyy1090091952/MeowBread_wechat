@@ -1,6 +1,7 @@
 // pages/word-list/word-list.js
 const { WORD_STATUS } = require('../../utils/constants.js');
 const learnedManager = require('../../utils/learnedManager.js');
+const mistakeManager = require('../../utils/mistakeManager.js'); // 引入错题管理器
 
 // 状态映射（与mistakes页面保持一致）
 const STATUS_MAP = {
@@ -112,10 +113,21 @@ Page({
           // 处理每个单词，保持word-card组件期望的数据格式，并添加状态信息和课程号
           lesson.forEach(item => {
             if (item.data) {
-              // 检查单词是否已背，设置正确的状态
-              const isLearned = learnedManager.isWordLearned(item.data, dictionaryId);
-              const statusKey = isLearned ? WORD_STATUS.MEMORIZED : WORD_STATUS.UNSEEN;
-              const status = STATUS_MAP[statusKey];
+              // --- 状态判断逻辑优化 ---
+              // 1. 检查是否在错题库中
+              const mistake = mistakeManager.getMistake(item.data, dictionaryId);
+              let statusKey;
+
+              if (mistake) {
+                // 如果在错题库中，使用错题库中的状态
+                statusKey = mistake.status;
+              } else {
+                // 2. 如果不在错题库中，检查是否已背
+                const isLearned = learnedManager.isWordLearned(item.data, dictionaryId);
+                statusKey = isLearned ? WORD_STATUS.MEMORIZED : WORD_STATUS.UNSEEN;
+              }
+              
+              const status = STATUS_MAP[statusKey] || STATUS_MAP[WORD_STATUS.UNSEEN]; // 增加默认值以防万一
               
               const wordItem = {
                 data: {
@@ -145,9 +157,22 @@ Page({
               '词性': word['词性'] || '',
               '例句': word['例句'] || ''
             };
-            const isLearned = learnedManager.isWordLearned(wordData, dictionaryId);
-            const statusKey = isLearned ? WORD_STATUS.MEMORIZED : WORD_STATUS.UNSEEN;
-            const status = STATUS_MAP[statusKey];
+
+            // --- 状态判断逻辑优化 ---
+            // 1. 检查是否在错题库中
+            const mistake = mistakeManager.getMistake(wordData, dictionaryId);
+            let statusKey;
+
+            if (mistake) {
+              // 如果在错题库中，使用错题库中的状态
+              statusKey = mistake.status;
+            } else {
+              // 2. 如果不在错题库中，检查是否已背
+              const isLearned = learnedManager.isWordLearned(wordData, dictionaryId);
+              statusKey = isLearned ? WORD_STATUS.MEMORIZED : WORD_STATUS.UNSEEN;
+            }
+
+            const status = STATUS_MAP[statusKey] || STATUS_MAP[WORD_STATUS.UNSEEN]; // 增加默认值以防万一
             
             const wordItem = {
               data: wordData,
@@ -276,4 +301,4 @@ Page({
       filteredWordList: filteredList
     });
   }
-}); 
+});

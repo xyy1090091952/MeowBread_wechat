@@ -80,10 +80,28 @@ function clearCorrectedMistakes() {
   return originalLength - filteredMistakes.length;
 }
 
+/**
+ * 查询单个单词是否在错题库中
+ * @param {object} wordInfo - 包含单词信息的对象
+ * @returns {object|undefined} - 如果找到，返回错题项；否则返回undefined
+ */
+function getMistake(wordInfo) {
+  const mistakes = getMistakeList();
+  const mistake = mistakes.find(item => {
+    if (!item.data) return false;
+    // 匹配逻辑：优先匹配汉字（如果存在），然后匹配假名
+    const kanjiMatch = (!wordInfo['汉字'] && !item.data['汉字']) || (wordInfo['汉字'] === item.data['汉字']);
+    const kanaMatch = wordInfo['假名'] === item.data['假名'];
+    return kanjiMatch && kanaMatch;
+  });
+  return mistake;
+}
+
 
 module.exports = {
   getMistakeList,
   addMistake,
   correctMistake,
-  clearCorrectedMistakes
+  clearCorrectedMistakes,
+  getMistake
 };
