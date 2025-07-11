@@ -34,7 +34,7 @@ page {
 .coin-text {
   font-size: 32rpx;
   font-weight: 600;
-  color: #333;
+  color: #FFB059;
 }
 
 /* 自定义导航栏 */
