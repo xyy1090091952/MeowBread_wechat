@@ -110,7 +110,7 @@ Page({
             if (!wordData || !wordData['假名']) return;
 
             // 1. 确定单词状态
-            const mistake = mistakeManager.getMistake(wordData, dictionaryId);
+            const mistake = mistakeManager.getMistake(wordData); // 全局错题库，不再需要 dictionaryId
             let statusKey;
             if (mistake) {
               statusKey = mistake.status;
@@ -294,58 +294,50 @@ Page({
    * 处理单词卡片长按事件
    */
   handleWordLongPress: function(e) {
-    const word = e.detail.word; // 从事件中获取单词数据
-    
-    // --- 健壮性代码 ---
+    const word = e.detail.word;
     if (!word || !word.data) {
       console.error("handleWordLongPress: word or word.data is invalid.", e.detail);
-      wx.showToast({
-        title: '无法获取单词信息',
-        icon: 'none'
-      });
+      wx.showToast({ title: '无法获取单词信息', icon: 'none' });
       return;
     }
 
-    const wordData = word.data; // 在回调外部提前获取 word.data
+    const wordData = word.data;
     const that = this;
-    const dictionaryId = that.data.currentDictionary.id; // 获取当前词典ID
+    const dictionaryId = that.data.currentDictionary.id;
 
     wx.showActionSheet({
-      itemList: ['设为已背', '标记为错误', '恢复未背'],
+      itemList: ['设为「已背」', '设为「未背」'],
       success: function(res) {
         const tapIndex = res.tapIndex;
         let newStatusKey = '';
         let toastTitle = '';
 
-        if (tapIndex === 0) { // 设为已背
+        if (tapIndex === 0) { // 设为「已背」
           learnedManager.markWordAsLearned(wordData, dictionaryId);
-          mistakeManager.correctMistake(wordData, dictionaryId); // 从错题库移除
+          mistakeManager.removeMistake(wordData); // 从错题库移除
           newStatusKey = WORD_STATUS.MEMORIZED;
-          toastTitle = '已设为已背';
-        } else if (tapIndex === 1) { // 标记为错误
-          mistakeManager.addMistake(wordData, dictionaryId);
-          newStatusKey = WORD_STATUS.ERROR;
-          toastTitle = '已标记为错误';
-        } else if (tapIndex === 2) { // 恢复未背
+          toastTitle = '已设为「已背」';
+        } else if (tapIndex === 1) { // 设为「未背」
           learnedManager.unmarkWordAsLearned(wordData, dictionaryId);
-          // 恢复未背后，需要检查它是否在错题库中，以决定最终状态
-          const mistake = mistakeManager.getMistake(wordData, dictionaryId);
-          newStatusKey = mistake ? mistake.status : WORD_STATUS.UNSEEN;
-          toastTitle = '已恢复未背';
+          mistakeManager.removeMistake(wordData); // 从错题库移除
+          newStatusKey = WORD_STATUS.UNSEEN;
+          toastTitle = '已设为「未背」';
         }
 
-        // 如果状态有变更，则更新UI并提示
         if (newStatusKey) {
-            that.updateWordState(wordData, newStatusKey);
-            wx.showToast({
-                title: toastTitle,
-                icon: 'success',
-                duration: 1500
-            });
+          that.updateWordState(wordData, newStatusKey);
+          wx.showToast({
+            title: toastTitle,
+            icon: 'success',
+            duration: 1500
+          });
         }
       },
       fail: function(res) {
-        console.log(res.errMsg);
+        // 用户取消操作时，不打印错误信息
+        if (res.errMsg !== "showActionSheet:fail cancel") {
+          console.log(res.errMsg);
+        }
       }
     });
   }

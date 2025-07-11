@@ -102,6 +102,31 @@ function clearCorrectedMistakes() {
 }
 
 /**
+ * 从错题库中移除一个指定的单词
+ * @param {object} wordInfo - 包含完整单词信息的对象
+ */
+function removeMistake(wordInfo) {
+  if (!wordInfo || !wordInfo['假名']) {
+    console.error('removeMistake: 尝试移除一个无效的单词信息', wordInfo);
+    return;
+  }
+  let mistakes = getMistakeList();
+  const originalLength = mistakes.length;
+  const filteredMistakes = mistakes.filter(item => {
+    if (!item.data) return true; // 保留格式不正确的数据，以防万一
+    // 匹配逻辑：优先匹配汉字（如果存在），然后匹配假名
+    const kanjiMatch = (!wordInfo['汉字'] && !item.data['汉字']) || (wordInfo['汉字'] === item.data['汉字']);
+    const kanaMatch = wordInfo['假名'] === item.data['假名'];
+    return !(kanjiMatch && kanaMatch); // 返回 false 以移除匹配项
+  });
+
+  if (originalLength > filteredMistakes.length) {
+    saveMistakeList(filteredMistakes);
+    console.log(`mistakeManager: 单词 "${wordInfo['汉字'] || wordInfo['假名']}" 已从错题库移除`);
+  }
+}
+
+/**
  * 查询单个单词是否在错题库中
  * @param {object} wordInfo - 包含单词信息的对象
  * @returns {object|undefined} - 如果找到，返回错题项；否则返回undefined
@@ -122,5 +147,6 @@ module.exports = {
   addMistake,
   correctMistake,
   clearCorrectedMistakes,
+  removeMistake, // 导出新函数
   getMistake
 };
