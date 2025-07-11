@@ -9,9 +9,14 @@ const { WORD_STATUS } = require('./constants.js');
 /**
  * 获取单词的唯一标识符
  * @param {object} wordData - 单词数据对象
- * @returns {string} 单词的唯一标识符
+ * @returns {string|null} 单词的唯一标识符，如果wordData无效则返回null
  */
 function getWordId(wordData) {
+  // 增加空值判断，确保wordData有效
+  if (!wordData || typeof wordData !== 'object') {
+    console.error('getWordId: 无效的单词数据', wordData);
+    return null;
+  }
   // 使用假名+汉字+中文作为唯一标识，确保同一个单词不会重复记录
   const kana = wordData['假名'] || '';
   const kanji = wordData['汉字'] || '';
@@ -25,8 +30,14 @@ function getWordId(wordData) {
  * @param {string} dictionaryId - 词典ID
  */
 function markWordAsLearned(wordData, dictionaryId) {
+  // 增加空值判断
+  if (!wordData) {
+    console.error('markWordAsLearned: 尝试标记一个空的单词信息');
+    return false;
+  }
   try {
     const wordId = getWordId(wordData);
+    if (!wordId) return false; // 如果无法获取wordId，则直接返回
     
     // 获取该词典的已背单词列表
     const learnedKey = `learned_words_${dictionaryId}`;
@@ -119,8 +130,11 @@ function getLearnedWords(dictionaryId = null) {
  * @returns {boolean} 是否已背
  */
 function isWordLearned(wordData, dictionaryId) {
+  // 增加空值判断
+  if (!wordData) return false;
   try {
     const wordId = getWordId(wordData);
+    if (!wordId) return false;
     const learnedKey = `learned_words_${dictionaryId}`;
     const learnedWords = wx.getStorageSync(learnedKey) || [];
     
@@ -213,11 +227,47 @@ function markWordsAsLearned(wordDataList, dictionaryId) {
   return successCount;
 }
 
+/**
+ * 将单词从已学列表中移除
+ * @param {object} wordData - 要取消标记的单词对象
+ * @param {string} dictionaryId - 词典ID
+ */
+function unmarkWordAsLearned(wordData, dictionaryId) {
+  // 增加空值判断
+  if (!wordData) {
+    console.error('unmarkWordAsLearned: 尝试取消标记一个空的单词信息');
+    return false;
+  }
+  try {
+    const wordId = getWordId(wordData);
+    if (!wordId) return false;
+    const learnedKey = `learned_words_${dictionaryId}`;
+    let learnedWords = wx.getStorageSync(learnedKey) || [];
+
+    const wordIndex = learnedWords.findIndex(item => item.id === wordId);
+
+    if (wordIndex > -1) {
+      learnedWords.splice(wordIndex, 1);
+      wx.setStorageSync(learnedKey, learnedWords);
+      updateLearningProgress(dictionaryId); // 同步更新学习进度计数
+      console.log(`单词已恢复为未背: ${wordData['假名'] || wordData['汉字']} (${dictionaryId})`);
+      return true;
+    } else {
+      console.log(`单词未曾被标记为已背: ${wordData['假名'] || wordData['汉字']}`);
+      return false;
+    }
+  } catch (error) {
+    console.error('取消标记单词为已背失败:', error);
+    return false;
+  }
+}
+
 module.exports = {
   markWordAsLearned,
   getLearnedWords,
   isWordLearned,
   getLearningProgress,
   resetLearningProgress,
-  markWordsAsLearned
-}; 
+  markWordsAsLearned,
+  unmarkWordAsLearned
+};
