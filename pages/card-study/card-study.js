@@ -56,19 +56,26 @@ Page({
     console.log('=== Card Study 页面初始化 ===');
     console.log('启动参数:', options);
     
-    // 调试：检查当前筛选条件
-    const currentFilter = require('../../utils/filterManager.js').getFilter();
-    console.log('当前筛选条件:', currentFilter);
-    
-    // 使用quiz服务初始化数据（复用相同的筛选逻辑）
-    const initialState = quizService.initializeQuiz(options);
-    
-    console.log('Quiz服务初始化结果:', initialState);
-    console.log('生成的题目数量:', initialState.questions?.length || 0);
-    console.log('原始单词数量:', initialState.allWordsInLesson?.length || 0);
-    
-    if (!initialState.questions || initialState.questions.length === 0) {
-      console.error('没有获取到单词数据，显示错误提示');
+    // 直接从filterManager获取当前有效的筛选条件来加载单词
+    // 不再调用quizService.initializeQuiz，因为它会错误地保存临时状态
+    const filterManager = require('../../utils/filterManager.js');
+    const wordManager = require('../../utils/wordManager.js');
+    const currentFilter = filterManager.getFilter();
+    // 从 wordManager 获取单词数据
+    const rawWords = wordManager.getWordsByFilter(currentFilter);
+
+    // [FIX] 数据结构转换：将 wordManager 返回的嵌套对象扁平化
+    // 原始结构: { data: { word_details... }, sourceDictionary: '...', lesson: '...' }
+    // 目标结构: { word_details..., sourceDictionary: '...', lesson: '...' }
+    const allWords = rawWords.map(wordInfo => ({
+      ...wordInfo.data,
+      sourceDictionary: wordInfo.sourceDictionary,
+      lesson: wordInfo.lesson
+    }));
+
+    // 检查是否成功获取到单词
+    if (!allWords || allWords.length === 0) {
+      console.error('card-study: 未根据当前筛选条件找到任何单词。');
       wx.showModal({
         title: '提示',
         content: '根据当前筛选条件，没有可学习的单词。请尝试更改筛选设置。',
@@ -80,17 +87,16 @@ Page({
       });
       return;
     }
-    
-    // 从questions中提取单词数据
-    const allWords = initialState.questions.map(q => q.wordInfo);
-    
+
+    // 卡片学习模式不需要复杂的 "问题" 结构，直接使用单词数据
+    // 也不再需要 initialState 和多余的日志
     this.setData({
-      lessonFiles: initialState.lessonFiles,
-      dictionaryId: initialState.dictionaryId,
-      basePath: initialState.basePath,
+      lessonFiles: currentFilter.selectedLessonFiles,
+      dictionaryId: currentFilter.dictionaryId,
       allWords: allWords,
       totalWords: allWords.length,
-      currentFilterDisplay: initialState.currentFilterDisplay,
+      // 为了简化，我们暂时移除 filter display 的复杂逻辑
+      currentFilterDisplay: ``, 
       currentCard: allWords[0] || null,
       nextCard: allWords[1] || null,
       isLoading: false
@@ -364,4 +370,4 @@ Page({
   onUnload: function() {
     this.clearTimer();
   }
-}); 
+});
