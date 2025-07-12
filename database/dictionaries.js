@@ -46,6 +46,16 @@ module.exports = {
             ]
         },
         {
+            "id": "liangs_intermediate",
+            "name": "梁老师中级",
+            "description": "梁老师中级",
+            "lesson_files": [
+                "liangs_intermediate/lesson1.js",
+                "liangs_intermediate/lesson2.js",
+                "liangs_intermediate/lesson3.js"
+            ]
+        },
+        {
             "id": "duolingguo",
             "name": "多邻国",
             "description": "多邻国日语词汇",
