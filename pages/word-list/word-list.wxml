@@ -20,7 +20,7 @@
     <view class="word-list-container">
       <block wx:for="{{filteredWordList || wordList}}" wx:key="index">
         <!-- 使用word-card组件，传入适配后的数据 -->
-        <word-card item="{{item}}" />
+        <word-card item="{{item}}" bind:wordlongpress="handleWordLongPress" />
       </block>
     </view>
   </scroll-view>
@@ -48,4 +48,4 @@
 
   <!-- 底部白色渐变遮罩 -->
   <view class="bottom-gradient-mask fade-in-element fade-delay-3 {{wordListLoaded ? 'show' : ''}}"></view>
-</view> 
+</view>

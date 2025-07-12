@@ -1,15 +1,10 @@
 // pages/word-list/word-list.js
 const { WORD_STATUS } = require('../../utils/constants.js');
 const learnedManager = require('../../utils/learnedManager.js');
+const mistakeManager = require('../../utils/mistakeManager.js'); // 引入错题管理器
+const { processWordStatus } = require('../../utils/statusManager.js'); // 引入状态处理函数
 const courseDataManager = require('../../utils/courseDataManager.js');
 
-// 状态映射（与mistakes页面保持一致）
-const STATUS_MAP = {
-  [WORD_STATUS.UNSEEN]: { text: '未背', class: 'status-unseen' },
-  [WORD_STATUS.ERROR]: { text: '错误', class: 'status-error' },
-  [WORD_STATUS.CORRECTED]: { text: '修正', class: 'status-corrected' },
-  [WORD_STATUS.MEMORIZED]: { text: '已背', class: 'status-memorized' }
-};
 
 Page({
   data: {
@@ -175,57 +170,46 @@ Page({
         const lesson = require('../../database/' + filePath);
         const lessonNumber = this.extractLessonNumber(filePath); // 从文件名推断课程号
         
-        if (Array.isArray(lesson)) {
-          // 处理每个单词，保持word-card组件期望的数据格式，并添加状态信息和课程号
-          lesson.forEach(item => {
-            if (item.data) {
-              // 检查单词是否已背，设置正确的状态
-              const isLearned = learnedManager.isWordLearned(item.data, dictionaryId);
-              const statusKey = isLearned ? WORD_STATUS.MEMORIZED : WORD_STATUS.UNSEEN;
-              const status = STATUS_MAP[statusKey];
-              
-              const wordItem = {
-                data: {
-                  '假名': item.data['假名'] || '',     // 保持原字段名
-                  '汉字': item.data['汉字'] || '',     // 保持原字段名
-                  '中文': item.data['中文'] || '',     // 保持原字段名
-                  '词性': item.data['词性'] || '',     // 保持原字段名
-                  '例句': item.data['例句'] || ''      // 保持原字段名
-                },
-                lesson: lessonNumber,               // 课程号（从文件名推断）
-                status: statusKey,                  // 状态值
-                statusText: status.text,            // 状态文字
-                statusClass: status.class           // 状态类名
-              };
-              
-              allWords.push(wordItem);
+        // 统一处理函数，避免重复代码
+        const processItems = (items) => {
+          items.forEach(item => {
+            // 确保 item.data 存在
+            const wordData = item.data || item;
+            if (!wordData || !wordData['假名']) return;
+
+            // 1. 确定单词状态
+            const mistake = mistakeManager.getMistake(wordData); // 全局错题库，不再需要 dictionaryId
+            let statusKey;
+            if (mistake) {
+              statusKey = mistake.status;
+            } else {
+              const isLearned = learnedManager.isWordLearned(wordData, dictionaryId);
+              statusKey = isLearned ? WORD_STATUS.MEMORIZED : WORD_STATUS.UNSEEN;
             }
+
+            // 2. 构建基础单词对象
+            const baseWordItem = {
+              data: {
+                '假名': wordData['假名'] || '',
+                '汉字': wordData['汉字'] || '',
+                '中文': wordData['中文'] || '',
+                '词性': wordData['词性'] || '',
+                '例句': wordData['例句'] || ''
+              },
+              lesson: lessonNumber,
+              status: statusKey
+            };
+
+            // 3. 使用 statusManager 处理状态显示
+            const processedWord = processWordStatus(baseWordItem);
+            allWords.push(processedWord);
           });
+        };
+
+        if (Array.isArray(lesson)) {
+          processItems(lesson);
         } else if (Array.isArray(lesson.words)) {
-          // 如果是words数组格式，也保持word-card组件期望的数据格式
-          lesson.words.forEach(word => {
-            // 检查单词是否已背，设置正确的状态
-            const wordData = {
-              '假名': word['假名'] || '',
-              '汉字': word['汉字'] || '',
-              '中文': word['中文'] || '',
-              '词性': word['词性'] || '',
-              '例句': word['例句'] || ''
-            };
-            const isLearned = learnedManager.isWordLearned(wordData, dictionaryId);
-            const statusKey = isLearned ? WORD_STATUS.MEMORIZED : WORD_STATUS.UNSEEN;
-            const status = STATUS_MAP[statusKey];
-            
-            const wordItem = {
-              data: wordData,
-              lesson: lessonNumber,               // 课程号（从文件名推断）
-              status: statusKey,                  // 状态值
-              statusText: status.text,            // 状态文字
-              statusClass: status.class           // 状态类名
-            };
-            
-            allWords.push(wordItem);
-          });
+          processItems(lesson.words);
         }
       } catch (err) {
         console.warn('无法加载课时文件', filePath, err);
@@ -342,5 +326,87 @@ Page({
     this.setData({
       filteredWordList: filteredList
     });
+  },
+
+  /**
+   * 更新单个单词的状态并同步到视图
+   * @param {object} wordData - 单词的核心数据 {汉字, 假名, ...}
+   * @param {string} newStatusKey - 新的状态，如 'memorized', 'error'
+   */
+  updateWordState: function(wordData, newStatusKey) {
+    const { wordList, filteredWordList } = this.data;
+
+    // 查找并更新函数
+    const updateList = (list, listName) => {
+      if (!list) return;
+      const index = list.findIndex(item => 
+        item.data['汉字'] === wordData['汉字'] && item.data['假名'] === wordData['假名']
+      );
+
+      if (index > -1) {
+        // 1. 构建基础单词对象
+        const baseWordItem = { ...list[index], status: newStatusKey };
+        // 2. 使用 statusManager 处理状态显示
+        const processedWord = processWordStatus(baseWordItem);
+        // 3. 更新视图
+        this.setData({ [`${listName}[${index}]`]: processedWord });
+      }
+    };
+
+    // 更新主列表和筛选列表
+    updateList(wordList, 'wordList');
+    updateList(filteredWordList, 'filteredWordList');
+  },
+
+  /**
+   * 处理单词卡片长按事件
+   */
+  handleWordLongPress: function(e) {
+    const word = e.detail.word;
+    if (!word || !word.data) {
+      console.error("handleWordLongPress: word or word.data is invalid.", e.detail);
+      wx.showToast({ title: '无法获取单词信息', icon: 'none' });
+      return;
+    }
+
+    const wordData = word.data;
+    const that = this;
+    const dictionaryId = that.data.currentDictionary.id;
+
+    wx.showActionSheet({
+      itemList: ['设为「已背」', '设为「未背」'],
+      success: function(res) {
+        const tapIndex = res.tapIndex;
+        let newStatusKey = '';
+        let toastTitle = '';
+
+        if (tapIndex === 0) { // 设为「已背」
+          learnedManager.markWordAsLearned(wordData, dictionaryId);
+          mistakeManager.removeMistake(wordData); // 从错题库移除
+          newStatusKey = WORD_STATUS.MEMORIZED;
+          toastTitle = '已设为「已背」';
+        } else if (tapIndex === 1) { // 设为「未背」
+          learnedManager.unmarkWordAsLearned(wordData, dictionaryId);
+          mistakeManager.removeMistake(wordData); // 从错题库移除
+          newStatusKey = WORD_STATUS.UNSEEN;
+          toastTitle = '已设为「未背」';
+        }
+
+        if (newStatusKey) {
+          that.updateWordState(wordData, newStatusKey);
+          wx.showToast({
+            title: toastTitle,
+            icon: 'success',
+            duration: 1500
+          });
+        }
+      },
+      fail: function(res) {
+        // 用户取消操作时，不打印错误信息
+        if (res.errMsg !== "showActionSheet:fail cancel") {
+          console.log(res.errMsg);
+        }
+      }
+    });
   }
-}); 
+});
