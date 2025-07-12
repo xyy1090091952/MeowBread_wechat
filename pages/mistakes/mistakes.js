@@ -5,6 +5,7 @@
 
 const { WORD_STATUS } = require('../../utils/constants.js');
 const mistakeManager = require('../../utils/mistakeManager.js');
+const { processWordStatus } = require('../../utils/statusManager.js'); // 引入状态处理函数
 
 Page({
   data: {
@@ -42,28 +43,22 @@ Page({
    */
   loadMistakes: function () {
     const mistakes = mistakeManager.getMistakeList();
-        const statusMap = {
-      [WORD_STATUS.UNSEEN]: { text: '未背', class: 'status-unseen' },
-      [WORD_STATUS.ERROR]: { text: '错误', class: 'status-error' },
-      [WORD_STATUS.CORRECTED]: { text: '修正', class: 'status-corrected' },
-      [WORD_STATUS.MEMORIZED]: { text: '已背', class: 'status-memorized' }
-    };
 
-        const processedMistakes = mistakes.map(mistakeItem => {
-      // 如果单词没有状态或状态无效，则默认为 'error'
-                  const statusKey = mistakeItem.status && statusMap[mistakeItem.status] ? mistakeItem.status : WORD_STATUS.ERROR;
-            const status = statusMap[statusKey];
-            mistakeItem.status = statusKey; // 确保每个item都有一个有效的状态
-            mistakeItem.statusText = status.text;
-            mistakeItem.statusClass = status.class;
-
-            return mistakeItem;
+    const processedMistakes = mistakes.map(mistakeItem => {
+      // 在错题库中，如果一个单词没有状态，或者状态无效，我们默认它就是个错误'error'
+      if (!mistakeItem.status || ![WORD_STATUS.ERROR, WORD_STATUS.CORRECTED].includes(mistakeItem.status)) {
+          mistakeItem.status = WORD_STATUS.ERROR;
+      }
+      // 使用通用的状态处理函数来附加 statusText 和 statusClass
+      return processWordStatus(mistakeItem);
     });
 
     this.setData({
       mistakeList: processedMistakes,
       // 错词数应包含 'error' 和 'corrected' 状态的单词
-                  mistakeCount: processedMistakes.filter(mistake => mistake.status === WORD_STATUS.ERROR || mistake.status === WORD_STATUS.CORRECTED).length
+      mistakeCount: processedMistakes.filter(mistake => 
+        mistake.status === WORD_STATUS.ERROR || mistake.status === WORD_STATUS.CORRECTED
+      ).length
     });
   },
 
