@@ -14,6 +14,8 @@
     "pages/word-list/word-list",
     "pages/webview/webview",
     "pages/grammar/grammar",
+    "pages/gashapon-result/gashapon-result",
+    "pages/gashapon-inventory/gashapon-inventory"
     "pages/course-mode/course-mode",
     "pages/card-study/card-study"
   ],

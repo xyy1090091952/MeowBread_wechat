@@ -1,14 +1,53 @@
 <!--pages/gashapon/gashapon.wxml-->
-<view class="container">
-  <view class="header fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}">
-    <text class="page-title">扭蛋机</text>
+<view class="gashapon-container">
+
+  <!-- 金币显示 -->
+  <view class="coin-display" style="top: {{statusBarHeight + navBarHeight + 16}}px;">
+    <image class="coin-icon-display" src="/images/icons/Coins.png"></image>
+    <text class="coin-text">{{userCoins}}</text>
   </view>
-  
-  <view class="content fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
-    <view class="placeholder">
-      <image class="placeholder-icon" src="/images/icons/Coins.png"></image>
-      <text class="placeholder-text">扭蛋机页面</text>
-      <text class="placeholder-subtitle">精彩内容即将上线...</text>
+
+  <!-- 自定义导航栏 -->
+  <view class="custom-nav" style="height: {{navBarHeight}}px; padding-top: {{statusBarHeight}}px;">
+    <image class="nav-back-icon" src="/images/icons/normal_arrow.svg" bindtap="onBack"></image>
+    <view class="nav-title">{{pageTitle}}</view>
+  </view>
+
+  <!-- 右侧功能按钮 -->
+  <view class="side-buttons" style="top: {{menuButtonTop}}px;">
+    <view class="side-button" bindtap="onInventory">
+      <text>库存</text>
+    </view>
+    <view class="side-button" bindtap="onRedeem">
+      <text>兑换</text>
     </view>
   </view>
-</view> 
+
+  <!-- 扭蛋机主体 -->
+  <image class="gashapon-machine" src="/images/gashapon/gashapon_machine.png" mode="widthFix"></image>
+
+  <!-- 底部操作区域 -->
+  <view class="bottom-sheet">
+    <!-- 标题 -->
+    <view class="sheet-title">扭蛋系列</view>
+
+    <!-- 系列选择 -->
+    <view class="series-selector">
+      <block wx:for="{{seriesList}}" wx:key="id">
+        <view class="series-card series-gradient-{{item.gradientType}} {{item.id === currentSeriesId ? 'active' : ''}}" bindtap="onSelectSeries" data-id="{{item.id}}">
+          <view class="series-name">{{item.name}}</view>
+          <view class="series-image-container">
+            <image class="series-image" src="{{item.image}}" mode="scaleToFill"></image>
+          </view>
+          <view class="series-progress">{{item.progress}}%</view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 抽奖按钮 -->
+    <view class="draw-button" bindtap="onDraw">
+      <image class="coin-icon" src="/images/icons/Coins.png"></image>
+      <text>{{drawCost}}金币 抽一次</text>
+    </view>
+  </view>
+</view>

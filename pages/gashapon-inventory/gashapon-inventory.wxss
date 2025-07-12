@@ -1,0 +1,132 @@
+/* pages/gashapon-inventory/gashapon-inventory.wxss */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #ffffff; /* 背景修改为纯白 */
+}
+
+.prize-swiper {
+  width: 100%;
+  height: 70%; /* 调整高度为缩略图导航留出空间 */
+}
+
+.prize-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+.prize-image {
+  width: 500rpx;
+  height: 500rpx;
+  margin-bottom: 40rpx;
+}
+
+.prize-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.prize-rarity {
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 20rpx;
+}
+
+/* 稀有度颜色 */
+.rarity-R {
+  background-color: #3AD4E5;
+}
+
+.rarity-SR {
+  background-color: #BFD100;
+}
+
+.rarity-SSR {
+  background-color: #FF8623;
+}
+
+.prize-name {
+  font-size: 48rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.prize-quote {
+  font-size: 28rpx;
+  color: #9D9D9D;
+  text-align: center;
+}
+
+/* 未解锁奖品的样式 */
+.prize-item.locked .prize-image {
+  /* 使用亮度滤镜将图片变为黑色剪影，并降低不透明度 */
+  filter: brightness(0) opacity(0.2);
+}
+
+.prize-item.locked .prize-info {
+  color: #aaa; /* 文字颜色变灰 */
+}
+
+.prize-item.locked .prize-rarity {
+  background-color: #ccc; /* 稀有度背景变灰 */
+}
+
+/* 缩略图导航 */
+.thumbnail-nav {
+  width: 100%;
+  background-color: #fff;
+  white-space: nowrap;
+  box-sizing: border-box;
+  /* 增大高度，为动画和阴影提供充足空间 */
+  height: 400rpx;
+}
+
+/* 缩略图包装器，负责对齐和间距 */
+.thumbnail-wrapper {
+  display: inline-flex; /* 使用flex布局进行对齐 */
+  align-items: center; /* 让内部元素垂直居中 */
+  justify-content: center; /* 水平居中 */
+  height: 100%; /* 占满父容器高度 */
+  padding: 0 10rpx; /* 左右间距 */
+  box-sizing: border-box;
+}
+
+/* 缩略图本身，负责视觉表现 */
+.thumbnail-item {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 24rpx;
+  border: 4rpx solid transparent;
+  background-color: #ffffff;
+  box-shadow: 4px 4px 40px 0px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+  /* 增加下外边距，为阴影创造空间 */
+  margin-bottom: 20rpx;
+}
+
+/* 选中状态 */
+.thumbnail-item.active {
+  transform: translateY(-20rpx);
+}
+
+.thumbnail-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 20rpx; /* 配合父元素的圆角 */
+}
+
+.thumbnail-image.locked {
+  filter: brightness(0) opacity(0.2);
+}

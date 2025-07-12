@@ -1,0 +1,206 @@
+/* pages/gashapon-result/gashapon-result.wxss */
+page {
+  /* 设置从白色到淡黄色的垂直线性渐变背景 */
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFE9B6 100%);
+  height: 100vh; /* 确保背景铺满整个视口 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 将内容推向两端 */
+  align-items: center;
+  overflow: hidden; /* 防止旋转动画溢出 */
+}
+
+.prize-container {
+  flex: 1; /* 占据剩余空间，将按钮推到底部 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* --- 奖品展示区 --- */
+.prize-display {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20rpx; /* 向上移动，原为100rpx */
+}
+
+/* --- 动画相关 --- */
+
+/* 光效背景 */
+.shinning-bg {
+  position: absolute;
+  width: 800rpx;   
+  height: 800rpx;  
+  top: 200rpx;     /* 定位到奖品图中心，原为50% */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0; /* 初始透明 */
+}
+
+.prize-image {
+  width: 400rpx;   
+  height: 400rpx;  
+  margin-bottom: 100rpx;
+  /* 将图片置于光效之上 */
+  z-index: 2; 
+  /* 初始状态：缩小且全白 */
+  transform: scale(0.5);
+  filter: brightness(100);
+  opacity: 0;
+}
+
+.prize-info {
+  text-align: center;
+  /* 将信息置于光效之上 */
+  z-index: 2;
+}
+
+/* 为每个文本元素设置初始透明 */
+.prize-rarity, .prize-name, .prize-desc {
+  opacity: 0;
+}
+
+/* 光效动画：旋转与淡入 */
+.shinning-animation {
+  animation: shinning-rotate 10s linear infinite, fade-in 1s ease-out forwards;
+}
+
+/* 奖品动画：放大、变色 */
+.prize-animation {
+  animation: prize-appear 2s ease-out forwards;
+}
+
+/* 信息动画：分别定义延迟，实现依次入场 */
+.rarity-animation {
+  animation: info-fade-in 0.5s ease-out 1s forwards; /* 延迟1s */
+}
+
+.name-animation {
+  animation: info-fade-in 0.5s ease-out 1.3s forwards; /* 延迟1.3s */
+}
+
+.desc-animation {
+  animation: info-fade-in 0.5s ease-out 1.6s forwards; /* 延迟1.6s */
+}
+
+@keyframes shinning-rotate {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes prize-appear {
+  0% {
+    transform: scale(0.5);
+    filter: brightness(10); /* 纯白高亮 */
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1); /* 放大超过目标尺寸 */
+    filter: brightness(1.5); /* 亮度降低 */
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1); /* 恢复正常大小 */
+    filter: brightness(1); /* 恢复正常颜色 */
+    opacity: 1;
+  }
+}
+
+@keyframes info-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* --- 奖品信息样式 --- */
+.prize-rarity {
+  display: inline-block;
+  padding: 8rpx 20rpx;
+  background-color: #000; /* 默认背景色 */
+  color: #fff;
+  border-radius: 20rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+
+/* 根据稀有度设置不同颜色 */
+.rarity-R {
+  background-color: #3AD4E5;
+}
+
+.rarity-SR {
+  background-color: #BFD100;
+}
+
+.rarity-SSR {
+  background-color: #FF8623;
+}
+
+.prize-name {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.prize-desc {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* --- 底部按钮区 --- */
+.button-container {
+  display: flex;
+  width: 100%;
+  padding: 20rpx 40rpx 60rpx; /* 增加底部安全距离 */
+  box-sizing: border-box;
+  gap: 20rpx; /* 按钮之间的间距 */
+}
+
+.btn {
+  height: 96rpx;
+  border-radius: 48rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32rpx;
+  font-weight: bold;
+  border: none; /* 移除默认边框 */
+}
+
+.btn-draw-again {
+  flex: 1; /* 较窄的按钮 */
+  background-color: #4845F7;
+  color: #fff;
+}
+
+.btn-confirm {
+  flex: 2; /* 较宽的按钮 */
+  background-color: #FFFFFF;
+  color: #333;
+  border: 1px solid #E0E0E0; /* 添加细边框 */
+}

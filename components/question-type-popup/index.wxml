@@ -1,25 +1,32 @@
 <!--components/question-type-popup/index.wxml-->
 <view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="closePopup" catchtouchmove="stopPropagation"></view>
-<view class="popup-container {{visible ? 'popup-show' : ''}}">
+<view class="popup-container {{visible ? 'popup-show' : ''}}" catchtouchmove="preventPropagation">
   <view class="popup-content">
     <view class="popup-header">
       <text class="popup-title">题型选择</text>
-      <view class="close-button" bindtap="closePopup">×</view>
     </view>
-    <view class="question-type-group">
-      <view class="question-type-group-title">选择题：</view>
-      <label class="switch-item" wx:for="{{questionTypeOptions}}" wx:if="{{item.category === '选择题'}}" wx:key="value">
+
+        <view class="question-type-group">
+      <view class="question-type-group-title">填空题</view>
+      <label class="switch-item" wx:for="{{internalOptions}}" wx:if="{{item.category === '填空题'}}" wx:key="value">
         <text class="switch-label">{{item.name}}</text>
         <switch checked="{{item.checked}}" bindchange="onQuestionTypeChange" data-value="{{item.value}}" color="#4845F7"/>
       </label>
     </view>
-    <view class="question-type-group">
-      <view class="question-type-group-title">填空题：</view>
-      <label class="switch-item" wx:for="{{questionTypeOptions}}" wx:if="{{item.category === '填空题'}}" wx:key="value">
+
+        <view class="question-type-group">
+      <view class="question-type-group-title">选择题</view>
+      <label class="switch-item" wx:for="{{internalOptions}}" wx:if="{{item.category === '选择题'}}" wx:key="value">
         <text class="switch-label">{{item.name}}</text>
         <switch checked="{{item.checked}}" bindchange="onQuestionTypeChange" data-value="{{item.value}}" color="#4845F7"/>
       </label>
     </view>
-    <button class="confirm-button" bindtap="onConfirm">确定</button>
+
+    <!-- 
+  使用 <view> 组件替代 <button>，可以完全避免微信小程序的默认按钮样式带来的干扰。
+  这是一个彻底解决样式覆盖问题的最佳实践，特别是对于需要高度自定义外观的按钮。
+  点击事件 bindtap 同样可以绑定在 <view> 上。
+-->
+<view class="confirm-button" bindtap="onConfirm">确认</view>
   </view>
 </view>

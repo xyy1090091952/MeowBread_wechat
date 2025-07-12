@@ -1,55 +1,221 @@
 /* pages/gashapon/gashapon.wxss */
+page {
+  height: 100%;
+}
 
-.container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #FFE066 0%, #FF6B6B 100%);
+.gashapon-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(180deg, #D6F1FF 0%, #F5DCE7 43.78%, #FFE8D9 62.53%, #FFFFD7 100%);
+  overflow: hidden;
+}
+
+/* 金币显示 */
+.coin-display {
+  position: fixed;
+  left: 24rpx;
+  display: flex;
+  align-items: center;
+  height: 64rpx;
   padding: 0 24rpx;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 32rpx;
+  z-index: 101; /* 比导航栏高一级 */
+  backdrop-filter: blur(10px);
 }
 
-.header {
-  padding: 40rpx 0;
-  text-align: center;
+.coin-icon-display {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 12rpx;
 }
 
-.page-title {
-  font-size: 36rpx;
+.coin-text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #FFB059;
+}
+
+/* 自定义导航栏 */
+.custom-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
+  z-index: 100;
+}
+
+.nav-back-icon {
+  width: 64rpx;
+  height: 64rpx;
+  position: absolute; /* 使用绝对定位，方便控制位置 */
+  left: 24rpx;
+  /* top, right, bottom, left 和 transform 会在 align-items: center; 作用下失效，因此无需设置 */
+}
+
+.nav-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #000;
+  margin: 0 auto; /* 居中标题 */
+}
+
+/* 右侧功能按钮 */
+.side-buttons {
+  position: fixed;
+  right: 24rpx;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.side-button {
+  display: flex;
+  align-items: center;
+  justify-content: center; padding: 12rpx 24rpx;
+  width: 100rpx;
+  height: 64rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  font-size: 32rpx; 
+  color: #333;
+}
+
+/* 扭蛋机主体 */
+.gashapon-machine {
+  position: absolute;
+  bottom: 620rpx; /* 调整此值将图片上移 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600rpx; /* 根据实际图片尺寸调整 */
+  height: 600rpx; /* 根据实际图片尺寸调整 */
+}
+
+/* 底部操作区域 */
+.bottom-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border-radius: 48rpx 48rpx 0 0;
+  padding: 32rpx 0; /* 上下padding，左右为0 */
+  padding-bottom: 68rpx; /* 为底部安全区留出空间 */
+  box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.08);
+}
+
+.sheet-title {
+  font-size: 40rpx; /* 20px * 2 = 40rpx */ font-family: 'Inter', sans-serif;
   font-weight: bold;
-  color: #fff;
-  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+  text-align: center;
+  margin-bottom: 48rpx;
+  padding: 0 32rpx; /* 保持左右内边距 */
 }
 
-.content {
-  flex: 1;
+/* 系列选择 */
+.series-selector {
+  display: flex;
+  gap: 24rpx; /* 使用gap实现卡片间距 */
+  padding: 0 32rpx; /* 左右留出边距 */
+  margin-bottom: 60rpx;
+  overflow-x: auto; /* 允许横向滚动 */
+  -webkit-overflow-scrolling: touch; /* 优化iOS上的滚动体验 */
+  scrollbar-width: none; /* 隐藏滚动条 (Firefox) */
+}
+
+/* 隐藏滚动条 (Chrome, Safari) */
+.series-selector::-webkit-scrollbar {
+  display: none;
+}
+
+.series-card {
+  width: 300rpx;
+  height: 340rpx;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border-radius: 48rpx;
+  overflow: hidden;
+  flex-shrink: 0; /* 防止卡片在flex布局中被压缩 */
+  border: 4rpx solid transparent; /* 添加透明描边，用于实现选中效果 */
+  box-sizing: border-box; /* 保证描边在盒子内部，不影响布局 */
+  transition: border-color 0.3s; /* 添加过渡动画 */
+}
+
+
+
+/* 系列卡片渐变背景 */
+.series-gradient-blue {
+  background: linear-gradient(180deg, #C0ECFF 0%, #E6F8FF 100%);
+}
+
+.series-gradient-orange {
+  background: linear-gradient(180deg, #FFEAB7 0%, #FFF4DA 100%);
+}
+
+.series-gradient-green {
+  background: linear-gradient(180deg, #D7FC89 0%, #EFFFD0 100%);
+}
+
+.series-card.active {
+  border-color: #4845F7; /* 选中时显示蓝色描边 */
+}
+
+.series-name {
+  font-family: 'PingFang SC', sans-serif;
+  font-weight: 600;
+  font-size: 32rpx;
+  color: #000000;
+  margin: 28rpx 0 0 28rpx;
+  text-align: left;
+  width: 100%;
+}
+
+.series-image-container {
+  position: absolute;
+  width: 360rpx; /* 放大图片容器 */
+  height: 360rpx; /* 放大图片容器 */
+  bottom: -100rpx; /* 容器高度的一半，使其一半在卡片外 */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.series-image {
+  width: 100%;
+  height: 100%;
+}
+
+.series-progress {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 48rpx;
+  color: #111111;
+  position: absolute;
+  right: 28rpx;
+  bottom: 16rpx;
+}
+
+/* 抽奖按钮 */
+.draw-button {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 96rpx;
+  background-color: #4845F7;
+  border-radius: 48rpx;
+  color: #fff;
+  font-size: 32rpx; font-weight: 700; font-family: 'Inter', sans-serif;
+  margin: 0 32rpx; /* 添加左右外边距 */
 }
 
-.placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 80rpx 40rpx;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 24rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+.coin-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 16rpx;
 }
-
-.placeholder-icon {
-  width: 120rpx;
-  height: 120rpx;
-  margin-bottom: 40rpx;
-  opacity: 0.8;
-}
-
-.placeholder-text {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 16rpx;
-}
-
-.placeholder-subtitle {
-  font-size: 24rpx;
-  color: #666;
-} 

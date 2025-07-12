@@ -122,7 +122,7 @@ Page({
     if (!element1 || !element2) return false;
     
     const iconSize = 230; // 230rpx图标大小
-    const pixelRatio = wx.getSystemInfoSync().pixelRatio || 2;
+    const pixelRatio = wx.getWindowInfo().pixelRatio || 2;
     const iconSizePx = iconSize / pixelRatio; // 转换为px
     
     // 计算中心点距离
