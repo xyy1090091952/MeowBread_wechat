@@ -171,11 +171,10 @@ Page({
       mistakeManager.correctMistake(currentQ.wordInfo);
       
       // 标记单词为已背（需要获取词典ID）
-      this.markWordAsLearned(currentQ.wordInfo);
+      this.markWordAsLearned(currentQ); // 传递整个题目对象
       
       // 回答正确，增加1个金币
       coinManager.addCoins(1);
-      this.markWordAsLearned(currentQ); // 传递整个题目对象
     } else {
       // 答错了：添加到错题库
       mistakeManager.addMistake(currentQ.wordInfo);
