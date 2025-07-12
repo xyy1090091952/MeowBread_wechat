@@ -4,7 +4,7 @@
     <text>你当前选择了: {{currentFilterDisplay}}</text>
   </view>
     <!-- 新增的进度条和计时器容器 -->
-    <view class="progress-timer-container fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}" wx:if="{{quizMode === 'quick'}}">
+    <view class="progress-timer-container fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}" wx:if="{{quizMode === 'quick' || quizMode === 'course'}}">
       <!-- 进度条 -->
       <view class="progress-bar-wrapper">
         <view class="progress-bar-background">
@@ -125,7 +125,8 @@
         <button 
           class="skip-button half-width-button" 
           bindtap="skipQuestion">
-          <image class="skip-arrow-icon" src="/images/icons/arrow_right.svg"></image>
+          <text wx:if="{{quizMode === 'endless'}}" class="skip-text">结算</text>
+          <image wx:else class="skip-arrow-icon" src="/images/icons/arrow_right.svg"></image>
         </button>
         <button 
           class="submit-button half-width-button" 

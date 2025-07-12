@@ -450,30 +450,24 @@ Page({
     // 读取用户在filter页面的选择
     let userFilter = filterManager.getFilter();
     
-    // 如果用户没有在filter页面设置过筛选条件，使用默认的全部辞典
+    // 如果用户没有在filter页面设置过筛选条件，引导用户去设置
     if (!userFilter || !userFilter.selectedLessonFiles || userFilter.selectedLessonFiles.length === 0) {
-      console.log('用户未设置筛选条件，使用默认的全部辞典');
-      userFilter = {
-        selectedDictionaryName: '全部辞典',
-        selectedLessonFiles: ['ALL_DICTIONARIES_ALL_LESSONS'],
-        selectedLessonName: '全部课程',
-        dictionaryId: 'all',
-        basePath: 'all',
-        selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill']
-      };
+      wx.showToast({
+        title: '请先选择题库范围',
+        icon: 'none',
+        duration: 1500
+      });
+      setTimeout(() => {
+        this.navigateToFilter();
+      }, 1500);
+      return;
     }
 
-    // 创建临时的筛选条件，添加快速模式标识，但不修改用户的原始选择
-    const tempFilter = {
-      ...userFilter,
-      quizMode: 'quick'
-    };
-    
-    // 临时保存到存储，供quiz页面使用
+    // 创建临时的筛选条件，添加快速模式标识
+    const tempFilter = { ...userFilter, quizMode: 'quick' };
     filterManager.saveFilter(tempFilter);
     
     console.log('快速答题使用筛选条件:', tempFilter);
-
     wx.navigateTo({
       url: `/pages/quiz/quiz?mode=quick`
     });
@@ -484,35 +478,26 @@ Page({
    */
   startEndlessQuiz() {
     console.log('Start Endless Quiz');
-    
-    // 读取用户在filter页面的选择
     let userFilter = filterManager.getFilter();
 
-    // 如果用户没有在filter页面设置过筛选条件，使用默认的全部辞典
+    // 如果用户没有在filter页面设置过筛选条件，引导用户去设置
     if (!userFilter || !userFilter.selectedLessonFiles || userFilter.selectedLessonFiles.length === 0) {
-      console.log('用户未设置筛选条件，使用默认的全部辞典');
-      userFilter = {
-        selectedDictionaryName: '全部辞典',
-        selectedLessonFiles: ['ALL_DICTIONARIES_ALL_LESSONS'],
-        selectedLessonName: '全部课程',
-        dictionaryId: 'all',
-        basePath: 'all',
-        selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill']
-      };
+      wx.showToast({
+        title: '请先选择题库范围',
+        icon: 'none',
+        duration: 1500
+      });
+      setTimeout(() => {
+        this.navigateToFilter();
+      }, 1500);
+      return;
     }
 
-    // 创建临时的筛选条件，添加无尽模式标识，但不修改用户的原始选择
-    const tempFilter = {
-      ...userFilter,
-      quizMode: 'endless'
-    };
-    
-    // 临时保存到存储，供quiz页面使用
+    // 创建临时的筛选条件，添加无尽模式标识
+    const tempFilter = { ...userFilter, quizMode: 'endless' };
     filterManager.saveFilter(tempFilter);
     
     console.log('无尽模式使用筛选条件:', tempFilter);
-
-    // 导航到 quiz 页面，quiz 页面会从本地存储读取完整的筛选条件
     wx.navigateTo({
       url: '/pages/quiz/quiz?mode=endless'
     });

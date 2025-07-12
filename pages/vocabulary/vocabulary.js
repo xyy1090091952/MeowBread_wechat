@@ -37,7 +37,13 @@ Page({
           // 动态引入课时文件 (注意路径需相对当前 js)
           const lesson = require('../../database/' + filePath);
           if (Array.isArray(lesson)) {
-            wordCount += lesson.length;
+            // 检查是否是新的数据格式（每个单词包装在data中）
+            if (lesson.length > 0 && lesson[0].data) {
+              wordCount += lesson.length;
+            } else {
+              // 旧格式：直接是单词数组
+              wordCount += lesson.length;
+            }
           } else if (Array.isArray(lesson.words)) {
             wordCount += lesson.words.length;
           }
@@ -49,14 +55,6 @@ Page({
       // 使用学习进度管理器获取准确的学习进度
       const learningProgress = learnedManager.getLearningProgress(dict.id);
       const progress = learningProgress.progress;
-      
-      // 调试信息：输出每个课本的学习进度
-      console.log(`=== ${dict.name} 学习进度调试 ===`);
-      console.log('课本ID:', dict.id);
-      console.log('学习进度对象:', learningProgress);
-      console.log('进度百分比:', progress);
-      console.log('已学单词数:', learningProgress.learnedCount);
-      console.log('总单词数:', learningProgress.totalCount);
       
       // 如果学习进度管理器返回的总数与计算的不同，使用计算的数量（更准确）
       const finalWordCount = learningProgress.totalCount || wordCount;

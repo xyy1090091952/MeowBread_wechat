@@ -93,5 +93,12 @@
         <text class="gallery-text">陈列馆</text>
       </view>
     </view>
+
+    <!-- 调试按钮：清除缓存 -->
+    <view class="debug-section fade-in-element fade-delay-6 {{pageLoaded ? 'show' : ''}}">
+      <view class="debug-btn" bindtap="clearCache">
+        <text class="debug-btn-text">清除缓存（用于调试）</text>
+      </view>
+    </view>
   </block>
 </view>

@@ -191,7 +191,13 @@ function getLearningProgress(dictionaryId) {
         try {
           const lesson = require('../database/' + filePath);
           if (Array.isArray(lesson)) {
-            totalCount += lesson.length;
+            // 检查是否是新的数据格式（每个单词包装在data中）
+            if (lesson.length > 0 && lesson[0].data) {
+              totalCount += lesson.length;
+            } else {
+              // 旧格式：直接是单词数组
+              totalCount += lesson.length;
+            }
           } else if (Array.isArray(lesson.words)) {
             totalCount += lesson.words.length;
           }

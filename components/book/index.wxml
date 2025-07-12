@@ -5,8 +5,4 @@
     <text class="dict-count">词汇量 {{dict.wordCount}}</text>
   </view>
   <view class="progress-tag" wx:if="{{dict.progress > 0}}">单词进度{{dict.progress}}%</view>
-  <!-- 调试信息：显示进度数据 -->
-  <view class="debug-info" style="font-size: 20rpx; color: #999; margin-top: 8rpx;">
-    进度: {{dict.progress}}% ({{dict.learnedCount || 0}}/{{dict.wordCount}})
-  </view>
 </view> 

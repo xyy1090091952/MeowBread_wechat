@@ -563,6 +563,13 @@
   filter: brightness(0); /* 将图标变为黑色 */
 }
 
+/* 无尽模式结算按钮文字 */
+.skip-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
 .submit-button.half-width-button {
   background-color: #7DF303; /* 使用统一的绿色 */
   color: black; /* 黑色文字在绿色背景上更清晰 */

@@ -78,6 +78,7 @@ function formatQuestion(wordData, questionTypeToGenerate, allWordsInLesson) {
     answer: correctAnswer,
     options: options,
     wordInfo: word,
+    sourceDictionary: wordData.sourceDictionary, // 把来源信息也打包进去！
     partOfSpeech: word.词性 || '',
     specificQuestionType: questionTypeToGenerate
   };
