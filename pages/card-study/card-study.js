@@ -336,7 +336,7 @@ Page({
     console.log(`卡片学习完成: 学习${studiedCount}个单词，记住${rememberedCount}个，准确率${(accuracy * 100).toFixed(1)}%`);
     
     wx.redirectTo({
-      url: `/pages/quiz-result/quiz-result?score=${rememberedCount}&totalQuestions=${studiedCount}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}&studyMode=card`
+      url: `/pages/quiz-result/quiz-result?score=${rememberedCount}&totalQuestions=${studiedCount}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}&studyMode=card&from=course`
     });
   },
 

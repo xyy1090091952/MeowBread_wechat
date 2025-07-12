@@ -302,6 +302,10 @@ Page({
     if (quizMode === 'mistakes') {
       url += `&fromMistakes=true`;
     }
+    // 如果是从课程模式启动的，也添加标识
+    if (quizMode === 'course') {
+      url += `&from=course`;
+    }
 
     // 使用redirectTo替换reLaunch，以修复导航堆栈问题
     // wx.reLaunch会关闭所有页面，导致无法返回上一页
