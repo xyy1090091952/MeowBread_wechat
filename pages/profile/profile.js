@@ -299,6 +299,45 @@ Page({
     });
   },
 
+  // 跳转到陈列馆
+  goToGallery: function() {
+    // wx.navigateTo({ url: '/pages/gallery/gallery' });
+    wx.showToast({
+      title: '陈列馆正在施工中...',
+      icon: 'none'
+    });
+  },
+
+  /**
+   * 清除缓存（用于调试）
+   */
+  clearCache() {
+    wx.showModal({
+      title: '确认清除缓存',
+      content: '这将删除所有学习记录、错题和筛选设置。此操作不可逆，仅用于调试！',
+      success: (res) => {
+        if (res.confirm) {
+          try {
+            wx.clearStorageSync();
+            wx.showToast({
+              title: '缓存已清除',
+              icon: 'success',
+              duration: 2000
+            });
+            // 清除后重新加载页面数据
+            this.onShow();
+          } catch (e) {
+            wx.showToast({
+              title: '清除失败',
+              icon: 'error'
+            });
+            console.error('清除缓存失败:', e);
+          }
+        }
+      }
+    });
+  },
+
   // 面包点击事件 - 触发Q弹动画
   onBreadTap: function() {
     // 如果动画正在进行中，则不重复触发

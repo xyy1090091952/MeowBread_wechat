@@ -4,5 +4,5 @@
     <text class="dict-name">{{dict.name}}</text>
     <text class="dict-count">词汇量 {{dict.wordCount}}</text>
   </view>
-  <view class="progress-tag">单词进度{{dict.progress}}%</view>
+  <view class="progress-tag" wx:if="{{dict.progress > 0}}">单词进度{{dict.progress}}%</view>
 </view> 

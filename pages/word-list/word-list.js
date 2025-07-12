@@ -3,6 +3,8 @@ const { WORD_STATUS } = require('../../utils/constants.js');
 const learnedManager = require('../../utils/learnedManager.js');
 const mistakeManager = require('../../utils/mistakeManager.js'); // 引入错题管理器
 const { processWordStatus } = require('../../utils/statusManager.js'); // 引入状态处理函数
+const courseDataManager = require('../../utils/courseDataManager.js');
+
 
 Page({
   data: {
@@ -44,26 +46,92 @@ Page({
   initializeCourseGroups(dictionaryId) {
     let courseGroups = [];
     
-    // 根据不同词典定义不同的课程集合
-    if (dictionaryId === 'liangs_class') {
-      courseGroups = [
-        {
-          id: 'primary_basic',
-          name: '初级上',
-          lessons: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16] // 第5-16课
-        },
-        {
-          id: 'primary_advanced', 
-          name: '初级下',
-          lessons: [17, 18, 19, 20, 21, 22, 23, 24, 25] // 第17-25课
-        }
-      ];
+    try {
+      // 使用课程数据管理器获取分册信息
+      const volumes = courseDataManager.getTextbookVolumes(dictionaryId);
+      
+      if (volumes && volumes.length > 0) {
+        courseGroups = volumes.map(volume => ({
+          id: volume.volumeKey,
+          name: volume.volumeName,
+          lessons: volume.courseRange.length === 2 ? 
+            this.generateLessonRange(volume.courseRange[0], volume.courseRange[1]) :
+            volume.courses.map(course => course.courseNumber)
+        }));
+      } else {
+        // 如果没有找到分册信息，使用默认的课程组织
+        console.warn(`No volume info found for textbook: ${dictionaryId}, using fallback`);
+        courseGroups = this.getFallbackCourseGroups(dictionaryId);
+      }
+    } catch (error) {
+      console.error('Error loading course groups:', error);
+      courseGroups = this.getFallbackCourseGroups(dictionaryId);
     }
-    // 其他词典可以在这里添加相应的课程集合定义
     
     this.setData({
       courseGroups: courseGroups
     });
+  },
+
+  /**
+   * 生成课程范围数组
+   * @param {number} start - 开始课程号
+   * @param {number} end - 结束课程号
+   * @returns {Array} 课程号数组
+   */
+  generateLessonRange(start, end) {
+    const range = [];
+    for (let i = start; i <= end; i++) {
+      range.push(i);
+    }
+    return range;
+  },
+
+  /**
+   * 获取回退的课程分组（当无法从课程信息文件获取时）
+   * @param {string} dictionaryId - 词典ID
+   * @returns {Array} 课程分组
+   */
+  getFallbackCourseGroups(dictionaryId) {
+    // 为不同词典提供回退的课程分组
+    switch (dictionaryId) {
+      case 'liangs_class':
+        return [
+          {
+            id: 'upper',
+            name: '初级上',
+            lessons: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+          },
+          {
+            id: 'lower', 
+            name: '初级下',
+            lessons: [17, 18, 19, 20, 21, 22, 23, 24, 25]
+          }
+        ];
+      case 'everyones_japanese':
+        return [
+          {
+            id: 'volume1',
+            name: '第一册',
+            lessons: [31, 32, 33, 34, 35, 36, 37]
+          },
+          {
+            id: 'volume2',
+            name: '第二册', 
+            lessons: [38, 44, 45]
+          }
+        ];
+      case 'duolingguo':
+        return [
+          {
+            id: 'complete',
+            name: '完整版',
+            lessons: [1, 2, 3, 5]
+          }
+        ];
+      default:
+        return [];
+    }
   },
 
   /**

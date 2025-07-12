@@ -124,6 +124,46 @@ function getLearnedWords(dictionaryId = null) {
 }
 
 /**
+ * 获取特定课程的已背单词列表
+ * @param {string} dictionaryId - 词典ID
+ * @param {string} lessonFile - 课程文件名（如 'lesson5'）
+ * @returns {Array} 该课程的已背单词列表
+ */
+function getLearnedWordsForCourse(dictionaryId, lessonFile) {
+  try {
+    // 获取该词典的所有已背单词
+    const allLearnedWords = getLearnedWords(dictionaryId);
+    
+    // 加载课程文件，获取该课程的所有单词
+    const courseWords = require(`../database/${dictionaryId}/${lessonFile}.js`);
+    
+    if (!Array.isArray(courseWords)) {
+      console.warn(`课程文件格式不正确: ${dictionaryId}/${lessonFile}.js`);
+      return [];
+    }
+    
+    // 创建课程单词的ID集合，用于快速查找
+    const courseWordIds = new Set();
+    courseWords.forEach(wordItem => {
+      if (wordItem.data) {
+        const wordId = getWordId(wordItem.data);
+        courseWordIds.add(wordId);
+      }
+    });
+    
+    // 筛选出属于该课程的已背单词
+    const courseLearnedWords = allLearnedWords.filter(learnedWord => {
+      return courseWordIds.has(learnedWord.id);
+    });
+    
+    return courseLearnedWords;
+  } catch (error) {
+    console.error(`获取课程 ${dictionaryId}/${lessonFile} 的已背单词失败:`, error);
+    return [];
+  }
+}
+
+/**
  * 检查单词是否已经被标记为已背
  * @param {object} wordData - 单词数据对象
  * @param {string} dictionaryId - 词典ID
@@ -165,7 +205,13 @@ function getLearningProgress(dictionaryId) {
         try {
           const lesson = require('../database/' + filePath);
           if (Array.isArray(lesson)) {
-            totalCount += lesson.length;
+            // 检查是否是新的数据格式（每个单词包装在data中）
+            if (lesson.length > 0 && lesson[0].data) {
+              totalCount += lesson.length;
+            } else {
+              // 旧格式：直接是单词数组
+              totalCount += lesson.length;
+            }
           } else if (Array.isArray(lesson.words)) {
             totalCount += lesson.words.length;
           }
@@ -265,6 +311,7 @@ function unmarkWordAsLearned(wordData, dictionaryId) {
 module.exports = {
   markWordAsLearned,
   getLearnedWords,
+  getLearnedWordsForCourse,
   isWordLearned,
   getLearningProgress,
   resetLearningProgress,

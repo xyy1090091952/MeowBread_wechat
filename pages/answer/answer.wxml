@@ -14,7 +14,7 @@
     <!-- 题库筛选按钮 -->
     <view class="option-card filter-card fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}" bindtap="navigateToFilter">
       <view class="option-text-container">
-        <text class="option-main-text">选择你的题型&题库</text>
+        <text class="option-main-text">选择你的课本&题型</text>
         <text class="option-sub-text filter-sub-text">{{currentFilterDisplay}}</text>
       </view>
       <image class="option-icon arrow-white" src="/images/icons/arrow_right.svg" />
@@ -33,7 +33,7 @@
     <view class="option-card standard-mode-card fade-in-element fade-delay-5 {{pageLoaded ? 'show' : ''}}" bindtap="startQuickQuiz">
       <view class="option-text-container">
         <text class="option-main-text">标准模式</text>
-        <text class="option-sub-text">选择课本30题随机抽答</text>
+        <text class="option-sub-text">选择课程的30道题随机抽答</text>
       </view>
       <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
     </view>

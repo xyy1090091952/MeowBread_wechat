@@ -295,6 +295,11 @@
 
 .filter-sub-text {
   /* filter-card 的副文本在上面已经统一设置颜色 */
+  /* 限制只显示一行，超过时显示省略号 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .option-icon {

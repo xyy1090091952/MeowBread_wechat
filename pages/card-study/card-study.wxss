@@ -1,0 +1,386 @@
+/* pages/card-study/card-study.wxss */
+
+/* ==================== 动画样式 ==================== */
+.fade-in-element {
+  opacity: 0;
+  transform: translateY(30rpx);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.fade-in-element.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 动画延迟 */
+.fade-delay-1 { transition-delay: 0.1s; }
+.fade-delay-2 { transition-delay: 0.2s; }
+.fade-delay-3 { transition-delay: 0.3s; }
+.fade-delay-4 { transition-delay: 0.4s; }
+.fade-delay-5 { transition-delay: 0.5s; }
+
+/* ==================== 页面布局 ==================== */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  min-height: 100vh;
+  padding: 20rpx 48rpx 40rpx 48rpx;
+}
+
+/* ==================== 筛选显示区域 ==================== */
+.current-filter-display {
+  width: 100%;
+  height: 64rpx;
+  background: linear-gradient(to right, #CFE2FF, #F0F6FC);
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 48rpx;
+  box-sizing: border-box;
+  margin-bottom: 24rpx;
+}
+
+.current-filter-display text {
+  font-size: 24rpx;
+  color: #000000;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* ==================== 进度条和计时器 ==================== */
+.progress-timer-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 40rpx;
+}
+
+.progress-bar-wrapper {
+  flex-grow: 1;
+  position: relative;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.progress-bar-background {
+  background-color: #EEEEEE;
+  height: 16rpx;
+  width: 100%;
+  border-radius: 24rpx;
+  overflow: hidden;
+  position: absolute;
+}
+
+.progress-bar-foreground {
+  background: linear-gradient(to right, #F0F7FC, #4845F7);
+  height: 100%;
+  min-width: 16rpx;
+  border-radius: 24rpx;
+  transition: width 0.3s ease-in-out;
+}
+
+.progress-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  z-index: 1;
+}
+
+.progress-text text {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #000000;
+}
+
+.timer-box {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to right, #F0F6FC, #CFE2FF);
+  border-radius: 24rpx;
+  padding: 12rpx 24rpx;
+  margin-left: 48rpx;
+  height: 48rpx;
+  box-sizing: border-box;
+}
+
+.timer-icon {
+  width: 24rpx;
+  height: 24rpx;
+  margin-right: 12rpx;
+}
+
+.timer-text {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* ==================== 卡片容器 ==================== */
+.card-container {
+  position: relative;
+  width: 400rpx;
+  height: 640rpx;
+  margin-bottom: 40rpx;
+}
+
+.study-card {
+  position: absolute;
+  width: 400rpx;
+  height: 640rpx;
+  background-color: #ffffff;
+  border-radius: 32rpx;
+  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.12);
+  padding: 40rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  cursor: grab;
+}
+
+.study-card.current-card {
+  z-index: 2;
+  transform-origin: center;
+}
+
+.study-card.background-card {
+  z-index: 1;
+  opacity: 0.8;
+  transform: scale(0.95);
+}
+
+.study-card.animating {
+  cursor: grabbing;
+}
+
+/* ==================== 卡片内容 ==================== */
+.card-header {
+  margin-bottom: 40rpx;
+}
+
+.word-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.word-text {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #1F2329;
+  text-align: center;
+}
+
+.part-of-speech-tag {
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 20rpx;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  line-height: 1;
+}
+
+.card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.word-details {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+}
+
+.detail-row.example-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8rpx;
+}
+
+.detail-label {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #666666;
+  min-width: 80rpx;
+  text-align: right;
+}
+
+.detail-value {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #1F2329;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.example-text {
+  font-size: 24rpx;
+  line-height: 1.5;
+  color: #666666;
+  padding: 16rpx;
+  background-color: #f8f9fa;
+  border-radius: 16rpx;
+}
+
+/* ==================== 滑动提示 ==================== */
+.swipe-hints {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  border-radius: 32rpx;
+  overflow: hidden;
+}
+
+.hint-left,
+.hint-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 16rpx 24rpx;
+  border-radius: 24rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.hint-left {
+  left: 40rpx;
+  background-color: #ff4757;
+  color: white;
+}
+
+.hint-right {
+  right: 40rpx;
+  background-color: #2ed573;
+  color: white;
+}
+
+/* ==================== 操作按钮 ==================== */
+.action-buttons {
+  display: flex;
+  gap: 32rpx;
+  width: 100%;
+  margin-bottom: 40rpx;
+}
+
+.action-button {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.forget-button {
+  background: linear-gradient(135deg, #ff4757, #ff3838);
+}
+
+.forget-button:active {
+  transform: scale(0.95);
+  background: linear-gradient(135deg, #ff3838, #ff2f2f);
+}
+
+.remember-button {
+  background: linear-gradient(135deg, #2ed573, #1dd1a1);
+}
+
+.remember-button:active {
+  transform: scale(0.95);
+  background: linear-gradient(135deg, #1dd1a1, #00d2d3);
+}
+
+/* ==================== 学习统计 ==================== */
+.study-stats {
+  display: flex;
+  gap: 40rpx;
+  padding: 24rpx;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 24rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.stat-number {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1F2329;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #666666;
+}
+
+/* ==================== 加载和空状态 ==================== */
+.loading-container,
+.empty-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 28rpx;
+  color: #666666;
+}
+
+/* ==================== 词性标签样式 ==================== */
+.part-of-speech-tag.adverb { background-color: #FF375C; }
+.part-of-speech-tag.verb { background-color: #598BF1; }
+.part-of-speech-tag.intransitive-verb { background-color: #39D763; }
+.part-of-speech-tag.transitive-verb { background-color: #FAAD3A; }
+.part-of-speech-tag.noun { background-color: #B79EFF; }
+.part-of-speech-tag.adjective { background-color: #F56593; }
+.part-of-speech-tag.particle { background-color: #5bc0de; }
+.part-of-speech-tag.conjunction { background-color: #aa66cc; }
+.part-of-speech-tag.adjectival-noun { background-color: #17a2b8; }
+.part-of-speech-tag.pronoun { background-color: #6f42c1; }
+.part-of-speech-tag.numeral { background-color: #fd7e14; }
+.part-of-speech-tag.suffix { background-color: #795548; }
+.part-of-speech-tag.greeting { background-color: #e91e63; }
+.part-of-speech-tag.interjection { background-color: #ff5722; }
+.part-of-speech-tag.idiom { background-color: #607d8b; }
+.part-of-speech-tag.attributive { background-color: #3f51b5; }
+.part-of-speech-tag.quantifier { background-color: #009688; }
+.part-of-speech-tag.noun-suru-verb { background-color: #9c27b0; }
+.part-of-speech-tag.adverb-adjectival-noun { background-color: #ff9800; }
+.part-of-speech-tag.noun-adjectival-noun { background-color: #8bc34a; }
+.part-of-speech-tag.unknown { background-color: #9e9e9e; } 

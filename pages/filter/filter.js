@@ -42,7 +42,11 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-
+    // 页面显示时重新加载用户的真实选择，避免被course模式影响
+    const refreshedState = filterService.initializeFilterState({ mode: this.data.quizMode });
+    this.setData(refreshedState, () => {
+      this.updateLessonState();
+    });
   },
 
   /**
