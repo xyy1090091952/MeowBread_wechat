@@ -206,7 +206,7 @@ Page({
 
     // 获取教材名称
     const textbookInfo = courseDataManager.getTextbookInfo(courseData.textbook);
-    const textbookName = textbookInfo ? textbookInfo.textbookName : courseData.textbook;
+    const textbookName = textbookInfo ? textbookInfo.name : courseData.textbook;
 
     // 设置筛选器为当前课程
     filterManager.saveFilter({
@@ -236,7 +236,7 @@ Page({
 
     // 获取教材名称
     const textbookInfo = courseDataManager.getTextbookInfo(courseData.textbook);
-    const textbookName = textbookInfo ? textbookInfo.textbookName : courseData.textbook;
+    const textbookName = textbookInfo ? textbookInfo.name : courseData.textbook;
 
     // 在设置临时课程选择之前，先保存用户的原始选择
     const currentFilter = filterManager.getFilter();
@@ -294,4 +294,4 @@ Page({
     // 重新加载课程数据
     this.loadCourseData();
   }
-}); 
+});
