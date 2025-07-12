@@ -301,10 +301,8 @@ Page({
 
   // 跳转到陈列馆
   goToGallery: function() {
-    // wx.navigateTo({ url: '/pages/gallery/gallery' });
-    wx.showToast({
-      title: '陈列馆正在施工中...',
-      icon: 'none'
+    wx.navigateTo({
+      url: '/pages/gashapon-inventory/gashapon-inventory'
     });
   },
 
