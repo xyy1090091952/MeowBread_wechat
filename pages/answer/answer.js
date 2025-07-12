@@ -1,5 +1,6 @@
 // pages/answer/answer.js
 const mistakeManager = require('../../utils/mistakeManager.js'); // 引入错题管理器
+const filterManager = require('../../utils/filterManager.js'); // 引入筛选管理器
 
 Page({
   data: {
@@ -237,20 +238,36 @@ Page({
    */
   onShow() {
     console.log('Page show');
-    // 页面显示时，从本地存储加载筛选条件并更新显示
-    const quizFilter = wx.getStorageSync('quizFilter');
-    const selectedDictId = wx.getStorageSync('selectedDictionary');
+    
+    // 获取用户在filter页面的真实选择（不包括临时的course模式选择）
+    let userFilter = filterManager.getFilter();
     let currentFilterDisplay = '请选择教材和课程'; // 默认提示
 
-    if (quizFilter && quizFilter.selectedDictionaryName && quizFilter.selectedLessonName) {
-      // 优先显示来自Filter页面的精确筛选结果
-      currentFilterDisplay = `当前：${quizFilter.selectedDictionaryName} - ${quizFilter.selectedLessonName}`;
-    } else if (selectedDictId) {
-      // 如果没有精确筛选，则显示已选择的教材
-      const dictionaries = require('../../database/dictionaries.js').dictionaries;
-      const selectedDict = dictionaries.find(d => d.id === selectedDictId);
-      if (selectedDict) {
-        currentFilterDisplay = `当前：${selectedDict.name} - 全部课程`;
+    // 如果当前筛选是course模式（来自course-mode页面的临时选择），则尝试恢复用户的原始选择
+    if (userFilter && userFilter.quizMode === 'course') {
+      const originalFilter = wx.getStorageSync('originalUserFilter');
+      if (originalFilter) {
+        // 恢复用户的原始筛选条件
+        filterManager.saveFilter(originalFilter);
+        userFilter = originalFilter;
+        console.log('恢复用户原始筛选条件:', originalFilter);
+        // 清除临时保存的原始选择
+        wx.removeStorageSync('originalUserFilter');
+      }
+    }
+
+    // 显示用户的筛选选择
+    if (userFilter && userFilter.selectedDictionaryName && userFilter.selectedLessonName) {
+      currentFilterDisplay = `当前：${userFilter.selectedDictionaryName} - ${userFilter.selectedLessonName}`;
+    } else {
+      // 如果没有筛选条件，检查是否有旧的selectedDictionary
+      const selectedDictId = wx.getStorageSync('selectedDictionary');
+      if (selectedDictId) {
+        const dictionaries = require('../../database/dictionaries.js').dictionaries;
+        const selectedDict = dictionaries.find(d => d.id === selectedDictId);
+        if (selectedDict) {
+          currentFilterDisplay = `当前：${selectedDict.name} - 全部课程`;
+        }
       }
     }
 
@@ -287,20 +304,19 @@ Page({
       const defaultDictionary = allDictionaries.find(d => d.id === defaultDictionaryId);
 
       if (defaultDictionary) {
-        // 构建一个与 filter 页面保存的结构一致的 quizFilter 对象
-        const quizFilter = {
+        // 构建一个与 filter 页面保存的结构一致的筛选条件对象
+        const defaultFilter = {
           selectedDictionaryIndex: allDictionaries.findIndex(d => d.id === defaultDictionaryId) + 1, // +1因为有'全部辞典'
           selectedLessonFiles: [`DICTIONARY_${defaultDictionary.id}_ALL_LESSONS`],
           selectedLessonName: '全部课程',
           selectedDictionaryName: defaultDictionary.name,
           dictionaryId: defaultDictionary.id,
           basePath: defaultDictionary.base_path || '',
-          quizMode: 'quick',
           selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill']
         };
 
-        // 保存完整的筛选条件和已选词典ID
-        wx.setStorageSync('quizFilter', quizFilter);
+        // 使用filterManager保存筛选条件
+        filterManager.saveFilter(defaultFilter);
         wx.setStorageSync('selectedDictionary', defaultDictionary.id);
 
         // 更新UI显示
@@ -331,21 +347,20 @@ Page({
     const dictionariesWithAllOption = [{ id: 'all', name: '全部辞典' }, ...allDictionaries];
     const dictionaryIndex = dictionariesWithAllOption.findIndex(d => d.id === selectedDictionary.id);
 
-    // 构建一个与 filter 页面保存的结构一致的 quizFilter 对象
-    const quizFilter = {
+    // 构建一个与 filter 页面保存的结构一致的筛选条件对象
+    const userFilter = {
       selectedDictionaryIndex: dictionaryIndex !== -1 ? dictionaryIndex : 0,
       selectedLessonFiles: [`DICTIONARY_${selectedDictionary.id}_ALL_LESSONS`], // 默认选择该教材的全部课程
       selectedLessonName: '全部课程',
       selectedDictionaryName: selectedDictionary.name,
       dictionaryId: selectedDictionary.id,
       basePath: selectedDictionary.base_path || '',
-      quizMode: 'quick', // 默认为快速答题模式
       // 首次选择时，使用默认的题型
       selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill']
     };
 
-    // 保存完整的筛选条件
-    wx.setStorageSync('quizFilter', quizFilter);
+    // 使用filterManager保存筛选条件
+    filterManager.saveFilter(userFilter);
     // 为了兼容旧逻辑或其他地方可能的直接引用，也保存一份 selectedDictionary
     wx.setStorageSync('selectedDictionary', selectedDictionary.id);
 
@@ -431,21 +446,28 @@ Page({
    */
   startQuickQuiz() {
     console.log('Start Quick Quiz');
-    let quizFilter = wx.getStorageSync('quizFilter');
-
-    if (!quizFilter || !quizFilter.selectedLessonFiles || quizFilter.selectedLessonFiles.length === 0) {
-      quizFilter = {
-        selectedDictionaryName: '全部辞典',
-        selectedLessonFiles: ['ALL_DICTIONARIES_ALL_LESSONS'],
-        selectedLessonName: '全部课程',
-        dictionaryId: 'all',
-        basePath: 'all',
-      };
+    
+    // 读取用户在filter页面的选择
+    let userFilter = filterManager.getFilter();
+    
+    // 如果用户没有在filter页面设置过筛选条件，引导用户去设置
+    if (!userFilter || !userFilter.selectedLessonFiles || userFilter.selectedLessonFiles.length === 0) {
+      wx.showToast({
+        title: '请先选择题库范围',
+        icon: 'none',
+        duration: 1500
+      });
+      setTimeout(() => {
+        this.navigateToFilter();
+      }, 1500);
+      return;
     }
 
-    quizFilter.quizMode = 'quick';
-    wx.setStorageSync('quizFilter', quizFilter);
-
+    // 创建临时的筛选条件，添加快速模式标识
+    const tempFilter = { ...userFilter, quizMode: 'quick' };
+    filterManager.saveFilter(tempFilter);
+    
+    console.log('快速答题使用筛选条件:', tempFilter);
     wx.navigateTo({
       url: `/pages/quiz/quiz?mode=quick`
     });
@@ -456,24 +478,26 @@ Page({
    */
   startEndlessQuiz() {
     console.log('Start Endless Quiz');
-    let quizFilter = wx.getStorageSync('quizFilter');
+    let userFilter = filterManager.getFilter();
 
-    // 检查是否存在有效的筛选条件，如果没有，则创建一个默认的
-    if (!quizFilter || !quizFilter.selectedLessonFiles || quizFilter.selectedLessonFiles.length === 0) {
-      quizFilter = {
-        selectedDictionaryName: '全部辞典',
-        selectedLessonFiles: ['ALL_DICTIONARIES_ALL_LESSONS'], // 修正为复数
-        selectedLessonName: '全部课程',
-        dictionaryId: 'all',
-        basePath: 'all',
-      };
+    // 如果用户没有在filter页面设置过筛选条件，引导用户去设置
+    if (!userFilter || !userFilter.selectedLessonFiles || userFilter.selectedLessonFiles.length === 0) {
+      wx.showToast({
+        title: '请先选择题库范围',
+        icon: 'none',
+        duration: 1500
+      });
+      setTimeout(() => {
+        this.navigateToFilter();
+      }, 1500);
+      return;
     }
 
-    // 将模式设置为 'endless' 并保存回本地存储
-    quizFilter.quizMode = 'endless';
-    wx.setStorageSync('quizFilter', quizFilter);
-
-    // 导航到 quiz 页面，quiz 页面会从本地存储读取完整的筛选条件
+    // 创建临时的筛选条件，添加无尽模式标识
+    const tempFilter = { ...userFilter, quizMode: 'endless' };
+    filterManager.saveFilter(tempFilter);
+    
+    console.log('无尽模式使用筛选条件:', tempFilter);
     wx.navigateTo({
       url: '/pages/quiz/quiz?mode=endless'
     });
@@ -496,7 +520,7 @@ Page({
     console.log('Start Timeline Mode');
     // 跳转到时间线页面
     wx.navigateTo({
-      url: '/pages/timeline/timeline'
+      url: '/pages/course-mode/course-mode'
     });
   },
 

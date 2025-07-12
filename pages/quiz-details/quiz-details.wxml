@@ -64,10 +64,10 @@
     <view class="rating-card">
       <view class="rating-header">
         <text class="rating-title">综合评级</text>
+        <text class="rating-description">{{ratingInfo.description}}</text>
       </view>
       <view class="rating-display">
         <text class="rating-grade rating-{{ratingInfo.grade}}">{{ratingInfo.grade}}</text>
-        <text class="rating-description">{{ratingInfo.description}}</text>
       </view>
     </view>
   </view>

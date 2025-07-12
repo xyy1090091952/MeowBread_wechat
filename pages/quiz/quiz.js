@@ -47,6 +47,18 @@ Page({
   onLoad: function(options) {
     const initialState = quizService.initializeQuiz(options);
 
+    // 添加调试信息，显示题目生成情况
+    console.log('=== Quiz 页面初始化 ===');
+    console.log('答题模式:', initialState.quizMode);
+    console.log('生成题目数量:', initialState.questions?.length || 0);
+    console.log('是否有补充题目:', initialState.questions?.some(q => q.isSupplementary) || false);
+    
+    // 统计补充题目数量
+    const supplementaryCount = initialState.questions?.filter(q => q.isSupplementary).length || 0;
+    if (supplementaryCount > 0) {
+      console.log('补充题目数量:', supplementaryCount);
+    }
+
     if (!initialState.questions || initialState.questions.length === 0) {
       wx.showModal({
         title: '提示',
@@ -157,7 +169,7 @@ Page({
       mistakeManager.correctMistake(currentQ.wordInfo);
       
       // 标记单词为已背（需要获取词典ID）
-      this.markWordAsLearned(currentQ.wordInfo);
+      this.markWordAsLearned(currentQ); // 传递整个题目对象
     } else {
       // 答错了：添加到错题库
       mistakeManager.addMistake(currentQ.wordInfo);
@@ -177,10 +189,17 @@ Page({
 
 
   /**
-   * 跳过题目 - 不计入任何统计数据
+   * 跳过题目或结算（无尽模式）
    */
   skipQuestion: function() {
-    // 跳过题目不做任何学习状态更新，不计入答题统计
+    // 如果是无尽模式，点击跳过按钮直接进入结算
+    if (this.data.quizMode === 'endless') {
+      console.log('无尽模式：点击结算按钮，直接进入结算页面');
+      this.endQuiz();
+      return;
+    }
+    
+    // 其他模式：跳过题目不做任何学习状态更新，不计入答题统计
     // 直接进入下一题，不更新score和actualAnsweredQuestions
     console.log('跳过题目，不计入统计数据');
     this.nextQuestion();
@@ -193,8 +212,18 @@ Page({
     this.setData({ showQuestion: false });
 
     wx.nextTick(() => {
+      // 无尽模式：永远不自动结束，除非用户主动结算
+      if (this.data.quizMode === 'endless') {
+        // 如果当前题目是最后一题，生成新的题目
+        if (this.data.currentQuestionIndex >= this.data.questions.length - 1) {
+          this.generateMoreQuestions();
+          return;
+        }
+      }
+      
+      // 其他模式：检查是否到达最后一题
       if ((this.data.quizMode === 'quick' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1) ||
-        (this.data.quizMode === 'endless' && this.data.currentQuestionIndex >= this.data.questions.length - 1)) {
+        (this.data.quizMode === 'course' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1)) {
         this.endQuiz();
       } else {
         const nextIndex = this.data.currentQuestionIndex + 1;
@@ -209,6 +238,52 @@ Page({
         });
       }
     });
+  },
+
+  /**
+   * 无尽模式：生成更多题目
+   */
+  generateMoreQuestions: function() {
+    console.log('无尽模式：生成更多题目');
+    
+    try {
+      // 从现有单词中重新生成题目
+      const allWords = this.data.allWordsInLesson;
+      const selectedQuestionTypes = this.data.selectedQuestionTypes;
+      
+      if (!allWords || allWords.length === 0) {
+        console.warn('无尽模式：没有可用单词，进入结算');
+        this.endQuiz();
+        return;
+      }
+      
+      // 使用quizService的generateQuestions方法生成新题目
+      const newQuestions = quizService.generateQuestions(allWords, selectedQuestionTypes);
+      
+      if (newQuestions && newQuestions.length > 0) {
+        // 将新题目添加到现有题目列表
+        const updatedQuestions = [...this.data.questions, ...newQuestions];
+        
+        this.setData({
+          questions: updatedQuestions,
+          currentQuestionIndex: this.data.currentQuestionIndex + 1,
+          userAnswer: '',
+          selectedOption: null,
+          isUserAnswerEmpty: true,
+          showAnswerCard: false,
+          isCorrect: false,
+          showQuestion: true
+        });
+        
+        console.log(`无尽模式：已生成${newQuestions.length}道新题目，当前总题数：${updatedQuestions.length}`);
+      } else {
+        console.warn('无尽模式：无法生成更多题目，进入结算');
+        this.endQuiz();
+      }
+    } catch (error) {
+      console.error('无尽模式生成题目失败:', error);
+      this.endQuiz();
+    }
   },
 
   endQuiz: function() {
@@ -257,7 +332,7 @@ Page({
 
   onReady: function() {},
   onShow: function() {
-    if (!this.data.timer && this.data.questions.length > 0 && !this.data.showAnswerCard && this.data.currentQuestionIndex < (this.data.quizMode === 'quick' ? this.data.totalQuestions : this.data.questions.length)) {
+    if (!this.data.timer && this.data.questions.length > 0 && !this.data.showAnswerCard && this.data.currentQuestionIndex < (this.data.quizMode === 'quick' || this.data.quizMode === 'course' ? this.data.totalQuestions : this.data.questions.length)) {
       this.startTimer();
     }
   },
@@ -269,29 +344,35 @@ Page({
   },
   /**
    * 标记单词为已背
-   * @param {object} wordInfo - 单词信息对象
+   * @param {object} question - 完整的题目对象
    */
-  markWordAsLearned: function(wordInfo) {
+  markWordAsLearned: function(question) {
     try {
-      // 获取词典ID，优先使用当前词典ID，如果是'all'则尝试从单词来源获取
+      const wordInfo = question.wordInfo;
+      if (!wordInfo) {
+        console.error('标记已背失败：无效的单词信息', question);
+        return;
+      }
+
+      // 获取词典ID，优先使用当前词典ID，如果是'all'则尝试从题目自带的来源获取
       let dictionaryId = this.data.dictionaryId;
       
-      // 如果是混合模式('all')，尝试从单词的sourceDictionary字段获取
-      if (dictionaryId === 'all' && wordInfo.sourceDictionary) {
-        dictionaryId = wordInfo.sourceDictionary;
+      if (dictionaryId === 'all' && question.sourceDictionary) {
+        dictionaryId = question.sourceDictionary;
       }
       
-      // 如果仍然无法确定词典ID，记录警告但不阻止程序运行
+      // 如果仍然无法确定词典ID，则不进行标记
       if (!dictionaryId || dictionaryId === 'all') {
-        console.warn('无法确定单词所属词典，将使用默认词典标记:', wordInfo);
-        dictionaryId = 'everyones_japanese'; // 使用默认词典
+        console.warn('无法确定单词所属词典，不标记为已背:', question);
+        return;
       }
       
       // 调用学习进度管理器标记为已背
       const success = learnedManager.markWordAsLearned(wordInfo, dictionaryId);
       
       if (success) {
-        console.log(`单词已标记为已背: ${wordInfo['假名'] || wordInfo['汉字']} (${dictionaryId})`);
+        const wordIdentifier = wordInfo['假名'] || wordInfo['汉字'];
+        console.log(`单词已标记为已背: ${wordIdentifier} (${dictionaryId})`);
       }
     } catch (error) {
       console.error('标记单词为已背时出错:', error);

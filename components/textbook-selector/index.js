@@ -52,6 +52,7 @@ Component({
         const coverMap = {
           'everyones_japanese': '../../images/book/dajia.jpg',
           'liangs_class': '../../images/book/liang.jpg',
+          'liangs_intermediate': '../../images/book/liang2.jpg',
           'duolingguo': '../../images/book/duolingguo.jpg'
         };
         let wordCount = 0;

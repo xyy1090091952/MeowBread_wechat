@@ -94,7 +94,7 @@ const quizService = {
   /**
    * 为测验选择单词并生成问题
    * @param {Array} allWords - 所有单词
-   * @param {string} mode - 测验模式 ('quick' 或 'endless')
+   * @param {string} mode - 测验模式 ('quick', 'endless', 或 'course')
    * @param {Array} selectedQuestionTypes - 选择的题型
    * @returns {Array} - 最终的问题列表
    */
@@ -117,10 +117,123 @@ const quizService = {
 
     finalQuestions.sort(() => 0.5 - Math.random());
 
-    if (mode === 'quick') {
-      return finalQuestions.slice(0, Math.min(finalQuestions.length, 30));
+    // 快速模式和课程模式都限制为30道题，如果不足则从历史记录补充
+    if (mode === 'quick' || mode === 'course') {
+      const targetQuestionCount = 30;
+      
+      if (finalQuestions.length < targetQuestionCount) {
+        // 如果当前题目不足30道，尝试从历史答题记录中补充
+        const supplementQuestions = this.getSupplementQuestions(
+          finalQuestions, 
+          targetQuestionCount - finalQuestions.length, 
+          selectedQuestionTypes,
+          mode
+        );
+        
+        // 将补充的题目添加到原题目列表中
+        finalQuestions.push(...supplementQuestions);
+        
+        // 重新打乱顺序
+        finalQuestions.sort(() => 0.5 - Math.random());
+        
+        console.log(`课程单词不足，已从历史记录补充 ${supplementQuestions.length} 道题目，总计 ${finalQuestions.length} 道题`);
+      }
+      
+      return finalQuestions.slice(0, Math.min(finalQuestions.length, targetQuestionCount));
     }
     return finalQuestions;
+  },
+
+  /**
+   * 从历史答题记录中获取补充题目
+   * @param {Array} existingQuestions - 已有的题目列表
+   * @param {number} needCount - 需要补充的题目数量
+   * @param {Array} selectedQuestionTypes - 选择的题型
+   * @param {string} mode - 答题模式
+   * @returns {Array} - 补充的题目列表
+   */
+  getSupplementQuestions(existingQuestions, needCount, selectedQuestionTypes, mode) {
+    const supplementQuestions = [];
+    
+    try {
+      // 只在course模式下从历史记录补充
+      if (mode !== 'course') {
+        return supplementQuestions;
+      }
+      
+      // 获取当前课程的筛选信息
+      const quizFilter = filterManager.getFilter();
+      if (!quizFilter || !quizFilter.dictionaryId || !quizFilter.selectedLessonKey) {
+        return supplementQuestions;
+      }
+      
+      const { dictionaryId, selectedLessonKey } = quizFilter;
+      
+      // 获取该课程的历史已学单词
+      const learnedManager = require('./learnedManager.js');
+      const learnedWords = learnedManager.getLearnedWordsForCourse(dictionaryId, selectedLessonKey);
+      
+      if (learnedWords.length === 0) {
+        console.log('该课程暂无历史答题记录，无法补充题目');
+        return supplementQuestions;
+      }
+      
+      // 获取已有题目的单词ID集合，避免重复
+      const existingWordIds = new Set();
+      existingQuestions.forEach(question => {
+        if (question.wordInfo) {
+          const wordId = this.getWordId(question.wordInfo);
+          existingWordIds.add(wordId);
+        }
+      });
+      
+      // 从历史记录中筛选出未重复的单词
+      const availableHistoryWords = learnedWords.filter(learnedWord => {
+        const wordId = learnedWord.id;
+        return !existingWordIds.has(wordId);
+      });
+      
+      // 随机选择需要的数量
+      const shuffledHistoryWords = availableHistoryWords.sort(() => 0.5 - Math.random());
+      const selectedHistoryWords = shuffledHistoryWords.slice(0, needCount);
+      
+      // 为选中的历史单词生成题目
+      selectedHistoryWords.forEach(learnedWord => {
+        const randomTypeIndex = Math.floor(Math.random() * selectedQuestionTypes.length);
+        const randomQuestionType = selectedQuestionTypes[randomTypeIndex];
+        
+        // 将历史单词转换为题目格式需要的格式
+        const wordForQuestion = {
+          data: learnedWord.wordData,
+          sourceDictionary: dictionaryId,
+          lesson: selectedLessonKey
+        };
+        
+        const question = quizUtils.formatQuestion(wordForQuestion, randomQuestionType, [wordForQuestion]);
+        if (question) {
+          // 标记这是补充题目
+          question.isSupplementary = true;
+          supplementQuestions.push(question);
+        }
+      });
+      
+    } catch (error) {
+      console.error('获取补充题目失败:', error);
+    }
+    
+    return supplementQuestions;
+  },
+
+  /**
+   * 获取单词的唯一标识符（与learnedManager保持一致）
+   * @param {object} wordData - 单词数据对象
+   * @returns {string} 单词的唯一标识符
+   */
+  getWordId(wordData) {
+    const kana = wordData['假名'] || '';
+    const kanji = wordData['汉字'] || '';
+    const meaning = wordData['中文'] || '';
+    return `${kana}_${kanji}_${meaning}`.replace(/\s+/g, '');
   },
 
   /**
