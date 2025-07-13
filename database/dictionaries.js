@@ -5,6 +5,10 @@ module.exports = {
             "name": "大家的日语",
             "description": "大家的日语",
             "lesson_files": [
+                "everyones_japanese/lesson27.js",
+                "everyones_japanese/lesson28.js",
+                "everyones_japanese/lesson29.js",
+                "everyones_japanese/lesson30.js",
                 "everyones_japanese/lesson31.js",
                 "everyones_japanese/lesson32.js",
                 "everyones_japanese/lesson33.js",
@@ -13,14 +17,25 @@ module.exports = {
                 "everyones_japanese/lesson36.js",
                 "everyones_japanese/lesson37.js",
                 "everyones_japanese/lesson38.js",
+                "everyones_japanese/lesson39.js",
+                "everyones_japanese/lesson40.js",
+                "everyones_japanese/lesson41.js",
+                "everyones_japanese/lesson42.js",
+                "everyones_japanese/lesson43.js",
                 "everyones_japanese/lesson44.js",
-                "everyones_japanese/lesson45.js"
+                "everyones_japanese/lesson45.js",
+                "everyones_japanese/lesson46.js",
+                "everyones_japanese/lesson47.js",
+                "everyones_japanese/lesson48.js",
+                "everyones_japanese/lesson49.js",
+                "everyones_japanese/lesson50.js"
             ],
             "volumes": [
-            {"id":"volume1","name":"第一册","description":"大家的日语第一册","lessons":[31,32,33,34,35,36,37]},
-            {"id":"volume2","name":"第二册","description":"大家的日语第二册","lessons":[38,44,45]}
+            {"id":"volume1","name":"第一册","description":"大家的日语第一册","lessons":[30,31,32,33,34,35,36,37]},
+            {"id":"volume2","name":"第二册","description":"大家的日语第二册","lessons":[38,39,40,41,42,43,44,45,46,47,48,49,50]}
         ],
             "courses": [
+            {"courseNumber":30,"courseTitle":"第30课","lessonFile":"lesson30","description":"大家的日语第30课"},
             {"courseNumber":31,"courseTitle":"第31课","lessonFile":"lesson31","description":"大家的日语第31课"},
             {"courseNumber":32,"courseTitle":"第32课","lessonFile":"lesson32","description":"大家的日语第32课"},
             {"courseNumber":33,"courseTitle":"第33课","lessonFile":"lesson33","description":"大家的日语第33课"},
@@ -29,8 +44,18 @@ module.exports = {
             {"courseNumber":36,"courseTitle":"第36课","lessonFile":"lesson36","description":"大家的日语第36课"},
             {"courseNumber":37,"courseTitle":"第37课","lessonFile":"lesson37","description":"大家的日语第37课"},
             {"courseNumber":38,"courseTitle":"第38课","lessonFile":"lesson38","description":"大家的日语第38课"},
+            {"courseNumber":39,"courseTitle":"第39课","lessonFile":"lesson39","description":"大家的日语第39课"},
+            {"courseNumber":40,"courseTitle":"第40课","lessonFile":"lesson40","description":"大家的日语第40课"},
+            {"courseNumber":41,"courseTitle":"第41课","lessonFile":"lesson41","description":"大家的日语第41课"},
+            {"courseNumber":42,"courseTitle":"第42课","lessonFile":"lesson42","description":"大家的日语第42课"},
+            {"courseNumber":43,"courseTitle":"第43课","lessonFile":"lesson43","description":"大家的日语第43课"},
             {"courseNumber":44,"courseTitle":"第44课","lessonFile":"lesson44","description":"大家的日语第44课"},
-            {"courseNumber":45,"courseTitle":"第45课","lessonFile":"lesson45","description":"大家的日语第45课"}
+            {"courseNumber":45,"courseTitle":"第45课","lessonFile":"lesson45","description":"大家的日语第45课"},
+            {"courseNumber":46,"courseTitle":"第46课","lessonFile":"lesson46","description":"大家的日语第46课"},
+            {"courseNumber":47,"courseTitle":"第47课","lessonFile":"lesson47","description":"大家的日语第47课"},
+            {"courseNumber":48,"courseTitle":"第48课","lessonFile":"lesson48","description":"大家的日语第48课"},
+            {"courseNumber":49,"courseTitle":"第49课","lessonFile":"lesson49","description":"大家的日语第49课"},
+            {"courseNumber":50,"courseTitle":"第50课","lessonFile":"lesson50","description":"大家的日语第50课"}
         ]
         },
         {
