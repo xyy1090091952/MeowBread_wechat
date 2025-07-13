@@ -47,6 +47,14 @@ Page({
     // 卡片显示数据
     currentCard: null, // 当前显示的卡片数据
     nextCard: null, // 下一张卡片数据
+    currentCardStyleType: 1, // 当前卡片样式类型 (1-6循环)
+    nextCardStyleType: 2, // 下一张卡片样式类型 (1-6循环)
+    isTransitioning: false, // 是否正在进行卡片过渡动画
+    isNewCardEntering: false, // 新背景卡片是否正在入场
+    
+    // 背景卡片动画状态
+    backgroundCardTransform: 'rotate(-8deg) scale(0.9)', // 背景卡片的变换
+    backgroundCardOpacity: 0, // 背景卡片的透明度
   },
 
   /**
@@ -99,11 +107,22 @@ Page({
       currentFilterDisplay: ``, 
       currentCard: allWords[0] || null,
       nextCard: allWords[1] || null,
+      currentCardStyleType: this.calculateCardStyleType(0),
+      nextCardStyleType: this.calculateCardStyleType(1),
       isLoading: false
     });
     
     this.startTimer();
     this.triggerLoadAnimation();
+  },
+
+  /**
+   * 计算卡片样式类型 (1-6循环)
+   * @param {number} index - 卡片索引
+   * @returns {number} 样式类型 (1-6)
+   */
+  calculateCardStyleType: function(index) {
+    return (index % 6) + 1;
   },
 
   /**
@@ -177,11 +196,23 @@ Page({
     // 计算旋转角度（基于水平移动）
     const rotation = deltaX * 0.1; // 旋转系数
     
+    // 计算背景卡片的过渡进度（基于滑动距离）
+    const threshold = 100; // 滑动阈值
+    const progress = Math.min(Math.abs(deltaX) / threshold, 1); // 0-1之间的进度值
+    
+    // 计算背景卡片的状态
+    const backgroundRotation = -8 + (8 * progress); // 从-8deg过渡到0deg（完全正常状态）
+    const backgroundOpacity = 0 + (1 * progress); // 从0过渡到1
+    const backgroundScale = 0.9 + (0.1 * progress); // 从0.9过渡到1
+    
     this.setData({
       cardOffsetX: deltaX,
       cardOffsetY: limitedDeltaY,
       cardRotation: rotation,
-      cardTransform: `translateX(${deltaX}px) translateY(${limitedDeltaY}px) rotate(${rotation}deg)`
+      cardTransform: `translateX(${deltaX}px) translateY(${limitedDeltaY}px) rotate(${rotation}deg)`,
+      // 背景卡片的实时状态
+      backgroundCardTransform: `rotate(${backgroundRotation}deg) scale(${backgroundScale})`,
+      backgroundCardOpacity: backgroundOpacity
     });
   },
 
@@ -190,6 +221,9 @@ Page({
    */
   onTouchEnd: function(e) {
     if (this.data.isCardAnimating) return;
+    
+    // 设置动画状态，防止重复触发
+    this.setData({ isCardAnimating: true });
     
     const deltaX = this.data.cardOffsetX;
     const threshold = 100; // 滑动阈值
@@ -207,21 +241,20 @@ Page({
    * 卡片滑动处理
    */
   swipeCard: function(direction) {
-    this.setData({ isCardAnimating: true });
-    
     const finalX = direction === 'right' ? 400 : -400;
     const finalRotation = direction === 'right' ? 30 : -30;
     
-    // 执行滑出动画
+    // 执行滑出动画，背景卡片保持当前状态（已经在滑动过程中完成过渡）
     this.setData({
       cardTransform: `translateX(${finalX}px) translateY(${this.data.cardOffsetY}px) rotate(${finalRotation}deg)`
+      // 背景卡片不需要额外设置，已经在滑动过程中到达最终状态
     });
     
     // 记录学习结果
     const isRemembered = direction === 'right';
     this.recordStudyResult(isRemembered);
     
-    // 延迟切换到下一张卡片
+    // 延迟切换到下一张卡片（时间缩短）
     setTimeout(() => {
       this.nextCard();
     }, 300);
@@ -235,7 +268,11 @@ Page({
       cardTransform: 'translateX(0px) translateY(0px) rotate(0deg)',
       cardOffsetX: 0,
       cardOffsetY: 0,
-      cardRotation: 0
+      cardRotation: 0,
+      isCardAnimating: false,
+      // 重置背景卡片到初始状态
+      backgroundCardTransform: 'rotate(-8deg) scale(0.9)',
+      backgroundCardOpacity: 0
     });
   },
 
@@ -307,15 +344,21 @@ Page({
       return;
     }
     
+    // 直接切换到下一张卡片，背景卡片已经在滑动过程中完成了过渡
     this.setData({
       currentWordIndex: nextIndex,
-      currentCard: this.data.allWords[nextIndex],
-      nextCard: this.data.allWords[nextIndex + 1] || null,
+      currentCard: this.data.nextCard, // 直接使用已经加载的nextCard
+      currentCardStyleType: this.data.nextCardStyleType, // 使用已经计算好的样式类型
+      nextCard: this.data.allWords[nextIndex + 1] || null, // 加载新的背景卡片
+      nextCardStyleType: this.calculateCardStyleType(nextIndex + 1),
       isCardAnimating: false,
       cardTransform: 'translateX(0px) translateY(0px) rotate(0deg)',
       cardOffsetX: 0,
       cardOffsetY: 0,
-      cardRotation: 0
+      cardRotation: 0,
+      // 重置背景卡片到初始状态
+      backgroundCardTransform: 'rotate(-8deg) scale(0.9)',
+      backgroundCardOpacity: 0
     });
   },
 
@@ -352,6 +395,19 @@ Page({
    */
   onForgetClick: function() {
     this.swipeCard('left');
+  },
+
+  /**
+   * 退出复习模式
+   */
+  onExitStudy: function() {
+    // 清理计时器
+    this.clearTimer();
+    
+    // 返回上一页
+    wx.navigateBack({
+      delta: 1
+    });
   },
 
   /**

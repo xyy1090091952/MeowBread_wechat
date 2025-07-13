@@ -26,76 +26,100 @@
     </view>
   </view>
 
+  <!-- 标题模块 -->
+  <view class="title-section fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
+    <text class="main-title">復习模式</text>
+    <text class="subtitle">👈左滑忘记单词回到错题库，👉右滑记住</text>
+  </view>
+
   <!-- 卡片容器 -->
   <view class="card-container fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}">
+    <!-- 左侧快捷按钮 - 忘记 -->
+    <view class="card-side-button card-side-button-left" bindtap="onForgetClick">
+      <image class="card-side-button-icon left" src="/images/icons/arrow_right.svg"></image>
+    </view>
+    
+    <!-- 右侧快捷按钮 - 记住 -->
+    <view class="card-side-button card-side-button-right" bindtap="onRememberClick">
+      <image class="card-side-button-icon right" src="/images/icons/arrow_right.svg"></image>
+    </view>
+    
     <!-- 下一张卡片（背景卡片） -->
-    <view class="study-card background-card" wx:if="{{nextCard}}">
+    <view class="study-card background-card" wx:if="{{nextCard}}" style="transform: {{backgroundCardTransform}}; opacity: {{backgroundCardOpacity}}; transition: none;">
+      <!-- 白色不透明底 -->
+      <view class="card-white-background"></view>
+      <!-- 背景图片 -->
+      <image class="card-background-image" src="/images/card/N5-Card{{nextCardStyleType}}.jpg" mode="aspectFill"></image>
+      <!-- 背景遮罩 -->
+      <view class="card-background-overlay"></view>
+      
       <view class="card-header">
         <view class="word-main">
-          <text class="word-text">{{nextCard['汉字'] ? nextCard['汉字'] : nextCard['假名']}}</text>
+          <!-- 第一行：词性标签 -->
           <view class="part-of-speech-tag {{utils.mapPartOfSpeechToClassName(nextCard['词性'])}}">
             {{nextCard['词性']}}
           </view>
+          <!-- 第二行：单词文本 -->
+          <text class="word-text">{{nextCard['汉字'] ? nextCard['汉字'] : nextCard['假名']}}</text>
+          <!-- 第三行：汉字和中文 -->
+          <view class="word-details-line">
+            <text class="detail-value" wx:if="{{nextCard['汉字']}}">{{nextCard['汉字']}}</text>
+            <text class="separator" wx:if="{{nextCard['汉字']}}"> | </text>
+            <text class="detail-value">{{nextCard['中文']}}</text>
+          </view>
+          <!-- 第四行：例句 -->
+          <text class="example-line" wx:if="{{nextCard['例句']}}">例句：{{nextCard['例句']}}</text>
         </view>
       </view>
       <view class="card-content">
-        <view class="word-details">
-          <view class="detail-row" wx:if="{{nextCard['假名']}}">
-            <text class="detail-label">假名</text>
-            <text class="detail-value">{{nextCard['假名']}}</text>
-          </view>
-          <view class="detail-row" wx:if="{{nextCard['汉字']}}">
-            <text class="detail-label">汉字</text>
-            <text class="detail-value">{{nextCard['汉字']}}</text>
-          </view>
-          <view class="detail-row">
-            <text class="detail-label">中文</text>
-            <text class="detail-value">{{nextCard['中文']}}</text>
-          </view>
-          <view class="detail-row example-row" wx:if="{{nextCard['例句']}}">
-            <text class="detail-label">例句</text>
-            <text class="detail-value example-text">{{nextCard['例句']}}</text>
-          </view>
+        <!-- 课程节数 -->
+        <view class="lesson-number">
+          <text>第{{nextCard['课程节数'] || 1}}课</text>
         </view>
       </view>
     </view>
 
-    <!-- 当前卡片（前景卡片） -->
+    <!-- 当前卡片触发区域（扩大的触摸区域） -->
     <view 
-      class="study-card current-card {{isCardAnimating ? 'animating' : ''}}" 
+      class="card-touch-area {{isCardAnimating ? 'animating' : ''}}" 
       wx:if="{{currentCard}}"
-      style="transform: {{cardTransform}}; transition: {{isCardAnimating ? 'transform 0.3s ease-out' : 'none'}};"
       bindtouchstart="onTouchStart"
       bindtouchmove="onTouchMove"
       bindtouchend="onTouchEnd">
       
+      <!-- 当前卡片（前景卡片） -->
+      <view class="study-card current-card" style="transform: {{cardTransform}}; transition: {{isCardAnimating ? 'transform 0.3s ease-out' : 'none'}};">
+      
+      <!-- 白色不透明底 -->
+      <view class="card-white-background"></view>
+      <!-- 背景图片 -->
+      <image class="card-background-image" src="/images/card/N5-Card{{currentCardStyleType}}.jpg" mode="aspectFill"></image>
+      <!-- 背景遮罩 -->
+      <view class="card-background-overlay"></view>
+      
       <view class="card-header">
         <view class="word-main">
-          <text class="word-text">{{currentCard['汉字'] ? currentCard['汉字'] : currentCard['假名']}}</text>
+          <!-- 第一行：词性标签 -->
           <view class="part-of-speech-tag {{utils.mapPartOfSpeechToClassName(currentCard['词性'])}}">
             {{currentCard['词性']}}
           </view>
+          <!-- 第二行：单词文本 -->
+          <text class="word-text">{{currentCard['汉字'] ? currentCard['汉字'] : currentCard['假名']}}</text>
+          <!-- 第三行：汉字和中文 -->
+          <view class="word-details-line">
+            <text class="detail-value" wx:if="{{currentCard['汉字']}}">{{currentCard['汉字']}}</text>
+            <text class="separator" wx:if="{{currentCard['汉字']}}"> | </text>
+            <text class="detail-value">{{currentCard['中文']}}</text>
+          </view>
+          <!-- 第四行：例句 -->
+          <text class="example-line" wx:if="{{currentCard['例句']}}">例句：{{currentCard['例句']}}</text>
         </view>
       </view>
       
       <view class="card-content">
-        <view class="word-details">
-          <view class="detail-row" wx:if="{{currentCard['假名']}}">
-            <text class="detail-label">假名</text>
-            <text class="detail-value">{{currentCard['假名']}}</text>
-          </view>
-          <view class="detail-row" wx:if="{{currentCard['汉字']}}">
-            <text class="detail-label">汉字</text>
-            <text class="detail-value">{{currentCard['汉字']}}</text>
-          </view>
-          <view class="detail-row">
-            <text class="detail-label">中文</text>
-            <text class="detail-value">{{currentCard['中文']}}</text>
-          </view>
-          <view class="detail-row example-row" wx:if="{{currentCard['例句']}}">
-            <text class="detail-label">例句</text>
-            <text class="detail-value example-text">{{currentCard['例句']}}</text>
-          </view>
+        <!-- 课程节数 -->
+        <view class="lesson-number">
+          <text>第{{currentCard['课程节数'] || 1}}课</text>
         </view>
       </view>
       
@@ -108,32 +132,24 @@
           <text>记住了</text>
         </view>
       </view>
+      </view>
     </view>
   </view>
 
   <!-- 操作按钮 -->
-  <view class="action-buttons fade-in-element fade-delay-4 {{pageLoaded ? 'show' : ''}}" wx:if="{{!isCardAnimating}}">
+  <view class="action-buttons fade-in-element fade-delay-4 {{pageLoaded ? 'show' : ''}}">
     <button class="action-button forget-button" bindtap="onForgetClick">
-      <text>没记住</text>
+      <text>忘记 {{forgottenCount}}</text>
     </button>
     <button class="action-button remember-button" bindtap="onRememberClick">
-      <text>记住了</text>
+      <text>记住 {{rememberedCount}}</text>
     </button>
   </view>
 
-  <!-- 学习统计 -->
-  <view class="study-stats fade-in-element fade-delay-5 {{pageLoaded ? 'show' : ''}}">
-    <view class="stat-item">
-      <text class="stat-number">{{rememberedCount}}</text>
-      <text class="stat-label">记住</text>
-    </view>
-    <view class="stat-item">
-      <text class="stat-number">{{forgottenCount}}</text>
-      <text class="stat-label">忘记</text>
-    </view>
-    <view class="stat-item">
-      <text class="stat-number">{{studiedCount}}</text>
-      <text class="stat-label">总计</text>
+  <!-- 退出按钮 -->
+  <view class="exit-button-container fade-in-element fade-delay-5 {{pageLoaded ? 'show' : ''}}">
+    <view class="next-button full-width-button" bindtap="onExitStudy">
+      退出復习模式
     </view>
   </view>
 </view>

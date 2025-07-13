@@ -19,7 +19,7 @@
 
 .result-card {
   text-align: center;
-  margin-top: 100rpx; /* 改为100rpx，进一步向上移动 */
+  margin-top: 160rpx; 
   margin-bottom: 5vh;
 }
 
@@ -40,7 +40,6 @@
   justify-content: space-between;
   width: 90%;
   gap: 20rpx; /* 10px → 20rpx */
-  margin-bottom: 8vh;
 }
 
 .stat-item {
@@ -131,27 +130,27 @@ button.done-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 20px;
+  width: 480rpx;
+  margin-top: 32px;
   padding: 10px 20px;
-  background-color: #FFF8E1; /* 淡黄色背景，突出显示 */
+  background: linear-gradient(to right, #FEE78B, #FFFFFF) !important; /* 从淡黄色到白色的渐变背景 */
   border-radius: 20px;
-  border: 1px solid #FFD180;
 }
 
 .coin-icon {
   width: 24px;
   height: 24px;
-  margin-right: 10px;
+  margin-left: 10px; /* 改为左边距，因为图标现在在文字后面 */
 }
 
 .coins-text {
   font-size: 16px;
-  color: #5D4037; /* 深棕色字体 */
+  color: #000000; /* 黑色字体 */
 }
 
 .coins-value {
   font-weight: bold;
-  color: #FF8F00; /* 橙色，突出显示金币数量 */
+  color: #000000; /* 黑色字体 */
   margin: 0 4px;
 }
 

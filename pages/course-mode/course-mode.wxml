@@ -33,7 +33,7 @@
       </view>
       <view class="course-actions">
         <view class="action-card" data-course="{{item}}" bindtap="onCardStudyTap">
-          <image class="action-icon" src="/images/icons/card.svg" mode="aspectFit"></image>
+          <image class="action-icon card-icon {{item.isCompleted ? 'card-icon-completed' : ''}}" src="/images/icons/card.svg" mode="aspectFit" wx:if="{{item.isCompleted}}"></image>
           <text class="action-text">卡片</text>
         </view>
         <view class="action-quiz" data-course="{{item}}" bindtap="onQuizTap">

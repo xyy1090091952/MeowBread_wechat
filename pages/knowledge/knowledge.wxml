@@ -23,7 +23,7 @@
   <!-- 内容区域 DIV2 -->
   <view class="content-area fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
     <!-- 第一个分类的内容 -->
-    <view wx:if="{{selectedCategory === 1}}" class="content-grid">
+    <view wx:if="{{selectedCategory === 1}}" class="content-grid" style="width: {{containerWidth}}rpx;">
       <view 
         class="content-card slide-in-card {{contentLoaded ? 'show' : ''}}" 
         wx:for="{{grammarCards}}" 
@@ -40,7 +40,7 @@
           </view>
         </view>
         <!-- 下半部分 - 标题区域 -->
-        <view class="card-title-section">
+        <view class="card-title-section card-style-{{item.styleType}}">
           <text class="card-title">{{item.title}}</text>
         </view>
       </view>
