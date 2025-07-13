@@ -17,7 +17,8 @@ Page({
     isLoading: true, // 加载状态
     isCourseSelectorVisible: false, // 控制课程范围选择弹窗的显示
     courseSelectorOptions: [], // 课程范围选择器的选项
-    selectedCourseRange: { label: '全部课程', value: 'all' } // 当前选择的课程范围
+    selectedCourseRange: { label: '全部课程', value: 'all' }, // 当前选择的课程范围
+    filterTitleDisplay: '全部课程' // 筛选器标题
   },
 
   /**
@@ -255,32 +256,21 @@ Page({
    */
   onCourseSelectorConfirm(e) {
     const { value } = e.detail;
-    // 从选项列表中找到用户选择的项
     const selectedOption = this.data.courseSelectorOptions.find(opt => opt.value === value);
-    
-    if (selectedOption) {
-      // 如果找到了选项，则更新当前选择的课程范围
-      this.setData({
-        selectedCourseRange: {
-          label: selectedOption.label,
-          value: selectedOption.value
-        },
-        isCourseSelectorVisible: false // 关闭选择弹窗
-      });
-      
-      // 重新加载课程数据以应用新的筛选条件
-      this.loadCourseData();
-    } else {
-      // 如果没有找到选项（异常情况），则仅隐藏弹窗
-      this.hideCourseSelector();
-    }
-    
+
     if (selectedOption) {
       this.setData({
         selectedCourseRange: selectedOption,
+        isCourseSelectorVisible: false,
+        filterTitleDisplay: selectedOption.label // 更新筛选器标题
+      });
+
+      // 重新加载课程数据
+      this.loadCourseData();
+    } else {
+      this.setData({
         isCourseSelectorVisible: false
       });
-      this.loadCourseData(); // 重新加载数据
     }
   },
 

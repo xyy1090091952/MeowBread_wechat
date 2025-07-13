@@ -8,7 +8,7 @@
   <!-- 筛选器模块 -->
   <view class="filter-module fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}" bindtap="showCourseSelector">
     <view class="filter-content">
-      <text class="filter-title">课程地图</text>
+      <text class="filter-title">{{filterTitleDisplay}}</text>
       <text class="filter-subtitle">{{courseData.length}}个课程</text>
     </view>
     <image class="filter-arrow" src="/images/icons/arrow_right.svg"></image>
