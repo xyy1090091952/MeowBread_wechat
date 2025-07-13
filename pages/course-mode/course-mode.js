@@ -3,6 +3,8 @@ const filterManager = require('../../utils/filterManager.js');
 const courseDataManager = require('../../utils/courseDataManager.js');
 const learnedManager = require('../../utils/learnedManager.js');
 
+const dictionaries = require('../../database/dictionaries.js');
+
 Page({
 
   /**
@@ -12,7 +14,10 @@ Page({
     currentFilterDisplay: '', // 当前筛选显示文本
     pageLoaded: false, // 控制页面渐显动画
     courseData: [], // 课程数据
-    isLoading: true // 加载状态
+    isLoading: true, // 加载状态
+    isCourseSelectorVisible: false, // 控制课程范围选择弹窗的显示
+    courseSelectorOptions: [], // 课程范围选择器的选项
+    selectedCourseRange: { label: '全部课程', value: 'all' } // 当前选择的课程范围
   },
 
   /**
@@ -124,12 +129,16 @@ Page({
 
       console.log('Final textbook to load:', textbook);
 
-      // 根据教材加载课程数据
-      const courseList = courseDataManager.getAllCourseDetails(textbook);
+      // 更新课程选择器选项
+      this.updateCourseSelectorOptions(textbook);
+
+      // 根据教材和选定的课程范围加载课程数据
+      const selectedRangeValue = this.data.selectedCourseRange.value;
+      const courseList = courseDataManager.getCourseDetailsByVolume(textbook, selectedRangeValue);
       
       if (!courseList || courseList.length === 0) {
-        console.warn(`No courses found for textbook: ${textbook}, falling back to default`);
-        this.loadDefaultCourseData();
+        console.warn(`No courses found for textbook: ${textbook} and range: ${selectedRangeValue}`);
+        this.setData({ courseData: [], isLoading: false });
         return;
       }
       
@@ -195,6 +204,84 @@ Page({
       courseData: courseDataWithProgress,
       isLoading: false
     });
+  },
+
+  /**
+   * 更新课程选择器的选项
+   */
+  updateCourseSelectorOptions(textbookKey) {
+    // 从总的字典数据中找到当前教材
+    const dictionary = dictionaries.dictionaries.find(d => d.id === textbookKey);
+
+    // 检查教材是否存在，以及是否包含分册信息
+    if (!dictionary || !dictionary.volumes || dictionary.volumes.length === 0) {
+      // 如果没有分册信息，则默认只提供“全部课程”选项
+      this.setData({ 
+        courseSelectorOptions: [{ label: '全部课程', value: 'all' }] 
+      });
+      return;
+    }
+
+    // 将分册信息格式化为选择器所需的数组格式
+    const options = dictionary.volumes.map(volume => ({
+      label: volume.name, // 选项显示名
+      value: volume.id, // 选项唯一标识
+      sublabel: volume.description // 选项的描述
+    }));
+
+    // 在选项列表的开头添加“全部课程”选项
+    options.unshift({ label: '全部课程', value: 'all' });
+
+    // 更新页面的课程选择器选项
+    this.setData({ courseSelectorOptions: options });
+  },
+
+  /**
+   * 显示课程范围选择弹窗
+   */
+  showCourseSelector() {
+    this.setData({ isCourseSelectorVisible: true });
+  },
+
+  /**
+   * 隐藏课程范围选择弹窗
+   */
+  hideCourseSelector() {
+    this.setData({ isCourseSelectorVisible: false });
+  },
+
+  /**
+   * 处理课程范围选择确认事件
+   */
+  onCourseSelectorConfirm(e) {
+    const { value } = e.detail;
+    // 从选项列表中找到用户选择的项
+    const selectedOption = this.data.courseSelectorOptions.find(opt => opt.value === value);
+    
+    if (selectedOption) {
+      // 如果找到了选项，则更新当前选择的课程范围
+      this.setData({
+        selectedCourseRange: {
+          label: selectedOption.label,
+          value: selectedOption.value
+        },
+        isCourseSelectorVisible: false // 关闭选择弹窗
+      });
+      
+      // 重新加载课程数据以应用新的筛选条件
+      this.loadCourseData();
+    } else {
+      // 如果没有找到选项（异常情况），则仅隐藏弹窗
+      this.hideCourseSelector();
+    }
+    
+    if (selectedOption) {
+      this.setData({
+        selectedCourseRange: selectedOption,
+        isCourseSelectorVisible: false
+      });
+      this.loadCourseData(); // 重新加载数据
+    }
   },
 
   /**

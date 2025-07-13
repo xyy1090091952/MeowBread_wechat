@@ -56,20 +56,41 @@
 
 .filter-module {
   width: 100%;
-  height: 128rpx;
-  background-color: #f8f9fa;
-  border-radius: 24rpx;
+  height: 64px; /* 根据Figma调整高度 */
+  background-color: #FFFFFF; /* 根据Figma调整背景色 */
+  border-radius: 24px; /* 根据Figma调整圆角 */
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   margin-bottom: 32rpx;
-  border: 2rpx solid #e9ecef;
+  padding: 0 24px; /* 根据Figma调整内边距 */
+  box-sizing: border-box;
+  box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.12); /* 根据Figma添加阴影 */
 }
 
-.filter-placeholder {
-  font-size: 28rpx;
-  color: #666666;
-  font-weight: 400;
+.filter-content {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* 根据Figma设置间距 */
+}
+
+.filter-title {
+  font-family: Inter, sans-serif; /* 根据Figma设置字体 */
+  font-size: 16px; /* 根据Figma设置字号 */
+  font-weight: 700; /* 根据Figma设置字重 */
+  color: #000000; /* 根据Figma设置颜色 */
+}
+
+.filter-subtitle {
+  font-family: 'PingFang SC', sans-serif; /* 根据Figma设置字体 */
+  font-size: 12px; /* 根据Figma设置字号 */
+  font-weight: 500; /* 根据Figma设置字重 */
+  color: #666666; /* 根据Figma设置颜色 */
+}
+
+.filter-arrow {
+  width: 16px; /* 根据Figma调整尺寸 */
+  height: 16px; /* 根据Figma调整尺寸 */
 }
 
 /* ==================== 课程模块样式 ==================== */
@@ -256,4 +277,4 @@
   font-size: 24rpx;
   color: #666666;
   font-weight: 400;
-} 
+}

@@ -137,6 +137,9 @@ class CourseDataManager {
    * @returns {Array} 课程详细信息列表
    */
   getCourseDetailsByVolume(textbookId, volumeId) {
+    if (volumeId === 'all' || !volumeId) {
+      return this.getAllCourseDetails(textbookId);
+    }
     const courseList = this.getCoursesByVolume(textbookId, volumeId);
     return courseList.map(course => this.getCourseDetails(textbookId, course.courseNumber));
   }
