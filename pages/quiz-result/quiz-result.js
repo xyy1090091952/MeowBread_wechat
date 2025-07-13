@@ -11,6 +11,7 @@ Page({
     resultText: '',
     resultImage: '',
     formattedTime: '00:00',
+    from: '', // 新增：页面来源，例如 'course'
     fromMistakes: false, // 默认不是从错题库来
     bubbleText: '',
     bubbleColor: '',
@@ -18,7 +19,7 @@ Page({
   },
 
   onLoad: function (options) {
-    const { score, totalQuestions, timeSpent, accuracy, resultLevel, coinsEarned } = options; // 新增：获取金币数量
+    const { score, totalQuestions, timeSpent, accuracy, resultLevel, coinsEarned, from } = options; // 新增：获取金币数量和来源
 
     const resultInfo = {
       noob: {
@@ -44,6 +45,7 @@ Page({
     const accuracyPercentage = (parseFloat(accuracy) * 100).toFixed(0);
 
     this.setData({
+      from: from, // 设置页面来源
       fromMistakes: options.fromMistakes === 'true',
       score: parseInt(score, 10) || 0,
       totalQuestions: parseInt(totalQuestions, 10) || 0,
@@ -115,8 +117,8 @@ Page({
   },
 
   handleDone: function () {
-    if (this.data.fromMistakes) {
-      // 如果是从错题库来的，则返回上一页，即错题库页面
+    // 如果是从课程模式或者错题库来的，则返回上一页
+    if (this.data.from === 'course' || this.data.fromMistakes) {
       wx.navigateBack();
     } else {
       // 否则，返回答题首页

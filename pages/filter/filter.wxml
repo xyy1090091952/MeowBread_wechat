@@ -1,6 +1,7 @@
 <!--pages/filter/filter.wxml-->
 <textbook-selector
   visible="{{isSelectorVisible}}"
+  currentBookId="{{dictionaries[selectedDictionaryIndex].id}}"
   bind:select="onConfirmTextbook"
   bind:close="onCancelTextbook"
 />

@@ -1,0 +1,24 @@
+<!--components/course-selector/index.wxml-->
+<view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="closePopup" catchtouchmove="stopPropagation"></view>
+<view class="popup-container {{visible ? 'popup-show' : ''}}" catchtouchmove="preventPropagation">
+  <view class="popup-content">
+    <view class="popup-header">
+      <text class="popup-title">内容选择</text>
+    </view>
+
+    <view class="options-group">
+      <view 
+        wx:for="{{options}}" 
+        wx:key="value" 
+        class="option-item {{selectedValue === item.value ? 'selected' : ''}}"
+        bindtap="onSelect"
+        data-value="{{item.value}}"
+      >
+        <text class="option-label">{{item.label}}</text>
+        <text class="option-sublabel" wx:if="{{item.sublabel}}">{{item.sublabel}}</text>
+      </view>
+    </view>
+
+    <view class="confirm-button" bindtap="onConfirm">确认</view>
+  </view>
+</view>

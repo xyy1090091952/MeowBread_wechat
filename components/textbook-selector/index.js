@@ -7,12 +7,24 @@ Component({
     visible: {
       type: Boolean,
       value: false
+    },
+    /**
+     * @description 当前选中的课本ID
+     * @type {String}
+     */
+    currentBookId: {
+      type: String,
+      value: null
     }
   },
 
   observers: {
     'visible': function(newVal, oldVal) {
       if (newVal && !oldVal) {
+        // 当弹窗显示时，自动选中当前正在使用的课本
+        this.setData({
+          selectedBookId: this.data.currentBookId
+        });
         // 弹窗显示时添加渐显动画
         this.setData({
           modalAnimationClass: ''

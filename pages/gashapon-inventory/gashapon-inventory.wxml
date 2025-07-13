@@ -1,8 +1,14 @@
 <!--pages/gashapon-inventory/gashapon-inventory.wxml-->
 <view class="container">
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="id" class="tab-item {{activeTab === item.id ? 'active' : ''}}" data-id="{{item.id}}" bindtap="switchTab">
+      {{item.name}}
+    </view>
+  </view>
+
   <!-- 主展示区域的 Swiper -->
   <swiper class="prize-swiper" circular="true" bindchange="onSwiperChange" current="{{currentSwiperIndex}}">
-    <block wx:for="{{allPrizes}}" wx:key="id">
+    <block wx:for="{{displayPrizes}}" wx:key="id">
       <swiper-item>
         <view class="prize-item {{item.unlocked ? '' : 'locked'}}">
           <image class="prize-image" src="{{item.image}}" mode="aspectFit"></image>
@@ -18,7 +24,7 @@
 
   <!-- 缩略图导航 -->
   <scroll-view class="thumbnail-nav" scroll-x="true" scroll-left="{{scrollLeft}}" scroll-with-animation="true">
-    <block wx:for="{{allPrizes}}" wx:key="id">
+    <block wx:for="{{displayPrizes}}" wx:key="id">
       <!-- 包装层，用于处理布局和点击 -->
       <view class="thumbnail-wrapper" id="thumb-{{index}}" bindtap="switchSwiper" data-index="{{index}}">
         <view class="thumbnail-item {{index === currentSwiperIndex ? 'active' : ''}}">

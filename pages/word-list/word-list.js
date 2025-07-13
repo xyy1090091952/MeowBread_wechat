@@ -26,7 +26,6 @@ Page({
     // 获取传递过来的词典ID
     const dictionaryId = options.dictionaryId;
     if (dictionaryId) {
-      this.initializeCourseGroups(dictionaryId); // 初始化课程集合
       this.loadWordList(dictionaryId);
     } else {
       wx.showToast({
@@ -87,52 +86,7 @@ Page({
     return range;
   },
 
-  /**
-   * 获取回退的课程分组（当无法从课程信息文件获取时）
-   * @param {string} dictionaryId - 词典ID
-   * @returns {Array} 课程分组
-   */
-  getFallbackCourseGroups(dictionaryId) {
-    // 为不同词典提供回退的课程分组
-    switch (dictionaryId) {
-      case 'liangs_class':
-        return [
-          {
-            id: 'upper',
-            name: '初级上',
-            lessons: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-          },
-          {
-            id: 'lower', 
-            name: '初级下',
-            lessons: [17, 18, 19, 20, 21, 22, 23, 24, 25]
-          }
-        ];
-      case 'everyones_japanese':
-        return [
-          {
-            id: 'volume1',
-            name: '第一册',
-            lessons: [31, 32, 33, 34, 35, 36, 37]
-          },
-          {
-            id: 'volume2',
-            name: '第二册', 
-            lessons: [38, 44, 45]
-          }
-        ];
-      case 'duolingguo':
-        return [
-          {
-            id: 'complete',
-            name: '完整版',
-            lessons: [1, 2, 3, 5]
-          }
-        ];
-      default:
-        return [];
-    }
-  },
+
 
   /**
    * 从文件名推断课程号
@@ -221,6 +175,7 @@ Page({
       currentDictionary: dictionary,
       currentDictName: dictionary.name,
       wordList: allWords,
+      courseGroups: dictionary.volumes || [], // 从词典数据加载分册信息
       filteredWordList: null, // 重置筛选列表
       selectedCourse: 'all', // 重置课程选择
       selectedCourseName: '全部课程', // 重置课程名称显示

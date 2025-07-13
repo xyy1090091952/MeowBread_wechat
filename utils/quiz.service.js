@@ -26,7 +26,7 @@ const quizService = {
       const questions = this.generateQuestions(allWordsInLesson, selectedQuestionTypes);
 
       return {
-        quizMode: 'endless',
+        quizMode: 'mistakes', // 修复：错题重练模式应该有独立的标识
         allWordsInLesson,
         questions,
         totalQuestions: questions.length,
