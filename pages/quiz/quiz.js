@@ -350,9 +350,12 @@ Page({
    */
   markWordAsLearned: function(question) {
     try {
-      const wordInfo = question.wordInfo;
-      if (!wordInfo) {
-        console.error('标记已背失败：无效的单词信息', question);
+      // 从问题对象中获取原始、完整的单词信息
+      const originalQuestion = this.data.questions[this.data.currentQuestionIndex];
+      const wordInfo = originalQuestion ? originalQuestion.wordInfo : null;
+
+      if (!wordInfo || !wordInfo['假名'] || !wordInfo['中文']) {
+        console.error('标记已背失败：无效或不完整的单词信息', question);
         return;
       }
 

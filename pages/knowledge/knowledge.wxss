@@ -131,8 +131,7 @@
 .content-grid {
   position: relative;
   height: 100%;
-  width: 880rpx; /* 精确计算：最后一张卡片位置(480rpx) + 卡片宽度(400rpx) = 880rpx */
-  padding-right: 48rpx; /* 右边距48rpx，与category-scroll-wrapper保持一致 */
+  /* width 现在通过 style 属性动态设置 */
   display: inline-block; /* 支持水平滚动 */
   vertical-align: top; /* 顶部对齐 */
 }
@@ -140,13 +139,12 @@
 /* 内容卡片 DIV3 */
 .content-card {
   position: absolute;
-  width: 400rpx; /* 200px */
-  height: auto; /* 改为自适应高度，避免底部白色条 */
-  min-height: 400rpx; /* 设置最小高度保持卡片基本尺寸 */
-  border-radius: 32rpx;
+  width: 400rpx; /* 200px - 卡片宽度 */
+  height: 624rpx; /* 312px - 固定高度，上半部分512rpx + 下半部分112rpx */
+  border-radius: 32rpx; /* 16px - 圆角 */
   overflow: hidden;
   background-color: #ffffff;
-  box-shadow: 16rpx 16rpx 64rpx rgba(0,0,0,0.08);
+  box-shadow: 16rpx 16rpx 64rpx rgba(0,0,0,0.08); /* 投影效果 */
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -155,23 +153,41 @@
   transform: translateY(-8rpx);
 }
 
-/* 卡片叠加位置设置 */
+/* 卡片叠加位置设置 - 支持6个卡片，调整间距和高度范围 */
 .content-card:nth-child(1) {
-  top: 120rpx; /* 60px */
+  top: 180rpx; /* 扩展高度范围：原80rpx调整到0-300区间 */
   left: 0rpx; /* 0px */
   z-index: 1;
 }
 
 .content-card:nth-child(2) {
-  top: 0rpx; /* 0px */
-  left: 240rpx; /* 120px，恢复到合适的偏移距离 */
+  top: 0rpx; /* 保持最高位置 */
+  left: 280rpx; /* 调整间距：240rpx -> 280rpx */
   z-index: 2;
 }
 
 .content-card:nth-child(3) {
-  top: 160rpx; /* 80px */
-  left: 480rpx; /* 240px，现在有足够空间可以放置 */
+  top: 260rpx; /* 扩展高度范围：原120rpx调整到0-300区间 */
+  left: 560rpx; /* 调整间距：480rpx -> 560rpx */
   z-index: 3;
+}
+
+.content-card:nth-child(4) {
+  top: 80rpx; /* 扩展高度范围：原40rpx调整到0-300区间 */
+  left: 840rpx; /* 调整间距：720rpx -> 840rpx */
+  z-index: 4;
+}
+
+.content-card:nth-child(5) {
+  top: 300rpx; /* 扩展高度范围：原140rpx调整到0-300区间 */
+  left: 1120rpx; /* 调整间距：960rpx -> 1120rpx */
+  z-index: 5;
+}
+
+.content-card:nth-child(6) {
+  top: 120rpx; /* 扩展高度范围：原60rpx调整到0-300区间 */
+  left: 1400rpx; /* 调整间距：1200rpx -> 1400rpx */
+  z-index: 6;
 }
 
 /* 上半部分 - 背景图片区域 */
@@ -224,8 +240,31 @@
   align-items: center;
   padding: 0 48rpx; /* 左右边距24px */
   box-sizing: border-box;
-  /* 添加从左到右的渐变背景：F0F6FC到CFE2FF */
-  background: linear-gradient(to right, #F0F6FC 0%, #CFE2FF 100%);
+}
+
+/* 6种不同的卡片标题区域渐变样式 */
+.card-title-section.card-style-1 {
+  background: linear-gradient(to right, #EEE0FF 0%, #F0F6FC 100%);
+}
+
+.card-title-section.card-style-2 {
+  background: linear-gradient(to right, #DBDAFF 0%, #EDF6FF 100%);
+}
+
+.card-title-section.card-style-3 {
+  background: linear-gradient(to right, #FFCFE1 0%, #FFFAFC 100%);
+}
+
+.card-title-section.card-style-4 {
+  background: linear-gradient(to right, #E3FFC5 0%, #EBFFF0 100%);
+}
+
+.card-title-section.card-style-5 {
+  background: linear-gradient(to right, #B2F3F4 0%, #F6FFFD 100%);
+}
+
+.card-title-section.card-style-6 {
+  background: linear-gradient(to right, #E7FFAE 0%, #FFFFEA 100%);
 }
 
 .card-title {
@@ -258,7 +297,7 @@
   transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* 为每张卡片设置不同的动画延迟 */
+/* 为每张卡片设置不同的动画延迟 - 支持6个卡片 */
 .slide-in-card:nth-child(1).show {
   transition-delay: 0s; /* 卡片1立即进入 */
 }
@@ -269,6 +308,18 @@
 
 .slide-in-card:nth-child(3).show {
   transition-delay: 0.3s; /* 卡片3延迟0.3s */
+}
+
+.slide-in-card:nth-child(4).show {
+  transition-delay: 0.45s; /* 卡片4延迟0.45s */
+}
+
+.slide-in-card:nth-child(5).show {
+  transition-delay: 0.6s; /* 卡片5延迟0.6s */
+}
+
+.slide-in-card:nth-child(6).show {
+  transition-delay: 0.75s; /* 卡片6延迟0.75s */
 }
 
 

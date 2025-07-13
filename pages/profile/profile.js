@@ -367,10 +367,11 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-    // 每次显示页面时重新检查登录状态
+    console.log('Profile page onShow');
+    // 检查登录状态，以防在其他页面进行了登录/登出操作
     this.checkLoginStatus();
-    
-    // 更新TabBar选中状态
+
+    // 重要的：更新自定义底部导航的选中状态，确保高亮正确
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       const page = getCurrentPages().pop();
       const route = page.route;

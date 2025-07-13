@@ -216,6 +216,15 @@
   display: none; /* 隐藏文字，保持原始图标样式 */
 }
 
+/* 已完成课程的卡片图标样式 - SVG文件已直接更新颜色 */
+.card-icon-completed {
+  /* SVG文件本身已包含正确颜色，无需额外的filter处理 */
+}
+
+.course-actions .action-text {
+  font-size: 24rpx;
+}
+
 /* ==================== 加载状态样式 ==================== */
 
 .loading-container {

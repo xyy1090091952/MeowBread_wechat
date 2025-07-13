@@ -61,32 +61,32 @@
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 40rpx;
+  margin-top: 24rpx;
 }
 
 .progress-bar-wrapper {
   flex-grow: 1;
   position: relative;
-  height: 48rpx;
+  height: 24px; /* 根据Figma调整 */
   display: flex;
   align-items: center;
   box-sizing: border-box;
 }
 
 .progress-bar-background {
-  background-color: #EEEEEE;
-  height: 16rpx;
+  background-color: #EEEEEE; /* Figma: #EEEEEE */
+  height: 16px; /* Figma: 16px */
   width: 100%;
-  border-radius: 24rpx;
+  border-radius: 24px; /* Figma: 24px */
   overflow: hidden;
   position: absolute;
 }
 
 .progress-bar-foreground {
-  background: linear-gradient(to right, #F0F7FC, #4845F7);
+  background: linear-gradient(to right, #F0F7FC, #4845F7); /* Figma: 渐变 */
   height: 100%;
-  min-width: 16rpx;
-  border-radius: 24rpx;
+  min-width: 16px; /* 最小宽度等于高度，保持圆形效果 */
+  border-radius: 24px;
   transition: width 0.3s ease-in-out;
 }
 
@@ -106,46 +106,106 @@
 .timer-box {
   display: flex;
   align-items: center;
-  background: linear-gradient(to right, #F0F6FC, #CFE2FF);
-  border-radius: 24rpx;
-  padding: 12rpx 24rpx;
-  margin-left: 48rpx;
-  height: 48rpx;
+  background: linear-gradient(to right, #F0F6FC, #CFE2FF); /* Figma: 渐变 */
+  border-radius: 24px; /* Figma: 24px */
+  padding: 6px 12px;
+  margin-left: 24px; /* Increased from 16px to prevent overlap */
+  height: 24px; /* Figma: 24px */
   box-sizing: border-box;
 }
 
 .timer-icon {
-  width: 24rpx;
-  height: 24rpx;
-  margin-right: 12rpx;
+  width: 12px; /* Figma: 12px */
+  height: 12px;
+  margin-right: 6px;
 }
 
 .timer-text {
-  font-size: 24rpx;
-  font-weight: 700;
-  color: #000000;
+  font-size: 12px; /* Figma: 12px */
+  font-weight: 700; /* Figma: bold */
+  color: #000000; /* Figma: black */
 }
 
 /* ==================== 卡片容器 ==================== */
 .card-container {
   position: relative;
-  width: 400rpx;
-  height: 640rpx;
-  margin-bottom: 40rpx;
+  width: 560rpx; /* 400rpx + 80rpx * 2 */
+  height: 800rpx; /* 640rpx + 80rpx * 2 */
+}
+
+/* 卡片容器左右快捷按钮 */
+.card-side-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0; /* 调整为0，让按钮在背景卡片(z-index: 1)下面 */
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.card-side-button:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.card-side-button-left {
+  left: -32rpx;
+  background-color: #FCF0F1;
+}
+
+.card-side-button-right {
+  right: -32rpx;
+  background-color: #F0F6FC;
+}
+
+.card-side-button-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.card-side-button-icon.left {
+  transform: rotate(180deg);
+  filter: brightness(0) saturate(100%) invert(84%) sepia(15%) saturate(1154%) hue-rotate(309deg) brightness(98%) contrast(93%); /* #EFBCC9 */
+}
+
+.card-side-button-icon.right {
+  transform: rotate(0deg);
+  filter: brightness(0) saturate(100%) invert(84%) sepia(12%) saturate(1154%) hue-rotate(174deg) brightness(98%) contrast(93%); /* #BCD6EF */
+}
+
+/* 扩大的触摸区域 */
+.card-touch-area {
+  position: absolute;
+  width: 560rpx; /* 400rpx + 80rpx * 2 */
+  height: 800rpx; /* 640rpx + 80rpx * 2 */
+  top: 0;
+  left: 0;
+  cursor: grab;
+}
+
+.card-touch-area.animating {
+  cursor: grabbing;
 }
 
 .study-card {
   position: absolute;
   width: 400rpx;
   height: 640rpx;
-  background-color: #ffffff;
+  top: 80rpx; /* 居中偏移 */
+  left: 80rpx; /* 居中偏移 */
+  background-color: #ffffff !important; /* 强制白色背景 */
   border-radius: 32rpx;
   box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.12);
   padding: 40rpx;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  cursor: grab;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 平滑过渡效果 */
 }
 
 .study-card.current-card {
@@ -153,14 +213,90 @@
   transform-origin: center;
 }
 
-.study-card.background-card {
-  z-index: 1;
-  opacity: 0.8;
-  transform: scale(0.95);
+/* 确保current-card的背景层级稳定 */
+.study-card.current-card .card-white-background {
+  background-color: #ffffff !important;
+  z-index: 0 !important;
 }
 
-.study-card.animating {
-  cursor: grabbing;
+.study-card.current-card .card-background-image {
+  z-index: 1 !important;
+  opacity: 1;
+}
+
+.study-card.current-card .card-background-overlay {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  z-index: 2 !important;
+}
+
+.study-card.background-card {
+  z-index: 1;
+  /* 初始状态通过inline style设置，实现实时跟随滑动 */
+}
+
+/* 确保background-card的白色底层始终存在 */
+.study-card.background-card .card-white-background {
+  background-color: #ffffff !important;
+  z-index: 0 !important;
+}
+
+/* 确保background-card的背景图片正确显示 */
+.study-card.background-card .card-background-image {
+  z-index: 1 !important;
+  opacity: 1;
+}
+
+/* 确保background-card的透明遮罩正确显示 */
+.study-card.background-card .card-background-overlay {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  z-index: 2 !important;
+}
+
+
+
+/* ==================== 卡片背景样式 ==================== */
+/* 白色不透明底层 */
+.card-white-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff !important; /* 纯白色不透明底 */
+  border-radius: 32rpx;
+  z-index: 0 !important;
+  opacity: 1 !important; /* 确保完全不透明 */
+}
+
+/* 背景图片层 */
+.card-background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 32rpx;
+  z-index: 1;
+}
+
+/* 透明遮罩层 */
+.card-background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7); /* 30%透明度的白色遮罩 */
+  border-radius: 32rpx;
+  z-index: 2;
+}
+
+/* 确保卡片内容在背景之上 */
+.study-card .card-header,
+.study-card .card-content,
+.study-card .swipe-hints {
+  position: relative;
+  z-index: 3;
 }
 
 /* ==================== 卡片内容 ==================== */
@@ -170,9 +306,9 @@
 
 .word-main {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
-  flex-wrap: wrap;
   gap: 16rpx;
 }
 
@@ -184,13 +320,41 @@
 }
 
 .part-of-speech-tag {
-  padding: 8rpx 16rpx;
-  border-radius: 20rpx;
+  width: 84rpx;
+  height: 40rpx;
   font-size: 20rpx;
-  font-weight: 700;
-  color: #ffffff;
+  border-radius: 20rpx;
+  color: #FFFFFF;
   text-align: center;
-  line-height: 1;
+  line-height: 40rpx;
+  display: inline-block;
+  background-color: #6c757d;
+  align-self: flex-start;
+}
+
+/* 单词详情行 */
+.word-details-line {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.separator {
+  font-size: 28rpx;
+  color: #666666;
+  font-weight: 500;
+  margin: 0 16rpx; /* 左右各增加16rpx的间距 */
+}
+
+/* 例句行 */
+.example-line {
+  display: block; /* 改为block，支持正常的文本换行 */
+  font-size: 24rpx;
+  line-height: 1.5;
+  color: #666666;
+  margin-top: 8rpx;
+  word-wrap: break-word; /* 支持长单词换行 */
+  word-break: break-all; /* 支持强制换行 */
 }
 
 .card-content {
@@ -198,49 +362,30 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
-
-.word-details {
-  display: flex;
-  flex-direction: column;
-  gap: 24rpx;
-}
-
-.detail-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 16rpx;
-}
-
-.detail-row.example-row {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 8rpx;
-}
-
-.detail-label {
-  font-size: 24rpx;
-  font-weight: 700;
-  color: #666666;
-  min-width: 80rpx;
-  text-align: right;
+  position: relative;
 }
 
 .detail-value {
-  font-size: 28rpx;
+  font-size: 24rpx;
   font-weight: 500;
-  color: #1F2329;
-  flex: 1;
+  color: #666666;
   line-height: 1.4;
 }
 
-.example-text {
-  font-size: 24rpx;
-  line-height: 1.5;
-  color: #666666;
-  padding: 16rpx;
-  background-color: #f8f9fa;
+/* ==================== 课程节数 ==================== */
+.lesson-number {
+  position: absolute;
+  bottom: 16rpx;
+  right: 16rpx;
   border-radius: 16rpx;
+  padding: 8rpx 16rpx;
+  z-index: 4;
+}
+
+.lesson-number text {
+  font-size: 20rpx;
+  font-weight: 600;
+  color: #666666;
 }
 
 /* ==================== 滑动提示 ==================== */
@@ -280,12 +425,38 @@
   color: white;
 }
 
+/* ==================== 标题模块 ==================== */
+.title-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 48rpx;
+}
+
+.main-title {
+  font-size: 48rpx;
+  color: #000000;
+  font-weight: 600;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 24rpx;
+  color: #666666;
+  text-align: center;
+  margin-top: 16rpx;
+}
+
 /* ==================== 操作按钮 ==================== */
 .action-buttons {
   display: flex;
   gap: 32rpx;
   width: 100%;
-  margin-bottom: 40rpx;
+  position: fixed;
+  bottom: 208rpx; /* 88rpx(退出按钮高度) + 32rpx(间距) + 40rpx(退出按钮底部边距) + 48rpx(新增padding) = 208rpx */
+  left: 48rpx;
+  right: 48rpx;
+  width: calc(100% - 96rpx);
 }
 
 .action-button {
@@ -298,26 +469,64 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #333;
   transition: all 0.2s ease;
 }
 
 .forget-button {
-  background: linear-gradient(135deg, #ff4757, #ff3838);
+  background: linear-gradient(135deg, #FFDBE8, #FFF6FA);
 }
 
 .forget-button:active {
   transform: scale(0.95);
-  background: linear-gradient(135deg, #ff3838, #ff2f2f);
+  background: linear-gradient(135deg, #FFD1E3, #FFF0F7);
 }
 
 .remember-button {
-  background: linear-gradient(135deg, #2ed573, #1dd1a1);
+  background: linear-gradient(135deg, #F0F6FC, #CFE2FF);
 }
 
 .remember-button:active {
   transform: scale(0.95);
-  background: linear-gradient(135deg, #1dd1a1, #00d2d3);
+  background: linear-gradient(135deg, #E8F2FD, #C4DCFF);
+}
+
+/* ==================== 退出按钮 ==================== */
+.exit-button-container {
+  width: 100%;
+  position: fixed;
+  bottom: 40rpx;
+  left: 48rpx;
+  right: 48rpx;
+  width: calc(100% - 96rpx);
+  box-sizing: border-box;
+  padding-bottom: 32rpx;
+}
+
+.full-width-button {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.next-button {
+  background-color: #4845F7; /* Blue, or choose another color */
+  color: white;
+  border: none; /* 下一题按钮通常不需要边框 */
+  height: 88rpx; /* 固定高度 */
+  padding: 0; /* 移除上下padding，因为高度已固定 */
+  font-size: 32rpx;
+  text-align: center;
+  border-radius: 48rpx;
+  display: flex; /* 使用flex布局 */
+  align-items: center; /* 内部文本垂直居中 */
+  justify-content: center; /* 内部文本水平居中 */
+  box-sizing: border-box; /* 确保padding和border不会增加元素实际宽高 */
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.next-button:active {
+  transform: scale(0.98);
+  background-color: #3a37d4;
 }
 
 /* ==================== 学习统计 ==================== */

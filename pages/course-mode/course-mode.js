@@ -208,7 +208,17 @@ Page({
     const textbookInfo = courseDataManager.getTextbookInfo(courseData.textbook);
     const textbookName = textbookInfo ? textbookInfo.textbookName : courseData.textbook;
 
-    // 设置筛选器为当前课程
+    // 获取用户之前设置的题型选择，如果没有则使用默认值
+    const currentFilter = filterManager.getFilter();
+    let userSelectedQuestionTypes = ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'];
+    if (currentFilter && currentFilter.selectedQuestionTypes && currentFilter.selectedQuestionTypes.length > 0) {
+      userSelectedQuestionTypes = currentFilter.selectedQuestionTypes;
+      console.log('卡片学习使用用户之前设置的题型:', userSelectedQuestionTypes);
+    } else {
+      console.log('卡片学习使用默认题型:', userSelectedQuestionTypes);
+    }
+
+    // 设置筛选器为当前课程，保留用户的题型选择
     filterManager.saveFilter({
       selectedDictionaryKey: courseData.textbook,
       selectedDictionaryName: textbookName,
@@ -218,7 +228,7 @@ Page({
       dictionaryId: courseData.textbook,
       basePath: courseData.textbook,
       quizMode: 'course',
-      selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill']
+      selectedQuestionTypes: userSelectedQuestionTypes // 使用用户选择的题型
     });
 
     // 跳转到卡片学习页面
@@ -245,7 +255,16 @@ Page({
       wx.setStorageSync('originalUserFilter', currentFilter);
     }
 
-    // 设置筛选器为当前课程（临时选择）
+    // 获取用户之前设置的题型选择，如果没有则使用默认值
+    let userSelectedQuestionTypes = ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'];
+    if (currentFilter && currentFilter.selectedQuestionTypes && currentFilter.selectedQuestionTypes.length > 0) {
+      userSelectedQuestionTypes = currentFilter.selectedQuestionTypes;
+      console.log('使用用户之前设置的题型:', userSelectedQuestionTypes);
+    } else {
+      console.log('使用默认题型:', userSelectedQuestionTypes);
+    }
+
+    // 设置筛选器为当前课程（临时选择），保留用户的题型选择
     filterManager.saveFilter({
       selectedDictionaryKey: courseData.textbook,
       selectedDictionaryName: textbookName,
@@ -255,7 +274,7 @@ Page({
       dictionaryId: courseData.textbook,
       basePath: courseData.textbook,
       quizMode: 'course', // 新增课程模式
-      selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill']
+      selectedQuestionTypes: userSelectedQuestionTypes // 使用用户选择的题型
     });
 
     // 直接跳转到quiz页面，进行课程专项练习

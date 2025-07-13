@@ -179,6 +179,7 @@ Page({
 
   /** 页面展示时更新底部导航选中状态并重新加载进度数据 */
   onShow() {
+    // 重要的：更新自定义底部导航的选中状态，确保高亮正确
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       const page = getCurrentPages().pop();
       const route = page.route;
@@ -188,7 +189,7 @@ Page({
         this.getTabBar().updateSelected(index);
       }
     }
-    
+
     // 重新加载数据以更新学习进度（用户可能刚完成答题）
     this.prepareData();
   }

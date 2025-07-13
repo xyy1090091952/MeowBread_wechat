@@ -1,50 +1,84 @@
 // pages/knowledge/knowledge.js
+const { KnowledgeCardsDB } = require('../../data/knowledge_cards.js');
+
 Page({
   data: {
     categories: [
-      { id: 1, name: 'N5', cardCount: 3 },
+      { id: 1, name: 'N5', cardCount: 0 },
       { id: 2, name: 'N4', cardCount: 0 },
       { id: 3, name: 'N3', cardCount: 0 },
       { id: 4, name: 'N2', cardCount: 0 },
       { id: 5, name: 'N1', cardCount: 0 }
     ],
     selectedCategory: 1, // 默认选中第一个分类
-    grammarCards: [
-      {
-        id: 1,
-        category: 'GRAMMAR',
-        subcategory: '变化',
-        title: '敬体&简体变化表',
-        backgroundImage: '/images/card/N5-Card1.jpg',
-        webUrl: '/pages/grammar/grammar?type=verb&title=动词变化表' // 指向本地语法页面
-      },
-      {
-        id: 2,
-        category: 'GRAMMAR',
-        subcategory: '知识',
-        title: '组合动词表',
-        backgroundImage: '/images/card/N5-Card2.jpg',
-        webUrl: '/pages/grammar/grammar?type=adjective&title=形容词变位' // 指向本地语法页面
-      },
-      {
-        id: 3,
-        category: 'GRAMMAR',
-        subcategory: '变化',
-        title: 'N5动词变化表',
-        backgroundImage: '/images/card/N5-Card3.jpg',
-        webUrl: '/pages/grammar/grammar?type=sentence&title=基本句型' // 指向本地语法页面
-      }
-    ],
+    grammarCards: [], // 将从数据库动态加载
+    containerWidth: 0, // 动态计算的容器宽度
     pageLoaded: false, // 控制页面渐显动画
     contentLoaded: false, // 控制内容卡片载入动画
     isFirstLoad: true // 标记是否首次加载
   },
   onLoad: function (options) {
+    // 初始化数据
+    this.initializeData();
     // 页面首次加载时执行的逻辑
     this.triggerPageAnimation();
     // 标记已完成首次加载
     this.setData({ isFirstLoad: false });
   },
+
+  /**
+   * 初始化数据 - 从数据库加载卡片数据
+   */
+  initializeData: function() {
+    // 更新分类卡片数量
+    const categories = this.data.categories.map(category => ({
+      ...category,
+      cardCount: KnowledgeCardsDB.getCardCountByLevel(category.name)
+    }));
+
+    // 加载默认分类的卡片数据
+    const defaultLevel = this.data.categories[0].name; // N5
+    const grammarCards = KnowledgeCardsDB.getCompleteCardsByLevel(defaultLevel);
+
+    // 计算容器宽度
+    const containerWidth = this.calculateContainerWidth(grammarCards.length);
+
+    this.setData({
+      categories: categories,
+      grammarCards: grammarCards,
+      containerWidth: containerWidth
+    });
+
+    console.log('初始化数据完成:', {
+      categories: categories,
+      grammarCards: grammarCards,
+      containerWidth: containerWidth
+    });
+  },
+
+  /**
+   * 计算容器宽度 - 根据卡片数量动态计算
+   * @param {number} cardCount - 卡片数量
+   * @returns {number} 容器宽度 (rpx)
+   */
+  calculateContainerWidth: function(cardCount) {
+    if (cardCount === 0) return 0;
+    
+    const cardWidth = 400; // 卡片宽度
+    const cardSpacing = 280; // 卡片间距 (调整为280rpx)
+    const rightPadding = 48; // 右边距
+    
+    // 计算最后一张卡片的位置
+    const lastCardPosition = (cardCount - 1) * cardSpacing;
+    
+    // 总宽度 = 最后一张卡片位置 + 卡片宽度 + 右边距
+    const totalWidth = lastCardPosition + cardWidth + rightPadding;
+    
+    console.log(`计算容器宽度: ${cardCount}张卡片 -> ${totalWidth}rpx`);
+    return totalWidth;
+  },
+
+
 
 
 
@@ -57,11 +91,26 @@ Page({
     
     console.log(`点击分类ID: ${categoryId}`);
     
+    // 根据分类ID获取对应的级别名称
+    const selectedCategoryData = this.data.categories.find(cat => cat.id === categoryId);
+    const levelName = selectedCategoryData ? selectedCategoryData.name : 'N5';
+    
+    // 从数据库加载对应级别的卡片数据
+    const grammarCards = KnowledgeCardsDB.getCompleteCardsByLevel(levelName);
+    
+    // 计算新的容器宽度
+    const containerWidth = this.calculateContainerWidth(grammarCards.length);
+    
     // 更新数据
     this.setData({
       selectedCategory: categoryId,
+      grammarCards: grammarCards,
+      containerWidth: containerWidth,
       contentLoaded: false // 重置内容动画
     });
+    
+    console.log(`加载${levelName}级别卡片:`, grammarCards);
+    console.log(`容器宽度更新为: ${containerWidth}rpx`);
     
     // 延迟启动内容动画
     setTimeout(() => {
@@ -132,6 +181,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
+    // 重要的：更新自定义底部导航的选中状态，确保高亮正确
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       const page = getCurrentPages().pop();
       const route = page.route;
@@ -141,7 +191,7 @@ Page({
         this.getTabBar().updateSelected(index);
       }
     }
-    
+
     // 只有在非首次加载时才重新播放动画（即tab切换回来时）
     if (!this.data.isFirstLoad) {
       console.log('Tab切换回知识库页面，重新播放动画');
