@@ -22,7 +22,7 @@
  */
 
 const STORAGE_KEY = 'userData'; // 定义本地缓存中使用的键名，方便管理
-const INITIAL_COINS = 500; // 定义新用户的初始金币数量
+const INITIAL_COINS = 0; // 定义新用户的初始金币数量
 
 /**
  * 初始化用户数据

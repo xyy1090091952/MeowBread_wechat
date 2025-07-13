@@ -84,24 +84,6 @@ Page({
     wx.navigateBack();
   },
 
-  onInventory() {
-    wx.navigateTo({
-      url: '/pages/gashapon-inventory/gashapon-inventory'
-    });
-  },
-
-  onRedeem() {
-    const amount = 500;
-    coinManager.addCoins(amount);
-    this.setData({
-      userCoins: coinManager.getCoins()
-    });
-    wx.showToast({
-      title: `成功兑换 ${amount} 金币!`,
-      icon: 'success'
-    });
-  },
-
   onSelectSeries(e) {
     const selectedId = e.currentTarget.dataset.id;
     const selectedSeries = gashaponData.find(item => item.id === selectedId);
