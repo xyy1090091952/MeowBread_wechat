@@ -281,7 +281,7 @@ Page({
       mistakeCount: mistakeCountDisplay // 更新错题数量显示
     });
 
-    // 更新自定义底部导航的选中状态
+    // 重要的：更新自定义底部导航的选中状态，确保高亮正确
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       const page = getCurrentPages().pop();
       const route = page.route;

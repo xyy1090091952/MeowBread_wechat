@@ -26,7 +26,7 @@ const quizService = {
       const questions = this.generateQuestions(allWordsInLesson, selectedQuestionTypes);
 
       return {
-        quizMode: 'endless',
+        quizMode: 'mistakes', // 修复：错题重练模式应该有独立的标识
         allWordsInLesson,
         questions,
         totalQuestions: questions.length,
@@ -45,7 +45,8 @@ const quizService = {
         selectedLessonName: '全部课程',
         dictionaryId: 'all',
         basePath: 'all',
-        quizMode: options.mode || 'quick'
+        quizMode: options.mode || 'quick',
+        selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'] // 添加默认题型
       };
     }
 
@@ -100,7 +101,13 @@ const quizService = {
    */
   selectWordsForQuiz(allWords, mode, selectedQuestionTypes) {
     let finalQuestions = [];
-    if (!selectedQuestionTypes || selectedQuestionTypes.length === 0 || !allWords || allWords.length === 0) {
+    
+    // 如果没有选择题型，使用默认题型
+    if (!selectedQuestionTypes || selectedQuestionTypes.length === 0) {
+      selectedQuestionTypes = ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'];
+    }
+    
+    if (!allWords || allWords.length === 0) {
       return [];
     }
 

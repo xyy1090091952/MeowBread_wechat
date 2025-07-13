@@ -171,11 +171,10 @@ Page({
       mistakeManager.correctMistake(currentQ.wordInfo);
       
       // 标记单词为已背（需要获取词典ID）
-      this.markWordAsLearned(currentQ.wordInfo);
+      this.markWordAsLearned(currentQ); // 传递整个题目对象
       
       // 回答正确，增加1个金币
       coinManager.addCoins(1);
-      this.markWordAsLearned(currentQ); // 传递整个题目对象
     } else {
       // 答错了：添加到错题库
       mistakeManager.addMistake(currentQ.wordInfo);
@@ -229,8 +228,8 @@ Page({
       }
       
       // 其他模式：检查是否到达最后一题
-      if ((this.data.quizMode === 'quick' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1) ||
-        (this.data.quizMode === 'course' && this.data.currentQuestionIndex >= this.data.totalQuestions - 1)) {
+      if ((this.data.quizMode === 'quick' || this.data.quizMode === 'course' || this.data.quizMode === 'mistakes') && 
+          this.data.currentQuestionIndex >= this.data.totalQuestions - 1) {
         this.endQuiz();
       } else {
         const nextIndex = this.data.currentQuestionIndex + 1;
@@ -303,8 +302,15 @@ Page({
     if (quizMode === 'mistakes') {
       url += `&fromMistakes=true`;
     }
+    // 如果是从课程模式启动的，也添加标识
+    if (quizMode === 'course') {
+      url += `&from=course`;
+    }
 
-    wx.reLaunch({
+    // 使用redirectTo替换reLaunch，以修复导航堆栈问题
+    // wx.reLaunch会关闭所有页面，导致无法返回上一页
+    // wx.redirectTo会关闭当前页面，跳转到新页面，这样就可以从结果页返回到之前的页面
+    wx.redirectTo({
       url: url
     });
   },
@@ -350,9 +356,12 @@ Page({
    */
   markWordAsLearned: function(question) {
     try {
-      const wordInfo = question.wordInfo;
-      if (!wordInfo) {
-        console.error('标记已背失败：无效的单词信息', question);
+      // 从问题对象中获取原始、完整的单词信息
+      const originalQuestion = this.data.questions[this.data.currentQuestionIndex];
+      const wordInfo = originalQuestion ? originalQuestion.wordInfo : null;
+
+      if (!wordInfo || !wordInfo['假名'] || !wordInfo['中文']) {
+        console.error('标记已背失败：无效或不完整的单词信息', question);
         return;
       }
 

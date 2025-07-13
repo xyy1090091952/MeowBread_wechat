@@ -27,8 +27,8 @@
 
     <!-- 新增：金币获取展示 -->
     <view class="coins-earned-container {{animationClass.coinsEarned}}" wx:if="{{coinsEarned > 0}}">
+      <view class="coins-text">本次学习获得 <text class="coins-value">{{coinsEarned}}</text></view>
       <image class="coin-icon" src="/images/icons/Coins.png"></image>
-      <view class="coins-text">本次学习获得 <text class="coins-value">{{coinsEarned}}</text> 金币</view>
     </view>
 
     <button class="done-button {{animationClass.doneButton}}" bindtap="handleDone">完成答题</button>

@@ -8,9 +8,16 @@ Page({
    * 页面的初始数据
    */
   data: {
-    allPrizes: [], // 存储所有奖品（包含解锁状态）
-    currentSwiperIndex: 0, // 当前swiper的索引
-    scrollLeft: 0, // 缩略图导航的滚动位置
+    supplyPrizes: [], // 美味补给
+    magicPrizes: [], // 梦幻魔法
+    displayPrizes: [], // 当前显示
+    currentSwiperIndex: 0,
+    scrollLeft: 0,
+    activeTab: 'supply', // 默认激活的tab
+    tabs: [
+      { id: 'supply', name: '美味补给' },
+      { id: 'magic', name: '梦幻魔法' }
+    ]
   },
 
   /**
@@ -32,25 +39,44 @@ Page({
    * @description 加载并处理所有奖品数据 (已重构)
    */
   loadPrizes() {
-    // 从 coinManager 获取已解锁的奖品ID列表
     const unlockedIds = coinManager.getUnlockedPrizes() || [];
-    // 将所有奖池的奖品合并到一个数组中
-    const allPrizes = gashaponData.flatMap(pool => pool.prizes);
+    
+    const supplyPrizes = [];
+    const magicPrizes = [];
 
-    // 为每个奖品添加 unlocked 状态
-    const processedPrizes = allPrizes.map(prize => {
-      return {
+    gashaponData.forEach(pool => {
+      const prizes = pool.prizes.map(prize => ({
         ...prize,
         unlocked: unlockedIds.includes(prize.id)
-      };
+      }));
+      
+      if (pool.name === '人类口粮' || pool.name === '猫咪口粮') {
+        supplyPrizes.push(...prizes);
+      } else if (pool.name === '特效扭蛋') {
+        magicPrizes.push(...prizes);
+      }
     });
 
     this.setData({
-      allPrizes: processedPrizes
+      supplyPrizes,
+      magicPrizes,
+      displayPrizes: supplyPrizes // 默认显示美味补给
     }, () => {
-      // 数据加载完成后，居中第一个元素
       this.centerActiveThumbnail();
     });
+  },
+
+  switchTab(e) {
+    const tabId = e.currentTarget.dataset.id;
+    if (this.data.activeTab !== tabId) {
+      this.setData({
+        activeTab: tabId,
+        displayPrizes: tabId === 'supply' ? this.data.supplyPrizes : this.data.magicPrizes,
+        currentSwiperIndex: 0 // 切换后重置swiper
+      }, () => {
+        this.centerActiveThumbnail();
+      });
+    }
   },
 
   /**

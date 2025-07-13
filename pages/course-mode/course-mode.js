@@ -3,6 +3,8 @@ const filterManager = require('../../utils/filterManager.js');
 const courseDataManager = require('../../utils/courseDataManager.js');
 const learnedManager = require('../../utils/learnedManager.js');
 
+const dictionaries = require('../../database/dictionaries.js');
+
 Page({
 
   /**
@@ -12,7 +14,11 @@ Page({
     currentFilterDisplay: '', // 当前筛选显示文本
     pageLoaded: false, // 控制页面渐显动画
     courseData: [], // 课程数据
-    isLoading: true // 加载状态
+    isLoading: true, // 加载状态
+    isCourseSelectorVisible: false, // 控制课程范围选择弹窗的显示
+    courseSelectorOptions: [], // 课程范围选择器的选项
+    selectedCourseRange: { label: '全部课程', value: 'all' }, // 当前选择的课程范围
+    filterTitleDisplay: '全部课程' // 筛选器标题
   },
 
   /**
@@ -124,12 +130,16 @@ Page({
 
       console.log('Final textbook to load:', textbook);
 
-      // 根据教材加载课程数据
-      const courseList = courseDataManager.getAllCourseDetails(textbook);
+      // 更新课程选择器选项
+      this.updateCourseSelectorOptions(textbook);
+
+      // 根据教材和选定的课程范围加载课程数据
+      const selectedRangeValue = this.data.selectedCourseRange.value;
+      const courseList = courseDataManager.getCourseDetailsByVolume(textbook, selectedRangeValue);
       
       if (!courseList || courseList.length === 0) {
-        console.warn(`No courses found for textbook: ${textbook}, falling back to default`);
-        this.loadDefaultCourseData();
+        console.warn(`No courses found for textbook: ${textbook} and range: ${selectedRangeValue}`);
+        this.setData({ courseData: [], isLoading: false });
         return;
       }
       
@@ -198,6 +208,73 @@ Page({
   },
 
   /**
+   * 更新课程选择器的选项
+   */
+  updateCourseSelectorOptions(textbookKey) {
+    // 从总的字典数据中找到当前教材
+    const dictionary = dictionaries.dictionaries.find(d => d.id === textbookKey);
+
+    // 检查教材是否存在，以及是否包含分册信息
+    if (!dictionary || !dictionary.volumes || dictionary.volumes.length === 0) {
+      // 如果没有分册信息，则默认只提供“全部课程”选项
+      this.setData({ 
+        courseSelectorOptions: [{ label: '全部课程', value: 'all' }] 
+      });
+      return;
+    }
+
+    // 将分册信息格式化为选择器所需的数组格式
+    const options = dictionary.volumes.map(volume => ({
+      label: volume.name, // 选项显示名
+      value: volume.id, // 选项唯一标识
+      sublabel: volume.description // 选项的描述
+    }));
+
+    // 在选项列表的开头添加“全部课程”选项
+    options.unshift({ label: '全部课程', value: 'all' });
+
+    // 更新页面的课程选择器选项
+    this.setData({ courseSelectorOptions: options });
+  },
+
+  /**
+   * 显示课程范围选择弹窗
+   */
+  showCourseSelector() {
+    this.setData({ isCourseSelectorVisible: true });
+  },
+
+  /**
+   * 隐藏课程范围选择弹窗
+   */
+  hideCourseSelector() {
+    this.setData({ isCourseSelectorVisible: false });
+  },
+
+  /**
+   * 处理课程范围选择确认事件
+   */
+  onCourseSelectorConfirm(e) {
+    const { value } = e.detail;
+    const selectedOption = this.data.courseSelectorOptions.find(opt => opt.value === value);
+
+    if (selectedOption) {
+      this.setData({
+        selectedCourseRange: selectedOption,
+        isCourseSelectorVisible: false,
+        filterTitleDisplay: selectedOption.label // 更新筛选器标题
+      });
+
+      // 重新加载课程数据
+      this.loadCourseData();
+    } else {
+      this.setData({
+        isCourseSelectorVisible: false
+      });
+    }
+  },
+
+  /**
    * 点击卡片学习按钮
    */
   onCardStudyTap(e) {
@@ -206,19 +283,35 @@ Page({
 
     // 获取教材名称
     const textbookInfo = courseDataManager.getTextbookInfo(courseData.textbook);
-    const textbookName = textbookInfo ? textbookInfo.textbookName : courseData.textbook;
+    const textbookName = textbookInfo ? textbookInfo.name : courseData.textbook;
 
-    // 设置筛选器为当前课程
+    // 在设置临时课程选择之前，先保存用户的原始选择
+    const currentFilter = filterManager.getFilter();
+    if (currentFilter && currentFilter.quizMode !== 'course') {
+      // 只有当前筛选不是course模式时，才保存为原始选择
+      wx.setStorageSync('originalUserFilter', currentFilter);
+    }
+
+    // 获取用户之前设置的题型选择，如果没有则使用默认值
+    let userSelectedQuestionTypes = ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'];
+    if (currentFilter && currentFilter.selectedQuestionTypes && currentFilter.selectedQuestionTypes.length > 0) {
+      userSelectedQuestionTypes = currentFilter.selectedQuestionTypes;
+      console.log('卡片学习使用用户之前设置的题型:', userSelectedQuestionTypes);
+    } else {
+      console.log('卡片学习使用默认题型:', userSelectedQuestionTypes);
+    }
+
+    // 设置筛选器为当前课程，保留用户的题型选择
     filterManager.saveFilter({
       selectedDictionaryKey: courseData.textbook,
       selectedDictionaryName: textbookName,
       selectedLessonKey: courseData.lessonFile,
       selectedLessonName: `第${courseData.courseNumber}课`,
-      selectedLessonFiles: [`${courseData.textbook}_${courseData.lessonFile}`],
+      lessonFiles: [`${courseData.textbook}_${courseData.lessonFile}`],
       dictionaryId: courseData.textbook,
       basePath: courseData.textbook,
       quizMode: 'course',
-      selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill']
+      selectedQuestionTypes: userSelectedQuestionTypes // 使用用户选择的题型
     });
 
     // 跳转到卡片学习页面
@@ -236,7 +329,7 @@ Page({
 
     // 获取教材名称
     const textbookInfo = courseDataManager.getTextbookInfo(courseData.textbook);
-    const textbookName = textbookInfo ? textbookInfo.textbookName : courseData.textbook;
+    const textbookName = textbookInfo ? textbookInfo.name : courseData.textbook;
 
     // 在设置临时课程选择之前，先保存用户的原始选择
     const currentFilter = filterManager.getFilter();
@@ -245,7 +338,16 @@ Page({
       wx.setStorageSync('originalUserFilter', currentFilter);
     }
 
-    // 设置筛选器为当前课程（临时选择）
+    // 获取用户之前设置的题型选择，如果没有则使用默认值
+    let userSelectedQuestionTypes = ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'];
+    if (currentFilter && currentFilter.selectedQuestionTypes && currentFilter.selectedQuestionTypes.length > 0) {
+      userSelectedQuestionTypes = currentFilter.selectedQuestionTypes;
+      console.log('使用用户之前设置的题型:', userSelectedQuestionTypes);
+    } else {
+      console.log('使用默认题型:', userSelectedQuestionTypes);
+    }
+
+    // 设置筛选器为当前课程（临时选择），保留用户的题型选择
     filterManager.saveFilter({
       selectedDictionaryKey: courseData.textbook,
       selectedDictionaryName: textbookName,
@@ -255,7 +357,7 @@ Page({
       dictionaryId: courseData.textbook,
       basePath: courseData.textbook,
       quizMode: 'course', // 新增课程模式
-      selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill']
+      selectedQuestionTypes: userSelectedQuestionTypes // 使用用户选择的题型
     });
 
     // 直接跳转到quiz页面，进行课程专项练习
@@ -294,4 +396,4 @@ Page({
     // 重新加载课程数据
     this.loadCourseData();
   }
-}); 
+});

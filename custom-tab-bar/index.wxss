@@ -46,28 +46,18 @@
 .tab-item-hover {
 }
 
-/* 选中背景 */
+/* 选中项的静态背景 */
 .tab-item.active::before {
-  /* 已由统一 indicator 实现 */
-}
-
-/* 活动指示器 */
-.indicator {
+  content: '';
   position: absolute;
   top: 12rpx;
-  left: 0; /* 默认位置，会被内联样式覆盖 */
+  left: 0;
   width: 172rpx;
   height: 112rpx;
   background: #FFF;
   border-radius: 68rpx;
   box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
-  z-index: 0;
-  /* 删除切换动画效果 */
-}
-
-/* 禁用动画状态 */
-.indicator.no-animation {
-  transition: none !important;
+  z-index: -1; /* 将背景置于icon和label之下 */
 }
 
 .icon {
