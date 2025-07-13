@@ -61,8 +61,8 @@ module.exports = {
                 "liangs_class/lesson25.js"
             ],
             "volumes": [
-            {"id":"upper","name":"初级上","description":"基础日语课程","lessons":[5,6,7,8,9,10,11,12,13,14,15,16]},
-            {"id":"lower","name":"初级下","description":"进阶日语课程","lessons":[17,18,19,20,21,22,23,24,25]}
+            {"id":"upper","name":"初级上","description":"5-17课","lessons":[5,6,7,8,9,10,11,12,13,14,15,16]},
+            {"id":"lower","name":"初级下","description":"18-25课","lessons":[17,18,19,20,21,22,23,24,25]}
         ],
             "courses": [
             {"courseNumber":5,"courseTitle":"初対面","lessonFile":"lesson5","description":"初次见面的日语表达"},
