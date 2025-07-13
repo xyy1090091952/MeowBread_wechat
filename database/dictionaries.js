@@ -32,8 +32,8 @@ module.exports = {
                 "everyones_japanese/lesson50.js"
             ],
             "volumes": [
-            {"id":"volume1","name":"第一册","description":"大家的日语第一册","lessons":[26,27,28,29,30,31,32,33,34,35,36,37]},
-            {"id":"volume2","name":"第二册","description":"大家的日语第二册","lessons":[38,39,40,41,42,43,44,45,46,47,48,49,50]}
+            {"id":"volume1","name":"第一册","description":"29-37课","lessons":[26,27,28,29,30,31,32,33,34,35,36,37]},
+            {"id":"volume2","name":"第二册","description":"38-50课","lessons":[38,39,40,41,42,43,44,45,46,47,48,49,50]}
         ],
             "courses": [
             {"courseNumber":26,"courseTitle":"第26课","lessonFile":"lesson26","description":""},

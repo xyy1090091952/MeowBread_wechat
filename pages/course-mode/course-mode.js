@@ -293,7 +293,6 @@ Page({
     }
 
     // 获取用户之前设置的题型选择，如果没有则使用默认值
-    const currentFilter = filterManager.getFilter();
     let userSelectedQuestionTypes = ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'];
     if (currentFilter && currentFilter.selectedQuestionTypes && currentFilter.selectedQuestionTypes.length > 0) {
       userSelectedQuestionTypes = currentFilter.selectedQuestionTypes;

@@ -4,10 +4,8 @@
     <text class="dict-name">{{dict.name}}</text>
     <text class="dict-count">词汇量 {{dict.wordCount}}</text>
   </view>
-  <view class="progress-container" wx:if="{{dict.progress > 0}}">
+  <view class="progress-container" wx:if="{{dict.learnedCount > 0}}">
     <view class="progress-bar" style="width: {{dict.progress}}%;"></view>
     <text class="progress-text">单词进度 {{dict.progress}}%</text>
   </view>
-  <!-- 学习进度标签, 当学习过的单词数大于0时显示 -->
-  <view class="progress-tag" wx:if="{{dict.learnedCount > 0}}">单词进度{{dict.progress}}%</view>
 </view>

@@ -1,6 +1,6 @@
 {
   "usingComponents": {
-    "course-selector": "/components/course-selector/index"
+    "course-selector": "../../components/course-selector/index"
   },
   "navigationBarTitleText": "课程模式",
   "navigationBarBackgroundColor": "#ffffff",
