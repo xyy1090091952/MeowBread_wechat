@@ -38,9 +38,8 @@ Page({
 
     // 初始化时更新系列进度和抽奖价格
     this.updateSeriesProgress();
-    const currentSeries = gashaponData.find(series => series.id === this.data.currentSeriesId);
     this.setData({
-      drawCost: currentSeries ? currentSeries.cost : 0,
+      drawCost: 80, // 固定为80金币
     });
   },
 
@@ -69,7 +68,6 @@ Page({
         name: series.name,
         cost: series.cost,
         image: series.image,
-        gradientType: series.gradientType,
         progress: progress, // 新增进度字段
       };
     });
@@ -103,20 +101,28 @@ Page({
   },
 
   onSelectSeries(e) {
-    const selectedId = e.currentTarget.dataset.id;
+    const selectedId = parseInt(e.currentTarget.dataset.id);
     const selectedSeries = gashaponData.find(item => item.id === selectedId);
-    if (selectedSeries) {
+    if (selectedSeries && selectedId !== this.data.currentSeriesId) {
+      // 先设置为隐藏状态
       this.setData({
-        currentSeriesId: selectedId,
-        drawCost: selectedSeries.cost,
+        currentSeriesId: null,
       });
+      
+      // 短暂延迟后显示新的图片并触发动画
+      setTimeout(() => {
+        this.setData({
+          currentSeriesId: selectedId,
+          drawCost: 80, // 固定为80金币
+        });
+      }, 100);
     }
   },
 
   // 单次抽奖 (已重构)
   onDraw() {
     console.log('--- 开始抽奖流程 ---');
-    const currentCost = this.data.drawCost;
+    const currentCost = 80; // 固定为80金币
     console.log(`本次消耗: ${currentCost}`);
 
     // 使用 coinManager.spendCoins() 来检查并扣除金币

@@ -93,7 +93,7 @@ const knowledgeCardsDB = {
       card_label_secondary: '进阶',
       card_title: 'N4语法要点',
       web_url: '/pages/grammar/grammar?type=n4&title=N4语法',
-      is_active: true,
+      is_active: false, // 暂时禁用，内容正在准备中
       created_at: '2024-07-13T10:00:00Z',
       updated_at: '2024-07-13T10:00:00Z'
     }

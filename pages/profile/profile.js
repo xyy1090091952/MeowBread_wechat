@@ -92,7 +92,6 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function() {
-    console.log('Profile page ready'); // 调试信息
     // 不再在这里统一触发动画，而是根据登录状态来决定是否播放动画
   },
 
@@ -109,7 +108,7 @@ Page({
   // 用户选择头像时的回调函数（原微信API方式）
   onChooseAvatar: function (e) {
     const { avatarUrl } = e.detail; // 获取用户选择的头像路径
-    console.log('用户选择的头像路径:', avatarUrl); // 调试信息
+    
     this.setData({
       avatarUrl: avatarUrl, // 更新头像路径到页面数据
     });
@@ -138,7 +137,7 @@ Page({
         });
       },
       fail(err) {
-        console.log('选择头像失败：', err);
+        // 选择头像失败的处理
         wx.showToast({
           title: '选择头像失败',
           icon: 'none'

@@ -28,26 +28,31 @@
 
   <!-- 底部操作区域 -->
   <view class="bottom-sheet">
-    <!-- 标题 -->
-    <view class="sheet-title">扭蛋系列</view>
-
-    <!-- 系列选择 -->
-    <view class="series-selector">
-      <block wx:for="{{seriesList}}" wx:key="id">
-        <view class="series-card series-gradient-{{item.gradientType}} {{item.id === currentSeriesId ? 'active' : ''}}" bindtap="onSelectSeries" data-id="{{item.id}}">
-          <view class="series-name">{{item.name}}</view>
-          <view class="series-image-container">
-            <image class="series-image" src="{{item.image}}" mode="scaleToFill"></image>
-          </view>
-          <view class="series-progress">{{item.progress}}%</view>
+    <!-- 选择tag -->
+    <view class="sheet-header">
+      <view class="series-tags">
+        <view class="series-tag {{currentSeriesId === 1 ? 'active' : ''}}" bindtap="onSelectSeries" data-id="1">
+          <text>特效扭蛋</text>
         </view>
+        <view class="series-tag {{currentSeriesId === 2 ? 'active' : ''}}" bindtap="onSelectSeries" data-id="2">
+          <text>人类口粮</text>
+        </view>
+      </view>
+      <!-- 滑动横条指示器 -->
+      <view class="tag-indicator" style="left: calc({{currentSeriesId === 1 ? '25% - 64rpx + 24rpx' : '75% - 64rpx - 24rpx'}})"></view>
+    </view>
+
+    <!-- 纯视觉展示区域 -->
+    <view class="visual-display">
+      <block wx:for="{{seriesList}}" wx:key="id">
+        <image class="display-card {{item.id === currentSeriesId ? 'show bounce-in' : 'hide'}}" wx:if="{{item.id === currentSeriesId}}" src="{{item.id === 2 ? '/images/gashapon/enegy.png' : '/images/gashapon/magic.png'}}" mode="scaleToFill"></image>
       </block>
     </view>
 
     <!-- 抽奖按钮 -->
     <view class="draw-button" bindtap="onDraw">
       <image class="coin-icon" src="/images/icons/Coins.png"></image>
-      <text>{{drawCost}}金币 抽一次</text>
+      <text>80 抽一次</text>
     </view>
   </view>
 </view>

@@ -279,9 +279,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  color: #999999;
-  font-size: 56rpx;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: #000000;
+  font-size: 32rpx;
+  font-weight: bold;
+  transform: translateY(-160rpx);
+  z-index: 10;
 }
 
 /* 载入动画 - 从左到右错位进入 */

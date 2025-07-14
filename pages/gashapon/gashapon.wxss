@@ -90,7 +90,7 @@ page {
 /* 扭蛋机主体 */
 .gashapon-machine {
   position: absolute;
-  bottom: 620rpx; /* 调整此值将图片上移 */
+  bottom: 580rpx; /* 调整此值将图片上移 */
   left: 50%;
   transform: translateX(-50%);
   width: 600rpx; /* 根据实际图片尺寸调整 */
@@ -110,95 +110,109 @@ page {
   box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.08);
 }
 
-.sheet-title {
-  font-size: 40rpx; /* 20px * 2 = 40rpx */ font-family: 'Inter', sans-serif;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 48rpx;
-  padding: 0 32rpx; /* 保持左右内边距 */
-}
-
-/* 系列选择 */
-.series-selector {
+/* 选择tag区域 */
+.sheet-header {
+  position: relative; /* 为横条指示器提供定位基准 */
   display: flex;
-  gap: 24rpx; /* 使用gap实现卡片间距 */
-  padding: 0 32rpx; /* 左右留出边距 */
-  margin-bottom: 60rpx;
-  overflow-x: auto; /* 允许横向滚动 */
-  -webkit-overflow-scrolling: touch; /* 优化iOS上的滚动体验 */
-  scrollbar-width: none; /* 隐藏滚动条 (Firefox) */
+  justify-content: center;
+  align-items: center;
+  padding: 0 48rpx; /* 左右边距48rpx */
 }
 
-/* 隐藏滚动条 (Chrome, Safari) */
-.series-selector::-webkit-scrollbar {
-  display: none;
-}
-
-.series-card {
-  width: 300rpx;
-  height: 340rpx;
+.series-tags {
   display: flex;
-  flex-direction: column;
-  position: relative;
+  width: 100%;
+}
+
+.series-tag {
+  flex: 1; /* 平均分配空间 */
+  height: 72rpx; /* 设置固定高度 */
   border-radius: 48rpx;
-  overflow: hidden;
-  flex-shrink: 0; /* 防止卡片在flex布局中被压缩 */
-  border: 4rpx solid transparent; /* 添加透明描边，用于实现选中效果 */
-  box-sizing: border-box; /* 保证描边在盒子内部，不影响布局 */
-  transition: border-color 0.3s; /* 添加过渡动画 */
+  background-color: transparent; /* 去掉背景颜色 */
+  border: 2rpx solid transparent;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 文案居中显示 */
 }
 
-
-
-/* 系列卡片渐变背景 */
-.series-gradient-blue {
-  background: linear-gradient(180deg, #C0ECFF 0%, #E6F8FF 100%);
+.series-tag.active {
+  background-color: transparent; /* 去掉背景颜色 */
+  border-color: transparent;
 }
 
-.series-gradient-orange {
-  background: linear-gradient(180deg, #FFEAB7 0%, #FFF4DA 100%);
-}
-
-.series-gradient-green {
-  background: linear-gradient(180deg, #D7FC89 0%, #EFFFD0 100%);
-}
-
-.series-card.active {
-  border-color: #4845F7; /* 选中时显示蓝色描边 */
-}
-
-.series-name {
-  font-family: 'PingFang SC', sans-serif;
+.series-tag text {
+  font-size: 28rpx;
   font-weight: 600;
-  font-size: 32rpx;
-  color: #000000;
-  margin: 28rpx 0 0 28rpx;
-  text-align: left;
-  width: 100%;
+  color: rgba(0, 0, 0, 0.5); /* 黑色50%透明度 */
 }
 
-.series-image-container {
+.series-tag.active text {
+  color: #000000; /* 选中状态黑色 */
+}
+
+/* 滑动横条指示器 */
+.tag-indicator {
   position: absolute;
-  width: 360rpx; /* 放大图片容器 */
-  height: 360rpx; /* 放大图片容器 */
-  bottom: -100rpx; /* 容器高度的一半，使其一半在卡片外 */
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 0;
+  width: 128rpx;
+  height: 6rpx;
+  background-color: #4845F7;
+  border-radius: 3rpx;
+  transition: left 0.3s ease;
+  z-index: 1;
 }
 
-.series-image {
-  width: 100%;
-  height: 100%;
+/* 纯视觉展示区域 */
+.visual-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 32rpx;
+  margin-bottom: 40rpx;
+  height: 340rpx; /* 固定高度，与原来的series-card保持一致 */
 }
 
-.series-progress {
-  font-family: 'Inter', sans-serif;
-  font-weight: 800;
-  font-size: 48rpx;
-  color: #111111;
-  position: absolute;
-  right: 28rpx;
-  bottom: 16rpx;
+.display-card {
+  width: 240rpx;
+  height: 320rpx;
+  border-radius: 48rpx;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.display-card.hide {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.display-card.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.display-card.bounce-in {
+  animation: bounceIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Q弹果冻效果的关键帧动画 */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  70% {
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* 抽奖按钮 */
@@ -207,10 +221,13 @@ page {
   align-items: center;
   justify-content: center;
   height: 96rpx;
-  background-color: #4845F7;
+  background-color: #FFF;
+  border: 2rpx solid #E0E0E0;
   border-radius: 48rpx;
-  color: #fff;
-  font-size: 32rpx; font-weight: 700; font-family: 'Inter', sans-serif;
+  color: #333333;
+  font-size: 32rpx;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
   margin: 0 32rpx; /* 添加左右外边距 */
 }
 

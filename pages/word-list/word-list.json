@@ -3,6 +3,7 @@
   "navigationBarBackgroundColor": "#ffffff",
   "navigationBarTextStyle": "black",
   "usingComponents": {
-    "word-card": "../../components/word-card/index"
+    "word-card": "../../components/word-card/index",
+    "course-selector": "../../components/course-selector/index"
   }
 } 

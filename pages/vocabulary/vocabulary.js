@@ -73,10 +73,7 @@ Page({
     // 从本地存储中读取用户之前选择的课本，如果没有选择则为空
     const selectedDictionaryId = wx.getStorageSync('selectedDictionary');
     
-    // 调试信息：输出当前用户选择的课本ID
-    console.log('=== Vocabulary页面排序调试 ===');
-    console.log('当前用户选择的课本ID:', selectedDictionaryId);
-    console.log('所有词典ID列表:', dicts.map(d => d.id));
+    // 根据用户选择的课本ID进行排序
     
     // 定义课本系列分组
     const seriesGroups = {
@@ -103,7 +100,7 @@ Page({
       }
       
       const selectedSeries = getBookSeries(selectedDictionaryId);
-      console.log('用户选择的课本系列:', selectedSeries);
+
       
       return dictsArray.sort((a, b) => {
         const aIsSelected = a.id === selectedDictionaryId;
@@ -148,16 +145,7 @@ Page({
       }
     ];
 
-    // 调试信息：输出排序后的结果
-    console.log('排序后的textbook分类:', categories[0].dicts.map(d => `${d.id} - ${d.name}`));
-    console.log('排序后的software分类:', categories[1].dicts.map(d => `${d.id} - ${d.name}`));
-    
-    // 额外调试：显示系列分组信息
-    if (selectedDictionaryId) {
-      const selectedSeries = getBookSeries(selectedDictionaryId);
-      console.log(`选择的课本 "${selectedDictionaryId}" 属于 "${selectedSeries}" 系列`);
-      console.log('系列分组详情:', seriesGroups);
-    }
+
 
     this.setData({ categories });
   },

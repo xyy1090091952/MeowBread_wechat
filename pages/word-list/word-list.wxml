@@ -6,9 +6,9 @@
       <view class="word-list-title">{{currentDictName}}</view>
       <view class="word-count-info">共 {{filteredWordList.length || wordList.length}} 个单词</view>
     </view>
-    <view class="right-controls" bindtap="showFilterModal">
+    <view class="right-controls" bindtap="showCourseSelector">
       <!-- 课程选择显示字段 -->
-      <view class="course-selector">{{selectedCourseName}}</view>
+      <view class="course-selector">{{selectedCourseRange.label || '全部课程'}}</view>
       <view class="filter-button">
         <image src="../../images/icons/change.png" class="filter-icon"></image>
       </view>
@@ -25,26 +25,14 @@
     </view>
   </scroll-view>
 
-  <!-- 筛选弹窗 -->
-  <view class="filter-modal {{modalAnimationClass}}" wx:if="{{showFilterModal}}" bindtap="hideFilterModal" catchtouchmove="stopPropagation">
-    <view class="filter-content" catchtap="stopPropagation">
-      <view class="filter-header">
-        <text class="filter-title">选择课程</text>
-        <view class="close-button" bindtap="hideFilterModal">×</view>
-      </view>
-      <view class="filter-options">
-        <view class="filter-option {{selectedCourse === 'all' ? 'selected' : ''}}" bindtap="selectCourse" data-course="all">
-          <text>全部课程</text>
-        </view>
-        <block wx:for="{{courseGroups}}" wx:key="id">
-          <view class="filter-option {{selectedCourse === item.id ? 'selected' : ''}}" bindtap="selectCourse" data-course="{{item.id}}">
-            <text>{{item.name}}</text>
-            <text class="course-range">（第{{item.lessons[0]}}-{{item.lessons[item.lessons.length-1]}}课）</text>
-          </view>
-        </block>
-      </view>
-    </view>
-  </view>
+  <!-- 课程范围选择弹窗 - 使用course-selector组件 -->
+  <course-selector
+    visible="{{isCourseSelectorVisible}}"
+    options="{{courseSelectorOptions}}"
+    defaultValue="{{selectedCourseRange.value}}"
+    bind:close="hideCourseSelector"
+    bind:confirm="onCourseSelectorConfirm"
+  />
 
   <!-- 底部白色渐变遮罩 -->
   <view class="bottom-gradient-mask fade-in-element fade-delay-3 {{wordListLoaded ? 'show' : ''}}"></view>
