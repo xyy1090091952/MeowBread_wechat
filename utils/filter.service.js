@@ -34,6 +34,16 @@ const service = {
       state.quizMode = userFilter.quizMode || options.mode || 'quick';
       state.selectedQuestionTypes = userFilter.selectedQuestionTypes || this.getDefaultSelectedQuestionTypes();
     } else {
+      // 如果没有完整的userFilter，尝试从selectedDictionary中读取信息
+      const selectedDictId = wx.getStorageSync('selectedDictionary');
+      if (selectedDictId) {
+        const dictionaryIndex = state.dictionaries.findIndex(d => d.id === selectedDictId);
+        if (dictionaryIndex !== -1) {
+          state.selectedDictionaryIndex = dictionaryIndex;
+          // 默认选择该教材的全部课程
+          state.selectedLessonFiles = [`DICTIONARY_${selectedDictId}_ALL_LESSONS`];
+        }
+      }
       state.selectedQuestionTypes = this.getDefaultSelectedQuestionTypes();
     }
 
