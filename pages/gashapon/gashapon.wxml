@@ -16,9 +16,9 @@
   <!-- 右侧功能按钮 -->
   <view class="side-buttons" style="top: {{menuButtonTop}}px;">
     <view class="side-button" bindtap="onInventory">
-      <text>库存</text>
+      <text>陈列库</text>
     </view>
-    <view class="side-button" bindtap="onRedeem">
+    <view class="side-button" bindtap="onRedeem" style="opacity: 0;">
       <text>兑换</text>
     </view>
   </view>
