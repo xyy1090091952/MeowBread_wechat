@@ -125,13 +125,44 @@ module.exports = {
             "lesson_files": [
                 "liangs_intermediate/lesson1.js",
                 "liangs_intermediate/lesson2.js",
-                "liangs_intermediate/lesson3.js"
+                "liangs_intermediate/lesson3.js",
+                "liangs_intermediate/lesson26.js",
+                "liangs_intermediate/lesson27.js",
+                "liangs_intermediate/lesson28.js",
+                "liangs_intermediate/lesson29.js",
+                "liangs_intermediate/lesson30.js",
+                "liangs_intermediate/lesson31.js",
+                "liangs_intermediate/lesson32.js",
+                "liangs_intermediate/lesson33.js",
+                "liangs_intermediate/lesson34.js",
+                "liangs_intermediate/lesson35.js",
+                "liangs_intermediate/lesson36.js",
+                "liangs_intermediate/lesson37.js",
+                "liangs_intermediate/lesson38.js",
+                "liangs_intermediate/lesson39.js"
             ],
-            "volumes": [],
+            "volumes": [
+            {"id":"volume1","name":"第一册","description":"1-3课","lessons":[1,2,3]},
+            {"id":"volume2","name":"第二册","description":"26-39课","lessons":[26,27,28,29,30,31,32,33,34,35,36,37,38,39]}
+        ],
             "courses": [
             {"courseNumber":1,"courseTitle":"第1课","lessonFile":"lesson1","description":"梁老师中级第1课"},
             {"courseNumber":2,"courseTitle":"第2课","lessonFile":"lesson2","description":"梁老师中级第2课"},
-            {"courseNumber":3,"courseTitle":"第3课","lessonFile":"lesson3","description":"梁老师中级第3课"}
+            {"courseNumber":3,"courseTitle":"第3课","lessonFile":"lesson3","description":"梁老师中级第3课"},
+            {"courseNumber":26,"courseTitle":"第26课","lessonFile":"lesson26","description":"梁老师中级第26课"},
+            {"courseNumber":27,"courseTitle":"第27课","lessonFile":"lesson27","description":"梁老师中级第27课"},
+            {"courseNumber":28,"courseTitle":"第28课","lessonFile":"lesson28","description":"梁老师中级第28课"},
+            {"courseNumber":29,"courseTitle":"第29课","lessonFile":"lesson29","description":"梁老师中级第29课"},
+            {"courseNumber":30,"courseTitle":"第30课","lessonFile":"lesson30","description":"梁老师中级第30课"},
+            {"courseNumber":31,"courseTitle":"第31课","lessonFile":"lesson31","description":"梁老师中级第31课"},
+            {"courseNumber":32,"courseTitle":"第32课","lessonFile":"lesson32","description":"梁老师中级第32课"},
+            {"courseNumber":33,"courseTitle":"第33课","lessonFile":"lesson33","description":"梁老师中级第33课"},
+            {"courseNumber":34,"courseTitle":"第34课","lessonFile":"lesson34","description":"梁老师中级第34课"},
+            {"courseNumber":35,"courseTitle":"第35课","lessonFile":"lesson35","description":"梁老师中级第35课"},
+            {"courseNumber":36,"courseTitle":"第36课","lessonFile":"lesson36","description":"梁老师中级第36课"},
+            {"courseNumber":37,"courseTitle":"第37课","lessonFile":"lesson37","description":"梁老师中级第37课"},
+            {"courseNumber":38,"courseTitle":"第38课","lessonFile":"lesson38","description":"梁老师中级第38课"},
+            {"courseNumber":39,"courseTitle":"第39课","lessonFile":"lesson39","description":"梁老师中级第39课"}
         ]
         },
         {
