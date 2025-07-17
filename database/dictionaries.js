@@ -123,9 +123,6 @@ module.exports = {
             "name": "梁老师中级",
             "description": "梁老师中级",
             "lesson_files": [
-                "liangs_intermediate/lesson1.js",
-                "liangs_intermediate/lesson2.js",
-                "liangs_intermediate/lesson3.js",
                 "liangs_intermediate/lesson26.js",
                 "liangs_intermediate/lesson27.js",
                 "liangs_intermediate/lesson28.js",
@@ -142,13 +139,10 @@ module.exports = {
                 "liangs_intermediate/lesson39.js"
             ],
             "volumes": [
-            {"id":"volume1","name":"第一册","description":"1-3课","lessons":[1,2,3]},
-            {"id":"volume2","name":"第二册","description":"26-39课","lessons":[26,27,28,29,30,31,32,33,34,35,36,37,38,39]}
+            {"id":"volume1","name":"第一册","description":"1-3课","lessons":[26,27,28,29,30,31,32]},
+            {"id":"volume2","name":"第二册","description":"26-39课","lessons":[33,34,35,36,37,38,39]}
         ],
             "courses": [
-            {"courseNumber":1,"courseTitle":"第1课","lessonFile":"lesson1","description":"梁老师中级第1课"},
-            {"courseNumber":2,"courseTitle":"第2课","lessonFile":"lesson2","description":"梁老师中级第2课"},
-            {"courseNumber":3,"courseTitle":"第3课","lessonFile":"lesson3","description":"梁老师中级第3课"},
             {"courseNumber":26,"courseTitle":"第26课","lessonFile":"lesson26","description":"梁老师中级第26课"},
             {"courseNumber":27,"courseTitle":"第27课","lessonFile":"lesson27","description":"梁老师中级第27课"},
             {"courseNumber":28,"courseTitle":"第28课","lessonFile":"lesson28","description":"梁老师中级第28课"},
