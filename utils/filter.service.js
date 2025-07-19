@@ -75,12 +75,17 @@ const service = {
     };
 
     let lessonsToShow = [allLessonsOption];
-    if (dictionary.lesson_files && Array.isArray(dictionary.lesson_files)) {
-      dictionary.lesson_files.forEach(lessonFilePattern => {
-        let lessonName = lessonFilePattern.split('/').pop().replace('.js', '');
+    if (dictionary.courses && Array.isArray(dictionary.courses)) {
+      dictionary.courses.forEach(course => {
+        // 如果 courseTitle 已经包含了类似“第26课”的信息，就直接使用
+        // 否则，进行拼接
+        const name = course.courseTitle.includes(`第${course.courseNumber}课`) 
+          ? course.courseTitle 
+          : `第${course.courseNumber}课 ${course.courseTitle}`;
+
         lessonsToShow.push({
-          name: `课程: ${lessonName}`,
-          file: `${dictionary.id}_${lessonName}`,
+          name: name,
+          file: `${dictionary.id}_${course.lessonFile}`,
           checked: false
         });
       });

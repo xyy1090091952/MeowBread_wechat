@@ -1,5 +1,6 @@
 // pages/gashapon-inventory/gashapon-inventory.js
-const { gashaponData } = require('../gashapon/gashapon-prizes.js');
+// 使用新的数据管理器，提供更好的数据访问体验 ✨
+const { gashaponData, PrizeDataManager } = require('../../data/gashapon-prizes-config.js');
 const coinManager = require('../../utils/coinManager.js'); // 引入金币管理器
 
 Page({
@@ -8,23 +9,29 @@ Page({
    * 页面的初始数据
    */
   data: {
-    supplyPrizes: [], // 美味补给
-    magicPrizes: [], // 梦幻魔法
-    displayPrizes: [], // 当前显示
-    currentSwiperIndex: 0,
+    // 自定义导航栏所需的高度信息
+    statusBarHeight: 0,
+    navBarHeight: 0,
+    supplyPrizes: [], // 美味补给原始数据
+    magicPrizes: [], // 梦幻魔法原始数据
+    displayPrizes: [], // 当前显示的数据
+    currentSwiperIndex: 0, // 当前选中的索引
     scrollLeft: 0,
-    activeTab: 'supply', // 默认激活的tab
-    tabs: [
-      { id: 'supply', name: '美味补给' },
-      { id: 'magic', name: '梦幻魔法' }
-    ]
+    currentSeriesId: 1, // 当前选中的系列ID，1为美味补给，2为梦幻魔法
+    isAnimating: false, // 控制图片动画状态
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    // 页面加载时不需要重复加载，onShow会处理
+    // 设置导航栏高度
+    const windowInfo = wx.getWindowInfo();
+    const menuButtonInfo = wx.getMenuButtonBoundingClientRect();
+    this.setData({
+      statusBarHeight: windowInfo.statusBarHeight,
+      navBarHeight: menuButtonInfo.height + (menuButtonInfo.top - windowInfo.statusBarHeight) * 2,
+    });
   },
 
   /**
@@ -36,70 +43,88 @@ Page({
   },
 
   /**
-   * @description 加载并处理所有奖品数据 (已重构)
+   * @description 加载并处理所有奖品数据 (使用新数据管理器优化)
    */
   loadPrizes() {
     const unlockedIds = coinManager.getUnlockedPrizes() || [];
     
-    const supplyPrizes = [];
-    const magicPrizes = [];
+    // 使用数据管理器获取分类数据，更加清晰和高效 ✨
+    const supplyPrizes = PrizeDataManager.getPrizesBySeriesId(2).map(prize => ({
+      ...prize,
+      unlocked: unlockedIds.includes(prize.id)
+    }));
+    
+    const magicPrizes = PrizeDataManager.getPrizesBySeriesId(1).map(prize => ({
+      ...prize,
+      unlocked: unlockedIds.includes(prize.id)
+    }));
 
-    gashaponData.forEach(pool => {
-      const prizes = pool.prizes.map(prize => ({
-        ...prize,
-        unlocked: unlockedIds.includes(prize.id)
-      }));
-      
-      if (pool.name === '人类口粮' || pool.name === '猫咪口粮') {
-        supplyPrizes.push(...prizes);
-      } else if (pool.name === '特效扭蛋') {
-        magicPrizes.push(...prizes);
-      }
-    });
-
+    // 根据当前currentSeriesId设置显示的奖品
+    const currentDisplayPrizes = this.data.currentSeriesId === 1 ? supplyPrizes : magicPrizes;
+    
     this.setData({
       supplyPrizes,
       magicPrizes,
-      displayPrizes: supplyPrizes // 默认显示美味补给
+      displayPrizes: currentDisplayPrizes, // 直接使用实际数据
+      currentSwiperIndex: 0, // 重置到第一个
     }, () => {
       this.centerActiveThumbnail();
     });
   },
 
+  /**
+   * 返回上一页
+   */
+  onBack() {
+    wx.navigateBack();
+  },
+
   switchTab(e) {
-    const tabId = e.currentTarget.dataset.id;
-    if (this.data.activeTab !== tabId) {
+    const seriesId = parseInt(e.currentTarget.dataset.id);
+    if (this.data.currentSeriesId !== seriesId && !this.data.isAnimating) {
+      const newDisplayPrizes = seriesId === 1 ? this.data.supplyPrizes : this.data.magicPrizes;
+      
       this.setData({
-        activeTab: tabId,
-        displayPrizes: tabId === 'supply' ? this.data.supplyPrizes : this.data.magicPrizes,
-        currentSwiperIndex: 0 // 切换后重置swiper
+        isAnimating: true,
+        currentSeriesId: seriesId,
+        displayPrizes: newDisplayPrizes,
+        currentSwiperIndex: 0, // 切换后重置索引
       }, () => {
         this.centerActiveThumbnail();
+        
+        // 动画结束后重置状态
+        setTimeout(() => {
+          this.setData({
+            isAnimating: false
+          });
+        }, 600);
       });
     }
   },
 
   /**
-   * @description Swiper切换时触发
-   */
-  onSwiperChange(e) {
-    this.setData({
-      currentSwiperIndex: e.detail.current
-    }, () => {
-      this.centerActiveThumbnail();
-    });
-  },
-
-  /**
-   * @description 点击缩略图切换Swiper
+   * @description 点击缩略图切换奖品
    */
   switchSwiper(e) {
-    const index = e.currentTarget.dataset.index;
-    if (this.data.currentSwiperIndex !== index) {
+    const targetIndex = parseInt(e.currentTarget.dataset.index);
+    
+    if (this.data.currentSwiperIndex !== targetIndex && !this.data.isAnimating) {
       this.setData({
-        currentSwiperIndex: index
+        isAnimating: true,
+        currentSwiperIndex: targetIndex
       }, () => {
+        // 触发Q弹动画
+        this.triggerJellyAnimation();
+        
+        // 居中显示选中的缩略图
         this.centerActiveThumbnail();
+        
+        // 600ms后重置动画状态
+        setTimeout(() => {
+          this.setData({
+            isAnimating: false
+          });
+        }, 600);
       });
     }
   },
@@ -111,6 +136,7 @@ Page({
     const query = wx.createSelectorQuery().in(this);
     const windowWidth = wx.getWindowInfo().windowWidth;
     
+    // 使用当前索引来定位缩略图
     query.select(`#thumb-${this.data.currentSwiperIndex}`).boundingClientRect();
     query.select('.thumbnail-nav').scrollOffset();
     
@@ -125,5 +151,28 @@ Page({
         });
       }
     });
+  },
+
+  /**
+   * @description 触发Q弹动画效果
+   * 为切换时的视觉反馈提供动画效果
+   */
+  triggerJellyAnimation() {
+    // 可以在这里添加具体的动画逻辑
+    // 比如给某个元素添加动画类名，然后在CSS中定义动画效果
+    console.log('触发Q弹动画效果');
+    
+    // 示例：如果需要给特定元素添加动画类名
+    // 可以通过setData更新某个控制动画的状态
+    // this.setData({
+    //   jellyAnimation: true
+    // });
+    
+    // 然后在一定时间后移除动画状态
+    // setTimeout(() => {
+    //   this.setData({
+    //     jellyAnimation: false
+    //   });
+    // }, 300);
   }
 })

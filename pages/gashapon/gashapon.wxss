@@ -87,6 +87,16 @@ page {
   color: #333;
 }
 
+/* 调试按钮特殊样式 */
+.debug-button {
+  background: #fff;
+  color: #333;
+  font-size: 28rpx;
+  border: 2rpx solid #e0e0e0;
+}
+
+
+
 /* 扭蛋机主体 */
 .gashapon-machine {
   position: absolute;
@@ -103,11 +113,34 @@ page {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: #fff;
+  background: linear-gradient(180deg, #FFD6E5 0%, #FFFFFF 100%); /* 默认第一个tag的渐变 */
   border-radius: 48rpx 48rpx 0 0;
   padding: 32rpx 0; /* 上下padding，左右为0 */
   padding-bottom: 68rpx; /* 为底部安全区留出空间 */
   box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.08);
+  overflow: hidden; /* 确保伪元素不溢出 */
+}
+
+/* 使用伪元素实现背景渐变过渡 */
+.bottom-sheet::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #FEE78B 0%, #FFFFFF 100%); /* 系列2的背景 */
+  opacity: 0; /* 初始透明 */
+  transition: opacity 0.6s ease; /* 透明度过渡 */
+  z-index: 0; /* 在内容后面但在默认背景前面 */
+  pointer-events: none; /* 确保不阻挡点击事件 */
+}
+
+
+
+/* 系列2激活时显示伪元素背景 */
+.bottom-sheet.series-2::before {
+  opacity: 1; /* 显示金黄色渐变 */
 }
 
 /* 选择tag区域 */
@@ -117,6 +150,7 @@ page {
   justify-content: center;
   align-items: center;
   padding: 0 48rpx; /* 左右边距48rpx */
+  z-index: 1; /* 确保在伪元素上方 */
 }
 
 .series-tags {
@@ -130,7 +164,7 @@ page {
   border-radius: 48rpx;
   background-color: transparent; /* 去掉背景颜色 */
   border: 2rpx solid transparent;
-  transition: all 0.3s ease;
+  transition: all 0.6s ease;
   display: flex;
   align-items: center;
   justify-content: center; /* 文案居中显示 */
@@ -157,78 +191,100 @@ page {
   bottom: 0;
   width: 128rpx;
   height: 6rpx;
-  background-color: #4845F7;
+  background-color: #FF4E91; /* 默认第一个tag的颜色 */
   border-radius: 3rpx;
-  transition: left 0.3s ease;
+  transition: left 0.6s ease, background-color 0.6s ease; /* 添加颜色过渡动画 */
   z-index: 1;
+}
+
+/* 第一个tag选中时的指示器颜色 - 特效扭蛋 */
+.bottom-sheet.series-1 .tag-indicator {
+  background-color: #FF4E91;
+}
+
+/* 第二个tag选中时的指示器颜色 - 人类口粮 */
+.bottom-sheet.series-2 .tag-indicator {
+  background-color: #FFCA1D;
+}
+
+/* 可滑动的内容区域 */
+.content-swiper {
+  width: 100%;
+  height: 380rpx; /* 减少高度，因为抽奖按钮移出了 */
+  z-index: 1; /* 确保在伪元素上方 */
+}
+
+.swiper-item {
+  width: 100%;
+  height: 100%;
+}
+
+.series-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 改为居中对齐 */
 }
 
 /* 纯视觉展示区域 */
 .visual-display {
+  position: relative; /* 添加定位 */
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0 32rpx;
-  margin-bottom: 40rpx;
   height: 340rpx; /* 固定高度，与原来的series-card保持一致 */
+  z-index: 1; /* 确保在伪元素上方 */
 }
 
 .display-card {
   width: 240rpx;
   height: 320rpx;
   border-radius: 48rpx;
-  opacity: 1;
-  transform: scale(1);
-  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.display-card.hide {
-  opacity: 0;
-  transform: scale(0.8);
-}
-
-.display-card.show {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.display-card.bounce-in {
-  animation: bounceIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-/* Q弹果冻效果的关键帧动画 */
-@keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.02);
-  }
-  70% {
-    transform: scale(0.98);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* 抽奖按钮 */
-.draw-button {
+/* 固定的抽奖按钮 */
+.draw-button-fixed {
+  position: relative; /* 添加定位 */
   display: flex;
   align-items: center;
   justify-content: center;
   height: 96rpx;
   background-color: #FFF;
-  border: 2rpx solid #E0E0E0;
+  border-radius: 48rpx;
+  color: #333333;
+  font-size: 32rpx;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  margin: 20rpx 32rpx 0 32rpx; /* 上边距20rpx，左右边距32rpx */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 使用项目约定的shadow样式 */
+  z-index: 1; /* 确保在伪元素上方 */
+  transition: all 0.3s ease; /* 添加过渡动画 */
+}
+
+/* 抽奖按钮悬停效果 */
+.draw-button-fixed:active {
+  transform: scale(0.98);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 原有的抽奖按钮样式保留（以防其他地方使用） */
+.draw-button {
+  position: relative; /* 添加定位 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 96rpx;
+  background-color: #FFF;
   border-radius: 48rpx;
   color: #333333;
   font-size: 32rpx;
   font-weight: 700;
   font-family: 'Inter', sans-serif;
   margin: 0 32rpx; /* 添加左右外边距 */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 使用项目约定的shadow样式 */
+  z-index: 1; /* 确保在伪元素上方 */
 }
 
 .coin-icon {

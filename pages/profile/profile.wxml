@@ -71,7 +71,10 @@
       <image class="gashapon-background" src="/images/banner/gashapon.jpg"></image>
       <view class="option-text-container">
         <text class="option-main-text">单词扭蛋机</text>
-        <text class="option-points-text">可以修改首页效果哦</text>
+        <view class="option-points-text">
+          <image class="coin-icon" src="/images/icons/Coins.png"></image>
+          <text>{{userCoins}}</text>
+        </view>
         <text class="option-rule-text">每答对1个单词增加1分</text>
       </view>
       <image class="option-icon arrow-gashapon" src="/images/icons/arrow_right.svg"></image>

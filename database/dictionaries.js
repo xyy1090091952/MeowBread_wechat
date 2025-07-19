@@ -98,7 +98,7 @@ module.exports = {
             {"courseNumber":5,"courseTitle":"初対面","lessonFile":"lesson5","description":"初次见面的日语表达"},
             {"courseNumber":6,"courseTitle":"Wi-Fiはありますか","lessonFile":"lesson6","description":"询问Wi-Fi等基本设施"},
             {"courseNumber":7,"courseTitle":"スマホに写真がありますよ","lessonFile":"lesson7","description":"谈论手机和照片"},
-            {"courseNumber":8,"courseTitle":"S サイズでお願いします","lessonFile":"lesson8","description":"购物时的尺寸选择"},
+            {"courseNumber":8,"courseTitle":"Sサイズでお願いします","lessonFile":"lesson8","description":"购物时的尺寸选择"},
             {"courseNumber":9,"courseTitle":"誕⽣⽇と性格","lessonFile":"lesson9","description":"生日和性格的表达"},
             {"courseNumber":10,"courseTitle":"映画の約束","lessonFile":"lesson10","description":"电影约会的安排"},
             {"courseNumber":11,"courseTitle":"電気屋さんで","lessonFile":"lesson11","description":"在电器店购物"},

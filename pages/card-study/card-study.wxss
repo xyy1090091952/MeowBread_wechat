@@ -201,7 +201,7 @@
   background-color: #ffffff !important; /* 强制白色背景 */
   border-radius: 32rpx;
   box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.12);
-  padding: 40rpx;
+  padding: 40rpx 48rpx; /* 上下40rpx，左右48rpx */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -232,6 +232,7 @@
 .study-card.background-card {
   z-index: 1;
   /* 初始状态通过inline style设置，实现实时跟随滑动 */
+  transition: opacity 0.4s ease-in-out;
 }
 
 /* 确保background-card的白色底层始终存在 */
@@ -292,7 +293,7 @@
 }
 
 /* 确保卡片内容在背景之上 */
-.study-card .card-header,
+.study-card .word-main,
 .study-card .card-content,
 .study-card .swipe-hints {
   position: relative;
@@ -300,9 +301,6 @@
 }
 
 /* ==================== 卡片内容 ==================== */
-.card-header {
-  margin-bottom: 40rpx;
-}
 
 .word-main {
   display: flex;
@@ -310,13 +308,15 @@
   align-items: flex-start;
   justify-content: center;
   gap: 16rpx;
+  width: 100%; /* 占据父容器的全部宽度 */
+  margin: 0 0 40rpx 0; /* 底部边距40rpx，其他边距为0 */
 }
 
 .word-text {
   font-size: 48rpx;
   font-weight: 700;
   color: #1F2329;
-  text-align: center;
+  text-align: left;
 }
 
 .part-of-speech-tag {
@@ -350,6 +350,7 @@
 .example-line {
   display: block; /* 改为block，支持正常的文本换行 */
   font-size: 24rpx;
+  font-weight: 700; /* 加粗 */
   line-height: 1.5;
   color: #666666;
   margin-top: 8rpx;
@@ -367,7 +368,7 @@
 
 .detail-value {
   font-size: 24rpx;
-  font-weight: 500;
+  font-weight: 700; /* 加粗 */
   color: #666666;
   line-height: 1.4;
 }
@@ -453,7 +454,7 @@
   gap: 32rpx;
   width: 100%;
   position: fixed;
-  bottom: 208rpx; /* 88rpx(退出按钮高度) + 32rpx(间距) + 40rpx(退出按钮底部边距) + 48rpx(新增padding) = 208rpx */
+  bottom: 192rpx; /* 88rpx(退出按钮高度) + 32rpx(间距) + 40rpx(退出按钮底部边距) + 32rpx(exit-button-container的padding-bottom) = 192rpx */
   left: 48rpx;
   right: 48rpx;
   width: calc(100% - 96rpx);

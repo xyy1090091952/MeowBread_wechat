@@ -409,6 +409,16 @@
   margin-top: 8rpx;
   z-index: 2;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+/* 金币图标样式 */
+.gashapon-section .coin-icon {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
 }
 
 /* 扭蛋机规则文本样式 */

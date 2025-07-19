@@ -1,5 +1,6 @@
 // 引入统计管理器
 const statisticsManager = require('../../utils/statisticsManager');
+const userTitleManager = require('../../utils/userTitleManager.js');
 
 Page({
   data: {
@@ -14,16 +15,53 @@ Page({
       standardModeCount: 0, // 标准模式完成次数（暂时模拟数据）
       endlessModeRecord: 0   // 无尽模式最长答题数（暂时模拟数据）
     },
-    formattedTimeSpent: '0分钟', // 格式化的总练习时长
+    formattedTimeSpent: '00:00:00', // 格式化的总练习时长 (时:分:秒)
     ratingInfo: {
-      grade: 'C',
-      description: '新手上路'
+      grade: 0 // 已背单词数量
     }
   },
 
   onLoad: function (options) {
-    // 加载统计数据
-    this.loadStatistics();
+    console.log('Quiz Details 页面加载');
+    
+    // 获取统计数据
+    const overallStats = statisticsManager.getOverallStatistics();
+    
+    // 扩展统计数据，添加更多有用信息
+    const extendedStats = {
+      ...overallStats,
+      // 计算平均每次答题数量
+      averageQuestionsPerQuiz: overallStats.totalQuizzes > 0 
+        ? Math.round(overallStats.totalQuestions / overallStats.totalQuizzes) 
+        : 0,
+      // 计算错误答案数量
+      incorrectAnswers: overallStats.totalQuestions - overallStats.correctAnswers,
+      // 计算错误率
+      errorRate: overallStats.totalQuestions > 0 
+        ? Math.round(((overallStats.totalQuestions - overallStats.correctAnswers) / overallStats.totalQuestions) * 100)
+        : 0,
+      // 获取真实的标准模式完成次数和无尽模式最长答题数
+      standardModeCount: statisticsManager.getStandardModeCount(),
+      endlessModeRecord: statisticsManager.getEndlessModeRecord()
+    };
+    
+    // 格式化练习时长
+    const formattedTime = this.formatTimeSpent(overallStats.totalTimeSpent);
+    
+    // 获取用户等级称号信息（基于已背单词数量）
+    const userTitleInfo = userTitleManager.getCurrentUserTitleInfo();
+    
+    // 更新数据
+    this.setData({
+      statistics: extendedStats,
+      formattedTimeSpent: formattedTime,
+      ratingInfo: {
+        grade: userTitleInfo.learnedCount // 显示已背单词数量
+      }
+    });
+    
+    console.log('加载的统计数据:', extendedStats);
+    console.log('用户等级称号信息:', userTitleInfo);
     
     // 触发加载动画
     this.triggerLoadAnimation();
@@ -31,7 +69,7 @@ Page({
 
   onShow: function () {
     // 每次显示页面时重新加载数据
-    this.loadStatistics();
+    this.onLoad();
     
     // 每次显示页面时都触发动画
     this.triggerLoadAnimation();
@@ -53,133 +91,24 @@ Page({
   },
 
   /**
-   * 加载统计数据
-   */
-  loadStatistics() {
-    try {
-      // 获取总体统计数据
-      const overallStats = statisticsManager.getOverallStatistics();
-      
-      // 模拟扩展数据（未来需要在statisticsManager中实现）
-      const extendedStats = {
-        ...overallStats,
-        standardModeCount: this.getStandardModeCount(),
-        endlessModeRecord: this.getEndlessModeRecord()
-      };
-      
-      // 格式化时间
-      const formattedTime = this.formatTimeSpent(overallStats.totalTimeSpent);
-      
-      // 计算评级
-      const ratingInfo = this.calculateRating(extendedStats);
-      
-      // 更新数据
-      this.setData({
-        statistics: extendedStats,
-        formattedTimeSpent: formattedTime,
-        ratingInfo: ratingInfo
-      });
-      
-    } catch (error) {
-      console.error('加载统计数据失败:', error);
-    }
-  },
-
-  /**
-   * 格式化时间显示
+   * 格式化时间显示为 时:分:秒 格式
    * @param {number} seconds - 总秒数
-   * @returns {string} 格式化的时间字符串
+   * @returns {string} 格式化的时间字符串 (HH:MM:SS)
    */
   formatTimeSpent(seconds) {
-    if (!seconds || seconds < 60) {
-      return `${seconds || 0}秒`;
-    }
+    // 确保 seconds 是数字，如果为空或无效则设为 0
+    const totalSeconds = parseInt(seconds) || 0;
     
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
+    // 计算小时、分钟、秒
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const remainingSeconds = totalSeconds % 60;
     
-    if (minutes < 60) {
-      return remainingSeconds > 0 
-        ? `${minutes}分${remainingSeconds}秒`
-        : `${minutes}分钟`;
-    }
+    // 格式化为两位数字符串（补零）
+    const formatNumber = (num) => num.toString().padStart(2, '0');
     
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    
-    return remainingMinutes > 0
-      ? `${hours}小时${remainingMinutes}分钟`
-      : `${hours}小时`;
-  },
-
-  /**
-   * 计算综合评级
-   * @param {Object} stats - 统计数据
-   * @returns {Object} 评级信息
-   */
-  calculateRating(stats) {
-    // 评级算法：基于答题数量、准确率、练习次数的综合评估
-    let score = 0;
-    
-    // 答题数量评分 (0-40分)
-    const questionScore = Math.min(stats.totalQuestions / 50, 1) * 40;
-    score += questionScore;
-    
-    // 准确率评分 (0-40分)
-    const accuracyScore = (stats.averageAccuracy / 100) * 40;
-    score += accuracyScore;
-    
-    // 练习次数评分 (0-20分)
-    const quizScore = Math.min(stats.totalQuizzes / 20, 1) * 20;
-    score += quizScore;
-    
-    // 根据分数确定等级
-    let grade, description;
-    
-    if (score >= 90) {
-      grade = 'SSS';
-      description = '日语大师';
-    } else if (score >= 80) {
-      grade = 'SS';
-      description = '单词达人';
-    } else if (score >= 70) {
-      grade = 'S';
-      description = '优秀学习者';
-    } else if (score >= 60) {
-      grade = 'A';
-      description = '勤奋练习者';
-    } else if (score >= 50) {
-      grade = 'B';
-      description = '努力学习中';
-    } else {
-      grade = 'C';
-      description = '新手上路';
-    }
-    
-    return {
-      grade,
-      description
-    };
-  },
-
-  /**
-   * 获取标准模式完成次数（模拟数据，未来需要实现）
-   * @returns {number}
-   */
-  getStandardModeCount() {
-    // 临时模拟数据
-    const mockData = wx.getStorageSync('standardModeCount') || 0;
-    return mockData;
-  },
-
-  /**
-   * 获取无尽模式最长答题数（模拟数据，未来需要实现）
-   * @returns {number}
-   */
-  getEndlessModeRecord() {
-    // 临时模拟数据
-    const mockData = wx.getStorageSync('endlessModeRecord') || 0;
-    return mockData;
+    // 返回 HH:MM:SS 格式
+    return `${formatNumber(hours)}:${formatNumber(minutes)}:${formatNumber(remainingSeconds)}`;
   },
 
   /**
@@ -205,15 +134,11 @@ Page({
    */
   resetAllData() {
     try {
-      // 清除统计数据
+      // 清除统计数据（包括标准模式完成次数和无尽模式最长答题数）
       statisticsManager.clearAllStatistics();
       
-      // 清除模拟数据
-      wx.removeStorageSync('standardModeCount');
-      wx.removeStorageSync('endlessModeRecord');
-      
       // 重新加载数据
-      this.loadStatistics();
+      this.onLoad();
       
       // 显示成功提示
       wx.showToast({
@@ -233,4 +158,4 @@ Page({
       });
     }
   }
-}) 
+})

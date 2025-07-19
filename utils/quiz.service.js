@@ -100,54 +100,55 @@ const quizService = {
    * @returns {Array} - 最终的问题列表
    */
   selectWordsForQuiz(allWords, mode, selectedQuestionTypes) {
+    // 引入 learnedManager 来判断单词是否已学
+    const learnedManager = require('./learnedManager.js');
+
     let finalQuestions = [];
-    
-    // 如果没有选择题型，使用默认题型
     if (!selectedQuestionTypes || selectedQuestionTypes.length === 0) {
       selectedQuestionTypes = ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'];
     }
-    
+
     if (!allWords || allWords.length === 0) {
       return [];
     }
 
-    let shuffledWords = [...allWords].sort(() => 0.5 - Math.random());
+    // 1. 区分已学和未学单词
+    const learnedWords = [];
+    const unlearnedWords = [];
+    const { dictionaryId } = filterManager.getFilter() || {};
 
-    shuffledWords.forEach(word => {
-      const randomTypeIndex = Math.floor(Math.random() * selectedQuestionTypes.length);
-      const randomQuestionType = selectedQuestionTypes[randomTypeIndex];
-      const question = quizUtils.formatQuestion(word, randomQuestionType, shuffledWords);
-      if (question) {
-        finalQuestions.push(question);
+    allWords.forEach(word => {
+      // 传递整个单词对象和词典ID给 isWordLearned
+      if (learnedManager.isWordLearned(word.data, dictionaryId)) { 
+        learnedWords.push(word);
+      } else {
+        unlearnedWords.push(word);
       }
     });
 
+    // 2. 优先从未学单词中生成问题
+    let questionsFromUnlearned = this.generateQuestions(unlearnedWords, selectedQuestionTypes);
+
+    // 3. 如果未学单词不足，从已学单词中补充
+    const targetQuestionCount = (mode === 'quick' || mode === 'course') ? 30 : questionsFromUnlearned.length;
+    if (questionsFromUnlearned.length < targetQuestionCount) {
+      const needed = targetQuestionCount - questionsFromUnlearned.length;
+      const questionsFromLearned = this.generateQuestions(learnedWords, selectedQuestionTypes);
+      const supplement = questionsFromLearned.slice(0, needed);
+      finalQuestions = questionsFromUnlearned.concat(supplement);
+    } else {
+      finalQuestions = questionsFromUnlearned;
+    }
+
+    // 4. 最终题目列表处理
+    // 随机打乱最终的题目顺序
     finalQuestions.sort(() => 0.5 - Math.random());
 
-    // 快速模式和课程模式都限制为30道题，如果不足则从历史记录补充
+    // 快速模式和课程模式限制最终数量
     if (mode === 'quick' || mode === 'course') {
-      const targetQuestionCount = 30;
-      
-      if (finalQuestions.length < targetQuestionCount) {
-        // 如果当前题目不足30道，尝试从历史答题记录中补充
-        const supplementQuestions = this.getSupplementQuestions(
-          finalQuestions, 
-          targetQuestionCount - finalQuestions.length, 
-          selectedQuestionTypes,
-          mode
-        );
-        
-        // 将补充的题目添加到原题目列表中
-        finalQuestions.push(...supplementQuestions);
-        
-        // 重新打乱顺序
-        finalQuestions.sort(() => 0.5 - Math.random());
-        
-        console.log(`课程单词不足，已从历史记录补充 ${supplementQuestions.length} 道题目，总计 ${finalQuestions.length} 道题`);
-      }
-      
-      return finalQuestions.slice(0, Math.min(finalQuestions.length, targetQuestionCount));
+      return finalQuestions.slice(0, targetQuestionCount);
     }
+
     return finalQuestions;
   },
 

@@ -1,6 +1,8 @@
 // pages/profile/profile.js
 const mistakeManager = require('../../utils/mistakeManager.js');
 const statisticsManager = require('../../utils/statisticsManager.js');
+const userTitleManager = require('../../utils/userTitleManager.js');
+const coinManager = require('../../utils/coinManager.js'); // 引入金币管理器
 
 Page({
   data: {
@@ -15,6 +17,7 @@ Page({
       averageAccuracy: 0   // 平均准确率
     },
     mistakeCount: 0, // 错题数量
+    userCoins: 0, // 用户金币数量
     pageLoaded: false, // 控制页面渐显动画
     breadBouncing: false // 控制面包弹跳动画状态
   },
@@ -29,6 +32,9 @@ Page({
     
     // 获取用户统计数据
     this.getUserStatistics();
+    
+    // 获取用户金币数量
+    this.updateUserCoins();
   },
 
   // 检查用户登录状态
@@ -85,6 +91,14 @@ Page({
     const statistics = statisticsManager.getOverallStatistics();
     this.setData({
       statistics: statistics
+    });
+  },
+
+  // 更新用户金币数量
+  updateUserCoins: function() {
+    const userCoins = coinManager.getCoins();
+    this.setData({
+      userCoins: userCoins
     });
   },
 
@@ -231,49 +245,16 @@ Page({
     // 获取错题数量
     const mistakeCount = mistakeManager.getMistakeList().length;
     
+    // 获取用户等级称号信息（基于已背单词数量）
+    const userTitleInfo = userTitleManager.getCurrentUserTitleInfo();
+    
     console.log('加载的真实统计数据:', realStatistics); // 调试信息
+    console.log('用户等级称号信息:', userTitleInfo); // 调试信息
     
     this.setData({
       statistics: realStatistics,
-      mistakeCount: mistakeCount
-    });
-    
-    // 更新用户称号
-    this.updateUserTitle(realStatistics.totalQuestions);
-  },
-
-  // 根据答题数量更新用户称号
-  updateUserTitle: function(totalQuestions) {
-    let title = '菜鸡 🐣'; // 默认称号（0-49题）
-    
-    // 10个进阶称号，中日结合的幽默称号设计 ✨
-    if (totalQuestions >= 6000) {
-      title = '日语之神 ⚡'; // 6000+ 传说级存在
-    } else if (totalQuestions >= 4500) {
-      title = '单词の鬼 👹'; // 4500+ 单词之鬼
-    } else if (totalQuestions >= 3200) {
-      title = '词汇マスター 👑'; // 3200+ 词汇大师
-    } else if (totalQuestions >= 2200) {
-      title = '学霸さん 🤓'; // 2200+ 学霸同学
-    } else if (totalQuestions >= 1500) {
-      title = '前辈 😎'; // 1500+ 前辈
-    } else if (totalQuestions >= 800) {
-      title = '老司机 🚗'; // 800+ 老司机
-    } else if (totalQuestions >= 400) {
-      title = '小有所成 🚀'; // 400+ 小有所成
-    } else if (totalQuestions >= 200) {
-      title = '努力中 📚'; // 200+ 努力中
-    } else if (totalQuestions >= 100) {
-      title = '新手君 🌱'; // 100+ 新手君
-    } else if (totalQuestions >= 50) {
-      title = '小白兔 🐰'; // 50+ 小白兔
-    }
-    // 0-49题保持菜鸡称号
-    
-    console.log(`用户答题数: ${totalQuestions}, 获得称号: ${title}`); // 调试信息
-    
-    this.setData({
-      userTitle: title
+      mistakeCount: mistakeCount,
+      userTitle: userTitleInfo.fullTitle // 使用完整称号（含emoji）
     });
   },
 
@@ -367,6 +348,9 @@ Page({
     console.log('Profile page onShow');
     // 检查登录状态，以防在其他页面进行了登录/登出操作
     this.checkLoginStatus();
+    
+    // 更新用户金币数量（可能在其他页面有变化）
+    this.updateUserCoins();
 
     // 重要的：更新自定义底部导航的选中状态，确保高亮正确
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {

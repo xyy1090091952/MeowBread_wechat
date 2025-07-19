@@ -1,6 +1,7 @@
 // pages/gashapon-result/gashapon-result.js
-// 导入扭蛋机的所有数据
-const { gashaponData } = require('../gashapon/gashapon-prizes.js');
+// 使用新的数据管理器，提供更好的数据访问体验 ✨
+const { gashaponData, PrizeDataManager } = require('../../data/gashapon-prizes-config.js');
+const { drawPrize } = require('../../utils/gashapon-helper.js');
 const coinManager = require('../../utils/coinManager.js'); // 引入金币管理器
 
 Page({

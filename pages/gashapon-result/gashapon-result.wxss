@@ -47,10 +47,11 @@ page {
   margin-bottom: 100rpx;
   /* 将图片置于光效之上 */
   z-index: 2; 
-  /* 初始状态：缩小且全白 */
-  transform: scale(0.5);
-  filter: brightness(100);
-  opacity: 0;
+  /* 初始状态：0.8倍大小，使用高亮度滤镜让图片呈现纯白色效果 */
+  transform: scale(0.8);
+  opacity: 1;
+  /* 初始状态为纯白色，通过超高亮度实现 */
+  filter: brightness(10);
 }
 
 .prize-info {
@@ -69,22 +70,22 @@ page {
   animation: shinning-rotate 10s linear infinite, fade-in 1s ease-out forwards;
 }
 
-/* 奖品动画：放大、变色 */
+/* 奖品动画：抖动 → 温和放大 → 颜色恢复 */
 .prize-animation {
-  animation: prize-appear 2s ease-out forwards;
+  animation: prize-ceremony 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 /* 信息动画：分别定义延迟，实现依次入场 */
 .rarity-animation {
-  animation: info-fade-in 0.5s ease-out 1s forwards; /* 延迟1s */
+  animation: info-fade-in 0.5s ease-out 0.8s forwards; /* 延迟0.8s */
 }
 
 .name-animation {
-  animation: info-fade-in 0.5s ease-out 1.3s forwards; /* 延迟1.3s */
+  animation: info-fade-in 0.5s ease-out 1.0s forwards; /* 延迟1.0s */
 }
 
 .desc-animation {
-  animation: info-fade-in 0.5s ease-out 1.6s forwards; /* 延迟1.6s */
+  animation: info-fade-in 0.5s ease-out 1.2s forwards; /* 延迟1.2s */
 }
 
 @keyframes shinning-rotate {
@@ -105,23 +106,53 @@ page {
   }
 }
 
-@keyframes prize-appear {
+@keyframes prize-ceremony {
+  /* 0-28.6%: 抖动阶段 - 7次疯狂抖动，保持纯白色（0.4秒） */
   0% {
-    transform: scale(0.5);
-    filter: brightness(10); /* 纯白高亮 */
-    opacity: 0.8;
+    transform: scale(0.8) translate(0, 0);
+    filter: brightness(10);
   }
-  50% {
-    transform: scale(1.1); /* 放大超过目标尺寸 */
-    filter: brightness(1.5); /* 亮度降低 */
-    opacity: 1;
+  4% {
+    transform: scale(0.8) translate(-24rpx, -18rpx);
+    filter: brightness(10);
   }
+  8% {
+    transform: scale(0.8) translate(24rpx, 18rpx);
+    filter: brightness(10);
+  }
+  12% {
+    transform: scale(0.8) translate(-20rpx, 16rpx);
+    filter: brightness(10);
+  }
+  16% {
+    transform: scale(0.8) translate(20rpx, -16rpx);
+    filter: brightness(10);
+  }
+  20% {
+    transform: scale(0.8) translate(-16rpx, -12rpx);
+    filter: brightness(10);
+  }
+  24% {
+    transform: scale(0.8) translate(16rpx, 12rpx);
+    filter: brightness(10);
+  }
+  28% {
+    transform: scale(0.8) translate(-8rpx, 8rpx);
+    filter: brightness(10);
+  }
+  28.6% {
+    transform: scale(0.8) translate(0, 0);
+    filter: brightness(10);
+  }
+  
+  /* 28.6-100%: 放大+颜色恢复阶段 - 同时进行，更自然流畅（1秒） */
   100% {
-    transform: scale(1); /* 恢复正常大小 */
-    filter: brightness(1); /* 恢复正常颜色 */
-    opacity: 1;
+    transform: scale(1.0);
+    filter: brightness(1);
   }
 }
+
+/* 移除遮罩层相关代码 */
 
 @keyframes info-fade-in {
   from {
