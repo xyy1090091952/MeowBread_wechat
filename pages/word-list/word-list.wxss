@@ -68,6 +68,10 @@
   font-size: 32rpx;
   font-weight: bold;
   color: #333;
+  max-width: 320rpx; /* 设置最大宽度，防止课程名太长 */
+  overflow: hidden; /* 隐藏溢出内容 */
+  text-overflow: ellipsis; /* 显示省略号 */
+  white-space: nowrap; /* 不换行 */
 }
 
 .word-count-info {
@@ -100,157 +104,62 @@
   padding-bottom: 40rpx;
 }
 
-/* 移除旧的word-card样式，现在使用word-card组件的样式 */
-
-/* 筛选弹窗样式 */
-.filter-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: flex-end;
-  z-index: 1000;
-  opacity: 0;
-}
-
-/* 弹窗动画样式 */
-.modal-fade-in {
-  animation: modalFadeIn 0.2s ease-out forwards;
-}
-
-.modal-fade-out {
-  animation: modalFadeOut 0.2s ease-out forwards;
-}
-
-@keyframes modalFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes modalFadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-.filter-content {
-  width: 100%;
-  background-color: #ffffff;
-  border-top-left-radius: 24rpx;
-  border-top-right-radius: 24rpx;
-  padding: 48rpx 48rpx calc(48rpx + env(safe-area-inset-bottom));
-  transform: translateY(100%);
-  transition: transform 0.3s ease-out;
-}
-
-/* 弹窗内容动画 - 修复双重动画问题 */
-.filter-modal.modal-fade-in .filter-content {
-  transform: translateY(0);
-}
-
-.filter-modal.modal-fade-out .filter-content {
-  transform: translateY(100%);
-}
-
-.filter-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32rpx;
-}
-
-.filter-title {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #111111;
-}
-
-.close-button {
-  width: 48rpx;
-  height: 48rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36rpx;
-  color: #666666;
-}
-
-.filter-options {
-  display: flex;
-  flex-direction: column;
-  gap: 24rpx;
-}
-
-.filter-option {
-  padding: 24rpx 40rpx;
-  border-bottom: 2rpx solid #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.filter-option:last-child {
-  border-bottom: none;
-}
-
-.filter-option.selected {
-  background-color: #f5f5ff;
-  color: #4845F7;
-}
-
-.filter-option text {
-  font-size: 32rpx;
-}
-
-/* 新增：课程范围显示样式 */
-.course-range {
-  font-size: 24rpx;
-  color: #999;
-  margin-left: 16rpx;
-}
-
-.filter-option.selected .course-range {
-  color: #4845F7;
-}
-
 /* 底部白色渐变遮罩 */
 .bottom-gradient-mask {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 240rpx; /* 120px高度 */
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-  pointer-events: none; /* 不阻挡点击事件 */
-  z-index: 10; /* 确保在内容之上 */
+  height: 200rpx;
+  background: linear-gradient(to top, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+  z-index: 10;
 }
 
-/* 渐显动画相关样式 */
-.fade-in-element {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+/* ==================== Volume Tags 样式 ==================== */
+/* 学习gashapon页面的series-tags设计 */
+
+.volume-tags {
+  display: flex;
+  width: 100%;
+  position: relative; /* 为横条指示器提供定位基准 */
 }
 
-.fade-in-element.show {
-  opacity: 1;
-  transform: translateY(0);
+.volume-tag {
+  flex: 1; /* 平均分配空间 */
+  height: 72rpx; /* 设置固定高度 */
+  border-radius: 48rpx;
+  background-color: transparent; /* 去掉背景颜色 */
+  border: 2rpx solid transparent;
+  transition: all 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 文案居中显示 */
 }
 
-.fade-delay-1 {
-  transition-delay: 0.1s;
+.volume-tag.active {
+  background-color: transparent; /* 去掉背景颜色 */
+  border-color: transparent;
 }
 
-.fade-delay-2 {
-  transition-delay: 0.2s;
-} 
+.volume-tag text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5); /* 黑色50%透明度 */
+}
+
+.volume-tag.active text {
+  color: #000000; /* 选中状态黑色 */
+}
+
+/* 滑动横条指示器 */
+.tag-indicator {
+  position: absolute;
+  bottom: 0;
+  width: 128rpx;
+  height: 6rpx;
+  background-color: #4845F7; /* 改成主题色 */
+  border-radius: 3rpx;
+  transition: left 0.6s ease, background-color 0.6s ease; /* 添加颜色过渡动画 */
+  z-index: 1;
+}

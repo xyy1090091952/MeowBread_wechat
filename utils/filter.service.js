@@ -75,12 +75,17 @@ const service = {
     };
 
     let lessonsToShow = [allLessonsOption];
-    if (dictionary.lesson_files && Array.isArray(dictionary.lesson_files)) {
-      dictionary.lesson_files.forEach(lessonFilePattern => {
-        let lessonName = lessonFilePattern.split('/').pop().replace('.js', '');
+    if (dictionary.courses && Array.isArray(dictionary.courses)) {
+      dictionary.courses.forEach(course => {
+        // 现在数据结构已统一：courseTitle为"第X课"，description为课程名字
+        // 显示格式：courseTitle + description（如果description存在）
+        const name = course.description 
+          ? `${course.courseTitle} ${course.description}`
+          : course.courseTitle;
+
         lessonsToShow.push({
-          name: `课程: ${lessonName}`,
-          file: `${dictionary.id}_${lessonName}`,
+          name: name,
+          file: `${dictionary.id}_${course.lessonFile}`,
           checked: false
         });
       });

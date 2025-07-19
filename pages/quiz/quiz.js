@@ -7,6 +7,7 @@ const quizService = require('../../utils/quiz.service.js');
 const mistakeManager = require('../../utils/mistakeManager.js');
 const learnedManager = require('../../utils/learnedManager.js');
 const coinManager = require('../../utils/coinManager.js'); // 引入金币管理器
+const statisticsManager = require('../../utils/statisticsManager.js'); // 引入统计管理器
 
 Page({
   /**
@@ -189,6 +190,20 @@ Page({
     }, () => {
       // 在setData回调中处理高亮，确保UI已更新
       this.processHighlight();
+      
+      // 如果是无尽模式，实时更新最长答题数记录
+      if (this.data.quizMode === 'endless') {
+        const isNewRecord = statisticsManager.updateEndlessModeRecord(newAnsweredCount);
+        if (isNewRecord) {
+          console.log(`🎉 无尽模式新记录！当前答题数：${newAnsweredCount}`);
+          // 可以在这里添加新记录的提示效果
+          wx.showToast({
+            title: `新记录！${newAnsweredCount}题`,
+            icon: 'success',
+            duration: 1500
+          });
+        }
+      }
     });
   },
 
@@ -298,7 +313,9 @@ Page({
     const accuracy = actualAnsweredQuestions > 0 ? score / actualAnsweredQuestions : 0;
     const resultLevel = quizService.calculateResultLevel(accuracy);
 
-    let url = `/pages/quiz-result/quiz-result?score=${score}&totalQuestions=${actualAnsweredQuestions}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}&coinsEarned=${coinsEarned}`;
+    // 添加答题模式参数到URL中
+    let url = `/pages/quiz-result/quiz-result?score=${score}&totalQuestions=${actualAnsweredQuestions}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}&coinsEarned=${coinsEarned}&mode=${quizMode}`;
+    
     if (quizMode === 'mistakes') {
       url += `&fromMistakes=true`;
     }

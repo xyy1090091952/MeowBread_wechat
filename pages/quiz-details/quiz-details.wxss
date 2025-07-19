@@ -104,13 +104,6 @@
 /* 表单项容器 */
 .form-item-wrapper {
   margin-bottom: 24rpx;
-}
-
-.form-item-wrapper:last-child {
-  margin-bottom: 0;
-}
-
-.form-item-container {
   background: #FFFFFF;
   border-radius: 48rpx;
   padding: 48rpx;
@@ -122,30 +115,12 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* 左侧内容区 */
-.form-item-left {
-  display: flex;
-  align-items: center;
-  flex: 1;
-}
-
-/* 删除图标相关样式 */
-
-/* 文字内容区 */
-.form-item-content {
-  flex: 1;
-}
-
+/* 表单标签和数值样式 */
 .form-label {
   font-size: 32rpx;
   color: #1F2329;
   font-weight: 600;
   line-height: 1.2;
-}
-
-/* 右侧数值区 */
-.form-item-right {
-  flex-shrink: 0;
 }
 
 .form-value {
@@ -159,44 +134,89 @@
   width: 100vw;
   padding-left: 48rpx;
   padding-right: 48rpx;
+  margin-bottom: 24rpx;
   box-sizing: border-box;
 }
 
 .rating-card {
-  height: 320rpx;
+  display: flex;
+  flex-direction: row; /* 水平布局 */
+  align-items: stretch; /* 让子元素高度一致 */
+  gap: 24rpx; /* 两个框框之间的间距 */
+}
+
+.rating-left {
+  width: 186rpx;
+  flex-shrink: 0; /* 防止收缩 */
   background: #FFFFFF;
   border-radius: 48rpx;
   padding: 48rpx;
   box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
   display: flex;
+  flex-direction: column; /* 垂直布局 */
+  align-items: flex-start; /* 左对齐 */
+  justify-content: flex-start; /* 顶部对齐 */
+}
+
+/* 右侧区域 - 占剩余空间，独立的卡片样式 */
+.rating-right {
+  flex: 1; /* 占据剩余空间 */
+  background: #FFFFFF;
+  border-radius: 48rpx;
+  padding: 48rpx;
+  box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column; /* 垂直布局 */
+  align-items: center; /* 水平居中 */
+  justify-content: flex-start; /* 顶部对齐 */
+}
+
+/* 左侧信息容器 */
+.rating-info {
+  display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  width: 100%; /* 占满整个容器 */
+  height: 100%; /* 占满整个容器高度 */
 }
 
 .rating-header {
-  margin-bottom: 40rpx;
+  margin-bottom: 48rpx; /* 调整间距 */
+  width: 100%; /* 占满宽度 */
+  display: flex;
+  flex-direction: row; /* 水平排列 */
+  align-items: baseline; /* 基线对齐 */
+  gap: 16rpx; /* 标题和描述之间的间距 */
 }
 
 .rating-title {
   font-size: 32rpx;
   font-weight: 600;
   color: #1F2329;
+  display: inline; /* 改为行内元素 */
+  margin-bottom: 0; /* 移除下边距 */
 }
 
-.rating-display {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  flex-direction: column;
-  margin-bottom: 40rpx;
-  margin-left: 80rpx;
-  flex: 1;
+.time-label {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1F2329;
+  margin-bottom: 48rpx; /* 设置下边距为 48rpx */
+}
+
+.time-value {
+  font-size: 64rpx;
+  font-weight: 800;
+  color: #FF4E91;
 }
 
 .rating-grade {
-  font-size: 160rpx;
+  font-size: 72rpx;
   font-weight: 800;
   margin-bottom: 16rpx;
-  text-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.1);
+  color: #FF4E91; /* 设置文字颜色为粉色 */
+  text-align: center; /* 文本居中 */
+  width: 100%; /* 占满宽度 */
 }
 
 /* 评级颜色 */
@@ -224,13 +244,6 @@
   background: linear-gradient(135deg, #FFD700, #FF6B35);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-.rating-description {
-  font-size: 24rpx;
-  color: #666666;
-  font-weight: 500;
-  margin-left: 16rpx;
 }
 
 /* 重置数据按钮区域 - 置底 */
@@ -278,7 +291,7 @@
   }
   
   .stat-card,
-  .form-item-container,
+  .form-item-wrapper,
   .rating-card {
     padding: 32rpx;
   }
@@ -295,4 +308,4 @@
     padding: 24rpx 32rpx;
     padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
   }
-} 
+}

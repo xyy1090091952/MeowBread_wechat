@@ -36,10 +36,10 @@ module.exports = {
             {"id":"volume2","name":"第二册","description":"38-50课","lessons":[38,39,40,41,42,43,44,45,46,47,48,49,50]}
         ],
             "courses": [
-            {"courseNumber":26,"courseTitle":"第26课","lessonFile":"lesson26","description":""},
-            {"courseNumber":27,"courseTitle":"第27课","lessonFile":"lesson27","description":""},
-            {"courseNumber":28,"courseTitle":"第28课","lessonFile":"lesson28","description":""},
-            {"courseNumber":29,"courseTitle":"第29课","lessonFile":"lesson29","description":""},
+            {"courseNumber":26,"courseTitle":"第26课","lessonFile":"lesson26","description":"大家的日语第26课"},
+            {"courseNumber":27,"courseTitle":"第27课","lessonFile":"lesson27","description":"大家的日语第27课"},
+            {"courseNumber":28,"courseTitle":"第28课","lessonFile":"lesson28","description":"大家的日语第28课"},
+            {"courseNumber":29,"courseTitle":"第29课","lessonFile":"lesson29","description":"大家的日语第29课"},
             {"courseNumber":30,"courseTitle":"第30课","lessonFile":"lesson30","description":"大家的日语第30课"},
             {"courseNumber":31,"courseTitle":"第31课","lessonFile":"lesson31","description":"大家的日语第31课"},
             {"courseNumber":32,"courseTitle":"第32课","lessonFile":"lesson32","description":"大家的日语第32课"},
@@ -95,27 +95,27 @@ module.exports = {
             {"id":"lower","name":"初级下","description":"18-25课","lessons":[17,18,19,20,21,22,23,24,25]}
         ],
             "courses": [
-            {"courseNumber":5,"courseTitle":"初対面","lessonFile":"lesson5","description":"初次见面的日语表达"},
-            {"courseNumber":6,"courseTitle":"Wi-Fiはありますか","lessonFile":"lesson6","description":"询问Wi-Fi等基本设施"},
-            {"courseNumber":7,"courseTitle":"スマホに写真がありますよ","lessonFile":"lesson7","description":"谈论手机和照片"},
-            {"courseNumber":8,"courseTitle":"S サイズでお願いします","lessonFile":"lesson8","description":"购物时的尺寸选择"},
-            {"courseNumber":9,"courseTitle":"誕⽣⽇と性格","lessonFile":"lesson9","description":"生日和性格的表达"},
-            {"courseNumber":10,"courseTitle":"映画の約束","lessonFile":"lesson10","description":"电影约会的安排"},
-            {"courseNumber":11,"courseTitle":"電気屋さんで","lessonFile":"lesson11","description":"在电器店购物"},
-            {"courseNumber":12,"courseTitle":"漫画ファン","lessonFile":"lesson12","description":"漫画爱好者的对话"},
-            {"courseNumber":13,"courseTitle":"忘れ物","lessonFile":"lesson13","description":"遗忘物品的处理"},
-            {"courseNumber":14,"courseTitle":"勉強スケジュール","lessonFile":"lesson14","description":"学习计划的制定"},
-            {"courseNumber":15,"courseTitle":"試験勉強","lessonFile":"lesson15","description":"考试复习的准备"},
-            {"courseNumber":16,"courseTitle":"村上夏樹先生の講演会","lessonFile":"lesson16","description":"村上夏树先生的讲演会"},
-            {"courseNumber":17,"courseTitle":"アンケート","lessonFile":"lesson17","description":"问卷调查的填写"},
-            {"courseNumber":18,"courseTitle":"妹からアドバイスをもらいました","lessonFile":"lesson18","description":"从妹妹那里得到建议"},
-            {"courseNumber":19,"courseTitle":"夏休の過ごし方","lessonFile":"lesson19","description":"暑假的度过方式"},
-            {"courseNumber":20,"courseTitle":"ネットで口コミ情報をチェック","lessonFile":"lesson20","description":"网上口碑信息的查看"},
-            {"courseNumber":21,"courseTitle":"返さなくてもいいんですか","lessonFile":"lesson21","description":"不用归还也可以吗"},
-            {"courseNumber":22,"courseTitle":"チームワークが⼀番です","lessonFile":"lesson22","description":"团队合作最重要"},
-            {"courseNumber":23,"courseTitle":"グループ作業","lessonFile":"lesson23","description":"小组作业的进行"},
-            {"courseNumber":24,"courseTitle":"ランチ","lessonFile":"lesson24","description":"午餐相关的日语表达"},
-            {"courseNumber":25,"courseTitle":"日本の弁当文化","lessonFile":"lesson25","description":"日本的便当文化"}
+            {"courseNumber":5,"courseTitle":"第5课","lessonFile":"lesson5","description":"初対面"},
+            {"courseNumber":6,"courseTitle":"第6课","lessonFile":"lesson6","description":"Wi-Fiはありますか"},
+            {"courseNumber":7,"courseTitle":"第7课","lessonFile":"lesson7","description":"スマホに写真がありますよ"},
+            {"courseNumber":8,"courseTitle":"第8课","lessonFile":"lesson8","description":"Sサイズでお願いします"},
+            {"courseNumber":9,"courseTitle":"第9课","lessonFile":"lesson9","description":"誕⽣⽇と性格"},
+            {"courseNumber":10,"courseTitle":"第10课","lessonFile":"lesson10","description":"映画の約束"},
+            {"courseNumber":11,"courseTitle":"第11课","lessonFile":"lesson11","description":"電気屋さんで"},
+            {"courseNumber":12,"courseTitle":"第12课","lessonFile":"lesson12","description":"漫画ファン"},
+            {"courseNumber":13,"courseTitle":"第13课","lessonFile":"lesson13","description":"忘れ物"},
+            {"courseNumber":14,"courseTitle":"第14课","lessonFile":"lesson14","description":"勉強スケジュール"},
+            {"courseNumber":15,"courseTitle":"第15课","lessonFile":"lesson15","description":"試験勉強"},
+            {"courseNumber":16,"courseTitle":"第16课","lessonFile":"lesson16","description":"村上夏樹先生の講演会"},
+            {"courseNumber":17,"courseTitle":"第17课","lessonFile":"lesson17","description":"アンケート"},
+            {"courseNumber":18,"courseTitle":"第18课","lessonFile":"lesson18","description":"妹からアドバイスをもらいました"},
+            {"courseNumber":19,"courseTitle":"第19课","lessonFile":"lesson19","description":"夏休の過ごし方"},
+            {"courseNumber":20,"courseTitle":"第20课","lessonFile":"lesson20","description":"ネットで口コミ情報をチェック"},
+            {"courseNumber":21,"courseTitle":"第21课","lessonFile":"lesson21","description":"返さなくてもいいんですか"},
+            {"courseNumber":22,"courseTitle":"第22课","lessonFile":"lesson22","description":"チームワークが⼀番です"},
+            {"courseNumber":23,"courseTitle":"第23课","lessonFile":"lesson23","description":"グループ作業"},
+            {"courseNumber":24,"courseTitle":"第24课","lessonFile":"lesson24","description":"ランチ"},
+            {"courseNumber":25,"courseTitle":"第25课","lessonFile":"lesson25","description":"日本の弁当文化"}
         ]
         },
         {
@@ -177,7 +177,7 @@ module.exports = {
             {"courseNumber":1,"courseTitle":"第1课","lessonFile":"lesson1","description":"多邻国第1课"},
             {"courseNumber":2,"courseTitle":"第2课","lessonFile":"lesson2","description":"多邻国第2课"},
             {"courseNumber":3,"courseTitle":"第3课","lessonFile":"lesson3","description":"多邻国第3课"},
-            {"courseNumber":4,"courseTitle":"第4课","lessonFile":"lesson4","description":""},
+            {"courseNumber":4,"courseTitle":"第4课","lessonFile":"lesson4","description":"多邻国第4课"},
             {"courseNumber":5,"courseTitle":"第5课","lessonFile":"lesson5","description":"多邻国第5课"}
         ]
         }

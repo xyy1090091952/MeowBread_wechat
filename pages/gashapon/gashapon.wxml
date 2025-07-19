@@ -18,8 +18,9 @@
     <view class="side-button" bindtap="onInventory">
       <text>陈列库</text>
     </view>
-    <view class="side-button" bindtap="onRedeem" style="opacity: 0;">
-      <text>兑换</text>
+    <!-- 调试按钮 -->
+    <view class="side-button debug-button" bindtap="onDebugClear">
+      <text>调试</text>
     </view>
   </view>
 
@@ -27,27 +28,52 @@
   <image class="gashapon-machine" src="/images/gashapon/gashapon_machine.png" mode="widthFix"></image>
 
   <!-- 底部操作区域 -->
-  <view class="bottom-sheet">
-    <!-- 标题 -->
-    <view class="sheet-title">扭蛋系列</view>
-
-    <!-- 系列选择 -->
-    <view class="series-selector">
-      <block wx:for="{{seriesList}}" wx:key="id">
-        <view class="series-card series-gradient-{{item.gradientType}} {{item.id === currentSeriesId ? 'active' : ''}}" bindtap="onSelectSeries" data-id="{{item.id}}">
-          <view class="series-name">{{item.name}}</view>
-          <view class="series-image-container">
-            <image class="series-image" src="{{item.image}}" mode="scaleToFill"></image>
-          </view>
-          <view class="series-progress">{{item.progress}}%</view>
+  <view class="bottom-sheet series-{{currentSeriesId}}">
+    <!-- 选择tag -->
+    <view class="sheet-header">
+      <view class="series-tags">
+        <view class="series-tag {{currentSeriesId === 2 ? 'active' : ''}}" bindtap="onSelectSeries" data-id="2">
+          <text>美味补给</text>
         </view>
-      </block>
+        <view class="series-tag {{currentSeriesId === 1 ? 'active' : ''}}" bindtap="onSelectSeries" data-id="1">
+          <text>梦幻魔法</text>
+        </view>
+      </view>
+      <!-- 滑动横条指示器 -->
+      <view class="tag-indicator" style="left: calc({{currentSeriesId === 2 ? '25% - 64rpx + 24rpx' : '75% - 64rpx - 24rpx'}})"></view>
     </view>
 
-    <!-- 抽奖按钮 -->
-    <view class="draw-button" bindtap="onDraw">
+    <!-- 可滑动的内容区域 -->
+    <swiper class="content-swiper" 
+            current="{{swiperIndex}}" 
+            bindchange="onSwiperChange"
+            duration="400"
+            easing-function="ease-out">
+      <!-- 第一个系列 - 美味补给 -->
+      <swiper-item class="swiper-item">
+        <view class="series-content">
+          <!-- 视觉展示区域 -->
+          <view class="visual-display">
+            <image class="display-card" src="/images/gashapon/enegy.png" mode="scaleToFill"></image>
+          </view>
+        </view>
+      </swiper-item>
+      
+      <!-- 第二个系列 - 梦幻魔法 -->
+      <swiper-item class="swiper-item">
+        <view class="series-content">
+          <!-- 视觉展示区域 -->
+          <view class="visual-display">
+            <image class="display-card" src="/images/gashapon/magic.png" mode="scaleToFill"></image>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+
+    <!-- 固定的抽奖按钮 -->
+    <view class="draw-button-fixed" bindtap="onDraw">
       <image class="coin-icon" src="/images/icons/Coins.png"></image>
-      <text>{{drawCost}}金币 抽一次</text>
+      <text>{{drawCost}} 抽一次</text>
     </view>
   </view>
 </view>

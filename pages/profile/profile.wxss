@@ -409,6 +409,16 @@
   margin-top: 8rpx;
   z-index: 2;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+/* 金币图标样式 */
+.gashapon-section .coin-icon {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
 }
 
 /* 扭蛋机规则文本样式 */
@@ -712,26 +722,4 @@
   justify-content: center;
   box-sizing: border-box;
   box-shadow: 0 8rpx 24rpx rgba(72, 69, 247, 0.3); /* 品牌色投影 */
-}
-
-/* 调试按钮区域 */
-.debug-section {
-  width: 100%;
-  margin-top: 32rpx;
-}
-
-.debug-btn {
-  background-color: #ffebee; /* 淡红色背景 */
-  border: 1rpx solid #ef9a9a; /* 红色边框 */
-  border-radius: 24rpx;
-  padding: 24rpx;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.debug-btn-text {
-  color: #c62828; /* 深红色文字 */
-  font-size: 28rpx;
-  font-weight: 500;
 }

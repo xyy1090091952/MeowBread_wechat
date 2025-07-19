@@ -1,24 +1,97 @@
 /* pages/gashapon-inventory/gashapon-inventory.wxss */
-.tabs {
+
+/* 自定义导航栏 */
+.custom-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: transparent;
+  z-index: 1000; /* 确保导航栏在最上层 */
+}
+
+.nav-back-icon {
+  width: 64rpx;
+  height: 64rpx;
+  position: absolute; /* 使用绝对定位，方便控制位置 */
+  left: 24rpx;
+  /* top, right, bottom, left 和 transform 会在 align-items: center; 作用下失效，因此无需设置 */
+}
+
+.nav-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #000;
+  margin: 0 auto; /* 居中标题 */
+}
+
+/* 选择tag区域 */
+.sheet-header {
+  position: relative; /* 为横条指示器提供定位基准 */
   display: flex;
   justify-content: center;
+  align-items: center;
+  width: 100%; /* 确保宽度撑满 */
+  padding: 0; /* 移除左右边距 */
+  z-index: 10; /* 确保在背景块上方 */
+}
+
+.series-tags {
+  display: flex;
   width: 100%;
-  margin-bottom: 40rpx;
+  padding: 0 48rpx; /* 添加左右48rpx的边距 */
 }
 
-.tab-item {
-  font-size: 32rpx;
-  color: #9D9D9D;
-  padding: 16rpx 32rpx;
-  margin: 0 20rpx;
-  border-bottom: 4rpx solid transparent;
-  transition: all 0.3s ease;
+.series-tag {
+  flex: 1; /* 平均分配空间 */
+  height: 72rpx; /* 设置固定高度 */
+  border-radius: 48rpx;
+  background-color: transparent; /* 去掉背景颜色 */
+  border: 2rpx solid transparent;
+  transition: all 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 文案居中显示 */
 }
 
-.tab-item.active {
-  color: #111;
-  font-weight: bold;
-  border-bottom-color: #4845F7;
+.series-tag.active {
+  background-color: transparent; /* 去掉背景颜色 */
+  border-color: transparent;
+}
+
+.series-tag text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5); /* 黑色50%透明度 */
+}
+
+.series-tag.active text {
+  color: #000000; /* 选中状态黑色 */
+}
+
+/* 滑动横条指示器 */
+.tag-indicator {
+  position: absolute;
+  bottom: 0;
+  width: 128rpx;
+  height: 6rpx;
+  background-color: #FFCA1D; /* 默认第一个tag的颜色（美味补给） */
+  border-radius: 3rpx;
+  transition: left 0.6s ease, background-color 0.6s ease; /* 添加颜色过渡动画 */
+  z-index: 1;
+}
+
+/* 第一个tag选中时的指示器颜色 - 美味补给 */
+.container.series-1 .tag-indicator {
+  background-color: #FFCA1D;
+}
+
+/* 第二个tag选中时的指示器颜色 - 梦幻魔法 */
+.container.series-2 .tag-indicator {
+  background-color: #FF4E91;
 }
 
 .container {
@@ -27,23 +100,93 @@
   align-items: center;
   justify-content: flex-start; /* 从顶部开始 */
   height: 100vh;
-  background-color: #ffffff; /* 背景修改为纯白 */
-  padding-top: 40rpx; /* 增加顶部内边距 */
+  background: linear-gradient(180deg, #FEE78B 0%, #FFFFFF 100%); /* 默认渐变（美味补给）：从FEE78B到FFFFFF */
+  position: relative; /* 为背景块提供定位基准 */
+  transition: background 0.6s ease; /* 添加背景过渡动画 */
 }
 
-.prize-swiper {
+/* 梦幻魔法系列的背景色（粉色） */
+.container.series-2 {
+  background: linear-gradient(180deg, #FFD6E5 0%, #FFFFFF 100%); /* 梦幻魔法：从FFD6E5到FFFFFF */
+}
+
+/* 背景渐变块 */
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 720rpx; /* 高度720rpx */
+  background: linear-gradient(180deg, #FEE78B 0%, #FFFFFF 100%); /* 默认（美味补给）从FEE78B到FFFFFF的上下渐变 */
+  opacity: 0.6; /* 60%不透明度 */
+  z-index: 0; /* 确保在其他内容下方 */
+  transition: background 0.6s ease; /* 添加背景过渡动画 */
+}
+
+/* 梦幻魔法系列的背景渐变块（粉色） */
+.series-2 .background-overlay {
+  background: linear-gradient(180deg, #FFD6E5 0%, #FFFFFF 100%); /* 梦幻魔法：从FFD6E5到FFFFFF */
+}
+
+.prize-display {
   width: 100%;
   height: 70%; /* 调整高度为缩略图导航留出空间 */
-}
-
-.prize-item {
+  margin-top: 32rpx; /* 添加顶部间距，与sheet-header分隔 */
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* 改为垂直排列，图片在上，文字在下 */
   align-items: center;
   justify-content: center;
-  height: 100%;
+}
+
+/* 图片容器 - 只有图片参与Q弹动画 */
+.prize-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 20rpx;
   box-sizing: border-box;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.2s ease-out;
+}
+
+/* 动画状态 - 果冻弹跳效果，只应用于图片容器 */
+.prize-image-container.animating {
+  animation: jellyBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+/* 果冻弹跳动画关键帧 - 温和的弹跳效果 */
+@keyframes jellyBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  15% {
+    opacity: 0.8;
+    transform: scale(0.85); /* 轻微向下压缩 */
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.05); /* 温和向上弹起 */
+  }
+  45% {
+    transform: scale(0.98); /* 轻微向下回弹 */
+  }
+  60% {
+    transform: scale(1.02); /* 第二次轻微向上弹起 */
+  }
+  75% {
+    transform: scale(0.99); /* 第二次轻微向下回弹 */
+  }
+  90% {
+    transform: scale(1.005); /* 非常轻微向上 */
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1); /* 回到原位 */
+  }
 }
 
 .prize-image {
@@ -93,61 +236,118 @@
 }
 
 /* 未解锁奖品的样式 */
-.prize-item.locked .prize-image {
+.prize-image-container.locked .prize-image {
   /* 使用亮度滤镜将图片变为黑色剪影，并降低不透明度 */
   filter: brightness(0) opacity(0.2);
 }
 
-.prize-item.locked .prize-info {
+/* 未解锁状态下的文字样式 */
+.prize-info.locked {
   color: #aaa; /* 文字颜色变灰 */
 }
 
-.prize-item.locked .prize-rarity {
+.prize-info.locked .prize-rarity {
   background-color: #ccc; /* 稀有度背景变灰 */
 }
 
 /* 缩略图导航 */
 .thumbnail-nav {
   width: 100%;
-  background-color: #fff;
+  background: linear-gradient(180deg, #FEE78B 0%, #FFFFFF 100%); /* 默认美味补给的渐变背景 */
   white-space: nowrap;
   box-sizing: border-box;
   /* 增大高度，为动画和阴影提供充足空间 */
   height: 400rpx;
+  position: relative; /* 为伪元素提供定位基准 */
+  overflow: hidden; /* 确保伪元素不溢出 */
+  transition: background 0.6s ease; /* 添加背景过渡动画 */
 }
 
-/* 缩略图包装器，负责对齐和间距 */
+/* 缩略图包装容器 - 实现垂直居中 */
 .thumbnail-wrapper {
-  display: inline-flex; /* 使用flex布局进行对齐 */
-  align-items: center; /* 让内部元素垂直居中 */
-  justify-content: center; /* 水平居中 */
   height: 100%; /* 占满父容器高度 */
-  padding: 0 10rpx; /* 左右间距 */
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  white-space: nowrap; /* 保持水平排列 */
+  padding: 0 48rpx; /* 左右留白 */
   box-sizing: border-box;
 }
 
-/* 缩略图本身，负责视觉表现 */
+/* 在wrapper后面添加一个伪元素来创建额外的右边距 */
+.thumbnail-wrapper::after {
+  content: '';
+  display: inline-block;
+  width: 48rpx; /* 额外的48rpx空间 */
+  height: 1rpx;
+  flex-shrink: 0; /* 防止被压缩 */
+}
+
+/* 使用伪元素实现thumbnail-nav的背景渐变过渡 */
+.thumbnail-nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #FFD6E5 0%, #FFFFFF 100%); /* 梦幻魔法的背景 */
+  opacity: 0; /* 初始透明 */
+  transition: opacity 0.6s ease; /* 透明度过渡 */
+  z-index: 0; /* 在内容后面但在默认背景前面 */
+  pointer-events: none; /* 确保不阻挡点击事件 */
+}
+
+/* 梦幻魔法系列激活时显示伪元素背景 */
+.series-2 .thumbnail-nav::before {
+  opacity: 1; /* 显示粉色渐变 */
+}
+
+/* 缩略图本身，现在处理所有功能：布局、样式、交互 */
 .thumbnail-item {
-  width: 160rpx;
-  height: 160rpx;
-  border-radius: 24rpx;
-  border: 4rpx solid transparent;
+  /* 布局相关（原wrapper功能） - 适配flex包装容器 */
+  display: inline-block; /* 在flex容器中保持内联块 */
+  margin-right: 24rpx; /* 只设置右边距，避免四边都有边距 */
+  box-sizing: border-box;
+  position: relative; /* 确保在伪元素之上 */
+  z-index: 1; /* 确保显示在thumbnail-nav的伪元素背景之上 */
+  flex-shrink: 0; /* 防止在flex容器中被压缩 */
+  
+  /* 视觉样式相关（原item功能） - 192rpx圆形 */
+  width: 192rpx; /* 设置为192rpx */
+  height: 192rpx; /* 设置为192rpx */
+  border-radius: 96rpx; /* 设置为圆形，半径为宽度的一半 */
+  border: 8rpx solid #FEE78B; /* 默认美味补给系列未选中描边 */
   background-color: #ffffff;
   box-shadow: 4px 4px 40px 0px rgba(0, 0, 0, 0.12);
   transition: all 0.3s ease;
-  /* 增加下外边距，为阴影创造空间 */
-  margin-bottom: 20rpx;
+  overflow: hidden; /* 确保图片不会超出圆形边界 */
 }
 
-/* 选中状态 */
-.thumbnail-item.active {
-  transform: translateY(-20rpx);
+/* 美味补给系列（series-1）的缩略图描边 */
+.series-1 .thumbnail-item {
+  border-color: #FEE78B; /* 未选中：浅黄色 */
+}
+
+.series-1 .thumbnail-item.active {
+  border-color: #FFCC00; /* 选中：深黄色 */
+  box-shadow: 4px 4px 40px 0px rgba(255, 204, 0, 0.3); /* 对应的阴影颜色 */
+}
+
+/* 梦幻魔法系列（series-2）的缩略图描边 */
+.series-2 .thumbnail-item {
+  border-color: #FFC9DD; /* 未选中：浅粉色 */
+}
+
+.series-2 .thumbnail-item.active {
+  border-color: #FF4E91; /* 选中：深粉色 */
+  box-shadow: 4px 4px 40px 0px rgba(255, 78, 145, 0.3); /* 对应的阴影颜色 */
 }
 
 .thumbnail-image {
   width: 100%;
   height: 100%;
-  border-radius: 20rpx; /* 配合父元素的圆角 */
+  border-radius: 96rpx; /* 配合父元素的圆角，确保图片也是圆形 */
+  object-fit: cover; /* 确保图片填充整个圆形区域，保持比例 */
 }
 
 .thumbnail-image.locked {

@@ -1,0 +1,185 @@
+/* components/course-selector-enhanced/index.wxss */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+}
+
+.modal-mask.show {
+  opacity: 1;
+  transition: opacity 0.2s ease-out;
+}
+
+.popup-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(100%);
+  transition: transform 0.3s ease-out;
+  z-index: 1001;
+  max-height: 80vh;
+  /* 移除 overflow: hidden，让内部scroll-view能够滚动 */
+}
+
+.popup-container.popup-show {
+  transform: translateY(0);
+}
+
+.popup-content {
+  background-color: #FAFAFA;
+  border-top-left-radius: 48rpx;
+  border-top-right-radius: 48rpx;
+  padding-top: 48rpx;
+  box-shadow: 0rpx -8rpx 80rpx rgba(0, 0, 0, 0.08);
+  min-height: 500rpx; /* 设置最小高度 */
+  max-height: 80vh; /* 设置最大高度 */
+  display: flex; /* 使用flex布局 */
+  flex-direction: column; /* 垂直排列 */
+  position: relative; /* 为浮动按钮提供定位基准 */
+}
+
+/* Tag切换区域样式 - 学习gashapon页面的series-tags设计 */
+.sheet-header {
+  padding: 0rpx 48rpx 0rpx 48rpx; /* 增加左右边距 */
+  position: relative; /* 为横条指示器提供定位基准 */
+  margin-bottom: 48rpx;
+}
+
+.volume-tags {
+  display: flex;
+  width: 100%;
+  position: relative; /* 为横条指示器提供定位基准 */
+}
+
+.volume-tag {
+  flex: 1; /* 平均分配空间 */
+  height: 72rpx; /* 设置固定高度 */
+  border-radius: 48rpx;
+  background-color: transparent; /* 去掉背景颜色 */
+  border: 2rpx solid transparent;
+  transition: all 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 文案居中显示 */
+}
+
+.volume-tag.active {
+  background-color: transparent; /* 去掉背景颜色 */
+  border-color: transparent;
+}
+
+.volume-tag text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5); /* 黑色50%透明度 */
+}
+
+.volume-tag.active text {
+  color: #000000; /* 选中状态黑色 */
+}
+
+/* 滑动横条指示器 */
+.tag-indicator {
+  position: absolute;
+  bottom: 0;
+  width: 128rpx;
+  height: 6rpx;
+  background-color: #4845F7; /* 改成主题色 */
+  border-radius: 3rpx;
+  transition: left 0.6s ease, background-color 0.6s ease; /* 添加颜色过渡动画 */
+  z-index: 1;
+}
+
+/* 课程列表样式 - 学习word-card的布局方式 */
+.options-group {
+  flex: 1; /* 占满剩余空间 */
+  min-height: 0; /* 允许收缩 */
+  padding-bottom: 160rpx; /* 为底部浮动按钮和投影留出空间：按钮高度80rpx + 边距24rpx + 投影空间56rpx */
+  /* 移除 max-height 限制，让其占满剩余空间 */
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  padding: 38rpx 48rpx; 
+  background-color: #FFFFFF;
+  border-radius: 48rpx;
+  box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08); /* 学习word-card的投影 */
+  margin: 0 48rpx 24rpx 48rpx; /* 学习word-card的margin */
+  border: 2rpx solid transparent; /* 恢复正常的边框宽度 */
+  transition: border-color 0.2s ease-in-out;
+  flex-direction: row; /* 水平排列 */
+}
+
+.option-item.selected {
+  border-color: #4845F7;
+}
+
+.option-item:last-child {
+  margin-bottom: 48rpx; /* 为投影留出充足空间：投影偏移8rpx + 模糊半径32rpx + 额外缓冲8rpx */
+}
+
+.option-label {
+  font-size: 28rpx; /* 稍微小一点 */
+  font-weight: 600;
+}
+
+.option-sublabel {
+  font-size: 24rpx; /* 稍微小一点 */
+  color: #888;
+  margin-left: 16rpx; /* 添加左边距，与option-label保持间隔 */
+}
+
+.confirm-button {
+  position: absolute; /* 改为绝对定位 */
+  bottom: 0; /* 贴底部 */
+  left: 48rpx; /* 左边距 */
+  right: 48rpx; /* 右边距 */
+  height: 80rpx; /* 稍微小一点 */
+  line-height: 80rpx;
+  background-color: #4845F7;
+  color: white;
+  border-radius: 40rpx; /* 对应高度的一半 */
+  text-align: center;
+  font-size: 28rpx; /* 稍微小一点 */
+  font-weight: 600;
+  margin-bottom: calc(24rpx + env(safe-area-inset-bottom)); /* 考虑安全区域 */
+  box-sizing: border-box;
+  border: none;
+  z-index: 10; /* 确保在滚动内容上方 */
+  box-shadow: 0rpx -4rpx 16rpx rgba(0, 0, 0, 0.1); /* 添加阴影增强浮动效果 */
+}
+
+/* 底部白色渐变遮罩 */
+.bottom-gradient-mask {
+  position: absolute;
+  bottom: 104rpx; /* 位于确认按钮上方，留出按钮高度+边距的空间 */
+  left: 0;
+  right: 0;
+  height: 120rpx; /* 渐变高度 */
+  background: linear-gradient(to top, rgba(250, 250, 250, 1) 0%, rgba(250, 250, 250, 0.8) 50%, rgba(250, 250, 250, 0) 100%);
+  pointer-events: none; /* 不阻挡点击事件 */
+  z-index: 5; /* 在滚动内容上方，但在确认按钮下方 */
+}
+
+/* 动画效果样式 */
+.fade-in-element {
+  opacity: 0;
+  transform: translateY(30rpx);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.fade-in-element.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-delay-3 {
+  transition-delay: 0.6s; /* 延迟0.6秒显示 */
+}

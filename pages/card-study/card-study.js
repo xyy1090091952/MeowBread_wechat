@@ -360,6 +360,15 @@ Page({
       backgroundCardTransform: 'rotate(-8deg) scale(0.9)',
       backgroundCardOpacity: 0
     });
+
+    // 延迟显示新的背景卡片，产生出现动画效果
+    if (this.data.allWords[nextIndex + 1]) {
+      setTimeout(() => {
+        this.setData({
+          backgroundCardOpacity: 1
+        });
+      }, 100); // 100ms后显示背景卡片
+    }
   },
 
   /**
