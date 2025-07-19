@@ -72,41 +72,12 @@ Page({
   },
 
   /**
-   * @description “再抽一次”按钮的点击事件 (已重构)
+   * @description “去陈列馆”按钮的点击事件，跳转到扭蛋陈列馆页面
    */
-  onDrawAgain() {
-    if (this.data.poolId === null) {
-      wx.showToast({ title: '奖池信息丢失', icon: 'none' });
-      return;
-    }
-
-    const pool = gashaponData.find(p => p.id === this.data.poolId);
-    if (!pool) {
-      wx.showToast({ title: '奖池配置错误', icon: 'none' });
-      return;
-    }
-
-    // 使用 coinManager 来检查并扣除金币
-    if (!coinManager.spendCoins(pool.cost)) {
-      wx.showToast({ title: '金币不足！', icon: 'none' });
-      return;
-    }
-
-    console.log(`金币已扣除, 剩余: ${coinManager.getCoins()}`);
-
-    // 执行抽奖逻辑
-    const prizes = pool.prizes;
-    const newPrize = prizes[Math.floor(Math.random() * prizes.length)];
-
-    if (newPrize) {
-      // 使用 coinManager 记录新解锁的奖品
-      coinManager.addUnlockedPrize(newPrize.id);
-      
-      this.setData({ prize: newPrize });
-      this.playAnimation();
-    } else {
-      wx.showToast({ title: '抽奖失败，请重试', icon: 'none' });
-    }
+  goToGallery() {
+    wx.navigateTo({
+      url: '/pages/gashapon-inventory/gashapon-inventory',
+    });
   },
 
   /**

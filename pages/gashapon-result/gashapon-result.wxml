@@ -1,31 +1,37 @@
 <!--pages/gashapon-result/gashapon-result.wxml-->
-<view class="prize-container bg-{{backgroundType}}">
-  <!-- 奖品展示 -->
-  <view class="prize-display" wx:if="{{prize}}">
-    <!-- 光效背景 -->
-    <image 
-      class="shinning-bg {{isAnimating ? 'shinning-animation' : ''}}" 
-      src="/images/gashapon/shinning.svg" 
-      mode="aspectFill">
-    </image>
-    <!-- 奖品图片 -->
-    <image 
-      class="prize-image {{isAnimating ? 'prize-animation' : ''}}" 
-      src="{{prize.image}}" 
-      mode="aspectFit">
-    </image>
+<!-- 根容器，用于应用动态背景 -->
+<view class="page-container bg-{{backgroundType}}">
+  <!-- 奖品容器 -->
+  <view class="prize-container">
+    <!-- 奖品展示 -->
+    <view class="prize-display" wx:if="{{prize}}">
+      <!-- 光效背景 -->
+      <image 
+        class="shinning-bg {{isAnimating ? 'shinning-animation' : ''}}" 
+        src="/images/gashapon/shinning.svg" 
+        mode="aspectFill">
+      </image>
+      <!-- 奖品图片 -->
+      <image 
+        class="prize-image {{isAnimating ? 'prize-animation' : ''}}" 
+        src="{{prize.image}}" 
+        mode="aspectFit">
+      </image>
 
-    <!-- 奖品信息 -->
-    <view class="prize-info">
-      <view class="prize-rarity {{isAnimating ? 'rarity-animation' : ''}} rarity-{{prize.rarity}}">{{prize.rarity}}</view>
-      <view class="prize-name {{isAnimating ? 'name-animation' : ''}}">{{prize.name}}</view>
-      <view class="prize-desc {{isAnimating ? 'desc-animation' : ''}}">"{{prize.quote}}"</view>
+      <!-- 奖品信息 -->
+      <view class="prize-info">
+        <view class="prize-rarity {{isAnimating ? 'rarity-animation' : ''}} rarity-{{prize.rarity}}">{{prize.rarity}}</view>
+        <view class="prize-name {{isAnimating ? 'name-animation' : ''}}">{{prize.name}}</view>
+        <view class="prize-desc {{isAnimating ? 'desc-animation' : ''}}">"{{prize.quote}}"</view>
+      </view>
     </view>
   </view>
-</view>
 
-<!-- 底部按钮 -->
-<view class="button-container">
-  <button class="btn btn-draw-again" bindtap="onDrawAgain">再抽一次</button>
-  <button class="btn btn-confirm" bindtap="onConfirm">好耶</button>
+  <!-- 底部按钮 -->
+  <view class="button-container">
+    <!-- 去陈列馆按钮，根据扭蛋类型动态变换样式 -->
+    <button class="btn btn-gallery {{backgroundType === 'supply' ? 'btn-gallery-supply' : 'btn-gallery-magic'}}" bindtap="goToGallery">去陈列馆</button>
+    <!-- 确认按钮 -->
+    <button class="btn btn-confirm" bindtap="onConfirm">好耶</button>
+  </view>
 </view>

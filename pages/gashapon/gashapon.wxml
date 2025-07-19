@@ -16,7 +16,7 @@
   <!-- 右侧功能按钮 -->
   <view class="side-buttons" style="top: {{menuButtonTop}}px;">
     <view class="side-button" bindtap="onInventory">
-      <text>陈列库</text>
+      <text>陈列馆</text>
     </view>
     <!-- 调试按钮 -->
     <view class="side-button debug-button" bindtap="onDebugClear">
