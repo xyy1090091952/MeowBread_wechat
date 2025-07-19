@@ -77,11 +77,11 @@ const service = {
     let lessonsToShow = [allLessonsOption];
     if (dictionary.courses && Array.isArray(dictionary.courses)) {
       dictionary.courses.forEach(course => {
-        // 如果 courseTitle 已经包含了类似“第26课”的信息，就直接使用
-        // 否则，进行拼接
-        const name = course.courseTitle.includes(`第${course.courseNumber}课`) 
-          ? course.courseTitle 
-          : `第${course.courseNumber}课 ${course.courseTitle}`;
+        // 现在数据结构已统一：courseTitle为"第X课"，description为课程名字
+        // 显示格式：courseTitle + description（如果description存在）
+        const name = course.description 
+          ? `${course.courseTitle} ${course.description}`
+          : course.courseTitle;
 
         lessonsToShow.push({
           name: name,

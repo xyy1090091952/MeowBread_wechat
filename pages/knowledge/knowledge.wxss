@@ -18,7 +18,6 @@
 .category-scroll-wrapper {
   width: 100%;
   margin-top: 48rpx;
-  padding-left: 48rpx; /* 与content-area保持一致的左边距 */
   overflow: visible; /* 确保投影不被裁剪 */
   min-height: 180rpx; /* 确保有足够高度容纳按钮和投影 */
   background-color: transparent; /* 确保背景透明，避免左滑时出现白色块 */
@@ -45,6 +44,7 @@
 .category-buttons {
   display: inline-flex;
   flex-direction: row;
+  padding-left: 48rpx; /* 与content-area保持一致的左边距 */
   padding-right: 48rpx; /* 与content-area保持一致的右边距 */
   padding-bottom: 32rpx; /* 为投影留出更多空间 */
   padding-top: 16rpx; /* 为投影留出更多空间 */

@@ -1,5 +1,5 @@
 <!--pages/gashapon-result/gashapon-result.wxml-->
-<view class="prize-container">
+<view class="prize-container bg-{{backgroundType}}">
   <!-- 奖品展示 -->
   <view class="prize-display" wx:if="{{prize}}">
     <!-- 光效背景 -->
@@ -19,7 +19,7 @@
     <view class="prize-info">
       <view class="prize-rarity {{isAnimating ? 'rarity-animation' : ''}} rarity-{{prize.rarity}}">{{prize.rarity}}</view>
       <view class="prize-name {{isAnimating ? 'name-animation' : ''}}">{{prize.name}}</view>
-      <view class="prize-desc {{isAnimating ? 'desc-animation' : ''}}">“{{prize.quote}}”</view>
+      <view class="prize-desc {{isAnimating ? 'desc-animation' : ''}}">"{{prize.quote}}"</view>
     </view>
   </view>
 </view>

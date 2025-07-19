@@ -269,8 +269,17 @@
   display: flex;
   align-items: center; /* 垂直居中 */
   white-space: nowrap; /* 保持水平排列 */
-  padding: 0 24rpx; /* 左右留白 */
+  padding: 0 48rpx; /* 左右留白 */
   box-sizing: border-box;
+}
+
+/* 在wrapper后面添加一个伪元素来创建额外的右边距 */
+.thumbnail-wrapper::after {
+  content: '';
+  display: inline-block;
+  width: 48rpx; /* 额外的48rpx空间 */
+  height: 1rpx;
+  flex-shrink: 0; /* 防止被压缩 */
 }
 
 /* 使用伪元素实现thumbnail-nav的背景渐变过渡 */

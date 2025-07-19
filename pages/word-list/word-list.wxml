@@ -16,7 +16,7 @@
   </view>
 
   <!-- 单词列表 -->
-  <scroll-view scroll-y class="word-list-scroll fade-in-element fade-delay-2 {{wordListLoaded ? 'show' : ''}}">
+  <scroll-view scroll-y="{{!isCourseSelectorVisible}}" class="word-list-scroll fade-in-element fade-delay-2 {{wordListLoaded ? 'show' : ''}}">
     <view class="word-list-container">
       <block wx:for="{{filteredWordList || wordList}}" wx:key="index">
         <!-- 使用word-card组件，传入适配后的数据 -->
@@ -25,10 +25,10 @@
     </view>
   </scroll-view>
 
-  <!-- 课程范围选择弹窗 - 使用course-selector组件 -->
-  <course-selector
+  <!-- 课程范围选择弹窗 - 使用新的course-selector-enhanced组件 -->
+  <course-selector-enhanced
     visible="{{isCourseSelectorVisible}}"
-    options="{{courseSelectorOptions}}"
+    dictionaryData="{{currentDictionary}}"
     defaultValue="{{selectedCourseRange.value}}"
     bind:close="hideCourseSelector"
     bind:confirm="onCourseSelectorConfirm"

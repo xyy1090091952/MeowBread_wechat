@@ -23,7 +23,7 @@
         <text class="course-num">{{item.courseNumber}}</text>
       </view>
       <view class="course-info">
-        <text class="course-name {{item.isCompleted ? 'course-name-completed' : ''}}">{{item.courseTitle}}</text>
+        <text class="course-name {{item.isCompleted ? 'course-name-completed' : ''}}">{{item.courseTitle}}{{item.description ? ' ' + item.description : ''}}</text>
         <view class="course-progress">
           <text class="progress-text {{item.isCompleted ? 'progress-text-completed' : ''}}">单词进度{{item.learnedCount}}/{{item.totalWords}}</text>
           <view class="progress-bar">

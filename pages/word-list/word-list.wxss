@@ -68,6 +68,10 @@
   font-size: 32rpx;
   font-weight: bold;
   color: #333;
+  max-width: 320rpx; /* 设置最大宽度，防止课程名太长 */
+  overflow: hidden; /* 隐藏溢出内容 */
+  text-overflow: ellipsis; /* 显示省略号 */
+  white-space: nowrap; /* 不换行 */
 }
 
 .word-count-info {
@@ -110,4 +114,52 @@
   background: linear-gradient(to top, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
   pointer-events: none;
   z-index: 10;
-} 
+}
+
+/* ==================== Volume Tags 样式 ==================== */
+/* 学习gashapon页面的series-tags设计 */
+
+.volume-tags {
+  display: flex;
+  width: 100%;
+  position: relative; /* 为横条指示器提供定位基准 */
+}
+
+.volume-tag {
+  flex: 1; /* 平均分配空间 */
+  height: 72rpx; /* 设置固定高度 */
+  border-radius: 48rpx;
+  background-color: transparent; /* 去掉背景颜色 */
+  border: 2rpx solid transparent;
+  transition: all 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 文案居中显示 */
+}
+
+.volume-tag.active {
+  background-color: transparent; /* 去掉背景颜色 */
+  border-color: transparent;
+}
+
+.volume-tag text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5); /* 黑色50%透明度 */
+}
+
+.volume-tag.active text {
+  color: #000000; /* 选中状态黑色 */
+}
+
+/* 滑动横条指示器 */
+.tag-indicator {
+  position: absolute;
+  bottom: 0;
+  width: 128rpx;
+  height: 6rpx;
+  background-color: #4845F7; /* 改成主题色 */
+  border-radius: 3rpx;
+  transition: left 0.6s ease, background-color 0.6s ease; /* 添加颜色过渡动画 */
+  z-index: 1;
+}

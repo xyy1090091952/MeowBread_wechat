@@ -17,6 +17,18 @@ page {
   justify-content: center;
   align-items: center;
   width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 美味补给背景 - 保持原有的背景色 */
+.bg-supply {
+  background: linear-gradient(180deg, #FFE4B5 0%, #FFF8DC 100%);
+}
+
+/* 梦幻魔法背景 - 白色到粉色渐变 */
+.bg-magic {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFD6E5 100%);
 }
 
 /* --- 奖品展示区 --- */
@@ -51,7 +63,7 @@ page {
   transform: scale(0.8);
   opacity: 1;
   /* 初始状态为纯白色，通过超高亮度实现 */
-  filter: brightness(10);
+  filter: brightness(50);
 }
 
 .prize-info {
@@ -110,39 +122,39 @@ page {
   /* 0-28.6%: 抖动阶段 - 7次疯狂抖动，保持纯白色（0.4秒） */
   0% {
     transform: scale(0.8) translate(0, 0);
-    filter: brightness(10);
+    filter: brightness(50);
   }
   4% {
     transform: scale(0.8) translate(-24rpx, -18rpx);
-    filter: brightness(10);
+    filter: brightness(50);
   }
   8% {
     transform: scale(0.8) translate(24rpx, 18rpx);
-    filter: brightness(10);
+    filter: brightness(50);
   }
   12% {
     transform: scale(0.8) translate(-20rpx, 16rpx);
-    filter: brightness(10);
+    filter: brightness(50);
   }
   16% {
     transform: scale(0.8) translate(20rpx, -16rpx);
-    filter: brightness(10);
+    filter: brightness(50);
   }
   20% {
     transform: scale(0.8) translate(-16rpx, -12rpx);
-    filter: brightness(10);
+    filter: brightness(50);
   }
   24% {
     transform: scale(0.8) translate(16rpx, 12rpx);
-    filter: brightness(10);
+    filter: brightness(50);
   }
   28% {
     transform: scale(0.8) translate(-8rpx, 8rpx);
-    filter: brightness(10);
+    filter: brightness(50);
   }
   28.6% {
     transform: scale(0.8) translate(0, 0);
-    filter: brightness(10);
+    filter: brightness(50);
   }
   
   /* 28.6-100%: 放大+颜色恢复阶段 - 同时进行，更自然流畅（1秒） */

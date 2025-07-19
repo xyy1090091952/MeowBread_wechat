@@ -1,9 +1,10 @@
 {
-  "navigationBarTitleText": "单词列表",
+  "navigationBarTitleText": "",
   "navigationBarBackgroundColor": "#ffffff",
   "navigationBarTextStyle": "black",
   "usingComponents": {
     "word-card": "../../components/word-card/index",
-    "course-selector": "../../components/course-selector/index"
+    "course-selector": "../../components/course-selector/index",
+    "course-selector-enhanced": "../../components/course-selector-enhanced/index"
   }
-} 
+}

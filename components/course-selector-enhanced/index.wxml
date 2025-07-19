@@ -1,0 +1,53 @@
+<!--components/course-selector-enhanced/index.wxml-->
+<view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="closePopup" catchtouchmove="stopPropagation"></view>
+<view class="popup-container {{visible ? 'popup-show' : ''}}" catchtouchmove="preventPropagation">
+  <view class="popup-content">
+    <!-- Tag切换区域 - 参考gashapon的sheet-header -->
+    <view class="sheet-header" wx:if="{{volumes.length > 1}}">
+      <view class="volume-tags">
+        <view 
+          wx:for="{{volumes}}" 
+          wx:key="id" 
+          class="volume-tag {{currentVolumeId === item.id ? 'active' : ''}}" 
+          bindtap="onSelectVolume" 
+          data-id="{{item.id}}"
+        >
+          <text>{{item.name}}</text>
+        </view>
+      </view>
+      <!-- 滑动横条指示器 -->
+      <view class="tag-indicator" style="left: {{indicatorLeft}}"></view>
+    </view>
+
+    <!-- 课程列表区域 - 使用scroll-view支持滚动 -->
+    <scroll-view class="options-group" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <!-- 全部课程按钮 -->
+      <view 
+        class="option-item {{selectedValue === 'all' ? 'selected' : ''}}"
+        bindtap="onSelectCourse"
+        data-value="all"
+      >
+        <view class="option-label">全部课程</view>
+        <view class="option-sublabel">{{currentVolumeDesc}}</view>
+      </view>
+
+      <!-- 具体课程列表 -->
+      <view 
+        wx:for="{{currentCourses}}" 
+        wx:key="courseNumber" 
+        class="option-item {{selectedValue === item.courseNumber ? 'selected' : ''}}"
+        bindtap="onSelectCourse"
+        data-value="{{item.courseNumber}}"
+      >
+        <view class="option-label">第{{item.courseNumber}}节</view>
+        <view class="option-sublabel">{{item.description}}</view>
+      </view>
+    </scroll-view>
+
+    <!-- 底部白色渐变遮罩 -->
+    <view class="bottom-gradient-mask fade-in-element fade-delay-3 show"></view>
+
+    <!-- 确认按钮 -->
+    <view class="confirm-button" bindtap="onConfirm">确认</view>
+  </view>
+</view>

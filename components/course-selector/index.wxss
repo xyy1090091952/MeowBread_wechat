@@ -65,6 +65,10 @@
 
 .options-group {
   margin-bottom: 24px;
+  /* 为投影留出空间 */
+  padding: 8px; /* 为投影留出空间 */
+  margin: -8px; /* 负边距抵消padding，保持整体布局不变 */
+  margin-bottom: 16px; /* 保持底部间距 */
 }
 
 .option-item {
