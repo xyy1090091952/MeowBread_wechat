@@ -18,7 +18,9 @@ Page({
     currentSwiperIndex: 0, // 当前选中的索引
     scrollLeft: 0,
     currentSeriesId: 1, // 当前选中的系列ID，1为美味补给，2为梦幻魔法
-    isAnimating: false, // 控制图片动画状态
+    isAnimating: false, // 控制图片动画状态,
+    collectedCount: 0, // 当前系列已收集数量
+    totalCount: 0, // 当前系列总数
   },
 
   /**
@@ -60,12 +62,17 @@ Page({
     }));
 
     // 根据当前currentSeriesId设置显示的奖品
-    const currentDisplayPrizes = this.data.currentSeriesId === 1 ? supplyPrizes : magicPrizes;
+    const isSupply = this.data.currentSeriesId === 1;
+    const currentDisplayPrizes = isSupply ? supplyPrizes : magicPrizes;
+    const collectedCount = currentDisplayPrizes.filter(p => p.unlocked).length;
+    const totalCount = currentDisplayPrizes.length;
     
     this.setData({
       supplyPrizes,
       magicPrizes,
       displayPrizes: currentDisplayPrizes, // 直接使用实际数据
+      collectedCount,
+      totalCount,
       currentSwiperIndex: 0, // 重置到第一个
     }, () => {
       this.centerActiveThumbnail();
@@ -84,10 +91,16 @@ Page({
     if (this.data.currentSeriesId !== seriesId && !this.data.isAnimating) {
       const newDisplayPrizes = seriesId === 1 ? this.data.supplyPrizes : this.data.magicPrizes;
       
+      // 重新计算收集进度
+      const collectedCount = newDisplayPrizes.filter(p => p.unlocked).length;
+      const totalCount = newDisplayPrizes.length;
+
       this.setData({
         isAnimating: true,
         currentSeriesId: seriesId,
         displayPrizes: newDisplayPrizes,
+        collectedCount, // 更新收集数量
+        totalCount,     // 更新总数
         currentSwiperIndex: 0, // 切换后重置索引
       }, () => {
         this.centerActiveThumbnail();

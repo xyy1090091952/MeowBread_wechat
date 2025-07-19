@@ -1,7 +1,6 @@
 <!--pages/gashapon-inventory/gashapon-inventory.wxml-->
 <view class="container series-{{currentSeriesId}}">
-  <!-- 背景渐变块 -->
-  <view class="background-overlay"></view>
+
   
   <!-- 自定义导航栏 -->
   <view class="custom-nav" style="height: {{navBarHeight}}px; padding-top: {{statusBarHeight}}px;">
@@ -38,20 +37,25 @@
   </view>
 
   <!-- 缩略图导航 -->
-  <scroll-view class="thumbnail-nav" 
-               scroll-x="true" 
-               scroll-left="{{scrollLeft}}" 
-               scroll-with-animation="true">
-    <!-- 直接使用实际数据，一一对应 -->
-    <view class="thumbnail-wrapper">
-      <block wx:for="{{displayPrizes}}" wx:key="id">
-        <view class="thumbnail-item {{index === currentSwiperIndex ? 'active' : ''}}" 
-              id="thumb-{{index}}" 
-              bindtap="switchSwiper" 
-              data-index="{{index}}">
-          <image class="thumbnail-image {{item.unlocked ? '' : 'locked'}}" src="{{item.image}}" mode="aspectFill"></image>
-        </view>
-      </block>
+  <view class="thumbnail-nav">
+    <view class="collection-info {{currentSeriesId === 1 ? 'supply' : 'magic'}}">
+      当前收集{{collectedCount}}/{{totalCount}}
     </view>
-  </scroll-view>
+    <scroll-view class="thumbnail-scroll" 
+                 scroll-x="true" 
+                 scroll-left="{{scrollLeft}}" 
+                 scroll-with-animation="true">
+      <!-- 直接使用实际数据，一一对应 -->
+      <view class="thumbnail-wrapper">
+        <block wx:for="{{displayPrizes}}" wx:key="id">
+          <view class="thumbnail-item {{index === currentSwiperIndex ? 'active' : ''}}" 
+                id="thumb-{{index}}" 
+                bindtap="switchSwiper" 
+                data-index="{{index}}">
+            <image class="thumbnail-image {{item.unlocked ? '' : 'locked'}}" src="{{item.image}}" mode="aspectFill"></image>
+          </view>
+        </block>
+      </view>
+    </scroll-view>
+  </view>
 </view>
