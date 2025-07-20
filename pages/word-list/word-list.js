@@ -133,9 +133,11 @@ Page({
     // 使用 Promise.all 并发加载所有 lesson_files
     const wordsByLesson = await Promise.all(dictionary.lesson_files.map(async (filePath) => {
       try {
-        const lessonNumber = this.extractLessonNumber(filePath); // 从文件名推断课程号
+        // 移除从文件名推断课程号的旧逻辑
+        // const lessonNumber = this.extractLessonNumber(filePath); 
         const words = await wordManager.getWordsByFilter({ lessonFiles: [filePath], dictionaryId });
-        return words.map(word => ({ ...word, lesson: lessonNumber }));
+        // 直接返回获取到的单词，假设它们已经包含了 lesson 属性
+        return words; 
       } catch (err) {
         console.warn('无法加载课时文件', filePath, err);
         return [];

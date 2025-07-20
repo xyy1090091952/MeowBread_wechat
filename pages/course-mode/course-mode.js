@@ -380,7 +380,7 @@ Page({
       selectedDictionaryName: textbookName,
       selectedLessonKey: courseData.lessonFile,
       selectedLessonName: `第${courseData.courseNumber}课`,
-      lessonFiles: [`${courseData.textbook}_${courseData.lessonFile}`],
+      selectedLessonFiles: [courseData.lessonFile], // [FIX] 修正数据格式，直接传递课程文件的URL
       dictionaryId: courseData.textbook,
       basePath: courseData.textbook,
       quizMode: 'course',
@@ -436,7 +436,7 @@ Page({
       selectedDictionaryName: textbookName,
       selectedLessonKey: courseData.lessonFile,
       selectedLessonName: `第${courseData.courseNumber}课`,
-      selectedLessonFiles: [`${courseData.textbook}_${courseData.lessonFile}`],
+      selectedLessonFiles: [courseData.lessonFile],
       dictionaryId: courseData.textbook,
       basePath: courseData.textbook,
       quizMode: 'course', // 新增课程模式
@@ -478,7 +478,7 @@ Page({
       selectedDictionaryName: '大家的日语',
       selectedLessonName: '全部课程',
       dictionaryId: 'everyones_japanese',
-      selectedLessonFiles: ['DICTIONARY_everyones_japanese_ALL_LESSONS'],
+      lessonFiles: ['DICTIONARY_everyones_japanese_ALL_LESSONS'],
       quizMode: 'quick',
       selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice']
     };

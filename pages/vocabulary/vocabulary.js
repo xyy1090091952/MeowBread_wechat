@@ -3,6 +3,7 @@ const learnedManager = require('../../utils/learnedManager.js');
 
 Page({
   data: {
+    bannerText: '就算切换课本MeowBread也会保存学习进度',
     categories: [], // [{id,title,dicts:[{id,name,wordCount,progress}] }]
     // 加载动画控制
     pageLoaded: false // 控制词典选择页面渐显动画
@@ -60,10 +61,11 @@ Page({
       return Promise.all(lessonPromises).then(wordCounts => {
         const totalWordCount = wordCounts.reduce((sum, count) => sum + count, 0);
         const learningProgress = learnedManager.getLearningProgress(dict.id);
+        const progress = totalWordCount > 0 ? Math.round((learningProgress.learnedCount / totalWordCount) * 100) : 0;
         return {
           ...dict,
           wordCount: totalWordCount,
-          progress: learningProgress.progress,
+          progress: progress, // [FIX] 根据已学和总数计算真实的进度
           learnedCount: learningProgress.learnedCount,
           totalCount: totalWordCount, // 使用从网络获取的准确总数
           cover: coverMap[dict.id] || ''

@@ -1,6 +1,7 @@
 // pages/answer/answer.js
 const mistakeManager = require('../../utils/mistakeManager.js'); // 引入错题管理器
 const filterManager = require('../../utils/filterManager.js'); // 引入筛选管理器
+const quizService = require('../../utils/quiz.service.js'); // 引入答题服务
 
 Page({
   data: {
@@ -444,63 +445,103 @@ Page({
   /**
    * 开始快速答题
    */
-  startQuickQuiz() {
+  async startQuickQuiz() {
     console.log('Start Quick Quiz');
     
-    // 读取用户在filter页面的选择
     let userFilter = filterManager.getFilter();
     
-    // 如果用户没有在filter页面设置过筛选条件，引导用户去设置
     if (!userFilter || !userFilter.selectedLessonFiles || userFilter.selectedLessonFiles.length === 0) {
       wx.showToast({
         title: '请先选择题库范围',
         icon: 'none',
         duration: 1500
       });
-      // 一秒后跳转到筛选页面
       setTimeout(() => {
         wx.navigateTo({ url: '/pages/filter/filter' });
       }, 1000);
       return;
     }
 
-    const quizConfig = {
-      numQuestions: 10, // 快速测验默认10题
-      questionTypes: userFilter.selectedQuestionTypes
-    };
+    wx.showLoading({ title: '正在出题...' });
 
-    const { questions, wordStats } = quizService.generateQuiz(userFilter, quizConfig);
-    this.navigateToQuizPage(questions, wordStats, userFilter, 'quick');
+    try {
+      const quizData = await quizService.initializeQuiz({ mode: 'quick' });
+      wx.hideLoading();
+
+      if (quizData.error) {
+        wx.showToast({ title: quizData.error, icon: 'none' });
+        return;
+      }
+
+      if (!quizData.questions || quizData.questions.length === 0) {
+        wx.showToast({ title: '没有找到符合条件的题目', icon: 'none' });
+        return;
+      }
+      
+      this.navigateToQuizPage(quizData.questions, quizData.allWordsInLesson, userFilter, 'quick');
+    } catch (error) {
+      wx.hideLoading();
+      console.error('Failed to start quick quiz:', error);
+      wx.showToast({ title: '出题失败，请稍后重试', icon: 'none' });
+    }
   },
 
   /**
    * 开始无尽模式
    */
-  startEndlessQuiz() {
+  async startEndlessQuiz() {
     console.log('Start Endless Quiz');
     let userFilter = filterManager.getFilter();
 
-    // 如果用户没有在filter页面设置过筛选条件，引导用户去设置
     if (!userFilter || !userFilter.selectedLessonFiles || userFilter.selectedLessonFiles.length === 0) {
       wx.showToast({
         title: '请先选择题库范围',
         icon: 'none',
         duration: 1500
       });
-      // 一秒后跳转到筛选页面
       setTimeout(() => {
         wx.navigateTo({ url: '/pages/filter/filter' });
       }, 1000);
       return;
     }
 
-    const quizConfig = {
-      numQuestions: -1, // 无尽模式不限制题目数量
-      questionTypes: userFilter.selectedQuestionTypes
-    };
+    wx.showLoading({ title: '正在出题...' });
 
-    const { questions, wordStats } = quizService.generateQuiz(userFilter, quizConfig);
-    this.navigateToQuizPage(questions, wordStats, userFilter, 'endless');
+    try {
+      const quizData = await quizService.initializeQuiz({ mode: 'endless' });
+      wx.hideLoading();
+
+      if (quizData.error) {
+        wx.showToast({ title: quizData.error, icon: 'none' });
+        return;
+      }
+
+      if (!quizData.questions || quizData.questions.length === 0) {
+        wx.showToast({ title: '没有找到符合条件的题目', icon: 'none' });
+        return;
+      }
+      
+      this.navigateToQuizPage(quizData.questions, quizData.allWordsInLesson, userFilter, 'endless');
+    } catch (error) {
+      wx.hideLoading();
+      console.error('Failed to start endless quiz:', error);
+      wx.showToast({ title: '出题失败，请稍后重试', icon: 'none' });
+    }
+  },
+
+  /**
+   * 跳转到答题页
+   */
+  navigateToQuizPage(questions, words, filter, mode) {
+    // 将题目数据和单词统计数据转换为JSON字符串，以便通过URL传递
+    const questionsStr = JSON.stringify(questions);
+    const wordsStr = JSON.stringify(words);
+    const filterStr = JSON.stringify(filter);
+
+    // 跳转到quiz页面，并通过URL参数传递数据
+    wx.navigateTo({
+      url: `/pages/quiz/quiz?questions=${encodeURIComponent(questionsStr)}&words=${encodeURIComponent(wordsStr)}&filter=${encodeURIComponent(filterStr)}&mode=${mode}`
+    });
   },
 
   /**

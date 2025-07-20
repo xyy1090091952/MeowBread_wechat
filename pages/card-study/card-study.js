@@ -62,7 +62,7 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function(options) {
+  onLoad: async function(options) {
     console.log('=== Card Study 页面初始化 ===');
     console.log('启动参数:', options);
     
@@ -72,7 +72,7 @@ Page({
     const wordManager = require('../../utils/wordManager.js');
     const currentFilter = filterManager.getFilter();
     // 从 wordManager 获取单词数据
-    const rawWords = wordManager.getWordsByFilter(currentFilter);
+    const rawWords = await wordManager.getWordsByFilter(currentFilter);
 
     // [FIX] 数据结构转换：将 wordManager 返回的嵌套对象扁平化
     // 原始结构: { data: { word_details... }, sourceDictionary: '...', lesson: '...' }
