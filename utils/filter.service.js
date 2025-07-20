@@ -85,7 +85,7 @@ const service = {
 
         lessonsToShow.push({
           name: name,
-          file: `${dictionary.id}_${course.lessonFile}`,
+          file: course.lessonFile.startsWith('http') ? course.lessonFile : `${dictionary.id}_${course.lessonFile}`,
           checked: false
         });
       });

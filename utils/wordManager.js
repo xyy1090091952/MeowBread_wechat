@@ -93,12 +93,19 @@ async function getWordsByFilter(filter) {
       // 智能处理：identifier 可能是一个 URL，也可能是一个拼接的文件名
       let lessonUrl = null;
       let dictionary = null;
+      let cleanedIdentifier = identifier;
+
+      // 修复BUG：增加防御性代码，处理上游可能传来的 'duolingguo_https://...' 这样的错误格式
+      if (identifier.includes('_http')) {
+        // 从 "http" 开始截取，得到一个干净的 URL
+        cleanedIdentifier = identifier.substring(identifier.indexOf('http'));
+      }
 
       // Case 1: identifier 本身就是完整的 URL
-      if (identifier.startsWith('http')) {
+      if (cleanedIdentifier.startsWith('http')) {
         for (const dict of dictionariesConfig) {
-          if (dict.lesson_files && dict.lesson_files.includes(identifier)) {
-            lessonUrl = identifier;
+          if (dict.lesson_files && dict.lesson_files.includes(cleanedIdentifier)) {
+            lessonUrl = cleanedIdentifier;
             dictionary = dict;
             break;
           }
