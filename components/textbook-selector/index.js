@@ -67,20 +67,44 @@ Component({
           'liangs_intermediate': 'https://free.picui.cn/free/2025/07/20/687bd4715697e.jpg',
           'duolingguo': 'https://free.picui.cn/free/2025/07/20/687bd47111ec1.jpg'
         };
+        // 初始化词汇量为0
         let wordCount = 0;
-        dict.lesson_files.forEach(filePath => {
-          try {
-            const lesson = require('../../database/' + filePath);
-            if (Array.isArray(lesson)) {
-              wordCount += lesson.length;
-            } else if (Array.isArray(lesson.words)) {
-              wordCount += lesson.words.length;
-            }
-          } catch (err) {
-            console.warn('无法加载课时文件', filePath);
-          }
+        // 创建一个Promise数组来处理所有的异步请求
+        const promises = dict.lesson_files.map(filePath => {
+          return new Promise((resolve, reject) => {
+            wx.request({
+              url: filePath,
+              success: (res) => {
+                if (res.statusCode === 200 && Array.isArray(res.data)) {
+                  // 请求成功，累加词汇量
+                  wordCount += res.data.length;
+                  resolve();
+                } else {
+                  // 数据格式不正确或请求失败
+                  console.warn(`加载失败或数据格式不正确: ${filePath}`);
+                  resolve(); // 即使失败也resolve，避免阻塞其他请求
+                }
+              },
+              fail: (err) => {
+                console.error(`无法加载课时文件: ${filePath}`, err);
+                resolve(); // 同样，失败也resolve
+              }
+            });
+          });
         });
-        return { ...dict, wordCount, cover: coverMap[dict.id] || '' };
+
+        // 当所有请求都完成后，更新UI
+        Promise.all(promises).then(() => {
+          const updatedTextbooks = this.data.textbooks.map(book => {
+            if (book.id === dict.id) {
+              return { ...book, wordCount };
+            }
+            return book;
+          });
+          this.setData({ textbooks: updatedTextbooks });
+        });
+
+        return { ...dict, wordCount: '加载中', cover: coverMap[dict.id] || '' };
       });
       this.setData({ textbooks });
     },

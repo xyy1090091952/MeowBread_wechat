@@ -74,13 +74,13 @@
   border-color: transparent;
 }
 
-.volume-tag text {
+.volume-tag-text {
   font-size: 28rpx;
   font-weight: 600;
   color: rgba(0, 0, 0, 0.5); /* 黑色50%透明度 */
 }
 
-.volume-tag.active text {
+.volume-tag.active .volume-tag-text {
   color: #000000; /* 选中状态黑色 */
 }
 

@@ -10,77 +10,185 @@ const allDictionariesData = require('../database/dictionaries.js');
  * @param {object} filter - 筛选条件，包含 lessonFiles, dictionaryId 等
  * @returns {Array} - 返回一个包含单词对象的数组，每个对象都增加了 sourceDictionary 和 lesson 字段
  */
-function getWordsByFilter(filter) {
-  const { lessonFiles } = filter;
+async function getWordsByFilter(filter) {
+  // 同时兼容 lessonFiles 和 selectedLessonFiles，增加健壮性
+  const lessonIdentifiers = filter.lessonFiles || filter.selectedLessonFiles;
   let wordsToLoad = [];
 
-  if (!lessonFiles || lessonFiles.length === 0) {
-    console.warn('wordManager: 传入的 lessonFiles 为空，无法加载单词。');
+  if (!lessonIdentifiers || lessonIdentifiers.length === 0) {
+    console.warn('wordManager: 传入的 lessonFiles / selectedLessonFiles 为空，无法加载单词。');
     return [];
   }
 
   const dictionariesConfig = allDictionariesData.dictionaries;
 
-  const processLessonFile = (dict, lessonFileName) => {
+  // 新增：一个根据文件名（如 'lesson1.json'）查找完整URL的辅助函数
+  const findUrlByFileName = (fileName) => {
+    for (const dict of dictionariesConfig) {
+      const url = dict.lesson_files.find(u => u.endsWith(`/${fileName}`));
+      if (url) {
+        return { url, dict };
+      }
+    }
+    return { url: null, dict: null };
+  };
+
+  // 异步处理单个课程文件 URL
+  const processLessonFile = async (dict, lessonFileUrl) => {
     try {
-      const lessonData = require(`../database/${dict.id}/${lessonFileName}`);
+      // 使用 wx.request 发起网络请求获取 JSON 数据
+      const res = await new Promise((resolve, reject) => {
+        wx.request({
+          url: lessonFileUrl,
+          dataType: 'json',
+          success: resolve,
+          fail: reject
+        });
+      });
+
+      const lessonData = res.data; // 获取请求返回的数据
+
       if (lessonData && Array.isArray(lessonData)) {
-        wordsToLoad.push(...lessonData.map(item => ({
-          data: item.data,
-          sourceDictionary: dict.id,
-          lesson: lessonFileName.replace('.js', '')
-        })));
+        wordsToLoad.push(...lessonData.map(item => {
+          // 从 URL 中提取 lesson 名称，例如从 '.../lesson1.json' 提取 'lesson1'
+          const lessonName = lessonFileUrl.substring(lessonFileUrl.lastIndexOf('/') + 1).replace('.json', '');
+          // 将 'lesson1' 转换为数字 1
+          const lessonNumber = parseInt(lessonName.replace('lesson', ''), 10);
+          return {
+            data: item.data,
+            sourceDictionary: dict.id,
+            // 如果转换失败（例如，文件名不是 lessonX.json），则保留原始名称
+            lesson: isNaN(lessonNumber) ? lessonName : lessonNumber
+          };
+        }));
       } else {
-        console.warn(`wordManager: 课程文件格式不正确或为空: ${dict.id}/${lessonFileName}`);
+        console.warn(`wordManager: 课程文件格式不正确或为空: ${lessonFileUrl}`);
       }
     } catch (e) {
-      console.error(`wordManager: 无法加载课程文件: ${dict.id}/${lessonFileName}`, e);
+      console.error(`wordManager: 无法加载课程文件: ${lessonFileUrl}`, e);
     }
   };
 
-  lessonFiles.forEach(lessonFile => {
-    if (lessonFile === 'ALL_DICTIONARIES_ALL_LESSONS') {
-      dictionariesConfig.forEach(dict => {
-        if (dict.lesson_files && Array.isArray(dict.lesson_files)) {
-          dict.lesson_files.forEach(lessonPattern => {
-            const lessonFileName = lessonPattern.split('/').pop();
-            processLessonFile(dict, lessonFileName);
-          });
-        }
-      });
-    } else if (lessonFile.startsWith('DICTIONARY_') && lessonFile.endsWith('_ALL_LESSONS')) {
-      const parts = lessonFile.split('_');
-      const targetDictId = parts.slice(1, parts.length - 2).join('_');
-      const targetDictionary = dictionariesConfig.find(d => d.id === targetDictId);
-      if (targetDictionary && targetDictionary.lesson_files) {
-        targetDictionary.lesson_files.forEach(fullPathPattern => {
-          const lessonFileName = fullPathPattern.split('/').pop();
-          processLessonFile(targetDictionary, lessonFileName);
-        });
-      }
-    } else {
-      let foundDictionary = false;
+  const loadingPromises = [];
+
+  for (const identifier of lessonIdentifiers) {
+    if (identifier === 'ALL_DICTIONARIES_ALL_LESSONS') {
       for (const dict of dictionariesConfig) {
-        if (lessonFile.startsWith(dict.id + '_')) {
-          const lessonName = lessonFile.substring(dict.id.length + 1);
-          const lessonFileName = `${lessonName}.js`;
-          const fullPathPattern = `${dict.id}/${lessonFileName}`;
-          if (dict.lesson_files && dict.lesson_files.includes(fullPathPattern)) {
-            processLessonFile(dict, lessonFileName);
-            foundDictionary = true;
-            break;
+        if (dict.lesson_files && Array.isArray(dict.lesson_files)) {
+          for (const url of dict.lesson_files) {
+            loadingPromises.push(processLessonFile(dict, url));
           }
         }
       }
-      if (!foundDictionary) {
-        console.warn(`wordManager: 无法为课程文件标识 ${lessonFile} 找到匹配的词典。`);
+    } else if (identifier.startsWith('DICTIONARY_') && identifier.endsWith('_ALL_LESSONS')) {
+      const parts = identifier.split('_');
+      const targetDictId = parts.slice(1, parts.length - 2).join('_');
+      const targetDictionary = dictionariesConfig.find(d => d.id === targetDictId);
+      if (targetDictionary && targetDictionary.lesson_files) {
+        for (const url of targetDictionary.lesson_files) {
+          loadingPromises.push(processLessonFile(targetDictionary, url));
+        }
+      }
+    } else {
+      // 智能处理：identifier 可能是一个 URL，也可能是一个拼接的文件名
+      let lessonUrl = null;
+      let dictionary = null;
+      let cleanedIdentifier = identifier;
+
+      // 修复BUG：增加防御性代码，处理上游可能传来的 'duolingguo_https://...' 这样的错误格式
+      if (identifier.includes('_http')) {
+        // 从 "http" 开始截取，得到一个干净的 URL
+        cleanedIdentifier = identifier.substring(identifier.indexOf('http'));
+      }
+
+      // Case 1: identifier 本身就是完整的 URL
+      if (cleanedIdentifier.startsWith('http')) {
+        for (const dict of dictionariesConfig) {
+          if (dict.lesson_files && dict.lesson_files.includes(cleanedIdentifier)) {
+            lessonUrl = cleanedIdentifier;
+            dictionary = dict;
+            break;
+          }
+        }
+      } 
+      // Case 2: identifier 是 '教材_文件名' 格式，例如 'liangs_class_lesson1.json'
+      else {
+        const fileName = identifier.split('_').pop(); // 获取 'lesson1.json'
+        const { url, dict } = findUrlByFileName(fileName);
+        if (url) {
+          lessonUrl = url;
+          dictionary = dict;
+        }
+      }
+
+      if (lessonUrl && dictionary) {
+        loadingPromises.push(processLessonFile(dictionary, lessonUrl));
+      } else {
+        console.warn(`wordManager: 无法为课程文件标识 ${identifier} 找到匹配的词典或URL。`);
       }
     }
-  });
+  }
+
+  await Promise.all(loadingPromises);
 
   return wordsToLoad;
 }
 
+/**
+ * 获取并缓存词典的总词数
+ * @param {string} dictionaryId - 词典ID
+ * @returns {Promise<number>} - 返回一个包含总词数的Promise
+ */
+async function getDictionaryWordCount(dictionaryId) {
+  const cacheKey = `word_count_cache_${dictionaryId}`;
+  try {
+    // 1. 尝试从缓存中读取
+    const cachedCount = wx.getStorageSync(cacheKey);
+    if (cachedCount) {
+      return cachedCount;
+    }
+
+    // 2. 如果缓存中没有，则计算
+    const dictionary = allDictionariesData.dictionaries.find(d => d.id === dictionaryId);
+    if (!dictionary || !dictionary.lesson_files) {
+      return 0;
+    }
+
+    let totalCount = 0;
+    const countPromises = dictionary.lesson_files.map(lessonFileUrl => {
+      return new Promise((resolve) => {
+        wx.request({
+          url: lessonFileUrl,
+          dataType: 'json',
+          success: (res) => {
+            if (res.data && Array.isArray(res.data)) {
+              resolve(res.data.length);
+            } else {
+              resolve(0);
+            }
+          },
+          fail: () => {
+            resolve(0);
+          }
+        });
+      });
+    });
+
+    const counts = await Promise.all(countPromises);
+    totalCount = counts.reduce((sum, count) => sum + count, 0);
+
+    // 3. 将结果存入缓存
+    wx.setStorageSync(cacheKey, totalCount);
+
+    return totalCount;
+  } catch (error) {
+    console.error(`计算词典 ${dictionaryId} 总词数失败:`, error);
+    return 0; // 出错时返回0
+  }
+}
+
+
 module.exports = {
-  getWordsByFilter
+  getWordsByFilter,
+  getDictionaryWordCount
 };

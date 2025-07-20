@@ -16,7 +16,7 @@ const quizService = {
    * @param {object} options - 页面启动参数
    * @returns {object} 初始化后的页面数据
    */
-  initializeQuiz(options) {
+  async initializeQuiz(options) {
     if (options.from === 'mistakes' && options.words) {
       const reviewWords = JSON.parse(options.words);
       const quizFilter = filterManager.getFilter() || {};
@@ -37,36 +37,45 @@ const quizService = {
       };
     }
 
-    let quizFilter = filterManager.getFilter();
-    if (!quizFilter || !quizFilter.selectedLessonFiles || quizFilter.selectedLessonFiles.length === 0) {
-      quizFilter = {
-        selectedDictionaryName: '全部辞典',
-        selectedLessonFiles: ['ALL_DICTIONARIES_ALL_LESSONS'],
-        selectedLessonName: '全部课程',
-        dictionaryId: 'all',
-        basePath: 'all',
-        quizMode: options.mode || 'quick',
-        selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'] // 添加默认题型
+    try {
+      let quizFilter = filterManager.getFilter();
+      if (!quizFilter || !quizFilter.selectedLessonFiles || quizFilter.selectedLessonFiles.length === 0) {
+        quizFilter = {
+          selectedDictionaryName: '全部辞典',
+          selectedLessonFiles: ['ALL_DICTIONARIES_ALL_LESSONS'],
+          selectedLessonName: '全部课程',
+          dictionaryId: 'all',
+          basePath: 'all',
+          quizMode: options.mode || 'quick',
+          selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'] // 添加默认题型
+        };
+      }
+
+      const { selectedLessonFiles, dictionaryId, basePath, selectedQuestionTypes, selectedDictionaryName, selectedLessonName } = quizFilter;
+      const quizMode = options.mode || quizFilter.quizMode || 'quick';
+      const words = await wordManager.getWordsByFilter({ lessonFiles: selectedLessonFiles, dictionaryId });
+      const questions = this.selectWordsForQuiz(words, quizMode, selectedQuestionTypes);
+
+      return {
+        quizMode,
+        lessonFiles: selectedLessonFiles,
+        dictionaryId,
+        basePath,
+        allWordsInLesson: words,
+        questions,
+        totalQuestions: questions.length,
+        currentFilterDisplay: `${selectedDictionaryName} - ${selectedLessonName}`,
+        selectedQuestionTypes: selectedQuestionTypes || ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'],
+        isLoading: false,
+      };
+    } catch (error) {
+      console.error('Failed to initialize quiz:', error);
+      // 处理错误，例如返回一个空状态或错误提示
+      return {
+        isLoading: false,
+        error: '初始化题目失败，请稍后重试。'
       };
     }
-
-    const { selectedLessonFiles, dictionaryId, basePath, selectedQuestionTypes, selectedDictionaryName, selectedLessonName } = quizFilter;
-    const quizMode = options.mode || quizFilter.quizMode || 'quick';
-    const words = wordManager.getWordsByFilter({ lessonFiles: selectedLessonFiles, dictionaryId });
-    const questions = this.selectWordsForQuiz(words, quizMode, selectedQuestionTypes);
-
-    return {
-      quizMode,
-      lessonFiles: selectedLessonFiles,
-      dictionaryId,
-      basePath,
-      allWordsInLesson: words,
-      questions,
-      totalQuestions: questions.length,
-      currentFilterDisplay: `${selectedDictionaryName} - ${selectedLessonName}`,
-      selectedQuestionTypes: selectedQuestionTypes || ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'],
-      isLoading: false,
-    };
   },
 
   /**
