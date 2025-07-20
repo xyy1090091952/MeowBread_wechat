@@ -111,7 +111,7 @@ Page({
    * 加载单词列表
    * @param {string} dictionaryId - 词典ID
    */
-  loadWordList(dictionaryId) {
+  async loadWordList(dictionaryId) {
     const db = require('../../database/dictionaries.js').dictionaries;
     const dictionary = db.find(dict => dict.id === dictionaryId);
     
@@ -126,58 +126,56 @@ Page({
       return;
     }
 
-    // 加载该词典的所有单词
+    // 异步加载该词典的所有单词
+    const wordManager = require('../../utils/wordManager.js');
     let allWords = [];
-    dictionary.lesson_files.forEach(filePath => {
+
+    // 使用 Promise.all 并发加载所有 lesson_files
+    const wordsByLesson = await Promise.all(dictionary.lesson_files.map(async (filePath) => {
       try {
-        const lesson = require('../../database/' + filePath);
         const lessonNumber = this.extractLessonNumber(filePath); // 从文件名推断课程号
-        
-        // 统一处理函数，避免重复代码
-        const processItems = (items) => {
-          items.forEach(item => {
-            // 确保 item.data 存在
-            const wordData = item.data || item;
-            if (!wordData || !wordData['假名']) return;
-
-            // 1. 确定单词状态
-            const mistake = mistakeManager.getMistake(wordData); // 全局错题库，不再需要 dictionaryId
-            let statusKey;
-            if (mistake) {
-              statusKey = mistake.status;
-            } else {
-              const isLearned = learnedManager.isWordLearned(wordData, dictionaryId);
-              statusKey = isLearned ? WORD_STATUS.MEMORIZED : WORD_STATUS.UNSEEN;
-            }
-
-            // 2. 构建基础单词对象
-            const baseWordItem = {
-              data: {
-                '假名': wordData['假名'] || '',
-                '汉字': wordData['汉字'] || '',
-                '中文': wordData['中文'] || '',
-                '词性': wordData['词性'] || '',
-                '例句': wordData['例句'] || ''
-              },
-              lesson: lessonNumber,
-              status: statusKey
-            };
-
-            // 3. 使用 statusManager 处理状态显示
-            const processedWord = processWordStatus(baseWordItem);
-            allWords.push(processedWord);
-          });
-        };
-
-        if (Array.isArray(lesson)) {
-          processItems(lesson);
-        } else if (Array.isArray(lesson.words)) {
-          processItems(lesson.words);
-        }
+        const words = await wordManager.getWordsByFilter({ lessonFiles: [filePath], dictionaryId });
+        return words.map(word => ({ ...word, lesson: lessonNumber }));
       } catch (err) {
         console.warn('无法加载课时文件', filePath, err);
+        return [];
       }
-    });
+    }));
+
+    allWords = wordsByLesson.flat(); // 将所有课程的单词扁平化到一个数组中
+
+    // 对所有单词进行状态处理
+    allWords = allWords.map(wordItem => {
+      // 确保 wordItem.data 存在
+      const wordData = wordItem.data || wordItem;
+      if (!wordData || !wordData['假名']) return null;
+
+      // 1. 确定单词状态
+      const mistake = mistakeManager.getMistake(wordData); // 全局错题库，不再需要 dictionaryId
+      let statusKey;
+      if (mistake) {
+        statusKey = mistake.status;
+      } else {
+        const isLearned = learnedManager.isWordLearned(wordData, dictionaryId);
+        statusKey = isLearned ? WORD_STATUS.MEMORIZED : WORD_STATUS.UNSEEN;
+      }
+
+      // 2. 构建基础单词对象
+      const baseWordItem = {
+        data: {
+          '假名': wordData['假名'] || '',
+          '汉字': wordData['汉字'] || '',
+          '中文': wordData['中文'] || '',
+          '词性': wordData['词性'] || '',
+          '例句': wordData['例句'] || ''
+        },
+        lesson: wordItem.lesson, // 保留课程号
+        status: statusKey
+      };
+
+      // 3. 使用 statusManager 处理状态显示
+      return processWordStatus(baseWordItem);
+    }).filter(Boolean); // 过滤掉 null 值
 
     // 尝试恢复该词典的筛选记录
     const savedFilter = wordListFilterManager.getWordListFilter(dictionaryId);
@@ -200,7 +198,7 @@ Page({
 
     // 如果有保存的筛选记录，应用筛选
     if (savedFilter && savedFilter.selectedCourseRange && savedFilter.selectedCourseRange.value !== 'all') {
-      this.filterWordsByCourseEnhanced(
+      await this.filterWordsByCourseEnhanced(
         savedFilter.selectedCourseRange.value, 
         savedFilter.selectedCourseRange.volumeId
       );

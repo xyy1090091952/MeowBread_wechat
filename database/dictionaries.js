@@ -164,21 +164,21 @@ module.exports = {
             "name": "多邻国",
             "description": "多邻国日语词汇",
             "lesson_files": [
-                "duolingguo/lesson1.js",
-                "duolingguo/lesson2.js",
-                "duolingguo/lesson3.js",
-                "duolingguo/lesson4.js",
-                "duolingguo/lesson5.js"
+                "https://xyy1090091952.github.io/MeowBread_database/lesson1.json",
+                "https://xyy1090091952.github.io/MeowBread_database/lesson2.json",
+                "https://xyy1090091952.github.io/MeowBread_database/lesson3.json",
+                "https://xyy1090091952.github.io/MeowBread_database/lesson4.json",
+                "https://xyy1090091952.github.io/MeowBread_database/lesson5.json"
             ],
             "volumes": [
             {"id":"complete","name":"完整版","description":"多邻国完整版","lessons":[1,2,3,4,5]}
         ],
             "courses": [
-            {"courseNumber":1,"courseTitle":"第1课","lessonFile":"lesson1","description":"多邻国第1课"},
-            {"courseNumber":2,"courseTitle":"第2课","lessonFile":"lesson2","description":"多邻国第2课"},
-            {"courseNumber":3,"courseTitle":"第3课","lessonFile":"lesson3","description":"多邻国第3课"},
-            {"courseNumber":4,"courseTitle":"第4课","lessonFile":"lesson4","description":"多邻国第4课"},
-            {"courseNumber":5,"courseTitle":"第5课","lessonFile":"lesson5","description":"多邻国第5课"}
+            {"courseNumber":1,"courseTitle":"第1课","lessonFile":"https://xyy1090091952.github.io/MeowBread_database/lesson1.json","description":"多邻国第1课"},
+            {"courseNumber":2,"courseTitle":"第2课","lessonFile":"https://xyy1090091952.github.io/MeowBread_database/lesson2.json","description":"多邻国第2课"},
+            {"courseNumber":3,"courseTitle":"第3课","lessonFile":"https://xyy1090091952.github.io/MeowBread_database/lesson3.json","description":"多邻国第3课"},
+            {"courseNumber":4,"courseTitle":"第4课","lessonFile":"https://xyy1090091952.github.io/MeowBread_database/lesson4.json","description":"多邻国第4课"},
+            {"courseNumber":5,"courseTitle":"第5课","lessonFile":"https://xyy1090091952.github.io/MeowBread_database/lesson5.json","description":"多邻国第5课"}
         ]
         }
     ]

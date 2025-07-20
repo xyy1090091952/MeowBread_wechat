@@ -43,7 +43,7 @@ Page({
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() {
+  async onShow() {
     console.log('Course mode page show');
     
     // 调试：输出当前筛选条件
@@ -59,7 +59,7 @@ Page({
     }
     
     // 页面显示时重新加载数据，以防用户在filter页面更改了教材选择
-    this.loadCourseData();
+    await this.loadCourseData();
     
     // 更新显示的筛选信息
     const currentFilterDisplay = filter ? 
@@ -74,7 +74,7 @@ Page({
   /**
    * 初始化课程模式页面
    */
-  initializeCoursePage() {
+  async initializeCoursePage() {
     // 获取当前筛选配置
     const filter = filterManager.getFilter();
     console.log('=== Initialize Course Page ===');
@@ -90,13 +90,13 @@ Page({
     });
 
     // 加载课程数据
-    this.loadCourseData();
+    await this.loadCourseData();
   },
 
   /**
    * 加载课程数据
    */
-  loadCourseData() {
+  async loadCourseData() {
     console.log('Loading course data...');
     
     try {
@@ -135,7 +135,7 @@ Page({
 
       // 根据教材和选定的课程范围加载课程数据
       const selectedRangeValue = this.data.selectedCourseRange.value;
-      const courseList = courseDataManager.getCourseDetailsByVolume(textbook, selectedRangeValue);
+      const courseList = await courseDataManager.getCourseDetailsByVolume(textbook, selectedRangeValue);
       
       if (!courseList || courseList.length === 0) {
         console.warn(`No courses found for textbook: ${textbook} and range: ${selectedRangeValue}`);
@@ -144,8 +144,8 @@ Page({
       }
       
       // 为每个课程添加学习进度信息
-      const courseDataWithProgress = courseList.map(course => {
-        const learnedWords = learnedManager.getLearnedWordsForCourse(textbook, course.lessonFile);
+      const courseDataWithProgress = await Promise.all(courseList.map(async (course) => {
+        const learnedWords = await learnedManager.getLearnedWordsForCourse(textbook, course.lessonFile);
         const learnedCount = learnedWords.length;
         const totalWords = course.wordCount;
         const progress = totalWords > 0 ? Math.round((learnedCount / totalWords) * 100) : 0;
@@ -162,7 +162,7 @@ Page({
           textbook: textbook,
           lessonFile: course.lessonFile
         };
-      });
+      }));
 
       this.setData({
         courseData: courseDataWithProgress,
@@ -171,18 +171,18 @@ Page({
 
     } catch (error) {
       console.error('Error loading course data:', error);
-      this.loadDefaultCourseData();
+      await this.loadDefaultCourseData();
     }
   },
 
   /**
    * 加载默认课程数据（梁老师的课程）
    */
-  loadDefaultCourseData() {
-    const courseList = courseDataManager.getAllCourseDetails('liangs_class');
+  async loadDefaultCourseData() {
+    const courseList = await courseDataManager.getAllCourseDetails('liangs_class');
     
-    const courseDataWithProgress = courseList.map(course => {
-      const learnedWords = learnedManager.getLearnedWordsForCourse('liangs_class', course.lessonFile);
+    const courseDataWithProgress = await Promise.all(courseList.map(async (course) => {
+      const learnedWords = await learnedManager.getLearnedWordsForCourse('liangs_class', course.lessonFile);
       const learnedCount = learnedWords.length;
       const totalWords = course.wordCount;
       const progress = totalWords > 0 ? Math.round((learnedCount / totalWords) * 100) : 0;
@@ -199,7 +199,7 @@ Page({
         textbook: 'liangs_class',
         lessonFile: course.lessonFile
       };
-    });
+    }));
 
     this.setData({
       courseData: courseDataWithProgress,

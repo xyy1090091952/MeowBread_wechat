@@ -129,16 +129,16 @@ function getLearnedWords(dictionaryId = null) {
  * @param {string} lessonFile - 课程文件名（如 'lesson5'）
  * @returns {Array} 该课程的已背单词列表
  */
-function getLearnedWordsForCourse(dictionaryId, lessonFile) {
+async function getLearnedWordsForCourse(dictionaryId, lessonFile) {
   try {
     // 获取该词典的所有已背单词
     const allLearnedWords = getLearnedWords(dictionaryId);
     
-    // 加载课程文件，获取该课程的所有单词
-    const courseWords = require(`../database/${dictionaryId}/${lessonFile}.js`);
+    // 异步加载课程文件，获取该课程的所有单词
+    const courseWords = await require('./wordManager.js').getWordsByFilter({ lessonFiles: [lessonFile], dictionaryId });
     
     if (!Array.isArray(courseWords)) {
-      console.warn(`课程文件格式不正确: ${dictionaryId}/${lessonFile}.js`);
+      console.warn(`课程文件格式不正确或加载失败: ${dictionaryId}/${lessonFile}`);
       return [];
     }
     

@@ -10,7 +10,7 @@ const allDictionariesData = require('../database/dictionaries.js');
  * @param {object} filter - 筛选条件，包含 lessonFiles, dictionaryId 等
  * @returns {Array} - 返回一个包含单词对象的数组，每个对象都增加了 sourceDictionary 和 lesson 字段
  */
-function getWordsByFilter(filter) {
+async function getWordsByFilter(filter) {
   const { lessonFiles } = filter;
   let wordsToLoad = [];
 
@@ -21,62 +21,73 @@ function getWordsByFilter(filter) {
 
   const dictionariesConfig = allDictionariesData.dictionaries;
 
-  const processLessonFile = (dict, lessonFileName) => {
+  // 异步处理单个课程文件 URL
+  const processLessonFile = async (dict, lessonFileUrl) => {
     try {
-      const lessonData = require(`../database/${dict.id}/${lessonFileName}`);
+      // 使用 wx.request 发起网络请求获取 JSON 数据
+      const res = await new Promise((resolve, reject) => {
+        wx.request({
+          url: lessonFileUrl,
+          dataType: 'json',
+          success: resolve,
+          fail: reject
+        });
+      });
+
+      const lessonData = res.data; // 获取请求返回的数据
+
       if (lessonData && Array.isArray(lessonData)) {
         wordsToLoad.push(...lessonData.map(item => ({
           data: item.data,
           sourceDictionary: dict.id,
-          lesson: lessonFileName.replace('.js', '')
+          // 从 URL 中提取 lesson 名称，例如从 '.../lesson1.json' 提取 'lesson1'
+          lesson: lessonFileUrl.substring(lessonFileUrl.lastIndexOf('/') + 1).replace('.json', '')
         })));
       } else {
-        console.warn(`wordManager: 课程文件格式不正确或为空: ${dict.id}/${lessonFileName}`);
+        console.warn(`wordManager: 课程文件格式不正确或为空: ${lessonFileUrl}`);
       }
     } catch (e) {
-      console.error(`wordManager: 无法加载课程文件: ${dict.id}/${lessonFileName}`, e);
+      console.error(`wordManager: 无法加载课程文件: ${lessonFileUrl}`, e);
     }
   };
 
-  lessonFiles.forEach(lessonFile => {
+  const loadingPromises = [];
+
+  for (const lessonFile of lessonFiles) {
     if (lessonFile === 'ALL_DICTIONARIES_ALL_LESSONS') {
-      dictionariesConfig.forEach(dict => {
+      for (const dict of dictionariesConfig) {
         if (dict.lesson_files && Array.isArray(dict.lesson_files)) {
-          dict.lesson_files.forEach(lessonPattern => {
-            const lessonFileName = lessonPattern.split('/').pop();
-            processLessonFile(dict, lessonFileName);
-          });
+          for (const url of dict.lesson_files) {
+            loadingPromises.push(processLessonFile(dict, url));
+          }
         }
-      });
+      }
     } else if (lessonFile.startsWith('DICTIONARY_') && lessonFile.endsWith('_ALL_LESSONS')) {
       const parts = lessonFile.split('_');
       const targetDictId = parts.slice(1, parts.length - 2).join('_');
       const targetDictionary = dictionariesConfig.find(d => d.id === targetDictId);
       if (targetDictionary && targetDictionary.lesson_files) {
-        targetDictionary.lesson_files.forEach(fullPathPattern => {
-          const lessonFileName = fullPathPattern.split('/').pop();
-          processLessonFile(targetDictionary, lessonFileName);
-        });
+        for (const url of targetDictionary.lesson_files) {
+          loadingPromises.push(processLessonFile(targetDictionary, url));
+        }
       }
     } else {
+      // lessonFile is a URL now
       let foundDictionary = false;
       for (const dict of dictionariesConfig) {
-        if (lessonFile.startsWith(dict.id + '_')) {
-          const lessonName = lessonFile.substring(dict.id.length + 1);
-          const lessonFileName = `${lessonName}.js`;
-          const fullPathPattern = `${dict.id}/${lessonFileName}`;
-          if (dict.lesson_files && dict.lesson_files.includes(fullPathPattern)) {
-            processLessonFile(dict, lessonFileName);
-            foundDictionary = true;
-            break;
-          }
+        if (dict.lesson_files && dict.lesson_files.includes(lessonFile)) {
+          loadingPromises.push(processLessonFile(dict, lessonFile));
+          foundDictionary = true;
+          break;
         }
       }
       if (!foundDictionary) {
-        console.warn(`wordManager: 无法为课程文件标识 ${lessonFile} 找到匹配的词典。`);
+        console.warn(`wordManager: 无法为课程文件URL ${lessonFile} 找到匹配的词典。`);
       }
     }
-  });
+  }
+
+  await Promise.all(loadingPromises);
 
   return wordsToLoad;
 }

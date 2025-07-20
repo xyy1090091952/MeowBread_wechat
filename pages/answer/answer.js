@@ -457,20 +457,20 @@ Page({
         icon: 'none',
         duration: 1500
       });
+      // 一秒后跳转到筛选页面
       setTimeout(() => {
-        this.navigateToFilter();
-      }, 1500);
+        wx.navigateTo({ url: '/pages/filter/filter' });
+      }, 1000);
       return;
     }
 
-    // 创建临时的筛选条件，添加快速模式标识
-    const tempFilter = { ...userFilter, quizMode: 'quick' };
-    filterManager.saveFilter(tempFilter);
-    
-    console.log('快速答题使用筛选条件:', tempFilter);
-    wx.navigateTo({
-      url: `/pages/quiz/quiz?mode=quick`
-    });
+    const quizConfig = {
+      numQuestions: 10, // 快速测验默认10题
+      questionTypes: userFilter.selectedQuestionTypes
+    };
+
+    const { questions, wordStats } = quizService.generateQuiz(userFilter, quizConfig);
+    this.navigateToQuizPage(questions, wordStats, userFilter, 'quick');
   },
 
   /**
@@ -487,20 +487,20 @@ Page({
         icon: 'none',
         duration: 1500
       });
+      // 一秒后跳转到筛选页面
       setTimeout(() => {
-        this.navigateToFilter();
-      }, 1500);
+        wx.navigateTo({ url: '/pages/filter/filter' });
+      }, 1000);
       return;
     }
 
-    // 创建临时的筛选条件，添加无尽模式标识
-    const tempFilter = { ...userFilter, quizMode: 'endless' };
-    filterManager.saveFilter(tempFilter);
-    
-    console.log('无尽模式使用筛选条件:', tempFilter);
-    wx.navigateTo({
-      url: '/pages/quiz/quiz?mode=endless'
-    });
+    const quizConfig = {
+      numQuestions: -1, // 无尽模式不限制题目数量
+      questionTypes: userFilter.selectedQuestionTypes
+    };
+
+    const { questions, wordStats } = quizService.generateQuiz(userFilter, quizConfig);
+    this.navigateToQuizPage(questions, wordStats, userFilter, 'endless');
   },
 
   /**

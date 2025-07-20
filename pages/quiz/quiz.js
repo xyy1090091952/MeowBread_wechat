@@ -47,8 +47,8 @@ Page({
    * 生命周期函数--监听页面加载
    * @param {object} options - 页面启动参数，包含 mode, from, words 等
    */
-  onLoad: function(options) {
-    const initialState = quizService.initializeQuiz(options);
+  onLoad: async function(options) {
+    const initialState = await quizService.initializeQuiz(options);
 
     // 添加调试信息，显示题目生成情况
     console.log('=== Quiz 页面初始化 ===');

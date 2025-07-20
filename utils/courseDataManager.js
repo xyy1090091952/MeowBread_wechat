@@ -47,14 +47,15 @@ class CourseDataManager {
    * @param {number} courseNumber - 课程编号
    * @returns {number} 单词总量
    */
-  getCourseWordCount(textbookId, courseNumber) {
+  async getCourseWordCount(textbookId, courseNumber) {
     try {
       const courseInfo = this.getCourseInfo(textbookId, courseNumber);
-      if (!courseInfo) return 0;
+      if (!courseInfo || !courseInfo.lessonFile) return 0;
 
-      // 动态加载对应的lesson文件
-      const lessonData = require(`../database/${textbookId}/${courseInfo.lessonFile}.js`);
-      return lessonData.length;
+      // 使用 wordManager 异步获取单词
+      const wordManager = require('./wordManager.js');
+      const words = await wordManager.getWordsByFilter({ lessonFiles: [courseInfo.lessonFile], dictionaryId: textbookId });
+      return words.length;
     } catch (error) {
       console.error(`获取课程单词数量失败: ${textbookId} - ${courseNumber}`, error);
       return 0;
@@ -67,14 +68,14 @@ class CourseDataManager {
    * @param {number} courseNumber - 课程编号
    * @returns {Object|null} 课程详细信息
    */
-  getCourseDetails(textbookId, courseNumber) {
+  async getCourseDetails(textbookId, courseNumber) {
     const textbookInfo = this.getTextbookInfo(textbookId);
     if (!textbookInfo) return null;
 
     const courseInfo = this.getCourseInfo(textbookId, courseNumber);
     if (!courseInfo) return null;
 
-    const wordCount = this.getCourseWordCount(textbookId, courseNumber);
+    const wordCount = await this.getCourseWordCount(textbookId, courseNumber);
 
     return {
       ...courseInfo,
@@ -89,9 +90,10 @@ class CourseDataManager {
    * @param {string} textbookId - 教材ID
    * @returns {Array} 课程详细信息列表
    */
-  getAllCourseDetails(textbookId) {
+  async getAllCourseDetails(textbookId) {
     const courseList = this.getCourseList(textbookId);
-    return courseList.map(course => this.getCourseDetails(textbookId, course.courseNumber));
+    // 使用 Promise.all 并发获取所有课程的详细信息
+    return Promise.all(courseList.map(course => this.getCourseDetails(textbookId, course.courseNumber)));
   }
 
   /**
@@ -136,12 +138,14 @@ class CourseDataManager {
    * @param {string} volumeId - 分册ID
    * @returns {Array} 课程详细信息列表
    */
-  getCourseDetailsByVolume(textbookId, volumeId) {
+  async getCourseDetailsByVolume(textbookId, volumeId) {
     if (volumeId === 'all' || !volumeId) {
-      return this.getAllCourseDetails(textbookId);
+      // 直接返回异步调用的结果
+      return await this.getAllCourseDetails(textbookId);
     }
     const courseList = this.getCoursesByVolume(textbookId, volumeId);
-    return courseList.map(course => this.getCourseDetails(textbookId, course.courseNumber));
+    // 使用 Promise.all 来处理 map 中的异步调用
+    return Promise.all(courseList.map(course => this.getCourseDetails(textbookId, course.courseNumber)));
   }
 
   /**
