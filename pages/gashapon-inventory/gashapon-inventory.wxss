@@ -152,36 +152,20 @@
 
 /* 动画状态 - 果冻弹跳效果，只应用于图片容器 */
 .prize-image-container.animating {
-  animation: jellyBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  animation: jellyBounce 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
 }
 
-/* 果冻弹跳动画关键帧 - 温和的弹跳效果 */
+/* 果冻弹跳动画关键帧 - 简化为单次弹跳效果 */
 @keyframes jellyBounce {
   0% {
     opacity: 0;
     transform: scale(0.5);
   }
-  15% {
-    opacity: 0.8;
-    transform: scale(0.85); /* 轻微向下压缩 */
-  }
-  30% {
+  50% {
     opacity: 1;
-    transform: scale(1.05); /* 温和向上弹起 */
-  }
-  45% {
-    transform: scale(0.98); /* 轻微向下回弹 */
-  }
-  60% {
-    transform: scale(1.02); /* 第二次轻微向上弹起 */
-  }
-  75% {
-    transform: scale(0.99); /* 第二次轻微向下回弹 */
-  }
-  90% {
-    transform: scale(1.005); /* 非常轻微向上 */
+    transform: scale(1.1); /* 单次向上弹起 */
   }
   100% {
     opacity: 1;
@@ -266,15 +250,15 @@
 /* 缩略图包装容器 - 实现垂直居中 */
 .thumbnail-wrapper {
   /* 确保包裹容器占满可用空间 */
+  padding-left: 48rpx;
   height: 100%;
   box-sizing: border-box;
 }
 
 /* 缩略图导航容器 - 新的视觉主体 */
 .thumbnail-nav {
-  height: 460rpx; /* 缩略图容器高度 */
+  height: 380rpx; /* 缩略图容器高度 */
   background-color: #FFFBEB; /* 淡黄色背景 */
-  padding-top: 10rpx; /* 调整内边距 */
   box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.05);
   border-top-left-radius: 40rpx;
   border-top-right-radius: 40rpx;
@@ -332,16 +316,16 @@
 .thumbnail-item {
   /* 布局相关（原wrapper功能） - 适配flex包装容器 */
   display: inline-block; /* 在flex容器中保持内联块 */
-  margin-right: 24rpx; /* 只设置右边距，避免四边都有边距 */
+  margin-right: 16rpx; /* 只设置右边距，避免四边都有边距 */
   box-sizing: border-box;
   position: relative; /* 确保在伪元素之上 */
   z-index: 1; /* 确保显示在thumbnail-nav的伪元素背景之上 */
   flex-shrink: 0; /* 防止在flex容器中被压缩 */
   
-  /* 视觉样式相关（原item功能） - 192rpx圆形 */
-  width: 192rpx; /* 恢复为192rpx */
-  height: 192rpx; /* 恢复为192rpx */
-  border-radius: 96rpx; /* 恢复为圆形，半径为宽度的一半 */
+  /* 视觉样式相关（原item功能） - 144rpx圆形 */
+  width: 144rpx; /* 改为144rpx */
+  height: 144rpx; /* 改为144rpx */
+  border-radius: 72rpx; /* 圆角半径为宽度的一半 */
   border: 8rpx solid #FEE78B; /* 恢复默认美味补给系列未选中描边 */
   background-color: #ffffff;
   transition: all 0.3s ease;
@@ -370,7 +354,7 @@
 .thumbnail-image {
   width: 100%;
   height: 100%;
-  border-radius: 80rpx; /* 配合父元素的圆角，确保图片也是圆形 */
+  border-radius: 56rpx; /* 配合父元素的圆角，确保图片也是圆形 (72rpx - 16rpx padding) */
   object-fit: cover; /* 确保图片填充整个圆形区域，保持比例 */
 }
 

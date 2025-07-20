@@ -25,7 +25,7 @@
   </view>
 
   <!-- 扭蛋机主体 -->
-  <image class="gashapon-machine" src="/images/gashapon/gashapon_machine.png" mode="widthFix"></image>
+  <image class="gashapon-machine" src="https://free.picui.cn/free/2025/07/20/687bd7c226b4e.png" mode="widthFix"></image>
 
   <!-- 底部操作区域 -->
   <view class="bottom-sheet series-{{currentSeriesId}}">
@@ -64,7 +64,7 @@
         <view class="series-content">
           <!-- 视觉展示区域 -->
           <view class="visual-display">
-            <image class="display-card" src="/images/gashapon/magic.png" mode="scaleToFill"></image>
+            <image class="display-card" src="https://free.picui.cn/free/2025/07/20/687bd7c1b8eae.png" mode="scaleToFill"></image>
           </view>
         </view>
       </swiper-item>

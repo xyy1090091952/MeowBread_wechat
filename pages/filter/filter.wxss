@@ -26,7 +26,7 @@
   border-radius: 48rpx;
   padding: 40rpx 48rpx;
   margin-bottom: 24rpx;
-  box-shadow: 4rpx 4rpx 40rpx 0px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
   position: relative; /* 提升层级准备 */
   z-index: 10; /* 确保卡片在上方 */
 }

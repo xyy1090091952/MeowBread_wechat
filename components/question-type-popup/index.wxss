@@ -57,7 +57,7 @@
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
   padding: 24px 24px calc(0px + env(safe-area-inset-bottom)); /* 根据Figma调整内边距 */
-  box-shadow: 0px -4px 40px rgba(0, 0, 0, 0.08); /* 增加一些阴影效果 */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 统一阴影效果 */
 }
 
 /* 弹窗内容动画 - 修复双重动画问题 */
@@ -105,7 +105,7 @@
   height: 64px; /* Figma: layout_DQ3DHD */
   background-color: #FFFFFF; /* Figma: fill_OCQRG9 */
   border-radius: 24px; /* Figma: borderRadius */
-  box-shadow: 0px 4px 40px rgba(0, 0, 0, 0.08); /* Figma: effect_46B5TJ, 调整透明度 */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 统一阴影规范 */
   margin-bottom: 16px; /* Figma: 间距 */
 }
 

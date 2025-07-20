@@ -82,7 +82,7 @@ page {
   background-color: #fff;
   border-radius: 16rpx;
   margin-bottom: 16rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
   font-size: 32rpx; 
   color: #333;
 }
@@ -117,7 +117,7 @@ page {
   border-radius: 48rpx 48rpx 0 0;
   padding: 32rpx 0; /* 上下padding，左右为0 */
   padding-bottom: 68rpx; /* 为底部安全区留出空间 */
-  box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
   overflow: hidden; /* 确保伪元素不溢出 */
 }
 
@@ -266,7 +266,7 @@ page {
 /* 抽奖按钮悬停效果 */
 .draw-button-fixed:active {
   transform: scale(0.98);
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
 }
 
 /* 原有的抽奖按钮样式保留（以防其他地方使用） */

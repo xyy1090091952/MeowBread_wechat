@@ -36,7 +36,7 @@
   border-top-left-radius: 48rpx;
   border-top-right-radius: 48rpx;
   padding-top: 48rpx;
-  box-shadow: 0rpx -8rpx 80rpx rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
   min-height: 500rpx; /* 设置最小高度 */
   max-height: 80vh; /* 设置最大高度 */
   display: flex; /* 使用flex布局 */
@@ -153,7 +153,7 @@
   box-sizing: border-box;
   border: none;
   z-index: 10; /* 确保在滚动内容上方 */
-  box-shadow: 0rpx -4rpx 16rpx rgba(0, 0, 0, 0.1); /* 添加阴影增强浮动效果 */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 统一阴影规范 */
 }
 
 /* 底部白色渐变遮罩 */

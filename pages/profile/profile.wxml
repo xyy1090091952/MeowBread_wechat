@@ -1,7 +1,7 @@
 <!--pages/profile/profile.wxml-->
 <view class="container {{!isLoggedIn ? 'login-mode' : ''}}">
   <!-- 登录背景图片 - 仅在未登录时显示，无动画 -->
-  <image wx:if="{{!isLoggedIn}}" class="login-background" src="/images/banner/login background.jpg" mode="aspectFill"></image>
+  <image wx:if="{{!isLoggedIn}}" class="login-background" src="https://free.picui.cn/free/2025/07/20/687bd6a37856d.jpg" mode="aspectFill"></image>
   
   <!-- 用户信息区域 -->
   <view class="fullscreen-user-section">
@@ -42,7 +42,7 @@
 
   <!-- 装饰素材 - 仅在未登录时显示，无动画效果 -->
   <block wx:if="{{!isLoggedIn}}">
-    <image class="small-bread-decoration {{breadBouncing ? 'bread-bounce' : ''}}" src="/images/banner/small bread.png" mode="aspectFit" bindtap="onBreadTap"></image>
+    <image class="small-bread-decoration {{breadBouncing ? 'bread-bounce' : ''}}" src="https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png" mode="aspectFit" bindtap="onBreadTap"></image>
     <image class="click-decoration" src="/images/banner/click.svg" mode="aspectFit"></image>
     <image class="arrow-decoration" src="/images/banner/arrow.svg" mode="aspectFit"></image>
   </block>
@@ -68,7 +68,7 @@
 
     <!-- 扭蛋机模块 -->
     <view class="gashapon-section fade-in-element fade-delay-4 {{pageLoaded ? 'show' : ''}}" bindtap="goToGashapon">
-      <image class="gashapon-background" src="/images/banner/gashapon.jpg"></image>
+      <image class="gashapon-background" src="https://free.picui.cn/free/2025/07/20/687bd6a34f3f3.jpg"></image>
       <view class="option-text-container">
         <text class="option-main-text">单词扭蛋机</text>
         <view class="option-points-text">

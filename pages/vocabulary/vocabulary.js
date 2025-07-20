@@ -26,10 +26,10 @@ Page({
     // 计算词汇总数，简单遍历 lesson 文件
     const dicts = db.map(dict => {
       const coverMap = {
-        'everyones_japanese': '../../images/book/dajia.jpg',
-        'liangs_class': '../../images/book/liang.jpg',
-        'liangs_intermediate': '../../images/book/liang2.jpg',
-        'duolingguo': '../../images/book/duolingguo.jpg'
+        'everyones_japanese': 'https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg',
+        'liangs_class': 'https://free.picui.cn/free/2025/07/20/687bd4712b75f.jpg',
+        'liangs_intermediate': 'https://free.picui.cn/free/2025/07/20/687bd4715697e.jpg',
+        'duolingguo': 'https://free.picui.cn/free/2025/07/20/687bd47111ec1.jpg'
       };
       let wordCount = 0;
       dict.lesson_files.forEach(filePath => {

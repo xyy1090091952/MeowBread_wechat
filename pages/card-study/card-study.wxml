@@ -45,11 +45,11 @@
     </view>
     
     <!-- 下一张卡片（背景卡片） -->
-    <view class="study-card background-card" wx:if="{{nextCard}}" style="transform: {{backgroundCardTransform}}; opacity: {{backgroundCardOpacity}};">
+    <view class="study-card background-card card-style-{{nextCardStyleType}}" wx:if="{{nextCard}}" style="transform: {{backgroundCardTransform}}; opacity: {{backgroundCardOpacity}};">
       <!-- 白色不透明底 -->
       <view class="card-white-background"></view>
       <!-- 背景图片 -->
-      <image class="card-background-image" src="/images/card/N5-Card{{nextCardStyleType}}.jpg" mode="aspectFill"></image>
+      <image class="card-background-image" src="{{nextCardImageUrl}}" mode="aspectFill"></image>
       <!-- 背景遮罩 -->
       <view class="card-background-overlay"></view>
       
@@ -86,12 +86,12 @@
       bindtouchend="onTouchEnd">
       
       <!-- 当前卡片（前景卡片） -->
-      <view class="study-card current-card" style="transform: {{cardTransform}}; transition: {{isCardAnimating ? 'transform 0.3s ease-out' : 'none'}};">
+      <view class="study-card current-card card-style-{{currentCardStyleType}}" style="transform: {{cardTransform}}; transition: {{isCardAnimating ? 'transform 0.3s ease-out' : 'none'}};">
       
       <!-- 白色不透明底 -->
       <view class="card-white-background"></view>
       <!-- 背景图片 -->
-      <image class="card-background-image" src="/images/card/N5-Card{{currentCardStyleType}}.jpg" mode="aspectFill"></image>
+      <image class="card-background-image" src="{{currentCardImageUrl}}" mode="aspectFill"></image>
       <!-- 背景遮罩 -->
       <view class="card-background-overlay"></view>
       
@@ -158,4 +158,4 @@
 <!-- 无数据状态 -->
 <view class="empty-container" wx:if="{{!isLoading && allWords.length === 0}}">
   <text>没有可学习的单词</text>
-</view> 
+</view>

@@ -18,11 +18,14 @@
   <view class="course-list fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}" wx:if="{{!isLoading && courseData.length > 0}}">
     <view class="course-item {{item.isCompleted ? 'course-completed' : ''}}" 
           wx:for="{{courseData}}" 
-          wx:key="courseNumber">
+          wx:key="courseNumber"
+          data-index="{{index}}"
+          bindtap="onCourseItemTap">
       <view class="course-number {{item.isCompleted ? 'course-number-completed' : ''}}">
         <text class="course-num">{{item.courseNumber}}</text>
       </view>
-      <view class="course-info">
+      <!-- 课程信息区域 - 根据展开状态显示/隐藏 -->
+      <view class="course-info {{item.showActionsExpanded ? 'course-info-hidden' : ''}}" wx:if="{{item.isCompleted}}">
         <text class="course-name {{item.isCompleted ? 'course-name-completed' : ''}}">{{item.courseTitle}}{{item.description ? ' ' + item.description : ''}}</text>
         <view class="course-progress">
           <text class="progress-text {{item.isCompleted ? 'progress-text-completed' : ''}}">单词进度{{item.learnedCount}}/{{item.totalWords}}</text>
@@ -31,13 +34,46 @@
           </view>
         </view>
       </view>
-      <view class="course-actions">
-        <view class="action-card" data-course="{{item}}" bindtap="onCardStudyTap">
-          <image class="action-icon card-icon {{item.isCompleted ? 'card-icon-completed' : ''}}" src="/images/icons/card.svg" mode="aspectFit" wx:if="{{item.isCompleted}}"></image>
-          <text class="action-text">卡片</text>
+      
+      <!-- 未完成课程的课程信息 -->
+      <view class="course-info" wx:else>
+        <text class="course-name {{item.isCompleted ? 'course-name-completed' : ''}}">{{item.courseTitle}}{{item.description ? ' ' + item.description : ''}}</text>
+        <view class="course-progress">
+          <text class="progress-text {{item.isCompleted ? 'progress-text-completed' : ''}}">单词进度{{item.learnedCount}}/{{item.totalWords}}</text>
+          <view class="progress-bar">
+            <view class="progress-fill {{item.isCompleted ? 'progress-fill-completed' : ''}}" style="width: {{item.progress}}%;"></view>
+          </view>
         </view>
-        <view class="action-quiz" data-course="{{item}}" bindtap="onQuizTap">
-          <image class="action-icon" src="{{item.isCompleted ? '/images/icons/complete.svg' : '/images/icons/arrow_right.svg'}}" mode="aspectFit"></image>
+      </view>
+      
+      <!-- 已完成课程的展开式操作按钮 -->
+      <view class="course-actions-expanded {{item.showActionsExpanded ? 'course-actions-expanded-show' : ''}}" wx:if="{{item.isCompleted}}">
+        <view class="actions-button" 
+              data-course="{{item}}" 
+              data-index="{{index}}"
+              catchtap="onActionsButtonTap">
+          <image class="actions-button-icon" 
+                 src="{{item.showActionsExpanded ? '/images/icons/finsh.svg' : '/images/icons/complete.svg'}}" 
+                 mode="aspectFit"></image>
+          <text class="actions-button-text">复习</text>
+        </view>
+        <!-- 抽屉容器：包含action-card和action-quiz -->
+        <view class="actions-drawer {{item.showActionsExpanded ? 'actions-drawer-show' : ''}}">
+          <view class="action-card" data-course="{{item}}" catchtap="onCardStudyTap">
+            <image class="action-icon card-icon-completed" src="/images/icons/card.svg" mode="aspectFit"></image>
+            <text class="action-text">记忆卡片</text>
+          </view>
+          <view class="action-quiz" data-course="{{item}}" catchtap="onQuizTap">
+            <image class="action-icon" src="/images/icons/retune.svg" mode="aspectFit"></image>
+            <text class="action-text">随机答题</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 未完成课程的答题按钮 -->
+      <view class="course-actions" wx:else>
+        <view class="action-quiz" data-course="{{item}}" catchtap="onQuizTap">
+          <image class="action-icon" src="/images/icons/retune.svg" mode="aspectFit"></image>
           <text class="action-text">答题</text>
         </view>
       </view>

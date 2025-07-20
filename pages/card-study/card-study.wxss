@@ -200,12 +200,87 @@
   left: 80rpx; /* 居中偏移 */
   background-color: #ffffff !important; /* 强制白色背景 */
   border-radius: 32rpx;
-  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
   padding: 40rpx 48rpx; /* 上下40rpx，左右48rpx */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 平滑过渡效果 */
+  /* 为伪元素描边做准备 */
+  position: relative;
+}
+
+/* 6种不同的卡片描边样式 - 使用伪元素实现圆角渐变描边 */
+.study-card.card-style-1::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(to right, #B780FF 0%, #83CBFE 100%);
+  border-radius: 36rpx; /* 比卡片圆角大4rpx */
+  z-index: -1;
+}
+
+.study-card.card-style-2::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(to right, #4845F7 0%, #93CDFF 100%);
+  border-radius: 36rpx; /* 比卡片圆角大4rpx */
+  z-index: -1;
+}
+
+.study-card.card-style-3::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(to right, #FE4D96 0%, #FB9BCB 100%);
+  border-radius: 36rpx; /* 比卡片圆角大4rpx */
+  z-index: -1;
+}
+
+.study-card.card-style-4::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(to right, #82EEBA 0%, #B7F758 100%);
+  border-radius: 36rpx; /* 比卡片圆角大4rpx */
+  z-index: -1;
+}
+
+.study-card.card-style-5::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(to right, #70E2D8 0%, #73E2FF 100%);
+  border-radius: 36rpx; /* 比卡片圆角大4rpx */
+  z-index: -1;
+}
+
+.study-card.card-style-6::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(to right, #CAFD94 0%, #F6FF54 100%);
+  border-radius: 36rpx; /* 比卡片圆角大4rpx */
+  z-index: -1;
 }
 
 .study-card.current-card {
@@ -593,4 +668,4 @@
 .part-of-speech-tag.noun-suru-verb { background-color: #9c27b0; }
 .part-of-speech-tag.adverb-adjectival-noun { background-color: #ff9800; }
 .part-of-speech-tag.noun-adjectival-noun { background-color: #8bc34a; }
-.part-of-speech-tag.unknown { background-color: #9e9e9e; } 
+.part-of-speech-tag.unknown { background-color: #9e9e9e; }
