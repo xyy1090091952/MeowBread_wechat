@@ -88,7 +88,7 @@ page {
 
 /* 奖品动画：抖动 → 温和放大 → 颜色恢复 */
 .prize-animation {
-  animation: prize-ceremony 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: prize-ceremony 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 /* 信息动画：分别定义延迟，实现依次入场 */
