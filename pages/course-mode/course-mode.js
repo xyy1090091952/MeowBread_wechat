@@ -26,7 +26,7 @@ Page({
    */
   onLoad(options) {
     console.log('Course mode page loaded with options:', options);
-    this.initializeCoursePage();
+    // 数据加载和UI更新的主要逻辑移至 onShow，以确保每次页面显示时数据都是最新的
   },
 
   /**
@@ -46,22 +46,11 @@ Page({
   async onShow() {
     console.log('Course mode page show');
     
-    // 调试：输出当前筛选条件
-    const filter = filterManager.getFilter();
-    console.log('=== Course Mode Debug ===');
-    console.log('Current filter in course-mode onShow:', filter);
-    
-    if (filter) {
-      console.log('Filter keys:', Object.keys(filter));
-      console.log('selectedDictionaryKey:', filter.selectedDictionaryKey);
-      console.log('selectedDictionaryName:', filter.selectedDictionaryName);
-      console.log('dictionaryId:', filter.dictionaryId);
-    }
-    
-    // 页面显示时重新加载数据，以防用户在filter页面更改了教材选择
+    // 每次页面显示时，都重新加载数据，确保数据最新
     await this.loadCourseData();
     
     // 更新显示的筛选信息
+    const filter = filterManager.getFilter();
     const currentFilterDisplay = filter ? 
       `你当前的课本：${filter.selectedDictionaryName}` : 
       '请先选择题库';
@@ -71,27 +60,7 @@ Page({
     });
   },
 
-  /**
-   * 初始化课程模式页面
-   */
-  async initializeCoursePage() {
-    // 获取当前筛选配置
-    const filter = filterManager.getFilter();
-    console.log('=== Initialize Course Page ===');
-    console.log('Filter in initializeCoursePage:', filter);
-    
-    const currentFilterDisplay = filter ? 
-      `你当前的课本：${filter.selectedDictionaryName}` : 
-      '请先选择题库';
-    
-    this.setData({
-      currentFilterDisplay,
-      isLoading: false
-    });
-
-    // 加载课程数据
-    await this.loadCourseData();
-  },
+  // initializeCoursePage 函数已被移除，其逻辑已整合进 onShow 和 loadCourseData
 
   /**
    * 加载课程数据

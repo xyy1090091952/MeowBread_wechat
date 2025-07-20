@@ -1,5 +1,41 @@
 /* pages/course-mode/course-mode.wxss - 课程模式页面样式 */
 
+/* ==================== 全局加载动画样式 ==================== */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw; /* 修改为100vw，使其水平居中 */
+  height: 100vh; /* 占满整个屏幕 */
+  background-color: rgba(255, 255, 255, 0.9); /* 使用半透明背景，视觉效果更好 */
+  position: fixed; /* 固定定位，覆盖在页面之上 */
+  top: 0;
+  left: 0;
+  z-index: 999;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 8rpx solid #f3f3f3; /* 浅灰色轨道 */
+  border-top: 8rpx solid #4845F7; /* 主题色 */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
 /* ==================== 课程模式页面专用动画样式 ==================== */
 /* 与quiz页面保持一致的动画效果 */
 
@@ -483,23 +519,6 @@
   /* SVG文件本身已包含正确颜色，无需额外的filter处理 */
 }
 
-/* ==================== 加载状态样式 ==================== */
-
-.loading-container {
-  width: 100%;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 80rpx 40rpx;
-}
-
-.loading-text {
-  font-size: 28rpx;
-  color: #666666;
-  font-weight: 400;
-}
-
 /* ==================== 无数据状态样式 ==================== */
 
 .no-data-container {
@@ -513,7 +532,7 @@
 }
 
 .no-data-text {
-  font-size: 32rpx;
+  font-size: 28rpx;
   color: #333333;
   font-weight: 500;
   margin-bottom: 16rpx;

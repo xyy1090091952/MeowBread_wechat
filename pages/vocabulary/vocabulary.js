@@ -1,5 +1,6 @@
 // pages/vocabulary/vocabulary.js
 const learnedManager = require('../../utils/learnedManager.js');
+const wordManager = require('../../utils/wordManager.js');
 
 Page({
   data: {
@@ -38,40 +39,24 @@ Page({
       }]
     });
 
-    const loadPromises = db.map(dict => {
-      const lessonPromises = dict.lesson_files.map(filePath => {
-        return new Promise((resolve, reject) => {
-          wx.request({
-            url: filePath,
-            success: (res) => {
-              if (res.statusCode === 200 && Array.isArray(res.data)) {
-                resolve(res.data.length);
-              } else {
-                resolve(0); // 文件加载失败或格式不正确
-              }
-            },
-            fail: (err) => {
-              console.warn(`无法加载课时文件: ${filePath}`, err);
-              resolve(0); // 网络错误
-            }
-          });
-        });
-      });
-
-      return Promise.all(lessonPromises).then(wordCounts => {
-        const totalWordCount = wordCounts.reduce((sum, count) => sum + count, 0);
-        const learningProgress = learnedManager.getLearningProgress(dict.id);
-        const progress = totalWordCount > 0 ? Math.round((learningProgress.learnedCount / totalWordCount) * 100) : 0;
-        return {
-          ...dict,
-          wordCount: totalWordCount,
-          progress: progress, // [FIX] 根据已学和总数计算真实的进度
-          learnedCount: learningProgress.learnedCount,
-          totalCount: totalWordCount, // 使用从网络获取的准确总数
-          cover: coverMap[dict.id] || ''
-        };
-      });
-    });
+    const loadPromises = db.map(dict => (async () => {
+      // 【性能优化】使用缓存函数获取总词数，避免重复计算
+      const totalWordCount = await wordManager.getDictionaryWordCount(dict.id);
+      // 获取学习进度
+      const learningProgress = learnedManager.getLearningProgress(dict.id);
+      // 计算进度百分比
+      const progress = totalWordCount > 0 ? Math.round((learningProgress.learnedCount / totalWordCount) * 100) : 0;
+      
+      // 返回组装好的词典对象
+      return {
+        ...dict,
+        wordCount: totalWordCount,
+        progress: progress,
+        learnedCount: learningProgress.learnedCount,
+        totalCount: totalWordCount,
+        cover: coverMap[dict.id] || ''
+      };
+    })());
 
     Promise.all(loadPromises).then(dicts => {
       const selectedDictionaryId = wx.getStorageSync('selectedDictionary');

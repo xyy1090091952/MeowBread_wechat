@@ -88,7 +88,8 @@
 
   <!-- 加载中状态 -->
   <view class="loading-container" wx:if="{{isLoading}}">
-    <text class="loading-text">正在加载课程模式数据...</text>
+    <view class="loading-spinner"></view>
+    <text class="loading-text">正在加载课程数据...</text>
   </view>
 
   <!-- 课程范围选择弹窗 -->

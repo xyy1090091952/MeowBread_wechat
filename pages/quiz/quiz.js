@@ -63,6 +63,7 @@ Page({
     }
 
     if (!initialState.questions || initialState.questions.length === 0) {
+      this.setData({ isLoading: false }); // 加载结束
       wx.showModal({
         title: '提示',
         content: '根据当前筛选条件，没有可生成的题目。请尝试更改筛选设置。',
@@ -77,6 +78,7 @@ Page({
 
     this.setData({
       ...initialState,
+      isLoading: false, // 数据加载完毕，关闭加载状态
       score: 0,
       currentQuestionIndex: 0,
       actualAnsweredQuestions: 0, // 初始化实际回答题数

@@ -127,6 +127,61 @@ async function getWordsByFilter(filter) {
   return wordsToLoad;
 }
 
+/**
+ * 获取并缓存词典的总词数
+ * @param {string} dictionaryId - 词典ID
+ * @returns {Promise<number>} - 返回一个包含总词数的Promise
+ */
+async function getDictionaryWordCount(dictionaryId) {
+  const cacheKey = `word_count_cache_${dictionaryId}`;
+  try {
+    // 1. 尝试从缓存中读取
+    const cachedCount = wx.getStorageSync(cacheKey);
+    if (cachedCount) {
+      return cachedCount;
+    }
+
+    // 2. 如果缓存中没有，则计算
+    const dictionary = allDictionariesData.dictionaries.find(d => d.id === dictionaryId);
+    if (!dictionary || !dictionary.lesson_files) {
+      return 0;
+    }
+
+    let totalCount = 0;
+    const countPromises = dictionary.lesson_files.map(lessonFileUrl => {
+      return new Promise((resolve) => {
+        wx.request({
+          url: lessonFileUrl,
+          dataType: 'json',
+          success: (res) => {
+            if (res.data && Array.isArray(res.data)) {
+              resolve(res.data.length);
+            } else {
+              resolve(0);
+            }
+          },
+          fail: () => {
+            resolve(0);
+          }
+        });
+      });
+    });
+
+    const counts = await Promise.all(countPromises);
+    totalCount = counts.reduce((sum, count) => sum + count, 0);
+
+    // 3. 将结果存入缓存
+    wx.setStorageSync(cacheKey, totalCount);
+
+    return totalCount;
+  } catch (error) {
+    console.error(`计算词典 ${dictionaryId} 总词数失败:`, error);
+    return 0; // 出错时返回0
+  }
+}
+
+
 module.exports = {
-  getWordsByFilter
+  getWordsByFilter,
+  getDictionaryWordCount
 };
