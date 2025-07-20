@@ -30,7 +30,7 @@ const magicPrizes = [
     id: 'FX-SSR-01', 
     name: '玫瑰魔法', 
     rarity: 'SSR', 
-    image: '/images/gashapon/prizes/FX-SSR-01.png', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png', 
     quote: '阿姨洗铁路' 
   },
   // SR 级别
@@ -38,7 +38,7 @@ const magicPrizes = [
     id: 'FX-SR-01', 
     name: '萤火虫', 
     rarity: 'SR', 
-    image: '/images/gashapon/prizes/FX-SR-01.png', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf85445556.png', 
     quote: '挑萤火虫夜读' 
   },
   // R 级别
@@ -46,21 +46,21 @@ const magicPrizes = [
     id: 'FX-R-01', 
     name: '樱花魔法', 
     rarity: 'R', 
-    image: '/images/gashapon/prizes/FX-R-01.png', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf854d8832.png', 
     quote: '故乡的花落了' 
   },
   { 
     id: 'FX-R-02', 
     name: '落叶魔法', 
     rarity: 'R', 
-    image: '/images/gashapon/prizes/FX-R-02.png', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf8549c6f3.png', 
     quote: '又到一年考试时' 
   },
   { 
     id: 'FX-R-03', 
     name: '谧雪魔法', 
     rarity: 'R', 
-    image: '/images/gashapon/prizes/FX-R-03.png', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf854dc136.png', 
     quote: '越背越心寒' 
   }
 ];
@@ -72,7 +72,7 @@ const supplyPrizes = [
     id: 'FOOD-SSR-01', 
     name: '梦幻圈圈', 
     rarity: 'SSR', 
-    image: '/images/gashapon/prizes/FOOD-SSR-01.png', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf85670845.png', 
     quote: '吃一口我能背3个' 
   },
   // SR 级别
@@ -80,7 +80,7 @@ const supplyPrizes = [
     id: 'FOOD-SR-01', 
     name: '小熊饼干', 
     rarity: 'SR', 
-    image: '/images/gashapon/prizes/FOOD-SR-01.png', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf856f3a00.png', 
     quote: '热量小熊炸弹' 
   },
   // R 级别
@@ -88,14 +88,14 @@ const supplyPrizes = [
     id: 'FOOD-R-01', 
     name: '奶奶拿铁', 
     rarity: 'R', 
-    image: '/images/gashapon/prizes/FOOD-R-01.png', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf85828beb.png', 
     quote: '温度是无声的拥抱' 
   },
   { 
     id: 'FOOD-R-02', 
     name: '莓莓圈圈', 
     rarity: 'R', 
-    image: '/images/gashapon/prizes/FOOD-R-02.png', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf857e63ae.png', 
     quote: '味觉防波堤' 
   },
   // N 级别
@@ -103,21 +103,21 @@ const supplyPrizes = [
     id: 'FOOD-N-01', 
     name: '脆脆薯条', 
     rarity: 'N', 
-    image: '/images/gashapon/prizes/FOOD-N-01.png', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf859a87a4.png', 
     quote: 'tree tree薯条' 
   },
   { 
     id: 'FOOD-N-02', 
     name: '芝识汉堡', 
     rarity: 'N', 
-    image: '/images/gashapon/prizes/FOOD-N-02.png', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf8593a21e.png', 
     quote: '芝士就是力量' 
   },
   { 
     id: 'FOOD-N-03', 
     name: '糖霜圈圈', 
     rarity: 'N', 
-    image: '/images/gashapon/prizes/FOOD-N-03.png', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf85854f37.png', 
     quote: '甜过单词' 
   }
 ];
@@ -129,7 +129,6 @@ const gashaponSeriesConfig = [
     name: '梦幻魔法',
     cost: 300,
     gradientType: 'blue',
-    image: '/images/gashapon/prizes/FX-SSR-01.png',
     prizes: magicPrizes
   },
   {
@@ -137,7 +136,6 @@ const gashaponSeriesConfig = [
     name: '美味补给',
     cost: 100,
     gradientType: 'orange',
-    image: '/images/gashapon/prizes/FOOD-SSR-01.png',
     prizes: supplyPrizes
   }
 ];

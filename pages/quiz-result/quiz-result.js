@@ -25,15 +25,15 @@ Page({
     const resultInfo = {
       noob: {
         text: '菜逼 Noob',
-        image: '/images/result/noob.png'
+        image: 'https://free.picui.cn/free/2025/07/20/687cec7e7d209.png'
       },
       normal: {
         text: '平平无奇 Normal',
-        image: '/images/result/normal.png'
+        image: 'https://free.picui.cn/free/2025/07/20/687cec7e5578f.png'
       },
       perfect: {
         text: '完美 Perfect',
-        image: '/images/result/perfect.png'
+        image: 'https://free.picui.cn/free/2025/07/20/687cec7e5cf3a.png'
       }
     };
 

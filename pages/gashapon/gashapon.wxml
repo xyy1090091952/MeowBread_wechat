@@ -54,7 +54,7 @@
         <view class="series-content">
           <!-- 视觉展示区域 -->
           <view class="visual-display">
-            <image class="display-card" src="/images/gashapon/enegy.png" mode="scaleToFill"></image>
+            <image class="display-card" src="https://free.picui.cn/free/2025/07/20/687cec7f082cf.png" mode="scaleToFill"></image>
           </view>
         </view>
       </swiper-item>
