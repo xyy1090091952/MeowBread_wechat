@@ -2,13 +2,13 @@
 <view class="container">
   <!-- Banner模块 -->
   <view class="banner-container fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
-    <image class="banner-image" src="/images/banner/banner1.jpg" mode="widthFix"></image>
+    <image class="banner-image" src="https://free.picui.cn/free/2025/07/20/687bd6a330b7c.jpg" mode="widthFix"></image>
     <!-- 中央 Logo -->
     <image class="banner-logo" src="/images/banner/Meow Bread.svg" mode="widthFix" />
     <!-- 中央 Banner -->
     <image class="banner-title" src="/images/banner/Meow Bread banner.svg" mode="widthFix" />
     <!-- 大面包装饰图片 -->
-    <image class="banner-bigbread {{breadBouncing ? 'bread-bounce' : ''}}" src="/images/banner/bigbread.png" mode="widthFix" bindtap="onBreadTap" />
+    <image class="banner-bigbread {{breadBouncing ? 'bread-bounce' : ''}}" src="https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png" mode="widthFix" bindtap="onBreadTap" />
   </view>
   <view class="content">
     <!-- 题库筛选按钮 -->

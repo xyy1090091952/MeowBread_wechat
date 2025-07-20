@@ -30,29 +30,42 @@ const IMAGE_PATHS = {
   // Banner相关图片
   banner: {
     arrow: 'banner/arrow.svg',
-    banner1: 'banner/banner1.jpg',
-    bigbread: 'banner/bigbread.png',
+    banner1: 'https://free.picui.cn/free/2025/07/20/687bd6a330b7c.jpg',
+    bigbread: 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png',
     click: 'banner/click.svg',
-    gashapon: 'banner/gashapon.jpg',
-    loginBg: 'banner/login-background.jpg',
+    gashapon: 'https://free.picui.cn/free/2025/07/20/687bd6a34f3f3.jpg',
+    loginBg: 'https://free.picui.cn/free/2025/07/20/687bd6a37856d.jpg',
     meowBreadBanner: 'banner/Meow-Bread-banner.svg',
     meowBread: 'banner/Meow-Bread.svg',
-    smallBread: 'banner/small-bread.png',
+    smallBread: 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png',
     whiteBread: 'banner/white-Bread.svg'
   },
   
   // 教材封面图片
   book: {
-    dajia: 'book/dajia.jpg',
-    duolingguo: 'book/duolingguo.jpg',
-    liang: 'book/liang.jpg'
+    dajia1: 'https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg',
+    dajia2: 'https://free.picui.cn/free/2025/07/20/687bd4713099b.jpg',
+    duolingguo: 'https://free.picui.cn/free/2025/07/20/687bd47111ec1.jpg',
+    liang: 'https://free.picui.cn/free/2025/07/20/687bd4712b75f.jpg',
+    liang2: 'https://free.picui.cn/free/2025/07/20/687bd4715697e.jpg'
   },
   
   // 卡片图片
   card: {
-    n5Card1: 'card/N5-Card1.jpg',
-    n5Card2: 'card/N5-Card2.jpg',
-    n5Card3: 'card/N5-Card3.jpg'
+    n5Card1: 'https://free.picui.cn/free/2025/07/20/687bd36a16e2b.jpg',
+    n5Card2: 'https://free.picui.cn/free/2025/07/20/687bd36a6ae61.jpg',
+    n5Card3: 'https://free.picui.cn/free/2025/07/20/687bd36b17b24.jpg',
+    n5Card4: 'https://free.picui.cn/free/2025/07/20/687bd369ca8a1.jpg',
+    n5Card5: 'https://free.picui.cn/free/2025/07/20/687bd36b8b0c7.jpg',
+    n5Card6: 'https://free.picui.cn/free/2025/07/20/687bd36cedd17.jpg'
+  },
+  
+  // 扭蛋机图片
+  gashapon: {
+    machine: 'https://free.picui.cn/free/2025/07/20/687bd7c226b4e.png',
+    magic: 'https://free.picui.cn/free/2025/07/20/687bd7c1b8eae.png',
+    energy: 'gashapon/enegy.png',
+    shinning: 'gashapon/shinning.svg'
   },
   
   // 图标
@@ -96,6 +109,9 @@ const getImageUrl = {
   // 卡片图片
   card: (name) => getCDNUrl(IMAGE_PATHS.card[name]),
   
+  // 扭蛋机图片
+  gashapon: (name) => getCDNUrl(IMAGE_PATHS.gashapon[name]),
+  
   // 图标
   icon: (name) => getCDNUrl(IMAGE_PATHS.icons[name]),
   
@@ -121,4 +137,4 @@ module.exports = {
 // data: {
 //   bigBreadUrl: getImageUrl.banner('bigbread'),
 //   logoUrl: getImageUrl.banner('meowBread')
-// } 
+// }

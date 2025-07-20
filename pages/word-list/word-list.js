@@ -4,7 +4,8 @@ const learnedManager = require('../../utils/learnedManager.js');
 const mistakeManager = require('../../utils/mistakeManager.js'); // 引入错题管理器
 const { processWordStatus } = require('../../utils/statusManager.js'); // 引入状态处理函数
 const courseDataManager = require('../../utils/courseDataManager.js');
-
+const dictionaries = require('../../database/dictionaries.js');
+const wordListFilterManager = require('../../utils/wordListFilterManager.js'); // 引入筛选记录管理器
 
 Page({
   data: {
@@ -12,12 +13,9 @@ Page({
     wordList: [], // 单词列表数据
     filteredWordList: null, // 筛选后的单词列表
     currentDictName: '', // 当前词典名称
-    // 课程筛选相关数据
-    showFilterModal: false, // 是否显示筛选弹窗
-    modalAnimationClass: '', // 弹窗动画类名
-    selectedCourse: 'all', // 选中的课程：all, primary_basic, primary_advanced 等
-    selectedCourseName: '全部课程', // 显示的课程名称
-    courseGroups: [], // 课程集合定义
+    // 课程选择器相关数据
+    isCourseSelectorVisible: false, // 控制课程范围选择弹窗的显示
+    selectedCourseRange: { label: '全部课程', value: 'all' }, // 当前选择的课程范围
     // 加载动画控制
     wordListLoaded: false // 控制单词列表页面渐显动画
   },
@@ -39,37 +37,50 @@ Page({
   },
 
   /**
-   * 初始化课程集合定义
-   * @param {string} dictionaryId - 词典ID
+   * 显示课程范围选择弹窗 - 与course-mode页面保持一致
    */
-  initializeCourseGroups(dictionaryId) {
-    let courseGroups = [];
+  showCourseSelector() {
+    this.setData({ isCourseSelectorVisible: true });
+  },
+
+  /**
+   * 隐藏课程范围选择弹窗 - 与course-mode页面保持一致
+   */
+  hideCourseSelector() {
+    this.setData({ isCourseSelectorVisible: false });
+  },
+
+  /**
+   * 处理课程范围选择确认事件 - 适配新的course-selector-enhanced组件
+   */
+  onCourseSelectorConfirm(e) {
+    const { value, volumeId, label, description } = e.detail;
     
-    try {
-      // 使用课程数据管理器获取分册信息
-      const volumes = courseDataManager.getTextbookVolumes(dictionaryId);
-      
-      if (volumes && volumes.length > 0) {
-        courseGroups = volumes.map(volume => ({
-          id: volume.volumeKey,
-          name: volume.volumeName,
-          lessons: volume.courseRange.length === 2 ? 
-            this.generateLessonRange(volume.courseRange[0], volume.courseRange[1]) :
-            volume.courses.map(course => course.courseNumber)
-        }));
-      } else {
-        // 如果没有找到分册信息，使用默认的课程组织
-        console.warn(`No volume info found for textbook: ${dictionaryId}, using fallback`);
-        courseGroups = this.getFallbackCourseGroups(dictionaryId);
-      }
-    } catch (error) {
-      console.error('Error loading course groups:', error);
-      courseGroups = this.getFallbackCourseGroups(dictionaryId);
-    }
+    // 构建选择的课程范围对象
+    const selectedCourseRange = {
+      value: value,
+      volumeId: volumeId,
+      label: label,
+      description: description
+    };
     
+    // 更新选中的课程范围显示
     this.setData({
-      courseGroups: courseGroups
+      selectedCourseRange: selectedCourseRange,
+      isCourseSelectorVisible: false
     });
+
+    // 保存当前词典的筛选记录
+    const dictionaryId = this.data.currentDictionary?.id;
+    if (dictionaryId) {
+      wordListFilterManager.saveWordListFilter(dictionaryId, {
+        selectedCourseRange: selectedCourseRange
+      });
+      console.log(`已保存词典 ${dictionaryId} 的课程筛选记录:`, selectedCourseRange);
+    }
+
+    // 重新筛选单词列表
+    this.filterWordsByCourseEnhanced(value, volumeId);
   },
 
   /**
@@ -85,8 +96,6 @@ Page({
     }
     return range;
   },
-
-
 
   /**
    * 从文件名推断课程号
@@ -170,17 +179,32 @@ Page({
       }
     });
 
+    // 尝试恢复该词典的筛选记录
+    const savedFilter = wordListFilterManager.getWordListFilter(dictionaryId);
+    let initialCourseRange = { label: '全部课程', value: 'all' };
+    
+    if (savedFilter && savedFilter.selectedCourseRange) {
+      initialCourseRange = savedFilter.selectedCourseRange;
+      console.log(`恢复词典 ${dictionaryId} 的筛选记录:`, initialCourseRange);
+    }
+
     // 更新页面数据，显示单词列表
     this.setData({
       currentDictionary: dictionary,
       currentDictName: dictionary.name,
       wordList: allWords,
-      courseGroups: dictionary.volumes || [], // 从词典数据加载分册信息
       filteredWordList: null, // 重置筛选列表
-      selectedCourse: 'all', // 重置课程选择
-      selectedCourseName: '全部课程', // 重置课程名称显示
+      selectedCourseRange: initialCourseRange, // 使用恢复的或默认的课程选择
       wordListLoaded: false // 重置单词列表动画状态
     });
+
+    // 如果有保存的筛选记录，应用筛选
+    if (savedFilter && savedFilter.selectedCourseRange && savedFilter.selectedCourseRange.value !== 'all') {
+      this.filterWordsByCourseEnhanced(
+        savedFilter.selectedCourseRange.value, 
+        savedFilter.selectedCourseRange.volumeId
+      );
+    }
 
     // 启动单词列表页面的渐显动画
     setTimeout(() => {
@@ -189,113 +213,62 @@ Page({
   },
 
   /**
-   * 显示筛选弹窗
+   * 根据课程筛选单词 - 新版本，支持course-selector-enhanced组件
+   * @param {string|number} courseValue - 课程值，'all' 表示全部课程，数字表示具体课程号
+   * @param {string} volumeId - 分册ID
    */
-  showFilterModal() {
-    // 禁用页面滚动
-    wx.pageScrollTo({
-      scrollTop: 0,
-      duration: 0
-    });
+  filterWordsByCourseEnhanced(courseValue, volumeId) {
+    const { wordList, currentDictionary } = this.data;
     
-    this.setData({
-      showFilterModal: true,
-      modalAnimationClass: ''
-    });
-    
-    // 添加渐显动画
-    setTimeout(() => {
-      this.setData({
-        modalAnimationClass: 'modal-fade-in'
-      });
-    }, 50);
-  },
-
-  /**
-   * 隐藏筛选弹窗
-   */
-  hideFilterModal() {
-    // 添加渐隐动画
-    this.setData({
-      modalAnimationClass: 'modal-fade-out'
-    });
-    
-    // 动画完成后隐藏弹窗
-    setTimeout(() => {
-      this.setData({
-        showFilterModal: false,
-        modalAnimationClass: ''
-      });
-    }, 200); // 与CSS动画时间保持一致
-  },
-
-  /**
-   * 阻止事件冒泡
-   */
-  stopPropagation() {
-    // 空函数，用于阻止事件冒泡
-  },
-
-  /**
-   * 选择课程
-   */
-  selectCourse(e) {
-    const { course } = e.currentTarget.dataset;
-    
-    // 根据选择的课程设置显示名称
-    let courseName = '全部课程';
-    if (course !== 'all') {
-      const courseGroup = this.data.courseGroups.find(group => group.id === course);
-      if (courseGroup) {
-        courseName = courseGroup.name;
+    if (courseValue === 'all') {
+      // 显示当前分册的全部单词
+      if (volumeId === 'all' || !currentDictionary.volumes || currentDictionary.volumes.length === 0) {
+        // 如果是全部分册或没有分册信息，显示所有单词
+        this.setData({
+          filteredWordList: null
+        });
+      } else {
+        // 显示指定分册的所有单词
+        const selectedVolume = currentDictionary.volumes.find(v => v.id === volumeId);
+        if (selectedVolume && selectedVolume.lessons) {
+          const filteredWords = wordList.filter(word => {
+            return selectedVolume.lessons.includes(word.lesson);
+          });
+          this.setData({
+            filteredWordList: filteredWords
+          });
+        } else {
+          this.setData({
+            filteredWordList: null
+          });
+        }
       }
-    }
-    
-    this.setData({
-      selectedCourse: course,
-      selectedCourseName: courseName,
-      showFilterModal: false
-    });
-    
-    // 执行课程筛选
-    this.filterWordsByCourse(course);
-  },
-
-  /**
-   * 根据课程筛选单词列表
-   */
-  filterWordsByCourse(courseId) {
-    const { wordList } = this.data;
-    let filteredList = null;
-
-    if (courseId === 'all') {
-      filteredList = null; // 显示全部
     } else {
-      // 找到对应的课程集合
-      const courseGroup = this.data.courseGroups.find(group => group.id === courseId);
-      if (courseGroup) {
-        filteredList = wordList.filter(word => courseGroup.lessons.includes(word.lesson));
-      }
+      // 显示具体课程的单词
+      const lessonNumber = Number(courseValue);
+      const filteredWords = wordList.filter(word => {
+        return word.lesson === lessonNumber;
+      });
+      this.setData({
+        filteredWordList: filteredWords
+      });
     }
-
-    this.setData({
-      filteredWordList: filteredList
-    });
   },
 
   /**
-   * 更新单个单词的状态并同步到视图
-   * @param {object} wordData - 单词的核心数据 {汉字, 假名, ...}
-   * @param {string} newStatusKey - 新的状态，如 'memorized', 'error'
+   * 更新单词状态
+   * @param {Object} wordData - 单词数据
+   * @param {string} newStatusKey - 新的状态键
    */
-  updateWordState: function(wordData, newStatusKey) {
+  updateWordState(wordData, newStatusKey) {
     const { wordList, filteredWordList } = this.data;
-
-    // 查找并更新函数
+    
     const updateList = (list, listName) => {
       if (!list) return;
+      
       const index = list.findIndex(item => 
-        item.data['汉字'] === wordData['汉字'] && item.data['假名'] === wordData['假名']
+        item.data && item.data['假名'] === wordData['假名'] && 
+        item.data['汉字'] === wordData['汉字']
       );
 
       if (index > -1) {

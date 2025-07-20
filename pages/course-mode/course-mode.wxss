@@ -65,7 +65,7 @@
   margin-bottom: 32rpx;
   padding: 0 24px; /* 根据Figma调整内边距 */
   box-sizing: border-box;
-  box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.12); /* 根据Figma添加阴影 */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 使用统一阴影规范 */
 }
 
 .filter-content {
@@ -110,8 +110,9 @@
   align-items: center;
   background-color: #ffffff;
   border-radius: 48rpx;
-  box-shadow: 0px 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
+  position: relative; /* 为弹窗定位做准备 */
 }
 
 /* 已完成课程的背景色 */
@@ -153,6 +154,11 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  max-width: none; /* 确保默认状态下没有宽度限制 */
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.4s ease-in-out; /* 统一过渡动画 */
+  margin-right: 8rpx;
 }
 
 .course-name {
@@ -213,10 +219,244 @@
 .course-actions {
   display: flex;
   align-items: center;
-  gap: 48rpx;
   margin-right: 48rpx;
+  transition: all 0.3s ease;
 }
 
+/* 展开式操作按钮区域 */
+.course-actions-expanded {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* 始终右对齐 */
+  gap: 0; /* 移除gap，让抽屉紧贴按钮 */
+  transition: all 0.4s ease-in-out;
+  overflow: hidden; /* 隐藏溢出的抽屉内容 */
+  margin-right: 24rpx; /* 与右边保持距离 */
+}
+
+.course-actions-expanded-show {
+  /* 展开状态：向前移动但不占用过多空间 */
+  justify-content: flex-start; /* 改为左对齐，让所有元素靠左显示 */
+  margin-right: 48rpx; /* 保持右边距 */
+  transition: all 0.4s ease-in-out;
+  overflow: visible; /* 展开时允许抽屉内容完全显示，不被裁剪 */
+}
+
+/* 抽屉容器样式 */
+.actions-drawer {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  /* 初始状态：宽度为0，完全隐藏 */
+  width: 0;
+  opacity: 0;
+  transform: translateX(20rpx); /* 稍微向右偏移，营造从右侧拉出的感觉 */
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 使用更流畅的缓动函数 */
+  overflow: hidden;
+  white-space: nowrap; /* 防止内容换行 */
+}
+
+.actions-drawer-show {
+  /* 展开状态：显示完整宽度 */
+  width: 360rpx; /* 设置足够大的固定宽度，确保两个按钮完整显示 */
+  opacity: 1;
+  transform: translateX(0); /* 移动到最终位置 */
+  margin-left: 16rpx; /* 与复习按钮保持间距 */
+  overflow: visible; /* 展开时允许内容完全显示，不被裁剪 */
+}
+
+/* 课程信息隐藏状态 - 完全消失 */
+.course-info-hidden {
+  flex: 0; /* 从flex: 1缩小到flex: 0 */
+  max-width: 0; /* 最大宽度缩小到0 */
+  margin-right: 0; /* 移除右边距 */
+  opacity: 0; /* 透明度变为0 */
+  transform: translateX(-20rpx); /* 向左移动一点，营造消失效果 */
+  overflow: hidden; /* 隐藏溢出内容 */
+  transition: all 0.4s ease-in-out; /* 统一过渡动画 */
+}
+
+/* 操作按钮样式 */
+.actions-button {
+  width: 120rpx;
+  height: 64rpx;
+  background: #D9FFB3;
+  border-radius: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 8rpx rgba(217, 255, 179, 0.3);
+  transition: all 0.3s ease;
+  padding: 0 24rpx;
+  flex-shrink: 0; /* 防止按钮被压缩 */
+}
+
+.actions-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(217, 255, 179, 0.4);
+}
+
+.actions-button-icon {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
+  transition: all 0.2s ease; /* 图标切换动画 */
+}
+
+.actions-button-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #000000;
+  margin-left: 8rpx;
+  white-space: nowrap; /* 防止文字换行 */
+  transition: all 0.2s ease; /* 文字消失动画 */
+}
+
+/* 展开状态下的按钮样式变化 */
+.course-actions-expanded-show .actions-button {
+  width: 64rpx; /* 宽度缩小，只显示图标 */
+  min-width: 64rpx;
+  padding: 0;
+  justify-content: center;
+}
+
+/* 展开状态下文字瞬间消失 */
+.course-actions-expanded-show .actions-button .actions-button-text {
+  opacity: 0;
+  width: 0;
+  margin: 0;
+  overflow: hidden;
+  transition: none; /* 瞬间消失，无过渡 */
+}
+
+/* 操作弹窗样式 */
+.actions-popup {
+  position: absolute;
+  top: 50%;
+  right: 0rpx;
+  transform: translateY(-50%) scale(0);
+  transform-origin: center center;
+  width: 252rpx;
+  height: 182rpx;
+  background: #F6FFED;
+  border-radius: 48rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 10;
+}
+
+.actions-popup.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) scale(1);
+}
+
+.popup-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+/* 弹窗遮罩层 */
+.popup-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  z-index: 5;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.popup-mask.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 弹窗内的操作项样式 */
+.popup-content .action-card,
+.popup-content .action-quiz {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 188rpx; /* 改为最小宽度，允许自适应 */
+  width: auto; /* 自适应宽度 */
+  height: 64rpx;
+  padding: 0 24rpx;
+  background: #D9FFB3;
+  border-radius: 32rpx;
+  transition: all 0.2s ease;
+  white-space: nowrap; /* 防止文字换行 */
+}
+
+.popup-content .action-card:active,
+.popup-content .action-quiz:active {
+  background: #C8F299;
+  transform: scale(0.98);
+}
+
+.popup-content .action-icon {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
+  margin-right: 8rpx;
+}
+
+.popup-content .action-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #000000;
+  flex-shrink: 0; /* 防止文字被压缩 */
+  overflow: visible; /* 确保文字可见 */
+}
+
+/* 抽屉中的操作项样式 */
+.actions-drawer .action-card,
+.actions-drawer .action-quiz {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto; /* 自适应宽度 */
+  height: 64rpx;
+  padding: 0 24rpx; /* 左右内边距确保文字不贴边 */
+  background: #D9FFB3;
+  border-radius: 32rpx;
+  transition: all 0.2s ease;
+  box-shadow: 0 2rpx 8rpx rgba(217, 255, 179, 0.3);
+  white-space: nowrap; /* 防止文字换行 */
+  flex-shrink: 0; /* 防止按钮被压缩 */
+}
+
+.actions-drawer .action-card:active,
+.actions-drawer .action-quiz:active {
+  background: #C8F299;
+  transform: scale(0.98);
+}
+
+.actions-drawer .action-icon {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
+  margin-right: 8rpx;
+}
+
+.actions-drawer .action-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #000000;
+  flex-shrink: 0; /* 防止文字被压缩 */
+}
 .action-card,
 .action-quiz {
   display: flex;
@@ -233,17 +473,14 @@
   filter: none;
 }
 
-.action-text {
+/* 未完成课程的action-text隐藏 */
+.course-actions .action-text {
   display: none; /* 隐藏文字，保持原始图标样式 */
 }
 
 /* 已完成课程的卡片图标样式 - SVG文件已直接更新颜色 */
 .card-icon-completed {
   /* SVG文件本身已包含正确颜色，无需额外的filter处理 */
-}
-
-.course-actions .action-text {
-  font-size: 24rpx;
 }
 
 /* ==================== 加载状态样式 ==================== */

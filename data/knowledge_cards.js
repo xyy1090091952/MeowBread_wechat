@@ -20,6 +20,8 @@ const knowledgeCardsDB = {
       created_at: '2024-07-13T10:00:00Z',
       updated_at: '2024-07-13T10:00:00Z'
     },
+    // 暂时注释掉其他N5卡片
+    /*
     {
       id: 2,
       level: 'N5',
@@ -81,6 +83,7 @@ const knowledgeCardsDB = {
       created_at: '2024-07-13T10:00:00Z',
       updated_at: '2024-07-13T10:00:00Z'
     }
+    */
   ],
 
   // N4级别卡片数据（示例）
@@ -93,7 +96,7 @@ const knowledgeCardsDB = {
       card_label_secondary: '进阶',
       card_title: 'N4语法要点',
       web_url: '/pages/grammar/grammar?type=n4&title=N4语法',
-      is_active: true,
+      is_active: false, // 暂时禁用，内容正在准备中
       created_at: '2024-07-13T10:00:00Z',
       updated_at: '2024-07-13T10:00:00Z'
     }
@@ -115,32 +118,32 @@ const knowledgeCardsDB = {
  */
 const cardStyleConfig = {
   1: {
-    backgroundImage: '/images/card/N5-Card1.jpg',
+    backgroundImage: 'https://free.picui.cn/free/2025/07/20/687bd36a16e2b.jpg',
     gradientClass: 'card-style-1',
     gradientColors: ['#EEE0FF', '#F0F6FC']
   },
   2: {
-    backgroundImage: '/images/card/N5-Card2.jpg',
+    backgroundImage: 'https://free.picui.cn/free/2025/07/20/687bd36a6ae61.jpg',
     gradientClass: 'card-style-2',
     gradientColors: ['#DBDAFF', '#EDF6FF']
   },
   3: {
-    backgroundImage: '/images/card/N5-Card3.jpg',
+    backgroundImage: 'https://free.picui.cn/free/2025/07/20/687bd36b17b24.jpg',
     gradientClass: 'card-style-3',
     gradientColors: ['#FFCFE1', '#FFFAFC']
   },
   4: {
-    backgroundImage: '/images/card/N5-Card4.jpg',
+    backgroundImage: 'https://free.picui.cn/free/2025/07/20/687bd369ca8a1.jpg',
     gradientClass: 'card-style-4',
     gradientColors: ['#E3FFC5', '#EBFFF0']
   },
   5: {
-    backgroundImage: '/images/card/N5-Card5.jpg',
+    backgroundImage: 'https://free.picui.cn/free/2025/07/20/687bd36b8b0c7.jpg',
     gradientClass: 'card-style-5',
     gradientColors: ['#B2F3F4', '#F6FFFD']
   },
   6: {
-    backgroundImage: '/images/card/N5-Card6.jpg',
+    backgroundImage: 'https://free.picui.cn/free/2025/07/20/687bd36cedd17.jpg',
     gradientClass: 'card-style-6',
     gradientColors: ['#E7FFAE', '#FFFFEA']
   }
@@ -260,4 +263,4 @@ const KnowledgeCardsDB = {
 module.exports = {
   KnowledgeCardsDB,
   cardStyleConfig
-}; 
+};

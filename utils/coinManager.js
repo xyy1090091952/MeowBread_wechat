@@ -22,7 +22,7 @@
  */
 
 const STORAGE_KEY = 'userData'; // 定义本地缓存中使用的键名，方便管理
-const INITIAL_COINS = 500; // 定义新用户的初始金币数量
+const INITIAL_COINS = 0; // 定义新用户的初始金币数量
 
 /**
  * 初始化用户数据
@@ -118,6 +118,29 @@ const addUnlockedPrize = (prizeId) => {
   }
 };
 
+/**
+ * 清除所有已解锁的奖品数据（调试用）
+ * 这个方法会清空用户的奖品收藏，但保留金币数量
+ */
+const clearUnlockedPrizes = () => {
+  const userData = getUserData();
+  userData.unlockedPrizes = [];
+  wx.setStorageSync(STORAGE_KEY, userData);
+  console.log('已清除所有解锁的奖品数据');
+};
+
+/**
+ * 重置所有用户数据（调试用）
+ * 这个方法会重置金币和奖品数据到初始状态
+ */
+const resetUserData = () => {
+  wx.setStorageSync(STORAGE_KEY, {
+    coins: INITIAL_COINS,
+    unlockedPrizes: [],
+  });
+  console.log('已重置所有用户数据到初始状态');
+};
+
 // 导出所有公共方法
 module.exports = {
   initializeUserData,
@@ -126,4 +149,6 @@ module.exports = {
   spendCoins,
   getUnlockedPrizes,
   addUnlockedPrize,
+  clearUnlockedPrizes, // 新增：清除奖品数据
+  resetUserData,       // 新增：重置所有数据
 };

@@ -47,7 +47,7 @@
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
   padding: 24px 24px calc(24px + env(safe-area-inset-bottom));
-  box-shadow: 0px -4px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
 }
 
 .popup-header {
@@ -65,6 +65,10 @@
 
 .options-group {
   margin-bottom: 24px;
+  /* 为投影留出空间 */
+  padding: 8px; /* 为投影留出空间 */
+  margin: -8px; /* 负边距抵消padding，保持整体布局不变 */
+  margin-bottom: 16px; /* 保持底部间距 */
 }
 
 .option-item {
@@ -75,7 +79,7 @@
   height: 64px;
   background-color: #FFFFFF;
   border-radius: 24px;
-  box-shadow: 0px 4px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
   margin-bottom: 16px;
   border: 2px solid transparent; /* 默认边框 */
   transition: border-color 0.2s ease-in-out;

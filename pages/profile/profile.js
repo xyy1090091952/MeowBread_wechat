@@ -1,6 +1,8 @@
 // pages/profile/profile.js
 const mistakeManager = require('../../utils/mistakeManager.js');
 const statisticsManager = require('../../utils/statisticsManager.js');
+const userTitleManager = require('../../utils/userTitleManager.js');
+const coinManager = require('../../utils/coinManager.js'); // 引入金币管理器
 
 Page({
   data: {
@@ -15,6 +17,7 @@ Page({
       averageAccuracy: 0   // 平均准确率
     },
     mistakeCount: 0, // 错题数量
+    userCoins: 0, // 用户金币数量
     pageLoaded: false, // 控制页面渐显动画
     breadBouncing: false // 控制面包弹跳动画状态
   },
@@ -29,6 +32,9 @@ Page({
     
     // 获取用户统计数据
     this.getUserStatistics();
+    
+    // 获取用户金币数量
+    this.updateUserCoins();
   },
 
   // 检查用户登录状态
@@ -88,11 +94,18 @@ Page({
     });
   },
 
+  // 更新用户金币数量
+  updateUserCoins: function() {
+    const userCoins = coinManager.getCoins();
+    this.setData({
+      userCoins: userCoins
+    });
+  },
+
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function() {
-    console.log('Profile page ready'); // 调试信息
     // 不再在这里统一触发动画，而是根据登录状态来决定是否播放动画
   },
 
@@ -109,7 +122,7 @@ Page({
   // 用户选择头像时的回调函数（原微信API方式）
   onChooseAvatar: function (e) {
     const { avatarUrl } = e.detail; // 获取用户选择的头像路径
-    console.log('用户选择的头像路径:', avatarUrl); // 调试信息
+    
     this.setData({
       avatarUrl: avatarUrl, // 更新头像路径到页面数据
     });
@@ -138,7 +151,7 @@ Page({
         });
       },
       fail(err) {
-        console.log('选择头像失败：', err);
+        // 选择头像失败的处理
         wx.showToast({
           title: '选择头像失败',
           icon: 'none'
@@ -232,49 +245,16 @@ Page({
     // 获取错题数量
     const mistakeCount = mistakeManager.getMistakeList().length;
     
+    // 获取用户等级称号信息（基于已背单词数量）
+    const userTitleInfo = userTitleManager.getCurrentUserTitleInfo();
+    
     console.log('加载的真实统计数据:', realStatistics); // 调试信息
+    console.log('用户等级称号信息:', userTitleInfo); // 调试信息
     
     this.setData({
       statistics: realStatistics,
-      mistakeCount: mistakeCount
-    });
-    
-    // 更新用户称号
-    this.updateUserTitle(realStatistics.totalQuestions);
-  },
-
-  // 根据答题数量更新用户称号
-  updateUserTitle: function(totalQuestions) {
-    let title = '菜鸡 🐣'; // 默认称号（0-49题）
-    
-    // 10个进阶称号，中日结合的幽默称号设计 ✨
-    if (totalQuestions >= 6000) {
-      title = '日语之神 ⚡'; // 6000+ 传说级存在
-    } else if (totalQuestions >= 4500) {
-      title = '单词の鬼 👹'; // 4500+ 单词之鬼
-    } else if (totalQuestions >= 3200) {
-      title = '词汇マスター 👑'; // 3200+ 词汇大师
-    } else if (totalQuestions >= 2200) {
-      title = '学霸さん 🤓'; // 2200+ 学霸同学
-    } else if (totalQuestions >= 1500) {
-      title = '前辈 😎'; // 1500+ 前辈
-    } else if (totalQuestions >= 800) {
-      title = '老司机 🚗'; // 800+ 老司机
-    } else if (totalQuestions >= 400) {
-      title = '小有所成 🚀'; // 400+ 小有所成
-    } else if (totalQuestions >= 200) {
-      title = '努力中 📚'; // 200+ 努力中
-    } else if (totalQuestions >= 100) {
-      title = '新手君 🌱'; // 100+ 新手君
-    } else if (totalQuestions >= 50) {
-      title = '小白兔 🐰'; // 50+ 小白兔
-    }
-    // 0-49题保持菜鸡称号
-    
-    console.log(`用户答题数: ${totalQuestions}, 获得称号: ${title}`); // 调试信息
-    
-    this.setData({
-      userTitle: title
+      mistakeCount: mistakeCount,
+      userTitle: userTitleInfo.fullTitle // 使用完整称号（含emoji）
     });
   },
 
@@ -306,35 +286,6 @@ Page({
     });
   },
 
-  /**
-   * 清除缓存（用于调试）
-   */
-  clearCache() {
-    wx.showModal({
-      title: '确认清除缓存',
-      content: '这将删除所有学习记录、错题和筛选设置。此操作不可逆，仅用于调试！',
-      success: (res) => {
-        if (res.confirm) {
-          try {
-            wx.clearStorageSync();
-            wx.showToast({
-              title: '缓存已清除',
-              icon: 'success',
-              duration: 2000
-            });
-            // 清除后重新加载页面数据
-            this.onShow();
-          } catch (e) {
-            wx.showToast({
-              title: '清除失败',
-              icon: 'error'
-            });
-            console.error('清除缓存失败:', e);
-          }
-        }
-      }
-    });
-  },
 
   // 面包点击事件 - 触发Q弹动画
   onBreadTap: function() {
@@ -368,6 +319,9 @@ Page({
     console.log('Profile page onShow');
     // 检查登录状态，以防在其他页面进行了登录/登出操作
     this.checkLoginStatus();
+    
+    // 更新用户金币数量（可能在其他页面有变化）
+    this.updateUserCoins();
 
     // 重要的：更新自定义底部导航的选中状态，确保高亮正确
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {

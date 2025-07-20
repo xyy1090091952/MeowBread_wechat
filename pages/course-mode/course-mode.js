@@ -275,6 +275,79 @@ Page({
   },
 
   /**
+   * 点击课程项
+   */
+  onCourseItemTap(e) {
+    // 关闭所有展开状态
+    this.closeAllPopups();
+  },
+
+  /**
+   * 点击操作按钮
+   */
+  onActionsButtonTap(e) {
+    const courseData = e.currentTarget.dataset.course;
+    const index = e.currentTarget.dataset.index;
+    
+    console.log('Actions button tapped:', courseData, 'index:', index);
+    
+    // 获取当前课程数据
+    const courseDataList = this.data.courseData;
+    
+    // 切换当前课程的展开显示状态
+    courseDataList[index].showActionsExpanded = !courseDataList[index].showActionsExpanded;
+    
+    // 关闭其他课程的展开状态
+    courseDataList.forEach((item, i) => {
+      if (i !== index) {
+        item.showActionsExpanded = false;
+      }
+    });
+    
+    this.setData({
+      courseData: courseDataList
+    });
+    
+    // 如果展开状态打开，添加点击外部关闭的监听
+    if (courseDataList[index].showActionsExpanded) {
+      // 延迟添加全局点击监听，避免立即触发
+      setTimeout(() => {
+        this.addGlobalClickListener();
+      }, 100);
+    } else {
+      this.removeGlobalClickListener();
+    }
+  },
+
+  /**
+   * 添加全局点击监听（用于点击外部关闭弹窗）
+   */
+  addGlobalClickListener() {
+    // 这里可以通过监听页面点击来关闭弹窗
+    // 由于小程序限制，我们通过其他方式实现
+  },
+
+  /**
+   * 移除全局点击监听
+   */
+  removeGlobalClickListener() {
+    // 移除监听器
+  },
+
+  /**
+   * 关闭所有展开状态
+   */
+  closeAllPopups() {
+    const courseDataList = this.data.courseData;
+    courseDataList.forEach(item => {
+      item.showActionsExpanded = false;
+    });
+    this.setData({
+      courseData: courseDataList
+    });
+  },
+
+  /**
    * 点击卡片学习按钮
    */
   onCardStudyTap(e) {
@@ -316,7 +389,17 @@ Page({
 
     // 跳转到卡片学习页面
     wx.navigateTo({
-      url: '/pages/card-study/card-study?mode=course'
+      url: '/pages/card-study/card-study?mode=course',
+      success: () => {
+        // 页面跳转成功后延迟收起抽屉，避免影响跳转动画
+        setTimeout(() => {
+          this.closeAllPopups();
+        }, 100);
+      },
+      fail: () => {
+        // 如果跳转失败，立即收起抽屉
+        this.closeAllPopups();
+      }
     });
   },
 
@@ -362,7 +445,17 @@ Page({
 
     // 直接跳转到quiz页面，进行课程专项练习
     wx.navigateTo({
-      url: '/pages/quiz/quiz?mode=course'
+      url: '/pages/quiz/quiz?mode=course',
+      success: () => {
+        // 页面跳转成功后延迟收起抽屉，避免影响跳转动画
+        setTimeout(() => {
+          this.closeAllPopups();
+        }, 100);
+      },
+      fail: () => {
+        // 如果跳转失败，立即收起抽屉
+        this.closeAllPopups();
+      }
     });
   },
 

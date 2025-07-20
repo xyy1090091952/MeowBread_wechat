@@ -1,36 +1,61 @@
 <!--pages/gashapon-inventory/gashapon-inventory.wxml-->
-<view class="container">
-  <view class="tabs">
-    <view wx:for="{{tabs}}" wx:key="id" class="tab-item {{activeTab === item.id ? 'active' : ''}}" data-id="{{item.id}}" bindtap="switchTab">
-      {{item.name}}
+<view class="container series-{{currentSeriesId}}">
+
+  
+  <!-- 自定义导航栏 -->
+  <view class="custom-nav" style="height: {{navBarHeight}}px; padding-top: {{statusBarHeight}}px;">
+    <image class="nav-back-icon" src="/images/icons/normal_arrow.svg" bindtap="onBack"></image>
+  </view>
+
+  <!-- 选择tag区域 -->
+  <view class="sheet-header" style="margin-top: {{statusBarHeight + navBarHeight}}px;">
+    <view class="series-tags">
+      <view class="series-tag {{currentSeriesId === 1 ? 'active' : ''}}" bindtap="switchTab" data-id="1">
+        <text>美味补给</text>
+      </view>
+      <view class="series-tag {{currentSeriesId === 2 ? 'active' : ''}}" bindtap="switchTab" data-id="2">
+        <text>梦幻魔法</text>
+      </view>
+    </view>
+    <!-- 滑动横条指示器 -->
+    <view class="tag-indicator" style="left: calc({{currentSeriesId === 1 ? '25% - 64rpx + 24rpx' : '75% - 64rpx - 24rpx'}})"></view>
+  </view>
+
+  <!-- 主展示区域 - 分离图片和文字部分 -->
+  <view class="prize-display">
+    <!-- 图片部分 - 参与Q弹动画 -->
+    <view class="prize-image-container {{displayPrizes[currentSwiperIndex] && displayPrizes[currentSwiperIndex].unlocked ? '' : 'locked'}} {{isAnimating ? 'animating' : ''}}" wx:if="{{displayPrizes[currentSwiperIndex]}}">
+      <image class="prize-image" src="{{displayPrizes[currentSwiperIndex].image}}" mode="aspectFit"></image>
+    </view>
+    
+    <!-- 文字信息部分 - 独立切换，不参与Q弹动画 -->
+    <view class="prize-info {{displayPrizes[currentSwiperIndex] && displayPrizes[currentSwiperIndex].unlocked ? '' : 'locked'}}" wx:if="{{displayPrizes[currentSwiperIndex]}}">
+      <view class="prize-rarity rarity-{{displayPrizes[currentSwiperIndex].rarity}}">{{displayPrizes[currentSwiperIndex].rarity}}</view>
+      <view class="prize-name">{{displayPrizes[currentSwiperIndex].unlocked ? displayPrizes[currentSwiperIndex].name : '???'}}</view>
+      <view class="prize-quote">{{displayPrizes[currentSwiperIndex].unlocked ? '"' + displayPrizes[currentSwiperIndex].quote + '"' : '"???"'}}</view>
     </view>
   </view>
 
-  <!-- 主展示区域的 Swiper -->
-  <swiper class="prize-swiper" circular="true" bindchange="onSwiperChange" current="{{currentSwiperIndex}}">
-    <block wx:for="{{displayPrizes}}" wx:key="id">
-      <swiper-item>
-        <view class="prize-item {{item.unlocked ? '' : 'locked'}}">
-          <image class="prize-image" src="{{item.image}}" mode="aspectFit"></image>
-          <view class="prize-info">
-            <view class="prize-rarity rarity-{{item.rarity}}">{{item.rarity}}</view>
-            <view class="prize-name">{{item.unlocked ? item.name : '???'}}</view>
-            <view class="prize-quote">{{item.unlocked ? '“' + item.quote + '”' : '“???”'}}</view>
-          </view>
-        </view>
-      </swiper-item>
-    </block>
-  </swiper>
-
   <!-- 缩略图导航 -->
-  <scroll-view class="thumbnail-nav" scroll-x="true" scroll-left="{{scrollLeft}}" scroll-with-animation="true">
-    <block wx:for="{{displayPrizes}}" wx:key="id">
-      <!-- 包装层，用于处理布局和点击 -->
-      <view class="thumbnail-wrapper" id="thumb-{{index}}" bindtap="switchSwiper" data-index="{{index}}">
-        <view class="thumbnail-item {{index === currentSwiperIndex ? 'active' : ''}}">
-          <image class="thumbnail-image {{item.unlocked ? '' : 'locked'}}" src="{{item.image}}" mode="aspectFill"></image>
-        </view>
+  <view class="thumbnail-nav">
+    <view class="collection-info {{currentSeriesId === 1 ? 'supply' : 'magic'}}">
+      当前收集{{collectedCount}}/{{totalCount}}
+    </view>
+    <scroll-view class="thumbnail-scroll" 
+                 scroll-x="true" 
+                 scroll-left="{{scrollLeft}}" 
+                 scroll-with-animation="true">
+      <!-- 直接使用实际数据，一一对应 -->
+      <view class="thumbnail-wrapper">
+        <block wx:for="{{displayPrizes}}" wx:key="id">
+          <view class="thumbnail-item {{index === currentSwiperIndex ? 'active' : ''}}" 
+                id="thumb-{{index}}" 
+                bindtap="switchSwiper" 
+                data-index="{{index}}">
+            <image class="thumbnail-image {{item.unlocked ? '' : 'locked'}}" src="{{item.image}}" mode="aspectFill"></image>
+          </view>
+        </block>
       </view>
-    </block>
-  </scroll-view>
+    </scroll-view>
+  </view>
 </view>

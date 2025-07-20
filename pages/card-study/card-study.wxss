@@ -200,12 +200,87 @@
   left: 80rpx; /* 居中偏移 */
   background-color: #ffffff !important; /* 强制白色背景 */
   border-radius: 32rpx;
-  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.12);
-  padding: 40rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
+  padding: 40rpx 48rpx; /* 上下40rpx，左右48rpx */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 平滑过渡效果 */
+  /* 为伪元素描边做准备 */
+  position: relative;
+}
+
+/* 6种不同的卡片描边样式 - 使用伪元素实现圆角渐变描边 */
+.study-card.card-style-1::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(to right, #B780FF 0%, #83CBFE 100%);
+  border-radius: 36rpx; /* 比卡片圆角大4rpx */
+  z-index: -1;
+}
+
+.study-card.card-style-2::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(to right, #4845F7 0%, #93CDFF 100%);
+  border-radius: 36rpx; /* 比卡片圆角大4rpx */
+  z-index: -1;
+}
+
+.study-card.card-style-3::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(to right, #FE4D96 0%, #FB9BCB 100%);
+  border-radius: 36rpx; /* 比卡片圆角大4rpx */
+  z-index: -1;
+}
+
+.study-card.card-style-4::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(to right, #82EEBA 0%, #B7F758 100%);
+  border-radius: 36rpx; /* 比卡片圆角大4rpx */
+  z-index: -1;
+}
+
+.study-card.card-style-5::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(to right, #70E2D8 0%, #73E2FF 100%);
+  border-radius: 36rpx; /* 比卡片圆角大4rpx */
+  z-index: -1;
+}
+
+.study-card.card-style-6::before {
+  content: '';
+  position: absolute;
+  top: -4rpx;
+  left: -4rpx;
+  right: -4rpx;
+  bottom: -4rpx;
+  background: linear-gradient(to right, #CAFD94 0%, #F6FF54 100%);
+  border-radius: 36rpx; /* 比卡片圆角大4rpx */
+  z-index: -1;
 }
 
 .study-card.current-card {
@@ -232,6 +307,7 @@
 .study-card.background-card {
   z-index: 1;
   /* 初始状态通过inline style设置，实现实时跟随滑动 */
+  transition: opacity 0.4s ease-in-out;
 }
 
 /* 确保background-card的白色底层始终存在 */
@@ -292,7 +368,7 @@
 }
 
 /* 确保卡片内容在背景之上 */
-.study-card .card-header,
+.study-card .word-main,
 .study-card .card-content,
 .study-card .swipe-hints {
   position: relative;
@@ -300,9 +376,6 @@
 }
 
 /* ==================== 卡片内容 ==================== */
-.card-header {
-  margin-bottom: 40rpx;
-}
 
 .word-main {
   display: flex;
@@ -310,13 +383,15 @@
   align-items: flex-start;
   justify-content: center;
   gap: 16rpx;
+  width: 100%; /* 占据父容器的全部宽度 */
+  margin: 0 0 40rpx 0; /* 底部边距40rpx，其他边距为0 */
 }
 
 .word-text {
   font-size: 48rpx;
   font-weight: 700;
   color: #1F2329;
-  text-align: center;
+  text-align: left;
 }
 
 .part-of-speech-tag {
@@ -350,6 +425,7 @@
 .example-line {
   display: block; /* 改为block，支持正常的文本换行 */
   font-size: 24rpx;
+  font-weight: 700; /* 加粗 */
   line-height: 1.5;
   color: #666666;
   margin-top: 8rpx;
@@ -367,7 +443,7 @@
 
 .detail-value {
   font-size: 24rpx;
-  font-weight: 500;
+  font-weight: 700; /* 加粗 */
   color: #666666;
   line-height: 1.4;
 }
@@ -453,7 +529,7 @@
   gap: 32rpx;
   width: 100%;
   position: fixed;
-  bottom: 208rpx; /* 88rpx(退出按钮高度) + 32rpx(间距) + 40rpx(退出按钮底部边距) + 48rpx(新增padding) = 208rpx */
+  bottom: 192rpx; /* 88rpx(退出按钮高度) + 32rpx(间距) + 40rpx(退出按钮底部边距) + 32rpx(exit-button-container的padding-bottom) = 192rpx */
   left: 48rpx;
   right: 48rpx;
   width: calc(100% - 96rpx);
@@ -592,4 +668,4 @@
 .part-of-speech-tag.noun-suru-verb { background-color: #9c27b0; }
 .part-of-speech-tag.adverb-adjectival-noun { background-color: #ff9800; }
 .part-of-speech-tag.noun-adjectival-noun { background-color: #8bc34a; }
-.part-of-speech-tag.unknown { background-color: #9e9e9e; } 
+.part-of-speech-tag.unknown { background-color: #9e9e9e; }

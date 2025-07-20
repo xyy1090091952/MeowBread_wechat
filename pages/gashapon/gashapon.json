@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "扭蛋机",
   "backgroundColor": "#FFE066",
-  "navigationStyle": "custom"
+  "navigationStyle": "custom",
+  "disableScroll": true
 }

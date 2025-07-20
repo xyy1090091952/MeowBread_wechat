@@ -220,7 +220,7 @@
   height: 64px; /* 固定高度 */
   width: 100%; /* 宽度占满容器 */
   box-sizing: border-box; /* 盒模型 */
-  box-shadow: 4px 4px 16px 0px rgba(0, 0, 0, 0.08); /* 阴影 */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 统一阴影 */
 }
 
 /* 禁用状态的选项按钮 */
@@ -276,7 +276,7 @@
   height: 200rpx;
   text-align: center;
   margin-bottom: 20rpx;
-  box-shadow: 4px 4px 16px 0px rgba(0, 0, 0, 0.08); /* 阴影 */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 统一阴影 */
 }
 
 .submit-button {
@@ -288,7 +288,7 @@
   font-size: 34rpx;
   width: 100%;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
 }
 
 /* 动画定义 */

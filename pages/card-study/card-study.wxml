@@ -45,31 +45,29 @@
     </view>
     
     <!-- 下一张卡片（背景卡片） -->
-    <view class="study-card background-card" wx:if="{{nextCard}}" style="transform: {{backgroundCardTransform}}; opacity: {{backgroundCardOpacity}}; transition: none;">
+    <view class="study-card background-card card-style-{{nextCardStyleType}}" wx:if="{{nextCard}}" style="transform: {{backgroundCardTransform}}; opacity: {{backgroundCardOpacity}};">
       <!-- 白色不透明底 -->
       <view class="card-white-background"></view>
       <!-- 背景图片 -->
-      <image class="card-background-image" src="/images/card/N5-Card{{nextCardStyleType}}.jpg" mode="aspectFill"></image>
+      <image class="card-background-image" src="{{nextCardImageUrl}}" mode="aspectFill"></image>
       <!-- 背景遮罩 -->
       <view class="card-background-overlay"></view>
       
-      <view class="card-header">
-        <view class="word-main">
-          <!-- 第一行：词性标签 -->
-          <view class="part-of-speech-tag {{utils.mapPartOfSpeechToClassName(nextCard['词性'])}}">
-            {{nextCard['词性']}}
-          </view>
-          <!-- 第二行：单词文本 -->
-          <text class="word-text">{{nextCard['汉字'] ? nextCard['汉字'] : nextCard['假名']}}</text>
-          <!-- 第三行：汉字和中文 -->
-          <view class="word-details-line">
-            <text class="detail-value" wx:if="{{nextCard['汉字']}}">{{nextCard['汉字']}}</text>
-            <text class="separator" wx:if="{{nextCard['汉字']}}"> | </text>
-            <text class="detail-value">{{nextCard['中文']}}</text>
-          </view>
-          <!-- 第四行：例句 -->
-          <text class="example-line" wx:if="{{nextCard['例句']}}">例句：{{nextCard['例句']}}</text>
+      <view class="word-main">
+        <!-- 第一行：词性标签 -->
+        <view class="part-of-speech-tag {{utils.mapPartOfSpeechToClassName(nextCard['词性'])}}">
+          {{nextCard['词性']}}
         </view>
+        <!-- 第二行：单词文本 -->
+        <text class="word-text">{{nextCard['汉字'] ? nextCard['汉字'] : nextCard['假名']}}</text>
+        <!-- 第三行：汉字和中文 -->
+        <view class="word-details-line">
+          <text class="detail-value" wx:if="{{nextCard['汉字']}}">{{nextCard['汉字']}}</text>
+          <text class="separator" wx:if="{{nextCard['汉字']}}"> | </text>
+          <text class="detail-value">{{nextCard['中文']}}</text>
+        </view>
+        <!-- 第四行：例句 -->
+        <text class="example-line" wx:if="{{nextCard['例句']}}">例句：{{nextCard['例句']}}</text>
       </view>
       <view class="card-content">
         <!-- 课程节数 -->
@@ -88,32 +86,30 @@
       bindtouchend="onTouchEnd">
       
       <!-- 当前卡片（前景卡片） -->
-      <view class="study-card current-card" style="transform: {{cardTransform}}; transition: {{isCardAnimating ? 'transform 0.3s ease-out' : 'none'}};">
+      <view class="study-card current-card card-style-{{currentCardStyleType}}" style="transform: {{cardTransform}}; transition: {{isCardAnimating ? 'transform 0.3s ease-out' : 'none'}};">
       
       <!-- 白色不透明底 -->
       <view class="card-white-background"></view>
       <!-- 背景图片 -->
-      <image class="card-background-image" src="/images/card/N5-Card{{currentCardStyleType}}.jpg" mode="aspectFill"></image>
+      <image class="card-background-image" src="{{currentCardImageUrl}}" mode="aspectFill"></image>
       <!-- 背景遮罩 -->
       <view class="card-background-overlay"></view>
       
-      <view class="card-header">
-        <view class="word-main">
-          <!-- 第一行：词性标签 -->
-          <view class="part-of-speech-tag {{utils.mapPartOfSpeechToClassName(currentCard['词性'])}}">
-            {{currentCard['词性']}}
-          </view>
-          <!-- 第二行：单词文本 -->
-          <text class="word-text">{{currentCard['汉字'] ? currentCard['汉字'] : currentCard['假名']}}</text>
-          <!-- 第三行：汉字和中文 -->
-          <view class="word-details-line">
-            <text class="detail-value" wx:if="{{currentCard['汉字']}}">{{currentCard['汉字']}}</text>
-            <text class="separator" wx:if="{{currentCard['汉字']}}"> | </text>
-            <text class="detail-value">{{currentCard['中文']}}</text>
-          </view>
-          <!-- 第四行：例句 -->
-          <text class="example-line" wx:if="{{currentCard['例句']}}">例句：{{currentCard['例句']}}</text>
+      <view class="word-main">
+        <!-- 第一行：词性标签 -->
+        <view class="part-of-speech-tag {{utils.mapPartOfSpeechToClassName(currentCard['词性'])}}">
+          {{currentCard['词性']}}
         </view>
+        <!-- 第二行：单词文本 -->
+        <text class="word-text">{{currentCard['汉字'] ? currentCard['汉字'] : currentCard['假名']}}</text>
+        <!-- 第三行：汉字和中文 -->
+        <view class="word-details-line">
+          <text class="detail-value" wx:if="{{currentCard['汉字']}}">{{currentCard['汉字']}}</text>
+          <text class="separator" wx:if="{{currentCard['汉字']}}"> | </text>
+          <text class="detail-value">{{currentCard['中文']}}</text>
+        </view>
+        <!-- 第四行：例句 -->
+        <text class="example-line" wx:if="{{currentCard['例句']}}">例句：{{currentCard['例句']}}</text>
       </view>
       
       <view class="card-content">
@@ -162,4 +158,4 @@
 <!-- 无数据状态 -->
 <view class="empty-container" wx:if="{{!isLoading && allWords.length === 0}}">
   <text>没有可学习的单词</text>
-</view> 
+</view>

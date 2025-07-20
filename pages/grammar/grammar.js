@@ -143,7 +143,6 @@ Page({
    */
   onReady() {
     // 页面渲染完成后，CSS table布局会自动计算最优宽度
-    console.log('Grammar page ready - CSS table layout will handle column widths automatically');
   },
 
   /**

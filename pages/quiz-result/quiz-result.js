@@ -16,23 +16,24 @@ Page({
     bubbleText: '',
     bubbleColor: '',
     coinsEarned: 0, // 新增：本次获得的金币数
+    mode: 'quick', // 新增：答题模式
   },
 
   onLoad: function (options) {
-    const { score, totalQuestions, timeSpent, accuracy, resultLevel, coinsEarned, from } = options; // 新增：获取金币数量和来源
+    const { score, totalQuestions, timeSpent, accuracy, resultLevel, coinsEarned, from, mode } = options; // 新增：获取答题模式
 
     const resultInfo = {
       noob: {
         text: '菜逼 Noob',
-        image: '/images/result/noob.png'
+        image: 'https://free.picui.cn/free/2025/07/20/687cec7e7d209.png'
       },
       normal: {
         text: '平平无奇 Normal',
-        image: '/images/result/normal.png'
+        image: 'https://free.picui.cn/free/2025/07/20/687cec7e5578f.png'
       },
       perfect: {
         text: '完美 Perfect',
-        image: '/images/result/perfect.png'
+        image: 'https://free.picui.cn/free/2025/07/20/687cec7e5cf3a.png'
       }
     };
 
@@ -47,6 +48,7 @@ Page({
     this.setData({
       from: from, // 设置页面来源
       fromMistakes: options.fromMistakes === 'true',
+      mode: mode || 'quick', // 设置答题模式，默认为标准模式
       score: parseInt(score, 10) || 0,
       totalQuestions: parseInt(totalQuestions, 10) || 0,
       timeSpent: parseInt(timeSpent, 10) || 0,
@@ -73,7 +75,8 @@ Page({
       score: this.data.score,
       totalQuestions: this.data.totalQuestions,
       timeSpent: this.data.timeSpent,
-      accuracy: this.data.accuracy
+      accuracy: this.data.accuracy,
+      mode: this.data.mode // 添加答题模式信息
     };
     
     // 使用统计管理器保存数据
