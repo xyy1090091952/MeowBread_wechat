@@ -194,39 +194,14 @@ function getLearningProgress(dictionaryId) {
   try {
     const learnedWords = getLearnedWords(dictionaryId);
     const learnedCount = learnedWords.length;
-    
-    // 计算词典总单词数
-    const db = require('../database/dictionaries.js').dictionaries;
-    const dictionary = db.find(dict => dict.id === dictionaryId);
-    
-    let totalCount = 0;
-    if (dictionary && dictionary.lesson_files) {
-      dictionary.lesson_files.forEach(filePath => {
-        try {
-          const lesson = require('../database/' + filePath);
-          if (Array.isArray(lesson)) {
-            // 检查是否是新的数据格式（每个单词包装在data中）
-            if (lesson.length > 0 && lesson[0].data) {
-              totalCount += lesson.length;
-            } else {
-              // 旧格式：直接是单词数组
-              totalCount += lesson.length;
-            }
-          } else if (Array.isArray(lesson.words)) {
-            totalCount += lesson.words.length;
-          }
-        } catch (err) {
-          console.warn('无法加载课时文件', filePath);
-        }
-      });
-    }
-    
-    const progress = totalCount > 0 ? Math.floor((learnedCount / totalCount) * 100) : 0;
-    
+
+    // 仅返回已学数量。总数和进度的计算交给调用方处理，
+    // 因为只有调用方（UI层）知道总数（可能来自网络）
+    // 返回0值以防止现有调用方解构时出错
     return {
       learnedCount,
-      totalCount,
-      progress
+      totalCount: 0, // 调用方应使用自己的总数覆盖此值
+      progress: 0,   // 调用方应根据自己的总数重新计算
     };
   } catch (error) {
     console.error('获取学习进度统计失败:', error);

@@ -12,7 +12,7 @@
           bindtap="onSelectVolume" 
           data-id="{{item.id}}"
         >
-          <text>{{item.name}}</text>
+          <text class="volume-tag-text">{{item.name}}</text>
         </view>
       </view>
       <!-- 滑动横条指示器 -->

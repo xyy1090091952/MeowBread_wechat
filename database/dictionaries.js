@@ -49,8 +49,8 @@ let data = {
             "description": "梁老师初级",
             "lesson_files": [], // 将被动态填充
             "volumes": [
-                {"id":"upper","name":"初级上","description":"5-17课","lessons":[5,6,7,8,9,10,11,12,13,14,15,16]},
-                {"id":"lower","name":"初级下","description":"18-25课","lessons":[17,18,19,20,21,22,23,24,25]}
+                {"id":"upper","name":"初级上","description":"5-17课","lessons":[5,6,7,8,9,10,11,12,13,14,15,16,17]},
+                {"id":"lower","name":"初级下","description":"18-25课","lessons":[18,19,20,21,22,23,24,25]}
             ],
             "courses": [
                 {"courseNumber":5,"courseTitle":"第5课","lessonFile":"lesson5","description":"初対面"},
@@ -82,8 +82,8 @@ let data = {
             "description": "梁老师中级",
             "lesson_files": [], // 将被动态填充
             "volumes": [
-                {"id":"volume1","name":"第一册","description":"1-3课","lessons":[26,27,28,29,30,31,32]},
-                {"id":"volume2","name":"第二册","description":"26-39课","lessons":[33,34,35,36,37,38,39]}
+                {"id":"volume1","name":"第一册","description":"26-32课","lessons":[26,27,28,29,30,31,32]},
+                {"id":"volume2","name":"第二册","description":"33-39课","lessons":[33,34,35,36,37,38,39]}
             ],
             "courses": [
                 {"courseNumber":26,"courseTitle":"第26课","lessonFile":"lesson26","description":"梁老师中级第26课"},
@@ -108,7 +108,7 @@ let data = {
             "description": "多邻国日语词汇",
             "lesson_files": [], // 将被动态填充
             "volumes": [
-                {"id":"complete","name":"完整版","description":"多邻国完整版","lessons":[1,2,3,4,5]}
+                {"id":"complete","name":"完整版","description":"1-5课","lessons":[1,2,3,4,5]}
             ],
             "courses": [
                 {"courseNumber":1,"courseTitle":"第1课","lessonFile":"lesson1","description":"多邻国第1课"},
