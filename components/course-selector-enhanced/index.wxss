@@ -24,7 +24,6 @@
   transition: transform 0.3s ease-out;
   z-index: 1001;
   max-height: 80vh;
-  /* 移除 overflow: hidden，让内部scroll-view能够滚动 */
 }
 
 .popup-container.popup-show {
@@ -37,51 +36,52 @@
   border-top-right-radius: 48rpx;
   padding-top: 48rpx;
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
-  min-height: 500rpx; /* 设置最小高度 */
-  max-height: 80vh; /* 设置最大高度 */
-  display: flex; /* 使用flex布局 */
-  flex-direction: column; /* 垂直排列 */
-  position: relative; /* 为浮动按钮提供定位基准 */
+  min-height: 500rpx;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden; /* 确保子元素的margin不会溢出 */
 }
 
 /* Tag切换区域样式 - 学习gashapon页面的series-tags设计 */
 .sheet-header {
-  padding: 0rpx 48rpx 0rpx 48rpx; /* 增加左右边距 */
-  position: relative; /* 为横条指示器提供定位基准 */
+  padding: 0rpx 48rpx 0rpx 48rpx;
+  position: relative;
   margin-bottom: 48rpx;
 }
 
 .volume-tags {
   display: flex;
   width: 100%;
-  position: relative; /* 为横条指示器提供定位基准 */
+  position: relative;
 }
 
 .volume-tag {
-  flex: 1; /* 平均分配空间 */
-  height: 72rpx; /* 设置固定高度 */
+  flex: 1;
+  height: 72rpx;
   border-radius: 48rpx;
-  background-color: transparent; /* 去掉背景颜色 */
+  background-color: transparent;
   border: 2rpx solid transparent;
   transition: all 0.6s ease;
   display: flex;
   align-items: center;
-  justify-content: center; /* 文案居中显示 */
+  justify-content: center;
 }
 
 .volume-tag.active {
-  background-color: transparent; /* 去掉背景颜色 */
+  background-color: transparent;
   border-color: transparent;
 }
 
 .volume-tag-text {
-  font-size: 28rpx;
+  font-size: 32rpx;
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.5); /* 黑色50%透明度 */
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .volume-tag.active .volume-tag-text {
-  color: #000000; /* 选中状态黑色 */
+  color: #000000;
 }
 
 /* 滑动横条指示器 */
@@ -90,18 +90,19 @@
   bottom: 0;
   width: 128rpx;
   height: 6rpx;
-  background-color: #4845F7; /* 改成主题色 */
+  background-color: #4845F7;
   border-radius: 3rpx;
-  transition: left 0.6s ease, background-color 0.6s ease; /* 添加颜色过渡动画 */
+  transition: left 0.6s ease, background-color 0.6s ease;
   z-index: 1;
 }
 
-/* 课程列表样式 - 学习word-card的布局方式 */
+/* 课程列表样式 */
 .options-group {
-  flex: 1; /* 占满剩余空间 */
-  min-height: 0; /* 允许收缩 */
-  padding-bottom: 160rpx; /* 为底部浮动按钮和投影留出空间：按钮高度80rpx + 边距24rpx + 投影空间56rpx */
-  /* 移除 max-height 限制，让其占满剩余空间 */
+  flex: 1;
+  min-height: 0;
+  max-height: 60vh;
+  margin: 0 0 160rpx 0; /* 只保留底部margin */
+  box-sizing: border-box;
 }
 
 .option-item {
@@ -110,11 +111,11 @@
   padding: 38rpx 48rpx; 
   background-color: #FFFFFF;
   border-radius: 48rpx;
-  box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08); /* 学习word-card的投影 */
-  margin: 0 48rpx 24rpx 48rpx; /* 学习word-card的margin */
-  border: 2rpx solid transparent; /* 恢复正常的边框宽度 */
+  box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
+  margin: 0 48rpx 24rpx 48rpx; /* 添加左右margin */
+  border: 4rpx solid transparent;
   transition: border-color 0.2s ease-in-out;
-  flex-direction: row; /* 水平排列 */
+  flex-direction: row;
 }
 
 .option-item.selected {
@@ -122,50 +123,50 @@
 }
 
 .option-item:last-child {
-  margin-bottom: 48rpx; /* 为投影留出充足空间：投影偏移8rpx + 模糊半径32rpx + 额外缓冲8rpx */
+  margin-bottom: 48rpx;
 }
 
 .option-label {
-  font-size: 28rpx; /* 稍微小一点 */
+  font-size: 28rpx;
   font-weight: 600;
 }
 
 .option-sublabel {
-  font-size: 24rpx; /* 稍微小一点 */
+  font-size: 24rpx;
   color: #888;
-  margin-left: 16rpx; /* 添加左边距，与option-label保持间隔 */
+  margin-left: 16rpx;
 }
 
 .confirm-button {
-  position: absolute; /* 改为绝对定位 */
-  bottom: 0; /* 贴底部 */
-  left: 48rpx; /* 左边距 */
-  right: 48rpx; /* 右边距 */
-  height: 80rpx; /* 稍微小一点 */
+  position: absolute;
+  bottom: 0;
+  left: 48rpx;
+  right: 48rpx;
+  height: 80rpx;
   line-height: 80rpx;
   background-color: #4845F7;
   color: white;
-  border-radius: 40rpx; /* 对应高度的一半 */
+  border-radius: 40rpx;
   text-align: center;
-  font-size: 28rpx; /* 稍微小一点 */
+  font-size: 28rpx;
   font-weight: 600;
-  margin-bottom: calc(24rpx + env(safe-area-inset-bottom)); /* 考虑安全区域 */
+  margin-bottom: calc(24rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
   border: none;
-  z-index: 10; /* 确保在滚动内容上方 */
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 统一阴影规范 */
+  z-index: 10;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
 }
 
 /* 底部白色渐变遮罩 */
 .bottom-gradient-mask {
   position: absolute;
-  bottom: 104rpx; /* 位于确认按钮上方，留出按钮高度+边距的空间 */
+  bottom: 0; /* 贴底部 */
   left: 0;
   right: 0;
-  height: 120rpx; /* 渐变高度 */
+  height: 200rpx; /* 增加高度，参考母页面 */
   background: linear-gradient(to top, rgba(250, 250, 250, 1) 0%, rgba(250, 250, 250, 0.8) 50%, rgba(250, 250, 250, 0) 100%);
-  pointer-events: none; /* 不阻挡点击事件 */
-  z-index: 5; /* 在滚动内容上方，但在确认按钮下方 */
+  pointer-events: none;
+  z-index: 10; /* 提高层级，参考母页面 */
 }
 
 /* 动画效果样式 */
@@ -181,5 +182,5 @@
 }
 
 .fade-delay-3 {
-  transition-delay: 0.6s; /* 延迟0.6秒显示 */
+  transition-delay: 0.6s;
 }

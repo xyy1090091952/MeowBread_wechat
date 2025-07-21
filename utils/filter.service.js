@@ -8,18 +8,16 @@
 const dictionariesData = require('../database/dictionaries.js');
 const filterManager = require('./filterManager.js');
 
-const ALL_DICTIONARIES_OPTION = { id: 'all', name: '全部辞典', description: '所有可用词典中的全部课程', base_path: 'all' };
-
 const service = {
   // 初始化筛选器状态
-  initializeFilterState(options) {
+  initializeFilterState(options = {}) {
     const savedFilter = filterManager.getFilter();
     // 优先读取用户的原始选择，如果当前是course模式的话
     const originalUserFilter = wx.getStorageSync('originalUserFilter');
     const userFilter = (savedFilter && savedFilter.quizMode === 'course' && originalUserFilter) ? originalUserFilter : savedFilter;
     
     let state = {
-      dictionaries: [ALL_DICTIONARIES_OPTION, ...dictionariesData.dictionaries],
+      dictionaries: dictionariesData.dictionaries,
       selectedDictionaryIndex: 0,
       selectedLessonFiles: [],
       quizMode: options.mode || 'quick',
@@ -64,10 +62,6 @@ const service = {
 
   // 根据词典获取课程列表
   getLessonsForDictionary(dictionary, selectedLessonFiles = []) {
-    if (dictionary.id === 'all') {
-      return [];
-    }
-
     const allLessonsOption = {
       name: '全部课程',
       file: `DICTIONARY_${dictionary.id}_ALL_LESSONS`,

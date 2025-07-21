@@ -51,9 +51,24 @@ Page({
     
     // 更新显示的筛选信息
     const filter = filterManager.getFilter();
-    const currentFilterDisplay = filter ? 
-      `你当前的课本：${filter.selectedDictionaryName}` : 
-      '请先选择题库';
+    let currentFilterDisplay = '请先选择题库';
+    
+    if (filter) {
+      let dictionaryName = filter.selectedDictionaryName;
+      
+      // 如果selectedDictionaryName不存在，尝试从字典数据中获取
+      if (!dictionaryName) {
+        const dictionaryId = filter.selectedDictionaryKey || filter.dictionaryId;
+        if (dictionaryId) {
+          const dictionary = dictionaries.dictionaries.find(d => d.id === dictionaryId);
+          dictionaryName = dictionary ? dictionary.name : dictionaryId;
+        }
+      }
+      
+      currentFilterDisplay = dictionaryName ? 
+        `你当前的课本：${dictionaryName}` : 
+        '请先选择题库';
+    }
     
     this.setData({
       currentFilterDisplay
@@ -91,10 +106,11 @@ Page({
         console.log('No filter found, using default:', textbook);
       }
       
-      // 如果选择的是"全部辞典"，则使用默认教材
+      // 如果选择的是"all"，则使用第一个可用的词典作为默认
       if (textbook === 'all') {
-        textbook = 'liangs_class';
-        console.log('Changed from "all" to default textbook:', textbook);
+        const firstDictionary = dictionaries.dictionaries[0];
+        textbook = firstDictionary.id;
+        console.log('Changed from "all" to first available dictionary:', textbook);
       }
 
       console.log('Final textbook to load:', textbook);

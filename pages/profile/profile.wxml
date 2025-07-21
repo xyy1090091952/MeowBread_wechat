@@ -37,6 +37,10 @@
         <!-- 显示用户称号（根据答题数量动态计算） -->
         <view class="user-title">{{userTitle}}</view>
       </view>
+      <!-- 缓存管理按钮 -->
+      <view class="cache-manager-button" bindtap="goToCacheManager">
+        <text class="cache-button-text">缓存</text>
+      </view>
     </block>
   </view>
 
@@ -96,7 +100,6 @@
         <text class="gallery-text">陈列馆</text>
       </view>
     </view>
-
 
   </block>
 </view>

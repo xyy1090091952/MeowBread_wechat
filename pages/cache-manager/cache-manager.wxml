@@ -1,0 +1,54 @@
+<!--pages/cache-manager/cache-manager.wxml-->
+<view class="container">
+  <!-- 缓存统计信息 -->
+  <view class="stats-section">
+    <view class="section-title">缓存统计</view>
+    
+    <view class="stats-grid">
+      <view class="stat-item">
+        <view class="stat-value">{{cacheStats.totalCaches}}</view>
+        <view class="stat-label">总缓存数</view>
+      </view>
+      
+      <view class="stat-item">
+        <view class="stat-value">{{cacheStats.totalSizeKB}}KB</view>
+        <view class="stat-label">占用空间</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 按课本统计 -->
+  <view class="textbook-section">
+    <view class="section-title">按课本统计</view>
+    <view class="textbook-list">
+      <view class="textbook-item" wx:for="{{textbookStats}}" wx:key="id">
+        <view class="textbook-info">
+          <view class="textbook-name">{{item.name}}</view>
+          <view class="textbook-detail">{{item.cacheCount}}个课程已缓存 · {{item.sizeKB}}KB</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="actions-section">
+    <button 
+      class="action-button primary" 
+      bindtap="clearAllCache"
+      disabled="{{loading}}"
+    >
+      <view class="button-content">
+        <view class="button-icon">🧹</view>
+        <view class="button-text">清理所有缓存</view>
+      </view>
+    </button>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <view class="loading-text">处理中...</view>
+    </view>
+  </view>
+</view>

@@ -2,7 +2,7 @@
 <view class="gashapon-container">
 
   <!-- 金币显示 -->
-  <view class="coin-display" style="top: {{statusBarHeight + navBarHeight + 16}}px;">
+  <view class="coin-display" style="top: {{statusBarHeight + navBarHeight + 26}}px;">
     <image class="coin-icon-display" src="/images/icons/Coins.png"></image>
     <text class="coin-text">{{userCoins}}</text>
   </view>
@@ -14,7 +14,7 @@
   </view>
 
   <!-- 右侧功能按钮 -->
-  <view class="side-buttons" style="top: {{menuButtonTop}}px;">
+  <view class="side-buttons" style="top: {{statusBarHeight + navBarHeight + 26}}px;">
     <view class="side-button" bindtap="onInventory">
       <text>陈列馆</text>
     </view>

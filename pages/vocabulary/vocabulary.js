@@ -98,11 +98,11 @@ Page({
 
       const categories = [{
         id: 'textbook',
-        title: '课本Textbook',
+        title: '教科書',
         dicts: sortDictsBySeriesAndSelection(dicts.filter(d => d.id !== 'duolingguo'))
       }, {
         id: 'software',
-        title: '其他Other',
+        title: '他の教材',
         dicts: sortDictsBySeriesAndSelection(dicts.filter(d => d.id === 'duolingguo'))
       }];
 

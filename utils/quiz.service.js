@@ -40,12 +40,16 @@ const quizService = {
     try {
       let quizFilter = filterManager.getFilter();
       if (!quizFilter || !quizFilter.selectedLessonFiles || quizFilter.selectedLessonFiles.length === 0) {
+        // 如果没有筛选条件，使用第一个词典作为默认
+        const dictionariesData = require('../database/dictionaries.js');
+        const firstDictionary = dictionariesData.dictionaries[0];
+        
         quizFilter = {
-          selectedDictionaryName: '全部辞典',
-          selectedLessonFiles: ['ALL_DICTIONARIES_ALL_LESSONS'],
+          selectedDictionaryName: firstDictionary.name,
+          selectedLessonFiles: [`DICTIONARY_${firstDictionary.id}_ALL_LESSONS`],
           selectedLessonName: '全部课程',
-          dictionaryId: 'all',
-          basePath: 'all',
+          dictionaryId: firstDictionary.id,
+          basePath: firstDictionary.base_path || '',
           quizMode: options.mode || 'quick',
           selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'] // 添加默认题型
         };

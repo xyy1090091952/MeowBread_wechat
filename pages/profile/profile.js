@@ -3,6 +3,7 @@ const mistakeManager = require('../../utils/mistakeManager.js');
 const statisticsManager = require('../../utils/statisticsManager.js');
 const userTitleManager = require('../../utils/userTitleManager.js');
 const coinManager = require('../../utils/coinManager.js'); // 引入金币管理器
+const { getCacheStats } = require('../../utils/wordManager.js'); // 引入缓存统计功能
 
 Page({
   data: {
@@ -19,7 +20,13 @@ Page({
     mistakeCount: 0, // 错题数量
     userCoins: 0, // 用户金币数量
     pageLoaded: false, // 控制页面渐显动画
-    breadBouncing: false // 控制面包弹跳动画状态
+    breadBouncing: false, // 控制面包弹跳动画状态
+    cacheStats: { // 缓存统计信息
+      totalCaches: 0,
+      validCaches: 0,
+      expiredCaches: 0,
+      totalSize: '0KB'
+    }
   },
 
   // 页面加载时的初始化逻辑
@@ -35,6 +42,9 @@ Page({
     
     // 获取用户金币数量
     this.updateUserCoins();
+    
+    // 获取缓存统计信息
+    this.updateCacheStats();
   },
 
   // 检查用户登录状态
@@ -100,6 +110,27 @@ Page({
     this.setData({
       userCoins: userCoins
     });
+  },
+
+  // 更新缓存统计信息
+  updateCacheStats: function() {
+    try {
+      const cacheStats = getCacheStats();
+      this.setData({
+        cacheStats: cacheStats
+      });
+    } catch (error) {
+      console.error('获取缓存统计信息失败:', error);
+      // 设置默认值
+      this.setData({
+        cacheStats: {
+          totalCaches: 0,
+          validCaches: 0,
+          expiredCaches: 0,
+          totalSize: '0KB'
+        }
+      });
+    }
   },
 
   /**
@@ -286,6 +317,13 @@ Page({
     });
   },
 
+  // 跳转到缓存管理页面
+  goToCacheManager: function() {
+    wx.navigateTo({
+      url: '/pages/cache-manager/cache-manager'
+    });
+  },
+
 
   // 面包点击事件 - 触发Q弹动画
   onBreadTap: function() {
@@ -322,6 +360,9 @@ Page({
     
     // 更新用户金币数量（可能在其他页面有变化）
     this.updateUserCoins();
+
+    // 更新缓存统计信息（可能在其他页面有变化）
+    this.updateCacheStats();
 
     // 重要的：更新自定义底部导航的选中状态，确保高亮正确
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {

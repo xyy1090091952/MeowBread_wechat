@@ -447,6 +447,9 @@
   height: 32rpx;
   flex-shrink: 0;
   margin-right: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .popup-content .action-text {
@@ -462,7 +465,7 @@
 .actions-drawer .action-quiz {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* 改为左对齐，让图标和文字自然排列 */
   width: auto; /* 自适应宽度 */
   height: 64rpx;
   padding: 0 24rpx; /* 左右内边距确保文字不贴边 */
@@ -485,6 +488,7 @@
   height: 32rpx;
   flex-shrink: 0;
   margin-right: 8rpx;
+  /* 移除flex相关属性，让image元素保持默认行为 */
 }
 
 .actions-drawer .action-text {
@@ -492,31 +496,47 @@
   font-weight: 600;
   color: #000000;
   flex-shrink: 0; /* 防止文字被压缩 */
+  line-height: 1; /* 确保文字垂直居中 */
 }
-.action-card,
-.action-quiz {
+
+/* 未完成课程的操作项样式 */
+.course-actions .action-card,
+.course-actions .action-quiz {
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: none;
   padding: 0;
+  width: 64rpx; /* 给未完成课程的按钮固定宽度 */
+  height: 64rpx;
 }
 
+/* 基础action-icon样式 - 移除flex属性，让image元素正常显示 */
 .action-icon {
+  width: 32rpx;
+  height: 32rpx;
+  filter: none;
+  /* 移除所有flex相关属性 */
+}
+
+/* 未完成课程的quiz图标样式 */
+.quiz-icon-uncompleted {
   width: 32rpx;
   height: 32rpx;
   filter: none;
 }
 
+/* 已完成课程的卡片图标样式 */
+.card-icon-completed {
+  width: 32rpx;
+  height: 32rpx;
+  /* 移除所有flex相关属性 */
+}
+
 /* 未完成课程的action-text隐藏 */
 .course-actions .action-text {
   display: none; /* 隐藏文字，保持原始图标样式 */
-}
-
-/* 已完成课程的卡片图标样式 - SVG文件已直接更新颜色 */
-.card-icon-completed {
-  /* SVG文件本身已包含正确颜色，无需额外的filter处理 */
 }
 
 /* ==================== 无数据状态样式 ==================== */

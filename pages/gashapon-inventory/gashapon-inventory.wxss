@@ -63,7 +63,7 @@
 }
 
 .series-tag text {
-  font-size: 28rpx;
+  font-size: 32rpx;
   font-weight: 600;
   color: rgba(0, 0, 0, 0.5); /* 黑色50%透明度 */
 }
@@ -221,8 +221,8 @@
 
 /* 未解锁奖品的样式 */
 .prize-image-container.locked .prize-image {
-  /* 使用亮度滤镜将图片变为黑色剪影，并降低不透明度 */
-  filter: grayscale(100%) contrast(0) brightness(1.6); /* 将未解锁的奖品图片处理成纯灰色块 */
+  /* 使用滤镜将图片变为纯白色剪影，保持形状但显示为白色 */
+  filter: grayscale(100%) contrast(0) brightness(10) opacity(0.8); /* 将未解锁的奖品图片处理成纯白色块 */
 }
 
 /* 未解锁状态下的文字样式 */
@@ -359,5 +359,6 @@
 }
 
 .thumbnail-image.locked {
-  filter: brightness(0) opacity(0.2);
+  /* 直接将图片变为EEEEEE浅灰色 */
+  filter: brightness(0) invert(1) sepia(1) saturate(0) hue-rotate(0deg) brightness(0.93);
 }

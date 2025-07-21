@@ -10,6 +10,7 @@ let data = {
             "id": "everyones_japanese",
             "name": "大家的日语",
             "description": "大家的日语",
+            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
                 {"id":"volume1","name":"第一册","description":"29-37课","lessons":[26,27,28,29,30,31,32,33,34,35,36,37]},
@@ -47,6 +48,7 @@ let data = {
             "id": "liangs_class",
             "name": "梁老师初级",
             "description": "梁老师初级",
+            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd4712b75f.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
                 {"id":"upper","name":"初级上","description":"5-17课","lessons":[5,6,7,8,9,10,11,12,13,14,15,16,17]},
@@ -80,6 +82,7 @@ let data = {
             "id": "liangs_intermediate",
             "name": "梁老师中级",
             "description": "梁老师中级",
+            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd4715697e.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
                 {"id":"volume1","name":"第一册","description":"26-32课","lessons":[26,27,28,29,30,31,32]},
@@ -106,6 +109,7 @@ let data = {
             "id": "duolingguo",
             "name": "多邻国",
             "description": "多邻国日语词汇",
+            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd47111ec1.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
                 {"id":"complete","name":"完整版","description":"1-5课","lessons":[1,2,3,4,5]}

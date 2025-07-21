@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "题库筛选",
-  "usingComponents": {
-    "textbook-selector": "/components/textbook-selector/index",
-    "question-type-popup": "/components/question-type-popup/index"
-  }
-}

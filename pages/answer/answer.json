@@ -1,6 +1,8 @@
 {
   "usingComponents": {
-    "textbook-selector": "../../components/textbook-selector/index"
+    "textbook-selector": "../../components/textbook-selector/index",
+    "question-type-popup": "../../components/question-type-popup/index",
+    "course-filter-popup": "../../components/course-filter-popup/index"
   },
   "navigationStyle": "custom"
 }

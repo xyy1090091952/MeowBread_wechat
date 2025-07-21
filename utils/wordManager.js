@@ -5,6 +5,7 @@
  */
 
 const allDictionariesData = require('../database/dictionaries.js');
+const wordCacheManager = require('./wordCacheManager.js'); // 引入缓存管理器
 /**
  * 根据筛选条件获取单词列表
  * @param {object} filter - 筛选条件，包含 lessonFiles, dictionaryId 等
@@ -36,7 +37,24 @@ async function getWordsByFilter(filter) {
   // 异步处理单个课程文件 URL
   const processLessonFile = async (dict, lessonFileUrl) => {
     try {
-      // 使用 wx.request 发起网络请求获取 JSON 数据
+      // 🚀 优先从缓存中获取数据
+      const cachedData = wordCacheManager.getCachedWords(lessonFileUrl);
+      if (cachedData) {
+        // 缓存命中，直接使用缓存数据
+        wordsToLoad.push(...cachedData.map(item => {
+          const lessonName = lessonFileUrl.substring(lessonFileUrl.lastIndexOf('/') + 1).replace('.json', '');
+          const lessonNumber = parseInt(lessonName.replace('lesson', ''), 10);
+          return {
+            data: item.data,
+            sourceDictionary: dict.id,
+            lesson: isNaN(lessonNumber) ? lessonName : lessonNumber
+          };
+        }));
+        return; // 缓存命中，直接返回
+      }
+
+      // 缓存未命中，从网络加载
+      console.log(`从网络加载单词: ${lessonFileUrl}`);
       const res = await new Promise((resolve, reject) => {
         wx.request({
           url: lessonFileUrl,
@@ -49,6 +67,9 @@ async function getWordsByFilter(filter) {
       const lessonData = res.data; // 获取请求返回的数据
 
       if (lessonData && Array.isArray(lessonData)) {
+        // 🎯 将数据存入缓存
+        wordCacheManager.setCachedWords(lessonFileUrl, lessonData);
+        
         wordsToLoad.push(...lessonData.map(item => {
           // 从 URL 中提取 lesson 名称，例如从 '.../lesson1.json' 提取 'lesson1'
           const lessonName = lessonFileUrl.substring(lessonFileUrl.lastIndexOf('/') + 1).replace('.json', '');
@@ -73,11 +94,11 @@ async function getWordsByFilter(filter) {
 
   for (const identifier of lessonIdentifiers) {
     if (identifier === 'ALL_DICTIONARIES_ALL_LESSONS') {
-      for (const dict of dictionariesConfig) {
-        if (dict.lesson_files && Array.isArray(dict.lesson_files)) {
-          for (const url of dict.lesson_files) {
-            loadingPromises.push(processLessonFile(dict, url));
-          }
+      // 使用第一个词典的所有课程作为默认
+      const firstDict = dictionariesConfig[0];
+      if (firstDict && firstDict.lesson_files && Array.isArray(firstDict.lesson_files)) {
+        for (const url of firstDict.lesson_files) {
+          loadingPromises.push(processLessonFile(firstDict, url));
         }
       }
     } else if (identifier.startsWith('DICTIONARY_') && identifier.endsWith('_ALL_LESSONS')) {
@@ -190,5 +211,9 @@ async function getDictionaryWordCount(dictionaryId) {
 
 module.exports = {
   getWordsByFilter,
-  getDictionaryWordCount
+  getDictionaryWordCount,
+  // 缓存管理功能
+  getCacheStats: wordCacheManager.getCacheStats,
+  clearAllCache: wordCacheManager.clearAllCache,
+  cleanExpiredCache: wordCacheManager.cleanExpiredCache
 };

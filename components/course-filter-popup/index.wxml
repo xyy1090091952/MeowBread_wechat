@@ -1,0 +1,23 @@
+<!--components/course-filter-popup/index.wxml-->
+<!-- 课程筛选弹窗 -->
+<view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="closePopup" catchtouchmove="stopPropagation"></view>
+<view class="modal-container {{visible ? 'modal-show' : ''}}">
+  <view class="modal-content">
+    <view class="modal-title">选择词库</view>
+    <view class="book-list">
+      <block wx:for="{{dictionaries}}" wx:key="id" wx:for-index="index">
+        <view class="book-card {{index === selectedDictionaryIndex ? 'selected' : ''}}" data-index="{{index}}" bindtap="onSelectDictionary">
+          <image class="book-cover" src="{{item.cover_image}}" mode="aspectFill" />
+          <view class="book-info">
+            <view class="book-name">{{item.name}}</view>
+            <view class="book-word-count" wx:if="{{item.wordCount}}">词汇量 {{item.wordCount}}</view>
+          </view>
+          <view class="progress-tag" wx:if="{{item.progress !== undefined}}">进度{{item.progress}}%</view>
+        </view>
+      </block>
+    </view>
+    <view class="modal-buttons">
+      <view class="btn btn-confirm" bindtap="onConfirm">确认</view>
+    </view>
+  </view>
+</view>

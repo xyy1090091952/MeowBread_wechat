@@ -1,9 +1,9 @@
 <!--components/course-selector-enhanced/index.wxml-->
-<view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="closePopup" catchtouchmove="stopPropagation"></view>
+<view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="closePopup" catchtouchmove="preventPropagation"></view>
 <view class="popup-container {{visible ? 'popup-show' : ''}}" catchtouchmove="preventPropagation">
-  <view class="popup-content">
+  <view class="popup-content" catchtouchmove="preventPropagation">
     <!-- Tag切换区域 - 参考gashapon的sheet-header -->
-    <view class="sheet-header" wx:if="{{volumes.length > 1}}">
+    <view class="sheet-header" wx:if="{{volumes.length > 1}}" catchtouchmove="preventPropagation">
       <view class="volume-tags">
         <view 
           wx:for="{{volumes}}" 
@@ -20,7 +20,14 @@
     </view>
 
     <!-- 课程列表区域 - 使用scroll-view支持滚动 -->
-    <scroll-view class="options-group" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <scroll-view 
+      class="options-group" 
+      scroll-y="{{true}}" 
+      enhanced="{{true}}" 
+      show-scrollbar="{{false}}"
+      enable-passive="{{false}}"
+      catchtouchmove="preventPropagation"
+    >
       <!-- 全部课程按钮 -->
       <view 
         class="option-item {{selectedValue === 'all' ? 'selected' : ''}}"
@@ -42,12 +49,15 @@
         <view class="option-label">第{{item.courseNumber}}节</view>
         <view class="option-sublabel">{{item.description}}</view>
       </view>
+
+      <!-- 底部空白区域，防止最后一个选项被底部按钮遮挡 -->
+      <view style="height: 32rpx;"></view>
     </scroll-view>
 
     <!-- 底部白色渐变遮罩 -->
-    <view class="bottom-gradient-mask fade-in-element fade-delay-3 show"></view>
+    <view class="bottom-gradient-mask" catchtouchmove="preventPropagation"></view>
 
     <!-- 确认按钮 -->
-    <view class="confirm-button" bindtap="onConfirm">确认</view>
+    <view class="confirm-button" bindtap="onConfirm" catchtouchmove="preventPropagation">确认</view>
   </view>
 </view>
