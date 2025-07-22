@@ -10,6 +10,7 @@ let data = {
             "id": "everyones_japanese",
             "name": "大家的日语",
             "description": "大家的日语",
+            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
                 {"id":"volume1","name":"第一册","description":"29-37课","lessons":[26,27,28,29,30,31,32,33,34,35,36,37]},
@@ -43,10 +44,34 @@ let data = {
                 {"courseNumber":50,"courseTitle":"第50课","lessonFile":"lesson50","description":"大家的日语第50课"}
             ]
         },
+         {
+            "id": "everyones_japanese_intermediate",
+            "name": "大日中级",
+            "description": "大日中级",
+            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd4713099b.jpg",
+            "volumes": [
+                {"id":"volume1","name":"第一册","description":"1-12课","lessons":[1,2,3,4,5,6,7,8,9,10,11,12]}
+            ],
+            "courses": [
+                {"courseNumber":1,"courseTitle":"第1课","lessonFile":"lesson1","description":"中级N3第1课"},
+                {"courseNumber":2,"courseTitle":"第2课","lessonFile":"lesson2","description":"中级N3第2课"},
+                {"courseNumber":3,"courseTitle":"第3课","lessonFile":"lesson3","description":"中级N3第3课"},
+                {"courseNumber":4,"courseTitle":"第4课","lessonFile":"lesson4","description":"中级N3第4课"},
+                {"courseNumber":5,"courseTitle":"第5课","lessonFile":"lesson5","description":"中级N3第5课"},
+                {"courseNumber":6,"courseTitle":"第6课","lessonFile":"lesson6","description":"中级N3第6课"},
+                {"courseNumber":7,"courseTitle":"第7课","lessonFile":"lesson7","description":"中级N3第7课"},
+                {"courseNumber":8,"courseTitle":"第8课","lessonFile":"lesson8","description":"中级N3第8课"},
+                {"courseNumber":9,"courseTitle":"第9课","lessonFile":"lesson9","description":"中级N3第9课"},
+                {"courseNumber":10,"courseTitle":"第10课","lessonFile":"lesson10","description":"中级N3第10课"},
+                {"courseNumber":11,"courseTitle":"第11课","lessonFile":"lesson11","description":"中级N3第11课"},
+                {"courseNumber":12,"courseTitle":"第12课","lessonFile":"lesson12","description":"中级N3第12课"},
+            ]
+        },
         {
             "id": "liangs_class",
             "name": "梁老师初级",
             "description": "梁老师初级",
+            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd4712b75f.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
                 {"id":"upper","name":"初级上","description":"5-17课","lessons":[5,6,7,8,9,10,11,12,13,14,15,16,17]},
@@ -80,32 +105,34 @@ let data = {
             "id": "liangs_intermediate",
             "name": "梁老师中级",
             "description": "梁老师中级",
+            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd4715697e.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
                 {"id":"volume1","name":"第一册","description":"26-32课","lessons":[26,27,28,29,30,31,32]},
                 {"id":"volume2","name":"第二册","description":"33-39课","lessons":[33,34,35,36,37,38,39]}
             ],
             "courses": [
-                {"courseNumber":26,"courseTitle":"第26课","lessonFile":"lesson26","description":"梁老师中级第26课"},
-                {"courseNumber":27,"courseTitle":"第27课","lessonFile":"lesson27","description":"梁老师中级第27课"},
-                {"courseNumber":28,"courseTitle":"第28课","lessonFile":"lesson28","description":"梁老师中级第28课"},
-                {"courseNumber":29,"courseTitle":"第29课","lessonFile":"lesson29","description":"梁老师中级第29课"},
-                {"courseNumber":30,"courseTitle":"第30课","lessonFile":"lesson30","description":"梁老师中级第30课"},
-                {"courseNumber":31,"courseTitle":"第31课","lessonFile":"lesson31","description":"梁老师中级第31课"},
-                {"courseNumber":32,"courseTitle":"第32课","lessonFile":"lesson32","description":"梁老师中级第32课"},
-                {"courseNumber":33,"courseTitle":"第33课","lessonFile":"lesson33","description":"梁老师中级第33课"},
-                {"courseNumber":34,"courseTitle":"第34课","lessonFile":"lesson34","description":"梁老师中级第34课"},
-                {"courseNumber":35,"courseTitle":"第35课","lessonFile":"lesson35","description":"梁老师中级第35课"},
-                {"courseNumber":36,"courseTitle":"第36课","lessonFile":"lesson36","description":"梁老师中级第36课"},
-                {"courseNumber":37,"courseTitle":"第37课","lessonFile":"lesson37","description":"梁老师中级第37课"},
-                {"courseNumber":38,"courseTitle":"第38课","lessonFile":"lesson38","description":"梁老师中级第38课"},
-                {"courseNumber":39,"courseTitle":"第39课","lessonFile":"lesson39","description":"梁老师中级第39课"}
+                {"courseNumber":26,"courseTitle":"第26课","lessonFile":"lesson26","description":"オックスフォードへの日帰り旅"},
+                {"courseNumber":27,"courseTitle":"第27课","lessonFile":"lesson27","description":"中村さんの日記"},
+                {"courseNumber":28,"courseTitle":"第28课","lessonFile":"lesson28","description":"花粉症"},
+                {"courseNumber":29,"courseTitle":"第29课","lessonFile":"lesson29","description":"花粉飛散予想"},
+                {"courseNumber":30,"courseTitle":"第30课","lessonFile":"lesson30","description":"ネットアンケートの作り方"},
+                {"courseNumber":31,"courseTitle":"第31课","lessonFile":"lesson31","description":"ネットアンケートの作り方（後編）"},
+                {"courseNumber":32,"courseTitle":"第32课","lessonFile":"lesson32","description":"銀河鉄道の夜"},
+                {"courseNumber":33,"courseTitle":"第33课","lessonFile":"lesson33","description":"宮崎駿と宮沢賢治"},
+                {"courseNumber":34,"courseTitle":"第34课","lessonFile":"lesson34","description":"『嫌われる勇気』"},
+                {"courseNumber":35,"courseTitle":"第35课","lessonFile":"lesson35","description":"経営戦略のセミナー"},
+                {"courseNumber":36,"courseTitle":"第36课","lessonFile":"lesson36","description":"人生相談"},
+                {"courseNumber":37,"courseTitle":"第37课","lessonFile":"lesson37","description":"創造性の高い人材"},
+                {"courseNumber":38,"courseTitle":"第38课","lessonFile":"lesson38","description":"佐藤さんのブログ記事"},
+                {"courseNumber":39,"courseTitle":"第39课","lessonFile":"lesson39","description":"ミーティングの初参加"}
             ]
         },
         {
             "id": "duolingguo",
             "name": "多邻国",
             "description": "多邻国日语词汇",
+            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd47111ec1.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
                 {"id":"complete","name":"完整版","description":"1-5课","lessons":[1,2,3,4,5]}

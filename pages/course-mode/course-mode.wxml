@@ -15,8 +15,9 @@
   </view>
 
   <!-- 课程模块列表 -->
-  <view class="course-list fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}" wx:if="{{!isLoading && courseData.length > 0}}">
-    <view class="course-item {{item.isCompleted ? 'course-completed' : ''}}" 
+  <view class="course-list" wx:if="{{!isLoading && courseData.length > 0}}">
+    <view class="course-item {{pageLoaded ? 'show' : ''}} {{item.isCompleted ? 'course-completed' : ''}}" 
+          style="opacity: {{pageLoaded ? 1 : 0}}; transform: translateY({{pageLoaded ? 0 : 30}}rpx); transition: all 0.6s ease-out {{0.3 + index * 0.05}}s;"
           wx:for="{{courseData}}" 
           wx:key="courseNumber"
           data-index="{{index}}"
@@ -73,7 +74,7 @@
       <!-- 未完成课程的答题按钮 -->
       <view class="course-actions" wx:else>
         <view class="action-quiz" data-course="{{item}}" catchtap="onQuizTap">
-          <image class="action-icon" src="/images/icons/retune.svg" mode="aspectFit"></image>
+          <image class="quiz-icon-uncompleted" src="/images/icons/arrow_right.svg" mode="aspectFit"></image>
           <text class="action-text">答题</text>
         </view>
       </view>

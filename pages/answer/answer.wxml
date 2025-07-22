@@ -11,13 +11,26 @@
     <image class="banner-bigbread {{breadBouncing ? 'bread-bounce' : ''}}" src="https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png" mode="widthFix" bindtap="onBreadTap" />
   </view>
   <view class="content">
-    <!-- 题库筛选按钮 -->
-    <view class="option-card filter-card fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}" bindtap="navigateToFilter">
-      <view class="option-text-container">
-        <text class="option-main-text">选择你的课本&题型</text>
-        <text class="option-sub-text filter-sub-text">{{currentFilterDisplay}}</text>
+    <!-- 筛选按钮行 -->
+    <view class="filter-row fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}">
+      <!-- 题库筛选按钮 -->
+      <view class="filter-card-custom filter-main-button" bindtap="showCourseSelector">
+        <!-- 课本图片 -->
+        <view class="textbook-image-container">
+          <image class="textbook-image" src="{{currentTextbookImage}}" mode="aspectFit" />
+        </view>
+        <!-- 文字内容 -->
+        <view class="option-text-container">
+          <text class="option-main-text">更换課本</text>
+          <text class="option-sub-text filter-sub-text">当前：{{currentTextbookName}}</text>
+        </view>
+        <image class="option-icon arrow-white" src="/images/icons/arrow_right.svg" />
       </view>
-      <image class="option-icon arrow-white" src="/images/icons/arrow_right.svg" />
+      
+      <!-- 正方形按钮 -->
+       <view class="square-button" bindtap="onSquareButtonTap">
+         <text class="square-button-text">题型</text>
+       </view>
     </view>
 
     <!-- 时间线模式按钮 -->
@@ -30,33 +43,21 @@
     </view>
 
     <!-- 标准模式按钮 -->
-    <view class="option-card standard-mode-card fade-in-element fade-delay-5 {{pageLoaded ? 'show' : ''}}" bindtap="startQuickQuiz">
+    <view class="option-card standard-mode-card fade-in-element fade-delay-5 {{pageLoaded ? 'show' : ''}}" bindtap="navigateToStandardQuiz">
       <view class="option-text-container">
         <text class="option-main-text">标准模式</text>
-        <text class="option-sub-text">选择课程的30道题随机抽答</text>
+        <text class="option-sub-text">当前词库的全部单词随机抽答</text>
       </view>
       <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
     </view>
 
-    <!-- 无尽模式和错题重练合并行 -->
-    <view class="dual-card-row fade-in-element fade-delay-6 {{pageLoaded ? 'show' : ''}}">
-      <!-- 无尽模式按钮 -->
-      <view class="option-card endless-mode-card dual-card-left" bindtap="startEndlessQuiz">
-        <view class="option-text-container">
-          <text class="option-main-text">无尽模式</text>
-          <text class="option-sub-text">单词的无尽测试</text>
-        </view>
-        <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
+    <!-- 错题重练按钮 -->
+    <view class="option-card wrong-questions-card fade-in-element fade-delay-6 {{pageLoaded ? 'show' : ''}}" bindtap="practiceWrongQuestions">
+      <view class="option-text-container">
+        <text class="option-main-text">错词库({{mistakeCount}})</text>
+        <text class="option-sub-text">练习错误题目</text>
       </view>
-
-      <!-- 错题重练按钮 -->
-      <view class="option-card wrong-questions-card dual-card-right" bindtap="practiceWrongQuestions">
-        <view class="option-text-container">
-          <text class="option-main-text">错题重练({{mistakeCount}})</text>
-          <text class="option-sub-text">练习错误题目</text>
-        </view>
-        <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
-      </view>
+      <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
     </view>
   </view>
 
@@ -65,5 +66,23 @@
     visible="{{showTextbookSelector}}"
     bind:close="onCloseSelector"
     bind:select="onSelectTextbook"
+  />
+
+  <!-- 题型选择弹窗 -->
+  <question-type-popup
+    visible="{{showQuestionTypePopup}}"
+    questionTypeOptions="{{questionTypeOptions}}"
+    bind:close="onCloseQuestionTypePopup"
+    bind:confirm="onConfirmQuestionTypePopup"
+  />
+
+  <!-- 课程筛选弹窗 -->
+  <course-filter-popup
+    visible="{{showCourseSelector}}"
+    dictionaries="{{dictionaries}}"
+    selectedDictionaryIndex="{{selectedDictionaryIndex}}"
+    bind:close="onCloseCourseSelector"
+    bind:dictionaryChange="onCourseDictionaryChange"
+    bind:confirm="onCourseSelectorConfirm"
   />
 </view>

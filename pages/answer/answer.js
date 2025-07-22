@@ -7,13 +7,25 @@ Page({
   data: {
     // 根据Figma设计稿，一级页面主要是选项，不直接展示题目信息
     currentFilterDisplay: '', // 用于显示当前题库筛选范围
+    currentTextbookName: '请选择教材', // 当前选择的课本名称
+    currentTextbookImage: '/images/icons/card.svg', // 当前选择的课本图片，默认使用卡片图标
     showTextbookSelector: false, // 控制教材选择弹窗的显示
     pageLoaded: false, // 控制页面渐显动画
     mistakeCount: 0, // 错题数量显示（超过99显示∞）
     // 元素位置信息（用于碰撞检测）
     elementPositions: [],
     breadBouncing: false, // 控制面包弹跳动画状态
-    autoBounceTimer: null // 自动弹跳定时器
+    autoBounceTimer: null, // 自动弹跳定时器
+    
+    // 题型选择相关数据
+    showQuestionTypePopup: false, // 控制题型选择弹窗的显示
+    questionTypeOptions: [], // 题型选项列表
+    selectedQuestionTypes: [], // 当前选择的题型
+    
+    // 词库选择相关数据
+    dictionaries: [], // 词典列表
+    selectedDictionaryIndex: 0, // 当前选择的词典索引
+    showCourseSelector: false // 控制课程选择弹窗的显示
   },
   onLoad: function (options) {
     // 页面加载时可以进行一些初始化操作
@@ -25,8 +37,38 @@ Page({
       this.setData({ showTextbookSelector: true });
     }
 
+    // 初始化题型选择数据
+    this.initializeQuestionTypes();
+
     // 启动自动弹跳效果
     this.startAutoBounce();
+  },
+
+  /**
+   * 初始化题型选择数据
+   */
+  initializeQuestionTypes() {
+    const filterService = require('../../utils/filter.service.js');
+    const questionTypeOptions = filterService.getDefaultQuestionTypeOptions();
+    
+    // 获取当前用户的选择
+    const userFilter = filterManager.getFilter();
+    const selectedQuestionTypes = userFilter && userFilter.selectedQuestionTypes 
+      ? userFilter.selectedQuestionTypes 
+      : filterService.getDefaultSelectedQuestionTypes();
+    
+    // 更新选项的选中状态
+    const updatedOptions = questionTypeOptions.map(opt => ({
+      ...opt,
+      checked: selectedQuestionTypes.includes(opt.value)
+    }));
+    
+    this.setData({
+      questionTypeOptions: updatedOptions,
+      selectedQuestionTypes: selectedQuestionTypes
+    });
+    
+    console.log('题型选择数据已初始化:', { selectedQuestionTypes, updatedOptions });
   },
 
   /**
@@ -240,34 +282,79 @@ Page({
   onShow() {
     console.log('Page show');
     
-    // 获取用户在filter页面的真实选择（不包括临时的course模式选择）
+    // 获取用户在filter页面的真实选择（包括course模式的选择）
     let userFilter = filterManager.getFilter();
     let currentFilterDisplay = '请选择教材和课程'; // 默认提示
+    let currentTextbookName = '请选择教材'; // 默认课本名称
+    let currentTextbookImage = '/images/icons/card.svg'; // 默认课本图片
 
-    // 如果当前筛选是course模式（来自course-mode页面的临时选择），则尝试恢复用户的原始选择
-    if (userFilter && userFilter.quizMode === 'course') {
-      const originalFilter = wx.getStorageSync('originalUserFilter');
-      if (originalFilter) {
-        // 恢复用户的原始筛选条件
-        filterManager.saveFilter(originalFilter);
-        userFilter = originalFilter;
-        console.log('恢复用户原始筛选条件:', originalFilter);
-        // 清除临时保存的原始选择
-        wx.removeStorageSync('originalUserFilter');
+    console.log('📋 当前筛选信息:', userFilter);
+
+    // 优先处理用户的筛选选择（包括course模式）
+    if (userFilter && (userFilter.selectedDictionaryName || userFilter.dictionaryId)) {
+      console.log('📋 检测到用户筛选信息:', userFilter);
+      
+      // 获取教材名称 - 优先使用selectedDictionaryName，如果没有则从数据库查找
+      if (userFilter.selectedDictionaryName) {
+        currentTextbookName = userFilter.selectedDictionaryName;
+      } else if (userFilter.dictionaryId) {
+        const dictionaries = require('../../database/dictionaries.js').dictionaries;
+        const selectedDict = dictionaries.find(d => d.id === userFilter.dictionaryId);
+        currentTextbookName = selectedDict ? selectedDict.name : '未知教材';
       }
-    }
+      
+      // 获取教材图片 - 优先使用dictionaryId，如果没有则使用selectedDictionaryKey
+      const imageId = userFilter.dictionaryId || userFilter.selectedDictionaryKey;
+      if (imageId) {
+        console.log('🔍 准备获取课本图片，imageId:', imageId);
+        currentTextbookImage = this.getTextbookImage(imageId);
+      }
+      
+      // 构建显示文本
+      if (userFilter.selectedLessonName && userFilter.selectedLessonName !== '全部课程') {
+        currentFilterDisplay = `当前：${currentTextbookName} - ${userFilter.selectedLessonName}`;
+      } else {
+        currentFilterDisplay = `当前：${currentTextbookName} - 全部课程`;
+      }
 
-    // 显示用户的筛选选择
-    if (userFilter && userFilter.selectedDictionaryName && userFilter.selectedLessonName) {
-      currentFilterDisplay = `当前：${userFilter.selectedDictionaryName} - ${userFilter.selectedLessonName}`;
+      // 如果是course模式，确保显示具体的课程信息
+      if (userFilter.quizMode === 'course' && userFilter.selectedLessonName) {
+        console.log('🎯 检测到课程模式，显示具体课程信息');
+        currentFilterDisplay = `当前：${currentTextbookName} - ${userFilter.selectedLessonName}`;
+      }
+      
+      console.log('✅ 筛选信息处理完成:', {
+        currentTextbookName,
+        currentFilterDisplay,
+        currentTextbookImage
+      });
     } else {
       // 如果没有筛选条件，检查是否有旧的selectedDictionary
       const selectedDictId = wx.getStorageSync('selectedDictionary');
+      console.log('🔍 从本地存储获取课本ID:', selectedDictId);
       if (selectedDictId) {
         const dictionaries = require('../../database/dictionaries.js').dictionaries;
         const selectedDict = dictionaries.find(d => d.id === selectedDictId);
+        console.log('📚 找到的课本信息:', selectedDict);
         if (selectedDict) {
+          currentTextbookName = selectedDict.name;
+          console.log('🔍 准备获取课本图片，dictionaryId:', selectedDict.id);
+          currentTextbookImage = this.getTextbookImage(selectedDict.id);
           currentFilterDisplay = `当前：${selectedDict.name} - 全部课程`;
+        }
+      } else {
+        // 如果完全没有数据，设置默认的大家的日语
+        console.log('🎯 没有找到任何教材数据，设置默认教材');
+        const dictionaries = require('../../database/dictionaries.js').dictionaries;
+        const defaultDict = dictionaries.find(d => d.id === 'everyones_japanese') || dictionaries[0];
+        if (defaultDict) {
+          currentTextbookName = defaultDict.name;
+          currentTextbookImage = this.getTextbookImage(defaultDict.id);
+          currentFilterDisplay = `当前：${defaultDict.name} - 全部课程`;
+          
+          // 保存默认选择到本地存储
+          wx.setStorageSync('selectedDictionary', defaultDict.id);
+          console.log('💾 已保存默认教材到本地存储:', defaultDict.id);
         }
       }
     }
@@ -277,8 +364,17 @@ Page({
     // 当错题数量超过99时显示∞符号
     const mistakeCountDisplay = mistakeCount > 99 ? '∞' : mistakeCount;
 
+    console.log('🎯 最终设置的数据:', {
+      currentFilterDisplay,
+      currentTextbookName,
+      currentTextbookImage,
+      mistakeCount: mistakeCountDisplay
+    });
+
     this.setData({
       currentFilterDisplay: currentFilterDisplay,
+      currentTextbookName: currentTextbookName,
+      currentTextbookImage: currentTextbookImage,
       mistakeCount: mistakeCountDisplay // 更新错题数量显示
     });
 
@@ -291,6 +387,41 @@ Page({
       if (index !== -1) {
         this.getTabBar().updateSelected(index);
       }
+    }
+  },
+
+  /**
+   * 根据课本ID获取对应的图片路径
+   */
+  getTextbookImage(dictionaryId) {
+    // 动态从数据库获取课本信息
+    try {
+      console.log('🔍 获取课本图片，dictionaryId:', dictionaryId);
+      
+      if (!dictionaryId) {
+        console.warn('⚠️ dictionaryId 为空，使用默认的大家的日语图片');
+        // 当dictionaryId为空时，返回默认的大家的日语图片，而不是通用图标
+        return 'https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg';
+      }
+      
+      const dictionariesData = require('../../database/dictionaries.js');
+      console.log('📚 数据库加载成功，课本数量:', dictionariesData.dictionaries.length);
+      
+      const dictionary = dictionariesData.dictionaries.find(dict => dict.id === dictionaryId);
+      console.log('🎯 找到的课本信息:', dictionary);
+      
+      if (dictionary && dictionary.cover_image) {
+        console.log('✅ 使用数据库中的封面图片:', dictionary.cover_image);
+        return dictionary.cover_image;
+      }
+      
+      console.warn('⚠️ 数据库中没有找到图片，使用默认图片');
+      // 如果数据库中没有图片字段，返回默认图片
+      return 'https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg';
+    } catch (error) {
+      console.error('❌ 获取课本图片失败:', error);
+      // 即使出错也返回默认的大家的日语图片
+      return 'https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg';
     }
   },
 
@@ -307,7 +438,7 @@ Page({
       if (defaultDictionary) {
         // 构建一个与 filter 页面保存的结构一致的筛选条件对象
         const defaultFilter = {
-          selectedDictionaryIndex: allDictionaries.findIndex(d => d.id === defaultDictionaryId) + 1, // +1因为有'全部辞典'
+          selectedDictionaryIndex: allDictionaries.findIndex(d => d.id === defaultDictionaryId), // 直接使用词典索引
           selectedLessonFiles: [`DICTIONARY_${defaultDictionary.id}_ALL_LESSONS`],
           selectedLessonName: '全部课程',
           selectedDictionaryName: defaultDictionary.name,
@@ -322,7 +453,9 @@ Page({
 
         // 更新UI显示
         this.setData({
-          currentFilterDisplay: `当前：${defaultDictionary.name} - 全部课程`
+          currentFilterDisplay: `当前：${defaultDictionary.name} - 全部课程`,
+          currentTextbookName: defaultDictionary.name,
+          currentTextbookImage: this.getTextbookImage(defaultDictionary.id)
         });
 
         wx.showToast({
@@ -345,8 +478,7 @@ Page({
 
     // 加载所有词典以找到索引
     const allDictionaries = require('../../database/dictionaries.js').dictionaries;
-    const dictionariesWithAllOption = [{ id: 'all', name: '全部辞典' }, ...allDictionaries];
-    const dictionaryIndex = dictionariesWithAllOption.findIndex(d => d.id === selectedDictionary.id);
+    const dictionaryIndex = allDictionaries.findIndex(d => d.id === selectedDictionary.id);
 
     // 构建一个与 filter 页面保存的结构一致的筛选条件对象
     const userFilter = {
@@ -368,7 +500,9 @@ Page({
     // 更新页面显示并关闭弹窗
     this.setData({
       showTextbookSelector: false,
-      currentFilterDisplay: `当前：${selectedDictionary.name} - 全部课程`
+      currentFilterDisplay: `当前：${selectedDictionary.name} - 全部课程`,
+      currentTextbookName: selectedDictionary.name,
+      currentTextbookImage: this.getTextbookImage(selectedDictionary.id)
     });
 
     wx.showToast({
@@ -433,13 +567,99 @@ Page({
   },
 
   /**
-   * 跳转到题库筛选页面
+   * 跳转到题库筛选页面 -> 改为显示课程选择弹窗
    */
   navigateToFilter() {
-    console.log('Navigate to Filter');
-    // 跳转到筛选页面时，可以传递一个默认的答题模式，例如 'quick'
-    // filter.js 的 onLoad 会接收这个 mode
-    wx.navigateTo({ url: '/pages/filter/filter?mode=quick' });
+    console.log('显示课程选择弹窗');
+    this.showCourseSelector();
+  },
+
+  /**
+   * 显示课程选择弹窗（现在简化为词库选择）
+   */
+  showCourseSelector() {
+    const filterService = require('../../utils/filter.service.js');
+    
+    // 初始化词典列表，传递默认的options参数
+    const dictionaries = filterService.initializeFilterState({ mode: 'quick' }).dictionaries;
+    
+    // 获取当前筛选条件
+    const filterManager = require('../../utils/filterManager.js');
+    const currentFilter = filterManager.getFilter() || {};
+    
+    // 找到当前选择的词典索引
+    let selectedDictionaryIndex = 0;
+    if (currentFilter.dictionaryId) {
+      const foundIndex = dictionaries.findIndex(dict => dict.id === currentFilter.dictionaryId);
+      if (foundIndex !== -1) {
+        selectedDictionaryIndex = foundIndex;
+      }
+    }
+    
+    this.setData({
+      dictionaries: dictionaries,
+      selectedDictionaryIndex: selectedDictionaryIndex,
+      showCourseSelector: true
+    });
+  },
+
+  /**
+   * 正方形按钮点击事件 - 显示题型选择弹窗
+   */
+  onSquareButtonTap() {
+    console.log('Square button tapped - 显示题型选择弹窗');
+    this.showQuestionTypePopup();
+  },
+
+  /**
+   * 显示题型选择弹窗
+   */
+  showQuestionTypePopup() {
+    // 如果数据还没有初始化，先初始化
+    if (!this.data.questionTypeOptions || this.data.questionTypeOptions.length === 0) {
+      this.initializeQuestionTypes();
+    }
+    
+    // 显示弹窗
+    this.setData({
+      showQuestionTypePopup: true
+    });
+  },
+
+  /**
+   * 关闭题型选择弹窗
+   */
+  onCloseQuestionTypePopup() {
+    this.setData({ showQuestionTypePopup: false });
+  },
+
+  /**
+   * 确认题型选择
+   */
+  onConfirmQuestionTypePopup(e) {
+    const { selectedQuestionTypes, questionTypeOptions } = e.detail;
+    
+    // 更新当前页面数据
+    this.setData({
+      selectedQuestionTypes,
+      questionTypeOptions,
+      showQuestionTypePopup: false
+    });
+    
+    // 保存到筛选条件中
+    const userFilter = filterManager.getFilter() || {};
+    const updatedFilter = {
+      ...userFilter,
+      selectedQuestionTypes: selectedQuestionTypes
+    };
+    
+    filterManager.saveFilter(updatedFilter);
+    
+    wx.showToast({
+      title: '题型已更新',
+      icon: 'success',
+      duration: 1500
+    });
   },
 
   /**
@@ -457,7 +677,7 @@ Page({
         duration: 1500
       });
       setTimeout(() => {
-        wx.navigateTo({ url: '/pages/filter/filter' });
+        this.showCourseSelector();
       }, 1000);
       return;
     }
@@ -487,49 +707,6 @@ Page({
   },
 
   /**
-   * 开始无尽模式
-   */
-  async startEndlessQuiz() {
-    console.log('Start Endless Quiz');
-    let userFilter = filterManager.getFilter();
-
-    if (!userFilter || !userFilter.selectedLessonFiles || userFilter.selectedLessonFiles.length === 0) {
-      wx.showToast({
-        title: '请先选择题库范围',
-        icon: 'none',
-        duration: 1500
-      });
-      setTimeout(() => {
-        wx.navigateTo({ url: '/pages/filter/filter' });
-      }, 1000);
-      return;
-    }
-
-    wx.showLoading({ title: '正在出题...' });
-
-    try {
-      const quizData = await quizService.initializeQuiz({ mode: 'endless' });
-      wx.hideLoading();
-
-      if (quizData.error) {
-        wx.showToast({ title: quizData.error, icon: 'none' });
-        return;
-      }
-
-      if (!quizData.questions || quizData.questions.length === 0) {
-        wx.showToast({ title: '没有找到符合条件的题目', icon: 'none' });
-        return;
-      }
-      
-      this.navigateToQuizPage(quizData.questions, quizData.allWordsInLesson, userFilter, 'endless');
-    } catch (error) {
-      wx.hideLoading();
-      console.error('Failed to start endless quiz:', error);
-      wx.showToast({ title: '出题失败，请稍后重试', icon: 'none' });
-    }
-  },
-
-  /**
    * 跳转到答题页
    */
   navigateToQuizPage(questions, words, filter, mode) {
@@ -541,6 +718,35 @@ Page({
     // 跳转到quiz页面，并通过URL参数传递数据
     wx.navigateTo({
       url: `/pages/quiz/quiz?questions=${encodeURIComponent(questionsStr)}&words=${encodeURIComponent(wordsStr)}&filter=${encodeURIComponent(filterStr)}&mode=${mode}`
+    });
+  },
+
+  /**
+   * 标准模式答题
+   */
+  navigateToStandardQuiz() {
+    const filterManager = require('../../utils/filterManager.js');
+    const currentFilter = filterManager.getFilter();
+    
+    // 如果没有选择词库，提示用户选择
+    if (!currentFilter || !currentFilter.dictionaryId) {
+      wx.showToast({
+        title: '请先选择词库',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+    
+    // 确保使用全部课程
+    const updatedFilter = {
+      ...currentFilter,
+      selectedLessonFiles: [`DICTIONARY_${currentFilter.dictionaryId}_ALL_LESSONS`]
+    };
+    filterManager.saveFilter(updatedFilter);
+    
+    wx.navigateTo({
+      url: '/pages/quiz/quiz'
     });
   },
 
@@ -624,5 +830,54 @@ Page({
     
     // 启动第一次自动弹跳
     scheduleNextBounce();
+  },
+
+  // ========== 词库选择弹窗相关方法 ==========
+
+  /**
+   * 关闭词库选择弹窗
+   */
+  onCloseCourseSelector() {
+    this.setData({ showCourseSelector: false });
+  },
+
+  /**
+   * 处理词库选择变化
+   */
+  onCourseDictionaryChange(e) {
+    const { selectedDictionaryIndex } = e.detail;
+    this.setData({ selectedDictionaryIndex });
+  },
+
+  /**
+   * 确认词库选择
+   */
+  onCourseSelectorConfirm() {
+    const selectedDict = this.data.dictionaries[this.data.selectedDictionaryIndex];
+    const filterManager = require('../../utils/filterManager.js');
+    
+    // 保存筛选设置（简化版，只保存词库信息）
+    const filterToSave = {
+      dictionaryId: selectedDict.id,
+      selectedDictionaryIndex: this.data.selectedDictionaryIndex,
+      selectedLessonFiles: [`DICTIONARY_${selectedDict.id}_ALL_LESSONS`], // 默认选择全部课程
+      selectedQuestionTypes: this.data.selectedQuestionTypes || []
+    };
+    
+    filterManager.saveFilter(filterToSave);
+    
+    // 更新主页面显示
+    this.setData({
+      showCourseSelector: false,
+      currentFilterDisplay: `当前：${selectedDict.name} - 全部课程`,
+      currentTextbookName: selectedDict.name,
+      currentTextbookImage: this.getTextbookImage(selectedDict.id)
+    });
+    
+    wx.showToast({
+      title: '词库选择已保存',
+      icon: 'success',
+      duration: 1500
+    });
   }
 })

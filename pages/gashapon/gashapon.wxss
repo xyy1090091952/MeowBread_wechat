@@ -76,15 +76,17 @@ page {
 .side-button {
   display: flex;
   align-items: center;
-  justify-content: center; padding: 12rpx 24rpx;
+  justify-content: center; 
+  padding: 0rpx 24rpx;
   width: 100rpx;
   height: 64rpx;
   background-color: #fff;
-  border-radius: 16rpx;
+  border-radius: 60rpx;
   margin-bottom: 16rpx;
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
-  font-size: 32rpx; 
-  color: #333;
+  font-size: 28rpx; 
+  font-weight: bold;
+  color: #000000;
 }
 
 /* 调试按钮特殊样式 */
@@ -176,7 +178,7 @@ page {
 }
 
 .series-tag text {
-  font-size: 28rpx;
+  font-size: 32rpx;
   font-weight: 600;
   color: rgba(0, 0, 0, 0.5); /* 黑色50%透明度 */
 }

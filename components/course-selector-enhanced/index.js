@@ -195,15 +195,27 @@ Component({
     /**
      * 阻止事件冒泡
      */
-    stopPropagation() {
+    stopPropagation(e) {
       // 阻止事件冒泡
+      if (e && e.stopPropagation) {
+        e.stopPropagation();
+      }
     },
 
     /**
      * 阻止滚动穿透
      */
-    preventPropagation() {
-      // 阻止滚动穿透
+    preventPropagation(e) {
+      // 阻止滚动穿透和事件冒泡
+      if (e) {
+        if (e.stopPropagation) {
+          e.stopPropagation();
+        }
+        if (e.preventDefault) {
+          e.preventDefault();
+        }
+      }
+      return false;
     }
   },
 

@@ -127,22 +127,86 @@
 }
 
 /* 双卡片行容器 */
-.dual-card-row {
+/* 筛选按钮行容器 */
+.filter-row {
   display: flex;
   justify-content: space-between;
-  gap: 24rpx; /* 两个卡片之间的间距 */
+  align-items: stretch; /* 让子元素高度一致 */
+  gap: 16rpx; /* 两个按钮之间的间距 */
   margin-bottom: 24rpx; /* 与其他卡片保持一致的间距 */
-  width: 100%; /* 占满容器宽度，与其他卡片保持一致 */
+  width: 100%; /* 占满容器宽度 */
 }
 
-/* 双卡片左侧（无尽模式） */
-.dual-card-left {
-  flex: 1; /* 等分空间 */
+/* 主筛选按钮 - 占据剩余空间 */
+.filter-main-button {
+  flex: 1; /* 占据剩余空间 */
+  margin-bottom: 0; /* 在行容器中不需要底部边距 */
+  min-height: 196rpx; /* 设置最小高度与正方形按钮一致 */
+  box-sizing: border-box; /* 确保padding包含在高度内 */
+  background: #4845F7 !important;
 }
 
-/* 双卡片右侧（错题重练） */
-.dual-card-right {
-  flex: 1; /* 等分空间 */
+/* 课本图片容器 */
+.textbook-image-container {
+  width: 108rpx; /* 恢复原来的容器宽度 */
+  height: 160rpx; /* 图片容器高度 */
+  margin-right: 24rpx; /* 与文字内容的间距 */
+  flex-shrink: 0; /* 不允许收缩 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1); /* 半透明白色背景 */
+  border-radius: 32rpx; /* 小圆角 */
+  overflow: hidden; /* 确保图片不会溢出 */
+}
+
+/* 课本图片 */
+.textbook-image {
+  width: 100%; /* 填满容器宽度 */
+  height: 100%; /* 填满容器高度 */
+  object-fit: cover; /* 保持比例并完全填满容器，裁剪多余部分 */
+  object-position: center; /* 图片居中显示 */
+  border-radius: 32rpx; /* 添加16rpx圆角 */
+  border: 4rpx solid #FFFFFF; /* 添加4rpx纯白色描边 */
+  box-sizing: border-box; /* 确保描边不会增加元素总尺寸 */
+}
+
+/* 正方形按钮 */
+.square-button {
+  width: 196rpx; /* 正方形宽度，根据option-card的高度计算 */
+  height: 196rpx; /* 正方形高度，与宽度相同 */
+  background: #4845F7; /* 纯色背景 */
+  border-radius: 48rpx; /* 与option-card相同的圆角 */
+  box-shadow: 0px 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 与option-card相同的阴影 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0; /* 不允许收缩 */
+}
+
+/* 正方形按钮文字 */
+.square-button-text {
+  font-size: 32rpx; /* 32rpx字号 */
+  color: #FFFFFF; /* 白色文字 */
+  font-weight: 800; /* 与其他按钮保持一致的字重 */
+}
+
+/* 独立的筛选卡片样式 - 不依赖option-card */
+.filter-card-custom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40rpx 0 16rpx; /* Figma 内边距 (16px, 20px) */
+  border-radius: 48rpx; /* Figma 圆角 (16px), 调整圆角以匹配图片 */
+  box-shadow: 0px 8rpx 24rpx rgba(0, 0, 0, 0.05); /* Figma 阴影 */
+  background: linear-gradient(90deg, #4845F7 0%, #93CDFF 100%); /* Figma 渐变背景色 */
+  border-image-source: linear-gradient(90deg, #4845F7 0%, #93CDFF 100%); /* Figma 渐变描边 */
+}
+
+/* 筛选卡片的文字颜色 */
+.filter-card-custom .option-main-text,
+.filter-card-custom .option-sub-text {
+  color: #FFFFFF; /* 筛选卡片文字颜色 */
 }
 
 .option-card {
@@ -155,16 +219,6 @@
   box-shadow: 0px 8rpx 24rpx rgba(0, 0, 0, 0.05); /* Figma 阴影 */
 }
 
-/* 在双卡片行中的卡片不需要底部边距 */
-.dual-card-row .option-card {
-  margin-bottom: 0;
-}
-
-.filter-card {
-  background: linear-gradient(90deg, #4845F7 0%, #93CDFF 100%); /* Figma 渐变背景色 */
-  border-image-source: linear-gradient(90deg, #4845F7 0%, #93CDFF 100%); /* Figma 渐变描边 */
-}
-
 .standard-mode-card {
   background-color: #FFFFFF;
   position: relative; /* 相对定位用于伪元素定位 */
@@ -173,29 +227,6 @@
 }
 
 .standard-mode-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: inherit; /* 保持圆角一致 */
-  padding: 4rpx; /* 描边宽度 */
-  background: linear-gradient(90deg, #4845F7 0%, #93CDFF 100%); /* 应用渐变 */
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor; /* 兼容性处理 */
-  mask-composite: exclude;
-  z-index: -1; /* 置于内容下方 */
-}
-
-.endless-mode-card {
-  background-color: #FFFFFF;
-  position: relative; /* 相对定位用于伪元素定位 */
-  border-radius: 48rpx; /* 继承父容器圆角 */
-  z-index: 1;
-}
-
-.endless-mode-card::before {
   content: '';
   position: absolute;
   top: 0;
@@ -269,13 +300,7 @@
   font-weight: 800; /* 字重 Extra Bold */
 }
 
-.filter-card .option-main-text,
-.filter-card .option-sub-text {
-  color: #FFFFFF; /* 筛选卡片文字颜色 */
-}
-
 .standard-mode-card .option-main-text,
-.endless-mode-card .option-main-text,
 .wrong-questions-card .option-main-text,
 .timeline-mode-card .option-main-text {
   color: #1D2129; /* 其他卡片主文字颜色 */
@@ -287,7 +312,6 @@
 }
 
 .standard-mode-card .option-sub-text,
-.endless-mode-card .option-sub-text,
 .wrong-questions-card .option-sub-text,
 .timeline-mode-card .option-sub-text {
   color: #86909C; /* 其他卡片副文字颜色 */

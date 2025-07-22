@@ -1,0 +1,40 @@
+<!--pages/cache-manager/cache-manager.wxml-->
+<view class="container">
+  <!-- 从vocabulary页面复制的section-title -->
+  <view class="section-title fade-in-element fade-delay-2 show">缓存详情</view>
+
+  <!-- 从quiz-details页面复制的form-item-wrapper -->
+  <view class="detail-forms fade-in-element fade-delay-3 show">
+    <view class="form-item-wrapper">
+      <view class="form-label">总缓存数</view>
+      <view class="form-value">{{cacheStats.totalCaches}}</view>
+    </view>
+    
+    <view class="form-item-wrapper">
+      <view class="form-label">占用空间</view>
+      <view class="form-value">{{cacheStats.totalSizeKB}}KB</view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="actions-section">
+    <button 
+      class="action-button primary" 
+      bindtap="clearAllCache"
+      disabled="{{loading}}"
+    >
+      <view class="button-content">
+        <view class="button-icon">🧹</view>
+        <view class="button-text">清理所有缓存</view>
+      </view>
+    </button>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <view class="loading-text">处理中...</view>
+    </view>
+  </view>
+</view>

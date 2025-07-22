@@ -67,7 +67,7 @@
     左边距48rpx，右边距48rpx+24rpx（最后一个卡片的margin-right）
   */
   padding-left: 48rpx;
-  padding-right: 72rpx; /* 48rpx + 24rpx，确保最后一个卡片右边也有48rpx的空间 */
+  padding-right: 24rpx; 
 }
 
 /* 卡片 */

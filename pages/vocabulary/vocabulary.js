@@ -23,12 +23,7 @@ Page({
    */
   prepareData() {
     const db = require('../../database/dictionaries.js').dictionaries;
-    const coverMap = {
-      'everyones_japanese': 'https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg',
-      'liangs_class': 'https://free.picui.cn/free/2025/07/20/687bd4712b75f.jpg',
-      'liangs_intermediate': 'https://free.picui.cn/free/2025/07/20/687bd4715697e.jpg',
-      'duolingguo': 'https://free.picui.cn/free/2025/07/20/687bd47111ec1.jpg'
-    };
+    // 封面图片现在从 dictionaries.js 中直接获取，不再需要本地的 coverMap
 
     // 显示加载状态
     this.setData({
@@ -54,7 +49,7 @@ Page({
         progress: progress,
         learnedCount: learningProgress.learnedCount,
         totalCount: totalWordCount,
-        cover: coverMap[dict.id] || ''
+        cover: dict.cover_image || ''
       };
     })());
 
@@ -98,11 +93,11 @@ Page({
 
       const categories = [{
         id: 'textbook',
-        title: '课本Textbook',
+        title: '教科書',
         dicts: sortDictsBySeriesAndSelection(dicts.filter(d => d.id !== 'duolingguo'))
       }, {
         id: 'software',
-        title: '其他Other',
+        title: '他の教材',
         dicts: sortDictsBySeriesAndSelection(dicts.filter(d => d.id === 'duolingguo'))
       }];
 

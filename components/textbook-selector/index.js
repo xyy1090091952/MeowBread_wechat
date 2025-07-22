@@ -61,12 +61,7 @@ Component({
     loadTextbooks() {
       const db = require('../../database/dictionaries.js').dictionaries;
       const textbooks = db.map(dict => {
-        const coverMap = {
-          'everyones_japanese': 'https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg',
-          'liangs_class': 'https://free.picui.cn/free/2025/07/20/687bd4712b75f.jpg',
-          'liangs_intermediate': 'https://free.picui.cn/free/2025/07/20/687bd4715697e.jpg',
-          'duolingguo': 'https://free.picui.cn/free/2025/07/20/687bd47111ec1.jpg'
-        };
+      // 封面图片现在从 dictionaries.js 中直接获取，不再需要本地的 coverMap
         // 初始化词汇量为0
         let wordCount = 0;
         // 创建一个Promise数组来处理所有的异步请求
@@ -104,7 +99,7 @@ Component({
           this.setData({ textbooks: updatedTextbooks });
         });
 
-        return { ...dict, wordCount: '加载中', cover: coverMap[dict.id] || '' };
+        return { ...dict, wordCount: '加载中', cover: dict.cover_image || '' };
       });
       this.setData({ textbooks });
     },

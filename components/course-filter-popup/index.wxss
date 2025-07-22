@@ -1,0 +1,196 @@
+/* components/course-filter-popup/index.wxss */
+
+/* 弹窗遮罩 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+/* 弹窗动画样式 */
+.modal-fade-in {
+  animation: modalFadeIn 0.2s ease-out forwards;
+}
+
+.modal-fade-out {
+  animation: modalFadeOut 0.2s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.modal-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(100%);
+  transition: transform 0.3s ease-out;
+  z-index: 100000;
+}
+
+.modal-container.modal-show {
+  transform: translateY(0);
+}
+
+.modal-content {
+  background-color: #FAFAFA;
+  border-top-left-radius: 24rpx;
+  border-top-right-radius: 24rpx;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.3s ease-out;
+}
+
+/* 弹窗内容动画 - 修复双重动画问题 */
+.modal-mask.modal-fade-in + .modal-container .modal-content {
+  transform: translateY(0);
+}
+
+.modal-mask.modal-fade-out + .modal-container .modal-content {
+  transform: translateY(100%);
+}
+
+.modal-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 32rpx;
+  text-align: left;
+  padding: 48rpx 48rpx 0 48rpx;
+}
+
+.book-list {
+  flex: 1;
+  padding: 32rpx 48rpx;
+  display: flex;
+  flex-direction: row;
+  gap: 24rpx;
+  max-height: 70vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* 隐藏滚动条 */
+.book-list::-webkit-scrollbar {
+  display: none;
+}
+
+.book-card {
+  width: 400rpx;
+  height: 640rpx;
+  background: #ffffff;
+  border-radius: 48rpx;
+  box-shadow: 8rpx 8rpx 32rpx rgba(0,0,0,0.08);
+  position: relative;
+  flex-shrink: 0;
+  border: 4rpx solid transparent;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.book-card.selected {
+  border: 4rpx solid #4845F7;
+}
+
+.book-cover {
+  width: 336rpx;
+  height: 512rpx;
+  margin: 32rpx 32rpx 0 32rpx;
+  border-radius: 8rpx;
+  object-fit: cover;
+}
+
+.book-info {
+  position: absolute;
+  bottom: 32rpx;
+  left: 48rpx;
+  right: 48rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 24rpx;
+  color: #000;
+}
+
+.book-name {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.book-word-count {
+  font-size: 12px;
+  font-weight: bold;
+  color: #666;
+  text-align: right;
+}
+
+.progress-tag {
+  position: absolute;
+  top: 476rpx;
+  left: 48rpx;
+  width: 168rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  border: 1rpx solid rgba(72,69,247,0.2);
+  border-radius: 24rpx;
+  background: #ffffff;
+  color: #000;
+}
+
+.modal-buttons {
+  padding: 32rpx 48rpx calc(32rpx + env(safe-area-inset-bottom));
+  background-color: #FAFAFA;
+  display: flex;
+  justify-content: center;
+}
+
+.btn {
+  width: 100%;
+  height: 88rpx;
+  border-radius: 48rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.btn-confirm {
+  background-color: #4845F7;
+  color: #ffffff;
+}
+
+.btn-confirm.disabled {
+  background-color: #E3E3E3;
+  color: #FFFFFF;
+}

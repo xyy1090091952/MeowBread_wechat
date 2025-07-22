@@ -52,6 +52,18 @@ page {
 .fade-delay-6 { transition-delay: 0.6s; }
 .fade-delay-7 { transition-delay: 0.7s; }
 .fade-delay-8 { transition-delay: 0.8s; }
+.fade-delay-9 { transition-delay: 0.9s; }
+.fade-delay-10 { transition-delay: 1.0s; }
+.fade-delay-11 { transition-delay: 1.1s; }
+.fade-delay-12 { transition-delay: 1.2s; }
+.fade-delay-13 { transition-delay: 1.3s; }
+.fade-delay-14 { transition-delay: 1.4s; }
+.fade-delay-15 { transition-delay: 1.5s; }
+.fade-delay-16 { transition-delay: 1.6s; }
+.fade-delay-17 { transition-delay: 1.7s; }
+.fade-delay-18 { transition-delay: 1.8s; }
+.fade-delay-19 { transition-delay: 1.9s; }
+.fade-delay-20 { transition-delay: 2.0s; }
 
 /* 加载状态类 - 页面加载时的占位 */
 .loading-placeholder {
@@ -64,4 +76,4 @@ page {
   0% { background-color: #f8f9fa; }
   50% { background-color: #e9ecef; }
   100% { background-color: #f8f9fa; }
-} 
+}

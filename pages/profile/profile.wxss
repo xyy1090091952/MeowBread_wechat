@@ -282,6 +282,31 @@
   margin-top: 8rpx;
 }
 
+/* 缓存管理按钮 */
+.cache-manager-button {
+  width: 160rpx; /* 按钮宽度 */
+  height: 96rpx; /* 按钮高度 */
+  background-color: #FFFFFF; /* 白色背景 */
+  border-radius: 48rpx; /* 圆角 */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 项目约定的shadow投影 */
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 左右居中 */
+  margin-left: 16rpx; /* 与user-text-container保持间距 */
+  transition: all 0.2s ease; /* 添加过渡效果 */
+}
+
+.cache-manager-button:active {
+  transform: scale(0.95); /* 点击时轻微缩放 */
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08); /* 点击时阴影变小 */
+}
+
+.cache-button-text {
+  font-size: 32rpx; /* 32rpx字体大小 */
+  color: #000000; /* 黑色字 */
+  font-weight: 800; 
+}
+
 /* ==================== 答题结果模块 ==================== */
 .quiz-results-section {
   width: 100%;
@@ -529,6 +554,61 @@
 
 .arrow-black {
   filter: none; /* 黑色箭头，保持原色 */
+}
+
+/* 缓存管理箭头颜色 - 深蓝色 */
+.arrow-cache {
+  filter: invert(25%) sepia(85%) saturate(2000%) hue-rotate(220deg) brightness(95%) contrast(105%);
+}
+
+/* ==================== 缓存管理模块 ==================== */
+.cache-manager-section {
+  width: 100%;
+  height: 176rpx;
+  background: linear-gradient(to right, #4845F7, #7B68EE);
+  border-radius: 48rpx;
+  box-shadow: 0px 8rpx 24rpx rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  margin-top: 24rpx; /* 与上方模块保持间距 */
+}
+
+.cache-manager-section .option-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-grow: 1;
+  position: absolute;
+  top: 50%;
+  left: 40rpx;
+  right: 80rpx;
+  transform: translateY(-50%);
+}
+
+.cache-manager-section .option-main-text {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.cache-manager-section .option-sub-text {
+  font-size: 24rpx;
+  margin-top: 8rpx;
+  color: #FFFFFF;
+  opacity: 0.9;
+}
+
+.cache-manager-section .option-icon {
+  width: 32rpx;
+  height: 32rpx;
+  position: absolute;
+  right: 48rpx;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /* ==================== 通用样式 ==================== */

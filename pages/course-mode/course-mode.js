@@ -46,18 +46,77 @@ Page({
   async onShow() {
     console.log('Course mode page show');
     
+    // 恢复用户之前选择的子册
+    this.restoreSelectedCourseRange();
+    
     // 每次页面显示时，都重新加载数据，确保数据最新
     await this.loadCourseData();
     
     // 更新显示的筛选信息
     const filter = filterManager.getFilter();
-    const currentFilterDisplay = filter ? 
-      `你当前的课本：${filter.selectedDictionaryName}` : 
-      '请先选择题库';
+    let currentFilterDisplay = '请先选择题库';
+    
+    if (filter) {
+      let dictionaryName = filter.selectedDictionaryName;
+      
+      // 如果selectedDictionaryName不存在，尝试从字典数据中获取
+      if (!dictionaryName) {
+        const dictionaryId = filter.selectedDictionaryKey || filter.dictionaryId;
+        if (dictionaryId) {
+          const dictionary = dictionaries.dictionaries.find(d => d.id === dictionaryId);
+          dictionaryName = dictionary ? dictionary.name : dictionaryId;
+        }
+      }
+      
+      currentFilterDisplay = dictionaryName ? 
+        `你当前的课本：${dictionaryName}` : 
+        '请先选择题库';
+    }
     
     this.setData({
       currentFilterDisplay
     });
+  },
+
+  /**
+   * 恢复用户之前选择的子册
+   */
+  restoreSelectedCourseRange() {
+    try {
+      // 获取当前教材ID
+      const filter = filterManager.getFilter();
+      let textbookId = 'liangs_class'; // 默认教材
+      
+      if (filter) {
+        textbookId = filter.selectedDictionaryKey || filter.dictionaryId || 'liangs_class';
+      }
+      
+      // 从本地存储中获取该教材的子册选择
+      const storageKey = `selectedCourseRange_${textbookId}`;
+      const savedCourseRange = wx.getStorageSync(storageKey);
+      
+      if (savedCourseRange) {
+        console.log('恢复用户之前选择的子册:', savedCourseRange);
+        this.setData({
+          selectedCourseRange: savedCourseRange,
+          filterTitleDisplay: savedCourseRange.label
+        });
+      } else {
+        console.log('没有找到保存的子册选择，使用默认值');
+        // 使用默认值
+        this.setData({
+          selectedCourseRange: { label: '全部课程', value: 'all' },
+          filterTitleDisplay: '全部课程'
+        });
+      }
+    } catch (error) {
+      console.error('恢复子册选择时出错:', error);
+      // 出错时使用默认值
+      this.setData({
+        selectedCourseRange: { label: '全部课程', value: 'all' },
+        filterTitleDisplay: '全部课程'
+      });
+    }
   },
 
   // initializeCoursePage 函数已被移除，其逻辑已整合进 onShow 和 loadCourseData
@@ -91,10 +150,11 @@ Page({
         console.log('No filter found, using default:', textbook);
       }
       
-      // 如果选择的是"全部辞典"，则使用默认教材
+      // 如果选择的是"all"，则使用第一个可用的词典作为默认
       if (textbook === 'all') {
-        textbook = 'liangs_class';
-        console.log('Changed from "all" to default textbook:', textbook);
+        const firstDictionary = dictionaries.dictionaries[0];
+        textbook = firstDictionary.id;
+        console.log('Changed from "all" to first available dictionary:', textbook);
       }
 
       console.log('Final textbook to load:', textbook);
@@ -228,6 +288,9 @@ Page({
     const selectedOption = this.data.courseSelectorOptions.find(opt => opt.value === value);
 
     if (selectedOption) {
+      // 保存用户的子册选择到本地存储
+      this.saveSelectedCourseRange(selectedOption);
+      
       this.setData({
         selectedCourseRange: selectedOption,
         isCourseSelectorVisible: false,
@@ -240,6 +303,29 @@ Page({
       this.setData({
         isCourseSelectorVisible: false
       });
+    }
+  },
+
+  /**
+   * 保存用户选择的子册到本地存储
+   */
+  saveSelectedCourseRange(selectedOption) {
+    try {
+      // 获取当前教材ID
+      const filter = filterManager.getFilter();
+      let textbookId = 'liangs_class'; // 默认教材
+      
+      if (filter) {
+        textbookId = filter.selectedDictionaryKey || filter.dictionaryId || 'liangs_class';
+      }
+      
+      // 保存到本地存储，使用教材ID作为键的一部分
+      const storageKey = `selectedCourseRange_${textbookId}`;
+      wx.setStorageSync(storageKey, selectedOption);
+      
+      console.log(`保存子册选择到本地存储: ${storageKey}`, selectedOption);
+    } catch (error) {
+      console.error('保存子册选择时出错:', error);
     }
   },
 
