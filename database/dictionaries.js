@@ -44,6 +44,29 @@ let data = {
                 {"courseNumber":50,"courseTitle":"第50课","lessonFile":"lesson50","description":"大家的日语第50课"}
             ]
         },
+         {
+            "id": "everyones_japanese_intermediate",
+            "name": "大日中级",
+            "description": "大日中级",
+            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd4713099b.jpg",
+            "volumes": [
+                {"id":"volume1","name":"第一册","description":"1-12课","lessons":[1,2,3,4,5,6,7,8,9,10,11,12]}
+            ],
+            "courses": [
+                {"courseNumber":1,"courseTitle":"第1课","lessonFile":"lesson1","description":"中级N3第1课"},
+                {"courseNumber":2,"courseTitle":"第2课","lessonFile":"lesson2","description":"中级N3第2课"},
+                {"courseNumber":3,"courseTitle":"第3课","lessonFile":"lesson3","description":"中级N3第3课"},
+                {"courseNumber":4,"courseTitle":"第4课","lessonFile":"lesson4","description":"中级N3第4课"},
+                {"courseNumber":5,"courseTitle":"第5课","lessonFile":"lesson5","description":"中级N3第5课"},
+                {"courseNumber":6,"courseTitle":"第6课","lessonFile":"lesson6","description":"中级N3第6课"},
+                {"courseNumber":7,"courseTitle":"第7课","lessonFile":"lesson7","description":"中级N3第7课"},
+                {"courseNumber":8,"courseTitle":"第8课","lessonFile":"lesson8","description":"中级N3第8课"},
+                {"courseNumber":9,"courseTitle":"第9课","lessonFile":"lesson9","description":"中级N3第9课"},
+                {"courseNumber":10,"courseTitle":"第10课","lessonFile":"lesson10","description":"中级N3第10课"},
+                {"courseNumber":11,"courseTitle":"第11课","lessonFile":"lesson11","description":"中级N3第11课"},
+                {"courseNumber":12,"courseTitle":"第12课","lessonFile":"lesson12","description":"中级N3第12课"},
+            ]
+        },
         {
             "id": "liangs_class",
             "name": "梁老师初级",

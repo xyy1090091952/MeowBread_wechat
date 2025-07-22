@@ -415,20 +415,9 @@ Page({
         return dictionary.cover_image;
       }
       
-      console.warn('⚠️ 数据库中没有找到图片，使用后备方案');
-      // 如果数据库中没有图片字段，使用临时的映射表作为后备方案
-      // 注意：顺序调整为与数据库一致，默认使用大家的日语
-      const textbookImages = {
-          'everyones_japanese': 'https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg', // 大家的日本语 - 经典蓝色封面
-          'liangs_class': 'https://free.picui.cn/free/2025/07/20/687bd4712b75f.jpg', // 梁老师初级 - 橙色封面
-          'liangs_intermediate': 'https://free.picui.cn/free/2025/07/20/687bd4715697e.jpg', // 梁老师中级 - 红色封面
-          'duolingguo': 'https://free.picui.cn/free/2025/07/20/687bd47111ec1.jpg', // 多邻国 - 绿色猫头鹰图标
-      };
-      
-      // 如果找不到对应的图片，使用默认的大家的日语图片
-      const fallbackImage = textbookImages[dictionaryId] || textbookImages['everyones_japanese'];
-      console.log('🔄 使用后备图片:', fallbackImage);
-      return fallbackImage;
+      console.warn('⚠️ 数据库中没有找到图片，使用默认图片');
+      // 如果数据库中没有图片字段，返回默认图片
+      return 'https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg';
     } catch (error) {
       console.error('❌ 获取课本图片失败:', error);
       // 即使出错也返回默认的大家的日语图片
