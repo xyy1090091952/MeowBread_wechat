@@ -18,10 +18,7 @@
     <view class="side-button" bindtap="onInventory">
       <text>陈列馆</text>
     </view>
-    <!-- 调试按钮 -->
-    <view class="side-button debug-button" bindtap="onDebugClear">
-      <text>调试</text>
-    </view>
+
   </view>
 
   <!-- 扭蛋机主体 -->
