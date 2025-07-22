@@ -1,97 +1,92 @@
 /* pages/cache-manager/cache-manager.wxss */
 
 .container {
-  min-height: 100vh;
   background: #ffffff;
   padding: 32rpx;
   box-sizing: border-box;
 }
 
-/* 缓存统计区域 */
-.stats-section {
-  margin-bottom: 48rpx;
-}
-
+/* 从vocabulary页面复制的section-title样式 */
 .section-title {
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #333333;
-  margin-bottom: 32rpx;
+  width: calc(100% - 96rpx); /* 减去左右各48rpx的边距 */
+  margin: 48rpx 48rpx 24rpx 48rpx; /* 恢复左右边距 */
+  font-size: 48rpx; /* 24px */
+  font-weight: bold;
+  font-family: 'Inter', sans-serif;
+  color: #111111;
+  line-height: 60rpx;
+  text-align: left; /* 确保文字左对齐 */
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24rpx;
+/* 从quiz-details页面复制的详细数据表单样式 */
+.detail-forms {
+  width: 100vw;
+  padding-left: 48rpx;
+  padding-right: 48rpx;
+  margin-bottom: 24rpx;
+  box-sizing: border-box;
 }
 
-.stat-item {
-  background: #f8f9fa;
-  border-radius: 16rpx;
-  padding: 32rpx 24rpx;
-  text-align: center;
-  border: 2rpx solid #e9ecef;
-}
-
-.stat-value {
-  font-size: 48rpx;
-  font-weight: 700;
-  color: #007aff;
-  margin-bottom: 8rpx;
-}
-
-.stat-label {
-  font-size: 24rpx;
-  color: #666666;
-}
-
-/* 按课本统计区域 */
-.textbook-section {
-  margin-bottom: 48rpx;
-}
-
-.textbook-list {
-  background: #f8f9fa;
-  border-radius: 16rpx;
-  overflow: hidden;
-  border: 2rpx solid #e9ecef;
-}
-
-.textbook-item {
-  padding: 32rpx 24rpx;
-  border-bottom: 2rpx solid #e9ecef;
-}
-
-.textbook-item:last-child {
-  border-bottom: none;
-}
-
-.textbook-info {
+/* 表单项容器 */
+.form-item-wrapper {
+  margin-bottom: 24rpx;
+  background: #FFFFFF;
+  border-radius: 48rpx;
+  padding: 48rpx;
   display: flex;
-  flex-direction: column;
-  gap: 8rpx;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 8rpx 8rpx 32rpx rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.textbook-name {
+/* 表单标签和数值样式 */
+.form-label {
   font-size: 32rpx;
+  color: #1F2329;
   font-weight: 600;
-  color: #333333;
+  line-height: 1.2;
 }
 
-.textbook-detail {
-  font-size: 26rpx;
-  color: #666666;
+.form-value {
+  font-size: 32rpx;
+  color: #999999;
+  font-weight: 700;
+}
+
+/* 动画样式 */
+.fade-in-element {
+  opacity: 0;
+  transform: translateY(30rpx);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.fade-in-element.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-delay-2 {
+  transition-delay: 0.4s;
+}
+
+.fade-delay-3 {
+  transition-delay: 0.6s;
 }
 
 /* 操作按钮区域 */
 .actions-section {
   margin-bottom: 48rpx;
+  display: flex; /* 添加flex布局以支持子元素的flex属性 */
+  width: 100%;
+  gap: 20rpx; /* 学习gashapon-result的按钮间距 */
 }
 
 .action-button {
   width: 100%;
   height: 96rpx;
-  border-radius: 16rpx;
+  border-radius: 48rpx; /* 更新为btn-confirm的圆角样式 */
   border: none;
   font-size: 32rpx;
   font-weight: 600;
@@ -107,12 +102,14 @@
 }
 
 .action-button.primary {
-  background: #007aff;
-  color: #ffffff;
+  flex: 2; /* 较宽的按钮，学习btn-confirm的flex设置 */
+  background-color: #FFFFFF;
+  color: #333;
+  border: 1px solid #E0E0E0; /* 添加细边框 */
 }
 
 .action-button.primary:active {
-  background: #0056cc;
+  background: #f0f0f0; /* 修正为更合适的白色按钮active状态 */
   transform: scale(0.98);
 }
 

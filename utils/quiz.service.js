@@ -60,6 +60,19 @@ const quizService = {
       const words = await wordManager.getWordsByFilter({ lessonFiles: selectedLessonFiles, dictionaryId });
       const questions = this.selectWordsForQuiz(words, quizMode, selectedQuestionTypes);
 
+      // 判断是否为标准模式（整本书）- 检查是否包含ALL_LESSONS
+      const isStandardMode = selectedLessonFiles && selectedLessonFiles.some(file => file.includes('ALL_LESSONS'));
+      
+      // 根据模式设置不同的显示文本
+      let currentFilterDisplay;
+      if (isStandardMode) {
+        // 标准模式只显示课本名称
+        currentFilterDisplay = selectedDictionaryName;
+      } else {
+        // 课程模式显示课本名称和课程名称
+        currentFilterDisplay = `${selectedDictionaryName} - ${selectedLessonName}`;
+      }
+
       return {
         quizMode,
         lessonFiles: selectedLessonFiles,
@@ -68,7 +81,7 @@ const quizService = {
         allWordsInLesson: words,
         questions,
         totalQuestions: questions.length,
-        currentFilterDisplay: `${selectedDictionaryName} - ${selectedLessonName}`,
+        currentFilterDisplay,
         selectedQuestionTypes: selectedQuestionTypes || ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'],
         isLoading: false,
       };

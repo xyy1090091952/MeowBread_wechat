@@ -1,32 +1,18 @@
 <!--pages/cache-manager/cache-manager.wxml-->
 <view class="container">
-  <!-- 缓存统计信息 -->
-  <view class="stats-section">
-    <view class="section-title">缓存统计</view>
-    
-    <view class="stats-grid">
-      <view class="stat-item">
-        <view class="stat-value">{{cacheStats.totalCaches}}</view>
-        <view class="stat-label">总缓存数</view>
-      </view>
-      
-      <view class="stat-item">
-        <view class="stat-value">{{cacheStats.totalSizeKB}}KB</view>
-        <view class="stat-label">占用空间</view>
-      </view>
-    </view>
-  </view>
+  <!-- 从vocabulary页面复制的section-title -->
+  <view class="section-title fade-in-element fade-delay-2 show">缓存详情</view>
 
-  <!-- 按课本统计 -->
-  <view class="textbook-section">
-    <view class="section-title">按课本统计</view>
-    <view class="textbook-list">
-      <view class="textbook-item" wx:for="{{textbookStats}}" wx:key="id">
-        <view class="textbook-info">
-          <view class="textbook-name">{{item.name}}</view>
-          <view class="textbook-detail">{{item.cacheCount}}个课程已缓存 · {{item.sizeKB}}KB</view>
-        </view>
-      </view>
+  <!-- 从quiz-details页面复制的form-item-wrapper -->
+  <view class="detail-forms fade-in-element fade-delay-3 show">
+    <view class="form-item-wrapper">
+      <view class="form-label">总缓存数</view>
+      <view class="form-value">{{cacheStats.totalCaches}}</view>
+    </view>
+    
+    <view class="form-item-wrapper">
+      <view class="form-label">占用空间</view>
+      <view class="form-value">{{cacheStats.totalSizeKB}}KB</view>
     </view>
   </view>
 

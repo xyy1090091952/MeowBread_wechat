@@ -25,6 +25,7 @@
   background-color: rgb(255, 255, 255); /* 与答题页面保持一致的背景色 */
   min-height: 100vh;
   padding: 0 0 220rpx 0; /* 调整底部padding为220rpx */
+  overflow: visible; /* 确保弹窗投影不被切掉，参考course-mode页面的做法 */
 }
 
 /* ===== 单词列表页面样式 ===== */

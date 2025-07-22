@@ -21,7 +21,7 @@
         </view>
         <!-- 文字内容 -->
         <view class="option-text-container">
-          <text class="option-main-text">更换你的課本</text>
+          <text class="option-main-text">更换課本</text>
           <text class="option-sub-text filter-sub-text">当前：{{currentTextbookName}}</text>
         </view>
         <image class="option-icon arrow-white" src="/images/icons/arrow_right.svg" />
