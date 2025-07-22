@@ -46,6 +46,9 @@ Page({
   async onShow() {
     console.log('Course mode page show');
     
+    // 恢复用户之前选择的子册
+    this.restoreSelectedCourseRange();
+    
     // 每次页面显示时，都重新加载数据，确保数据最新
     await this.loadCourseData();
     
@@ -73,6 +76,47 @@ Page({
     this.setData({
       currentFilterDisplay
     });
+  },
+
+  /**
+   * 恢复用户之前选择的子册
+   */
+  restoreSelectedCourseRange() {
+    try {
+      // 获取当前教材ID
+      const filter = filterManager.getFilter();
+      let textbookId = 'liangs_class'; // 默认教材
+      
+      if (filter) {
+        textbookId = filter.selectedDictionaryKey || filter.dictionaryId || 'liangs_class';
+      }
+      
+      // 从本地存储中获取该教材的子册选择
+      const storageKey = `selectedCourseRange_${textbookId}`;
+      const savedCourseRange = wx.getStorageSync(storageKey);
+      
+      if (savedCourseRange) {
+        console.log('恢复用户之前选择的子册:', savedCourseRange);
+        this.setData({
+          selectedCourseRange: savedCourseRange,
+          filterTitleDisplay: savedCourseRange.label
+        });
+      } else {
+        console.log('没有找到保存的子册选择，使用默认值');
+        // 使用默认值
+        this.setData({
+          selectedCourseRange: { label: '全部课程', value: 'all' },
+          filterTitleDisplay: '全部课程'
+        });
+      }
+    } catch (error) {
+      console.error('恢复子册选择时出错:', error);
+      // 出错时使用默认值
+      this.setData({
+        selectedCourseRange: { label: '全部课程', value: 'all' },
+        filterTitleDisplay: '全部课程'
+      });
+    }
   },
 
   // initializeCoursePage 函数已被移除，其逻辑已整合进 onShow 和 loadCourseData
@@ -244,6 +288,9 @@ Page({
     const selectedOption = this.data.courseSelectorOptions.find(opt => opt.value === value);
 
     if (selectedOption) {
+      // 保存用户的子册选择到本地存储
+      this.saveSelectedCourseRange(selectedOption);
+      
       this.setData({
         selectedCourseRange: selectedOption,
         isCourseSelectorVisible: false,
@@ -256,6 +303,29 @@ Page({
       this.setData({
         isCourseSelectorVisible: false
       });
+    }
+  },
+
+  /**
+   * 保存用户选择的子册到本地存储
+   */
+  saveSelectedCourseRange(selectedOption) {
+    try {
+      // 获取当前教材ID
+      const filter = filterManager.getFilter();
+      let textbookId = 'liangs_class'; // 默认教材
+      
+      if (filter) {
+        textbookId = filter.selectedDictionaryKey || filter.dictionaryId || 'liangs_class';
+      }
+      
+      // 保存到本地存储，使用教材ID作为键的一部分
+      const storageKey = `selectedCourseRange_${textbookId}`;
+      wx.setStorageSync(storageKey, selectedOption);
+      
+      console.log(`保存子册选择到本地存储: ${storageKey}`, selectedOption);
+    } catch (error) {
+      console.error('保存子册选择时出错:', error);
     }
   },
 
