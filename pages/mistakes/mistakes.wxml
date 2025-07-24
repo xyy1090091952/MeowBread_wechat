@@ -4,18 +4,44 @@
       <text class="title">错题库</text>
       <text class="mistake-count">错误单词 {{mistakeCount}}</text>
     </view>
-    <scroll-view scroll-y class="mistake-list-scroll" wx:if="{{mistakeList.length > 0}}">
-      <word-card wx:for="{{mistakeList}}" wx:key="index" item="{{item}}" />
+    
+    <!-- 查看已修正按钮 -->
+    <view class="corrected-button" bindtap="showCorrectedModal" wx:if="{{correctedCount > 0}}">
+      <text class="corrected-text">查看已修正({{correctedCount}})</text>
+      <image class="corrected-arrow" src="/images/icons/arrow_right.svg"></image>
+    </view>
+    
+    <!-- 错误单词列表 -->
+    <scroll-view scroll-y class="mistake-list-scroll" wx:if="{{errorList.length > 0 && !showCorrected}}">
+      <word-card wx:for="{{errorList}}" wx:key="index" item="{{item}}" />
       <view style="height: 200rpx;"></view> <!-- 底部占位符 -->
     </scroll-view>
 
-    <view class="empty-state" wx:else>
+    <view class="empty-state" wx:elif="{{!showCorrected && errorList.length === 0}}">
       <text>这里还没有任何记录</text>
+    </view>
+    
+    <view class="empty-state" wx:elif="{{showCorrected && correctedList.length === 0}}">
+      <text>还没有已修正的单词</text>
     </view>
   </view>
 
   <view class="footer fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}">
     <view class="review-button" bindtap="startReview">开始复习</view>
+  </view>
+</view>
+
+<!-- 底部浮层 -->
+<view class="bottom-sheet-overlay" wx:if="{{showCorrectedModal}}" bindtap="hideCorrectedModal">
+  <view class="bottom-sheet" bindtap="stopPropagation">
+    <view class="sheet-header">
+      <view class="sheet-title">已修正单词</view>
+      <view class="sheet-close" bindtap="hideCorrectedModal">×</view>
+    </view>
+    <scroll-view class="sheet-content" scroll-y="true">
+       <word-card wx:for="{{correctedList}}" wx:key="index" item="{{item}}" />
+       <view style="height: 40rpx;"></view> <!-- 底部占位符 -->
+     </scroll-view>
   </view>
 </view>
 

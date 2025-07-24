@@ -44,10 +44,7 @@
       <view class="form-value">{{statistics.standardModeCount}}次</view>
     </view>
     
-    <view class="form-item-wrapper">
-      <view class="form-label">无尽模式最长答题数</view>
-      <view class="form-value">{{statistics.endlessModeRecord}}题</view>
-    </view>
+
   </view>
 </view>
 

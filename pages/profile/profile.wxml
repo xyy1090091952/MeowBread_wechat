@@ -38,7 +38,7 @@
         <view class="user-title">{{userTitle}}</view>
       </view>
       <!-- 缓存管理按钮 -->
-      <view class="cache-manager-button" bindtap="goToCacheManager">
+      <view class="cache-manager-button fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}" bindtap="navigateToCacheManager">
         <text class="cache-button-text">缓存</text>
       </view>
     </block>

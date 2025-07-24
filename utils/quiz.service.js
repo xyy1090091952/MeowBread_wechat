@@ -121,15 +121,16 @@ const quizService = {
   /**
    * 为测验选择单词并生成问题
    * @param {Array} allWords - 所有单词
-   * @param {string} mode - 测验模式 ('quick', 'endless', 或 'course')
+   * @param {string} mode - 测验模式 ('quick', 'course', 或 'mistakes')
    * @param {Array} selectedQuestionTypes - 选择的题型
    * @returns {Array} - 最终的问题列表
    */
   selectWordsForQuiz(allWords, mode, selectedQuestionTypes) {
+    console.log('selectWordsForQuiz called with:', { wordsCount: allWords.length, questionTypes: selectedQuestionTypes, mode });
+    
     // 引入 learnedManager 来判断单词是否已学
     const learnedManager = require('./learnedManager.js');
 
-    let finalQuestions = [];
     if (!selectedQuestionTypes || selectedQuestionTypes.length === 0) {
       selectedQuestionTypes = ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'];
     }
@@ -138,43 +139,47 @@ const quizService = {
       return [];
     }
 
-    // 1. 区分已学和未学单词
-    const learnedWords = [];
-    const unlearnedWords = [];
-    const { dictionaryId } = filterManager.getFilter() || {};
-
-    allWords.forEach(word => {
-      // 传递整个单词对象和词典ID给 isWordLearned
-      if (learnedManager.isWordLearned(word.data, dictionaryId)) { 
-        learnedWords.push(word);
-      } else {
-        unlearnedWords.push(word);
-      }
+    // 1. 分离已学和未学单词
+    const unlearnedWords = allWords.filter(word => {
+      const wordId = this.getWordId(word.data);
+      return !learnedManager.isWordLearned(wordId);
+    });
+    const learnedWords = allWords.filter(word => {
+      const wordId = this.getWordId(word.data);
+      return learnedManager.isWordLearned(wordId);
     });
 
-    // 2. 优先从未学单词中生成问题
+    // 2. 根据模式和可用单词数量动态决定题目数量
+    let targetQuestionCount;
+    if (mode === 'course' || mode === 'quick') {
+      // 课程和快速模式：根据可用单词数量动态决定，最多30题
+      targetQuestionCount = Math.min(allWords.length, 30);
+    } else {
+      // 其他模式（如错题库模式）：使用全部可用单词
+      targetQuestionCount = allWords.length;
+    }
+    
+    console.log('Target question count:', targetQuestionCount);
+    console.log('Unlearned words:', unlearnedWords.length, 'Learned words:', learnedWords.length);
+
+    // 3. 优先从未学单词中生成问题
     let questionsFromUnlearned = this.generateQuestions(unlearnedWords, selectedQuestionTypes);
 
-    // 3. 如果未学单词不足，从已学单词中补充
-    const targetQuestionCount = (mode === 'quick' || mode === 'course') ? 30 : questionsFromUnlearned.length;
+    // 4. 如果未学单词不足，从已学单词中补充
+    let finalQuestions = [];
     if (questionsFromUnlearned.length < targetQuestionCount) {
       const needed = targetQuestionCount - questionsFromUnlearned.length;
       const questionsFromLearned = this.generateQuestions(learnedWords, selectedQuestionTypes);
       const supplement = questionsFromLearned.slice(0, needed);
       finalQuestions = questionsFromUnlearned.concat(supplement);
     } else {
-      finalQuestions = questionsFromUnlearned;
+      finalQuestions = questionsFromUnlearned.slice(0, targetQuestionCount);
     }
 
-    // 4. 最终题目列表处理
-    // 随机打乱最终的题目顺序
+    // 5. 随机打乱最终的题目顺序
     finalQuestions.sort(() => 0.5 - Math.random());
 
-    // 快速模式和课程模式限制最终数量
-    if (mode === 'quick' || mode === 'course') {
-      return finalQuestions.slice(0, targetQuestionCount);
-    }
-
+    console.log('Final questions count:', finalQuestions.length);
     return finalQuestions;
   },
 

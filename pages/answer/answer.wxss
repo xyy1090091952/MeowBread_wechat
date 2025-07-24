@@ -132,7 +132,6 @@
   display: flex;
   justify-content: space-between;
   align-items: stretch; /* 让子元素高度一致 */
-  gap: 16rpx; /* 两个按钮之间的间距 */
   margin-bottom: 24rpx; /* 与其他卡片保持一致的间距 */
   width: 100%; /* 占满容器宽度 */
 }
@@ -144,6 +143,7 @@
   min-height: 196rpx; /* 设置最小高度与正方形按钮一致 */
   box-sizing: border-box; /* 确保padding包含在高度内 */
   background: #4845F7 !important;
+  border-radius: 48rpx 0 0 48rpx !important; /* 只保留左侧圆角 */
 }
 
 /* 课本图片容器 */
@@ -176,7 +176,9 @@
   width: 196rpx; /* 正方形宽度，根据option-card的高度计算 */
   height: 196rpx; /* 正方形高度，与宽度相同 */
   background: #4845F7; /* 纯色背景 */
-  border-radius: 48rpx; /* 与option-card相同的圆角 */
+  border-radius: 0 48rpx 48rpx 0; /* 只保留右侧圆角 */
+  border-left: 1rpx dashed rgba(255, 255, 255, 0.4); /* 左侧40%不透明白色虚线分割线 */
+  border-image: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0, rgba(255, 255, 255, 0.4) 8rpx, transparent 8rpx, transparent 16rpx) 1;
   box-shadow: 0px 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 与option-card相同的阴影 */
   display: flex;
   align-items: center;
@@ -281,7 +283,7 @@
   bottom: 0;
   border-radius: inherit; /* 保持圆角一致 */
   padding: 4rpx; /* 描边宽度 */
-  background: linear-gradient(90deg, #FF9500 0%, #FFCC00 100%); /* 橙色渐变描边 - 时间线主题色 */
+  background: linear-gradient(90deg, #4845F7 0%, #93CDFF 100%); /* 蓝色渐变描边 - 与标准模式一致 */
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor; /* 兼容性处理 */
   mask-composite: exclude;
@@ -308,7 +310,6 @@
 
 .option-sub-text {
   font-size: 24rpx; /* Figma 字体大小 12px */
-  margin-top: 8rpx; /* Figma 上边距 4px */
 }
 
 .standard-mode-card .option-sub-text,

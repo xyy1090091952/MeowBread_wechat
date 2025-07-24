@@ -11,6 +11,10 @@ Page({
   data: {
     mistakeCount: 0,
     mistakeList: [],
+    errorList: [], // 错误状态的单词列表
+    correctedList: [], // 已修正状态的单词列表
+    correctedCount: 0, // 已修正单词数量
+    showCorrectedModal: false, // 是否显示已修正弹窗
     pageLoaded: false // 控制页面加载动画
   },
 
@@ -53,13 +57,42 @@ Page({
       return processWordStatus(mistakeItem);
     });
 
+    // 按状态分类
+    const errorList = processedMistakes.filter(mistake => mistake.status === WORD_STATUS.ERROR);
+    const correctedList = processedMistakes.filter(mistake => mistake.status === WORD_STATUS.CORRECTED);
+
     this.setData({
       mistakeList: processedMistakes,
-      // 错词数应包含 'error' 和 'corrected' 状态的单词
-      mistakeCount: processedMistakes.filter(mistake => 
-        mistake.status === WORD_STATUS.ERROR || mistake.status === WORD_STATUS.CORRECTED
-      ).length
+      errorList: errorList,
+      correctedList: correctedList,
+      mistakeCount: errorList.length, // 只计算错误状态的单词数
+      correctedCount: correctedList.length
     });
+  },
+
+  /**
+   * 显示已修正单词弹窗
+   */
+  showCorrectedModal: function() {
+    this.setData({
+      showCorrectedModal: true
+    });
+  },
+
+  /**
+   * 隐藏已修正单词弹窗
+   */
+  hideCorrectedModal: function() {
+    this.setData({
+      showCorrectedModal: false
+    });
+  },
+
+  /**
+   * 阻止事件冒泡
+   */
+  stopPropagation: function() {
+    // 阻止点击弹窗内容时关闭弹窗
   },
 
     /**
@@ -67,11 +100,11 @@ Page({
    * 会将当前错词库中的所有单词传递给答题页
    */
   startReview: function () {
-    // 筛选出错词库中所有需要复习的单词
-    const reviewWords = this.data.mistakeList;
+    // 只筛选出错误状态的单词进行复习，不包含已修正的单词
+    const reviewWords = this.data.errorList;
     if (reviewWords.length === 0) {
       wx.showToast({
-        title: '错词库是空的，快去答题吧！',
+        title: '没有需要复习的错题，快去答题吧！',
         icon: 'none'
       });
       return;

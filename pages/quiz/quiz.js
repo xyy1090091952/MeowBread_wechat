@@ -14,7 +14,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    quizMode: '', // 答题模式: quick 或 endless
+    quizMode: '', // 答题模式: quick, course, mistakes
     lessonFiles: [], // 课程范围标识 (数组)
     dictionaryId: '', // 当前词典ID ('all' 或具体ID)
     basePath: '', // 当前词典的基础路径 (如果非'all')
@@ -37,7 +37,11 @@ Page({
     showQuestion: true, // 用于控制题目显示/隐藏以触发动画
     highlightParticles: true, // 新增：是否高亮助词
     processedExampleSentence: '', // 新增：处理后的例句
-    pageLoaded: false // 控制页面加载动画
+    pageLoaded: false, // 控制页面加载动画
+    // 错题重做相关状态
+    wrongQuestions: [], // 错题重做队列
+    originalTotalQuestions: 0, // 原始题目总数
+    isInWrongQuestionPhase: false // 是否在错题重做阶段
   },
 
   /**
@@ -89,6 +93,10 @@ Page({
       isCorrect: false,
       timeSpent: 0,
       formattedTime: '00:00',
+      // 初始化错题重做相关状态
+      wrongQuestions: [],
+      originalTotalQuestions: initialState.totalQuestions || initialState.questions?.length || 0,
+      isInWrongQuestionPhase: false
     });
 
     this.startTimer();
@@ -170,17 +178,28 @@ Page({
     const newAnsweredCount = this.data.actualAnsweredQuestions + 1;
 
     if (isCorrect) {
-      // 答对了：更新错题记录 + 标记为已背
-      mistakeManager.correctMistake(currentQ.wordInfo);
+      // 答对了：只在错题库模式下修正错题状态
+      if (this.data.quizMode === 'mistakes') {
+        mistakeManager.correctMistake(currentQ.wordInfo);
+      }
       
-      // 标记单词为已背（需要获取词典ID）
-      this.markWordAsLearned(currentQ); // 传递整个题目对象
+      // 在错题重做阶段答对不标记单词为已背，避免影响学习进度
+      if (!this.data.isInWrongQuestionPhase) {
+        this.markWordAsLearned(currentQ); // 传递整个题目对象
+      }
       
       // 回答正确，增加1个金币
       coinManager.addCoins(1);
     } else {
       // 答错了：添加到错题库
       mistakeManager.addMistake(currentQ.wordInfo);
+      
+      // 如果不在错题重做阶段，将错题加入重做队列
+      if (!this.data.isInWrongQuestionPhase) {
+        this.setData({
+          wrongQuestions: [...this.data.wrongQuestions, currentQ]
+        });
+      }
     }
 
     this.setData({
@@ -192,37 +211,16 @@ Page({
     }, () => {
       // 在setData回调中处理高亮，确保UI已更新
       this.processHighlight();
-      
-      // 如果是无尽模式，实时更新最长答题数记录
-      if (this.data.quizMode === 'endless') {
-        const isNewRecord = statisticsManager.updateEndlessModeRecord(newAnsweredCount);
-        if (isNewRecord) {
-          console.log(`🎉 无尽模式新记录！当前答题数：${newAnsweredCount}`);
-          // 可以在这里添加新记录的提示效果
-          wx.showToast({
-            title: `新记录！${newAnsweredCount}题`,
-            icon: 'success',
-            duration: 1500
-          });
-        }
-      }
     });
   },
 
 
 
   /**
-   * 跳过题目或结算（无尽模式）
+   * 跳过题目
    */
   skipQuestion: function() {
-    // 如果是无尽模式，点击跳过按钮直接进入结算
-    if (this.data.quizMode === 'endless') {
-      console.log('无尽模式：点击结算按钮，直接进入结算页面');
-      this.endQuiz();
-      return;
-    }
-    
-    // 其他模式：跳过题目不做任何学习状态更新，不计入答题统计
+    // 跳过题目不做任何学习状态更新，不计入答题统计
     // 直接进入下一题，不更新score和actualAnsweredQuestions
     console.log('跳过题目，不计入统计数据');
     this.nextQuestion();
@@ -235,18 +233,18 @@ Page({
     this.setData({ showQuestion: false });
 
     wx.nextTick(() => {
-      // 无尽模式：永远不自动结束，除非用户主动结算
-      if (this.data.quizMode === 'endless') {
-        // 如果当前题目是最后一题，生成新的题目
-        if (this.data.currentQuestionIndex >= this.data.questions.length - 1) {
-          this.generateMoreQuestions();
-          return;
-        }
-      }
+      // 移除无尽模式相关逻辑
       
       // 其他模式：检查是否到达最后一题
       if ((this.data.quizMode === 'quick' || this.data.quizMode === 'course' || this.data.quizMode === 'mistakes') && 
           this.data.currentQuestionIndex >= this.data.totalQuestions - 1) {
+        
+        // 检查是否有错题需要重做
+        if (!this.data.isInWrongQuestionPhase && this.data.wrongQuestions.length > 0) {
+          this.startWrongQuestionPhase();
+          return;
+        }
+        
         this.endQuiz();
       } else {
         const nextIndex = this.data.currentQuestionIndex + 1;
@@ -264,50 +262,36 @@ Page({
   },
 
   /**
-   * 无尽模式：生成更多题目
+   * 开始错题重做阶段
    */
-  generateMoreQuestions: function() {
-    console.log('无尽模式：生成更多题目');
+  startWrongQuestionPhase: function() {
+    console.log('开始错题重做阶段，错题数量：', this.data.wrongQuestions.length);
     
-    try {
-      // 从现有单词中重新生成题目
-      const allWords = this.data.allWordsInLesson;
-      const selectedQuestionTypes = this.data.selectedQuestionTypes;
-      
-      if (!allWords || allWords.length === 0) {
-        console.warn('无尽模式：没有可用单词，进入结算');
-        this.endQuiz();
-        return;
-      }
-      
-      // 使用quizService的generateQuestions方法生成新题目
-      const newQuestions = quizService.generateQuestions(allWords, selectedQuestionTypes);
-      
-      if (newQuestions && newQuestions.length > 0) {
-        // 将新题目添加到现有题目列表
-        const updatedQuestions = [...this.data.questions, ...newQuestions];
-        
-        this.setData({
-          questions: updatedQuestions,
-          currentQuestionIndex: this.data.currentQuestionIndex + 1,
-          userAnswer: '',
-          selectedOption: null,
-          isUserAnswerEmpty: true,
-          showAnswerCard: false,
-          isCorrect: false,
-          showQuestion: true
-        });
-        
-        console.log(`无尽模式：已生成${newQuestions.length}道新题目，当前总题数：${updatedQuestions.length}`);
-      } else {
-        console.warn('无尽模式：无法生成更多题目，进入结算');
-        this.endQuiz();
-      }
-    } catch (error) {
-      console.error('无尽模式生成题目失败:', error);
-      this.endQuiz();
-    }
+    // 将错题添加到题目列表末尾
+    const updatedQuestions = [...this.data.questions, ...this.data.wrongQuestions];
+    
+    this.setData({
+      questions: updatedQuestions,
+      totalQuestions: updatedQuestions.length,
+      isInWrongQuestionPhase: true,
+      currentQuestionIndex: this.data.currentQuestionIndex + 1,
+      userAnswer: '',
+      selectedOption: null,
+      isUserAnswerEmpty: true,
+      showAnswerCard: false,
+      isCorrect: false,
+      showQuestion: true
+    });
+    
+    // 提示用户进入错题重做阶段
+    wx.showToast({
+      title: '开始重做错题',
+      icon: 'none',
+      duration: 1500
+    });
   },
+
+
 
   endQuiz: function() {
     this.clearTimer();
