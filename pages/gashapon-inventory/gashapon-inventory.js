@@ -21,6 +21,9 @@ Page({
     isAnimating: false, // 控制图片动画状态,
     collectedCount: 0, // 当前系列已收集数量
     totalCount: 0, // 当前系列总数
+    currentParticleId: '', // 当前选中的粒子效果ID
+    supplyParticleId: '', // 美味补给系列的粒子效果ID
+    magicParticleId: '', // 梦幻魔法系列的粒子效果ID
   },
 
   /**
@@ -42,6 +45,7 @@ Page({
    */
   onShow() {
     this.loadPrizes();
+    this.loadParticleSettings();
   },
 
   /**
@@ -94,6 +98,9 @@ Page({
       // 重新计算收集进度
       const collectedCount = newDisplayPrizes.filter(p => p.unlocked).length;
       const totalCount = newDisplayPrizes.length;
+      
+      // 根据切换的系列设置对应的粒子效果ID
+      const currentParticleId = seriesId === 1 ? this.data.supplyParticleId : this.data.magicParticleId;
 
       this.setData({
         isAnimating: true,
@@ -102,6 +109,7 @@ Page({
         collectedCount, // 更新收集数量
         totalCount,     // 更新总数
         currentSwiperIndex: 0, // 切换后重置索引
+        currentParticleId, // 更新当前粒子效果ID
       }, () => {
         this.centerActiveThumbnail();
         
@@ -187,5 +195,80 @@ Page({
     //     jellyAnimation: false
     //   });
     // }, 300);
+  },
+
+  /**
+   * @description 加载粒子效果设置
+   */
+  loadParticleSettings() {
+    try {
+      const supplyParticleId = wx.getStorageSync('supplyParticleId') || '';
+      const magicParticleId = wx.getStorageSync('magicParticleId') || '';
+      // 根据当前系列设置currentParticleId
+      const currentParticleId = this.data.currentSeriesId === 1 ? supplyParticleId : magicParticleId;
+      
+      this.setData({
+        supplyParticleId,
+        magicParticleId,
+        currentParticleId
+      });
+    } catch (error) {
+      console.error('加载粒子设置失败:', error);
+    }
+  },
+
+  /**
+   * @description 保存粒子效果设置
+   * @param {string} particleId 粒子效果ID
+   * @param {number} seriesId 系列ID
+   */
+  saveParticleSettings(particleId, seriesId) {
+    try {
+      const storageKey = seriesId === 1 ? 'supplyParticleId' : 'magicParticleId';
+      wx.setStorageSync(storageKey, particleId);
+    } catch (error) {
+      console.error('保存粒子设置失败:', error);
+    }
+  },
+
+  /**
+   * @description 切换粒子效果
+   * @param {Object} e 事件对象
+   */
+  toggleParticleEffect(e) {
+    const prizeId = e.currentTarget.dataset.prizeId;
+    const currentSeriesId = this.data.currentSeriesId;
+    const newParticleId = this.data.currentParticleId === prizeId ? '' : prizeId;
+    
+    // 更新对应系列的粒子效果ID
+    const updateData = {
+      currentParticleId: newParticleId
+    };
+    
+    if (currentSeriesId === 1) {
+      updateData.supplyParticleId = newParticleId;
+    } else {
+      updateData.magicParticleId = newParticleId;
+    }
+    
+    this.setData(updateData);
+    
+    // 保存设置
+    this.saveParticleSettings(newParticleId, currentSeriesId);
+    
+    // 通知首页更新粒子效果（使用当前激活的粒子效果）
+    const app = getApp();
+    if (app.globalData) {
+      app.globalData.currentParticleId = newParticleId;
+    }
+    
+    // 显示提示
+    const particleName = newParticleId ? this.data.displayPrizes.find(p => p.id === prizeId)?.name : '关闭';
+    const seriesName = currentSeriesId === 1 ? '美味补给' : '梦幻魔法';
+    wx.showToast({
+      title: `${seriesName}粒子效果：${particleName}`,
+      icon: 'none',
+      duration: 1500
+    });
   }
 })

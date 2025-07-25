@@ -402,4 +402,261 @@
   }
 }
 
+/* 粒子效果样式 */
+.particle-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2; /* 在banner图片之上，但在其他元素之下 */
+  pointer-events: none; /* 不阻挡交互 */
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  pointer-events: none;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.particle-image {
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+/* 雪花粒子动画 */
+.particle-snow {
+  animation-name: snowfall;
+  animation-iteration-count: infinite;
+}
+
+@keyframes snowfall {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(-200rpx) rotate(0deg);
+  }
+  5% {
+    opacity: 0.8;
+  }
+  20% {
+    transform: translateX(-120rpx) translateY(20vh) rotate(90deg);
+  }
+  50% {
+    transform: translateX(-240rpx) translateY(50vh) rotate(180deg);
+  }
+  80% {
+    transform: translateX(-360rpx) translateY(80vh) rotate(270deg);
+  }
+  95% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-480rpx) translateY(120vh) rotate(360deg);
+  }
+}
+
+/* 玫瑰魔法粒子动画 */
+.particle-rose {
+  animation-name: rosefall;
+  animation-iteration-count: infinite;
+}
+
+@keyframes rosefall {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(-200rpx) rotate(0deg) scale(0.5);
+  }
+  5% {
+    opacity: 0.9;
+  }
+  20% {
+    transform: translateX(-150rpx) translateY(20vh) rotate(72deg) scale(1);
+  }
+  50% {
+    transform: translateX(-300rpx) translateY(50vh) rotate(180deg) scale(1.1);
+  }
+  80% {
+    transform: translateX(-450rpx) translateY(80vh) rotate(288deg) scale(0.9);
+  }
+  95% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-600rpx) translateY(120vh) rotate(360deg) scale(0.8);
+  }
+}
+
+/* 萤火虫粒子动画 */
+.particle-firefly {
+  animation-name: fireflyfall;
+  animation-iteration-count: infinite;
+}
+
+@keyframes fireflyfall {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(-200rpx) scale(0.3);
+  }
+  5% {
+    opacity: 1;
+  }
+  15% {
+    opacity: 0.3;
+    transform: translateX(-90rpx) translateY(15vh) scale(1);
+  }
+  30% {
+    opacity: 1;
+    transform: translateX(-180rpx) translateY(30vh) scale(1.2);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateX(-270rpx) translateY(50vh) scale(0.8);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(-360rpx) translateY(70vh) scale(1.1);
+  }
+  85% {
+    opacity: 0.7;
+    transform: translateX(-450rpx) translateY(85vh) scale(0.9);
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-540rpx) translateY(120vh) scale(0.5);
+  }
+}
+
+/* 樱花魔法粒子动画 */
+.particle-sakura {
+  animation-name: sakurafall;
+  animation-iteration-count: infinite;
+}
+
+@keyframes sakurafall {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(-200rpx) rotate(0deg);
+  }
+  5% {
+    opacity: 0.8;
+  }
+  20% {
+    transform: translateX(-120rpx) translateY(20vh) rotate(72deg);
+  }
+  40% {
+    transform: translateX(-210rpx) translateY(40vh) rotate(144deg);
+  }
+  60% {
+    transform: translateX(-270rpx) translateY(60vh) rotate(216deg);
+  }
+  80% {
+    transform: translateX(-330rpx) translateY(80vh) rotate(288deg);
+  }
+  95% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-420rpx) translateY(120vh) rotate(360deg);
+  }
+}
+
+/* 落叶魔法粒子动画 */
+.particle-leaf {
+  animation-name: leaffall;
+  animation-iteration-count: infinite;
+}
+
+@keyframes leaffall {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(-200rpx) rotate(0deg);
+  }
+  5% {
+    opacity: 0.9;
+  }
+  15% {
+    transform: translateX(-120rpx) translateY(15vh) rotate(54deg);
+  }
+  30% {
+    transform: translateX(-210rpx) translateY(30vh) rotate(108deg);
+  }
+  45% {
+    transform: translateX(-300rpx) translateY(45vh) rotate(162deg);
+  }
+  60% {
+    transform: translateX(-420rpx) translateY(60vh) rotate(216deg);
+  }
+  75% {
+    transform: translateX(-510rpx) translateY(75vh) rotate(270deg);
+  }
+  90% {
+    transform: translateX(-600rpx) translateY(90vh) rotate(324deg);
+  }
+  95% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-720rpx) translateY(120vh) rotate(360deg);
+  }
+}
+
+/* 粒子位置随机分布 */
+.particle-1 { left: 10%; }
+.particle-2 { left: 25%; }
+.particle-3 { left: 40%; }
+.particle-4 { left: 55%; }
+.particle-5 { left: 70%; }
+.particle-6 { left: 85%; }
+.particle-7 { left: 15%; }
+.particle-8 { left: 35%; }
+.particle-9 { left: 60%; }
+.particle-10 { left: 80%; }
+.particle-11 { left: 5%; }
+.particle-12 { left: 30%; }
+.particle-13 { left: 45%; }
+.particle-14 { left: 65%; }
+.particle-15 { left: 75%; }
+.particle-16 { left: 90%; }
+.particle-17 { left: 20%; }
+.particle-18 { left: 50%; }
+.particle-19 { left: 12%; }
+.particle-20 { left: 88%; }
+
+/* 随机Y轴起始位置变化 - 让粒子从屏幕外不同高度开始 */
+.particle-start-1 { transform: translateY(-250rpx); }
+.particle-start-2 { transform: translateY(-220rpx); }
+.particle-start-3 { transform: translateY(-280rpx); }
+.particle-start-4 { transform: translateY(-200rpx); }
+.particle-start-5 { transform: translateY(-240rpx); }
+.particle-start-6 { transform: translateY(-300rpx); }
+.particle-start-7 { transform: translateY(-210rpx); }
+.particle-start-8 { transform: translateY(-230rpx); }
+.particle-start-9 { transform: translateY(-260rpx); }
+.particle-start-10 { transform: translateY(-270rpx); }
+.particle-start-11 { transform: translateY(-290rpx); }
+.particle-start-12 { transform: translateY(-215rpx); }
+.particle-start-13 { transform: translateY(-245rpx); }
+.particle-start-14 { transform: translateY(-205rpx); }
+.particle-start-15 { transform: translateY(-225rpx); }
+.particle-start-16 { transform: translateY(-265rpx); }
+.particle-start-17 { transform: translateY(-235rpx); }
+.particle-start-18 { transform: translateY(-255rpx); }
+.particle-start-19 { transform: translateY(-275rpx); }
+.particle-start-20 { transform: translateY(-295rpx); }
+
+/* 随机动画速度变化 (通过内联样式实现，这里保留作为备用) */
+.particle-speed-slow { animation-duration: 1.25; } /* 0.8倍速度 */
+.particle-speed-normal { animation-duration: 1; } /* 1.0倍速度 */
+.particle-speed-fast { animation-duration: 0.83; } /* 1.2倍速度 */
+
 

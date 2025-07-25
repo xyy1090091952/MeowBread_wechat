@@ -13,7 +13,7 @@
 
         <!-- 头像占位渐变圆 - 支持显示选中的头像 -->
         <view class="avatar-placeholder">
-          <image wx:if="{{avatarUrl && avatarUrl !== '/images/icons/profile.png'}}" class="avatar-preview" src="{{avatarUrl}}" mode="aspectFill"></image>
+          <image wx:if="{{avatarUrl && avatarUrl !== '/images/tab/profile.png'}}" class="avatar-preview" src="{{avatarUrl}}" mode="aspectFill"></image>
         </view>
 
         <!-- 选头像按钮 -->
@@ -38,7 +38,7 @@
         <view class="user-title">{{userTitle}}</view>
       </view>
       <!-- 缓存管理按钮 -->
-      <view class="cache-manager-button fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}" bindtap="navigateToCacheManager">
+      <view class="cache-manager-button fade-in-element fade-delay-3 {{pageLoaded ? 'show' : ''}}" bindtap="goToCacheManager">
         <text class="cache-button-text">缓存</text>
       </view>
     </block>

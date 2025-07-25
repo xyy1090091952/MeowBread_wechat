@@ -24,6 +24,8 @@ Page({
     drawCost: 0,
     // swiper相关数据（调换后索引0对应系列2美味补给，索引1对应系列1梦幻魔法）
     swiperIndex: 0, // 默认显示索引0，即美味补给
+    // 扭蛋机背景图片URL
+    machineImageUrl: 'https://free.picui.cn/free/2025/07/26/6883c5e4b8633.jpg', // 默认显示美味补给的图片
   },
 
   /**
@@ -169,10 +171,16 @@ Page({
     const targetSeriesId = currentIndex === 0 ? 2 : 1;
     const currentSeries = gashaponData.find(series => series.id === targetSeriesId);
     
+    // 根据系列ID切换背景图片
+    const machineImageUrl = targetSeriesId === 2 
+      ? 'https://free.picui.cn/free/2025/07/26/6883c5e4b8633.jpg' // 美味补给
+      : 'https://free.picui.cn/free/2025/07/26/6883c5e48d352.jpg'; // 梦幻魔法
+    
     this.setData({
       swiperIndex: currentIndex,
       currentSeriesId: targetSeriesId,
       drawCost: currentSeries ? currentSeries.cost : 0, // 动态获取当前系列的消耗
+      machineImageUrl: machineImageUrl, // 更新背景图片
     });
   },
 
@@ -186,10 +194,16 @@ Page({
     const targetIndex = selectedId === 2 ? 0 : 1;
     const currentSeries = gashaponData.find(series => series.id === selectedId);
     
+    // 根据系列ID切换背景图片
+    const machineImageUrl = selectedId === 2 
+      ? 'https://free.picui.cn/free/2025/07/26/6883c5e4b8633.jpg' // 美味补给
+      : 'https://free.picui.cn/free/2025/07/26/6883c5e48d352.jpg'; // 梦幻魔法
+    
     this.setData({
       swiperIndex: targetIndex,
       currentSeriesId: selectedId,
       drawCost: currentSeries ? currentSeries.cost : 0, // 动态获取当前系列的消耗
+      machineImageUrl: machineImageUrl, // 更新背景图片
     });
   },
 
@@ -219,60 +233,34 @@ Page({
 
     // 使用 coinManager.spendCoins() 来检查并扣除金币
     if (!coinManager.spendCoins(currentCost)) {
-      console.log('金币不足，中断抽奖');
-      wx.showToast({
+      wx.showModal({
         title: '金币不足',
-        icon: 'none'
+        content: `抽奖需要 ${currentCost} 金币，当前金币: ${coinManager.getCoins()}`,
+        showCancel: false,
+        confirmText: '知道了'
       });
       return;
     }
 
-    console.log('金币扣除成功！');
-    // 成功扣除后，更新页面显示的金币数量
+    // 更新页面显示的金币数量
     this.setData({
       userCoins: coinManager.getCoins()
     });
 
-    console.log('成功找到奖池，准备抽奖...');
-    
+    // 执行抽奖逻辑
     const result = drawPrize(currentSeries.prizes);
-    
-    // 检查抽奖结果
-    if (!result) {
-      // 理论上不应该到这里，因为前面已经检查过了
+    console.log('抽奖结果:', result);
+
+    if (result.success) {
+      // 跳转到结果页面
+      wx.navigateTo({
+        url: `/pages/gashapon-result/gashapon-result?prizeId=${result.prize.id}&seriesId=${this.data.currentSeriesId}`
+      });
+    } else {
       wx.showToast({
-        title: '抽奖异常，请重试',
+        title: result.message || '抽奖失败',
         icon: 'none'
       });
-      // 退还金币
-      coinManager.addCoins(currentCost);
-      this.setData({
-        userCoins: coinManager.getCoins()
-      });
-      return;
     }
-    
-    console.log('抽奖成功！获得奖品:', result);
-
-    // 将新获得的奖品ID添加到用户数据中
-    coinManager.addUnlockedPrize(result.id);
-    
-    // 更新系列进度
-    this.updateSeriesProgress();
-
-    const prizeData = encodeURIComponent(JSON.stringify(result));
-    console.log('奖品数据已打包，准备跳转...');
-
-    wx.navigateTo({
-      url: `/pages/gashapon-result/gashapon-result?prizeData=${prizeData}&poolId=${this.data.currentSeriesId}`,
-      success: function(res) {
-        console.log('页面跳转成功！', res);
-      },
-      fail: function(err) {
-        console.error('页面跳转失败！', err);
-      }
-    });
-  },
-
-  // ... (其他生命周期函数保持不变)
+  }
 });

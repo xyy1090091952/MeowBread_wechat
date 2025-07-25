@@ -131,23 +131,19 @@
 .prize-display {
   width: 100%;
   height: 70%; /* 调整高度为缩略图导航留出空间 */
-  margin-top: 32rpx; /* 添加顶部间距，与sheet-header分隔 */
-  display: flex;
-  flex-direction: column; /* 改为垂直排列，图片在上，文字在下 */
-  align-items: center;
-  justify-content: center;
+  margin-top: 16rpx; /* 减少顶部间距，让内容向上移动 */
+  text-align: center; /* 文字居中 */
 }
 
 /* 图片容器 - 只有图片参与Q弹动画 */
 .prize-image-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-top: 60rpx; /* 使用margin-top定位图片位置 */
   padding: 20rpx;
   box-sizing: border-box;
   opacity: 1;
   transform: scale(1);
   transition: opacity 0.2s ease-out;
+  text-align: center; /* 图片居中 */
 }
 
 /* 动画状态 - 果冻弹跳效果，只应用于图片容器 */
@@ -174,9 +170,8 @@
 }
 
 .prize-image {
-  width: 500rpx;
-  height: 500rpx;
-  margin-bottom: 40rpx;
+  width: 480rpx;
+  height: 480rpx;
 }
 
 .prize-info {
@@ -361,4 +356,64 @@
 .thumbnail-image.locked {
   /* 直接将图片变为EEEEEE浅灰色 */
   filter: brightness(0) invert(1) sepia(1) saturate(0) hue-rotate(0deg) brightness(0.93);
+}
+
+/* 粒子效果切换按钮样式 */
+.particle-button-container {
+  margin-top: 32rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.particle-button {
+  width: 320rpx;
+  height: 96rpx;
+  border-radius: 48rpx;
+  border: none;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 梦幻魔法系列的粒子按钮样式 */
+.series-2 .particle-button {
+  background: #ff4e91;
+}
+
+.series-2 .particle-button.active {
+  background-color: #FF98BF;
+}
+
+/* 美味补给系列的粒子按钮样式 */
+.series-1 .particle-button {
+  background: #FFCC00;
+}
+
+.series-1 .particle-button.active {
+  background: #fee78b;
+}
+
+.particle-button-text {
+  font-size: 32rpx;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+/* 梦幻魔法系列的文字颜色 */
+.series-2 .particle-button-text {
+  color: #FFFFFF;
+}
+
+.series-2 .particle-button.active .particle-button-text {
+  color: #EF6197;
+}
+
+/* 美味补给系列的文字颜色 */
+.series-1 .particle-button-text {
+  color: #FFFFFF;
+}
+
+.series-1 .particle-button.active .particle-button-text {
+  color: #DAAF00;
 }

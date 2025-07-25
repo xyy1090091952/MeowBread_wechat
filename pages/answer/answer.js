@@ -25,7 +25,13 @@ Page({
     // 词库选择相关数据
     dictionaries: [], // 词典列表
     selectedDictionaryIndex: 0, // 当前选择的词典索引
-    showCourseSelector: false // 控制课程选择弹窗的显示
+    showCourseSelector: false, // 控制课程选择弹窗的显示
+    
+    // 粒子效果相关数据
+    currentParticleId: '', // 当前选中的粒子效果ID
+    showParticles: false, // 是否显示粒子效果
+    particleConfig: null, // 当前粒子配置
+    particleRefreshTimer: null, // 粒子刷新定时器
   },
   onLoad: function (options) {
     // 页面加载时可以进行一些初始化操作
@@ -42,6 +48,9 @@ Page({
 
     // 启动自动弹跳效果
     this.startAutoBounce();
+    
+    // 初始化粒子效果
+    this.initParticleEffect();
   },
 
   /**
@@ -282,6 +291,9 @@ Page({
   onShow() {
     console.log('Page show');
     
+    // 重新初始化粒子效果（确保粒子系统正确启动）
+    this.initParticleEffect();
+    
     // 获取用户在filter页面的真实选择（包括course模式的选择）
     let userFilter = filterManager.getFilter();
     let currentFilterDisplay = '请选择教材和课程'; // 默认提示
@@ -388,6 +400,9 @@ Page({
         this.getTabBar().updateSelected(index);
       }
     }
+    
+    // 初始化粒子效果
+    this.initParticleEffect();
   },
 
   /**
@@ -517,6 +532,13 @@ Page({
    */
   onHide() {
     console.log('Page hide');
+    
+    // 停止粒子刷新定时器，节省内存
+    if (this.data.particleRefreshTimer) {
+      clearTimeout(this.data.particleRefreshTimer);
+      this.setData({ particleRefreshTimer: null });
+      console.log('⏸️ 页面隐藏，停止粒子刷新定时器');
+    }
   },
 
   /**
@@ -534,6 +556,12 @@ Page({
     // 清理自动弹跳定时器
     if (this.data.autoBounceTimer) {
       clearTimeout(this.data.autoBounceTimer);
+    }
+
+    // 清理粒子刷新定时器
+    if (this.data.particleRefreshTimer) {
+      clearTimeout(this.data.particleRefreshTimer);
+      this.setData({ particleRefreshTimer: null });
     }
   },
 
@@ -879,5 +907,158 @@ Page({
       icon: 'success',
       duration: 1500
     });
+  },
+
+  // ========== 粒子效果相关方法 ==========
+
+  /**
+   * 初始化粒子效果
+   */
+  initParticleEffect() {
+    try {
+      // 从全局数据获取当前粒子ID
+      const app = getApp();
+      let currentParticleId = app.globalData.currentParticleId || '';
+      
+      // 如果全局数据为空，从本地存储获取
+      if (!currentParticleId) {
+        currentParticleId = wx.getStorageSync('currentParticleId') || '';
+        // 同步到全局数据
+        app.globalData.currentParticleId = currentParticleId;
+      }
+      
+      // 如果没有任何粒子效果，默认显示雪花
+      if (!currentParticleId) {
+        currentParticleId = 'FX-R-03'; // 默认雪花效果
+      }
+      
+      // 获取粒子配置
+      const particleConfig = this.getParticleConfig(currentParticleId);
+      
+      this.setData({
+        currentParticleId,
+        showParticles: true, // 默认显示粒子效果
+        particleConfig
+      });
+      
+      // 启动粒子动态刷新定时器
+      this.startParticleRefresh();
+      
+      console.log('✨ 粒子效果初始化完成:', { currentParticleId, showParticles: true });
+    } catch (error) {
+      console.error('❌ 粒子效果初始化失败:', error);
+    }
+  },
+
+  /**
+   * 启动粒子动态刷新
+   */
+  startParticleRefresh() {
+     // 清除之前的定时器
+     if (this.data.particleRefreshTimer) {
+       clearTimeout(this.data.particleRefreshTimer);
+     }
+    
+    // 每3-8秒随机刷新一次粒子配置
+    const refreshParticles = () => {
+      // 检查页面是否还在显示状态，只有当前页面可见时才刷新粒子
+      const pages = getCurrentPages();
+      const currentPage = pages[pages.length - 1];
+      const isCurrentPageAnswer = currentPage && currentPage.route === 'pages/answer/answer';
+      
+      if (isCurrentPageAnswer && this.data.showParticles && this.data.currentParticleId) {
+        const newConfig = this.getParticleConfig(this.data.currentParticleId);
+        this.setData({ particleConfig: newConfig });
+        console.log('🔄 粒子配置已刷新，新数量:', newConfig.count);
+        
+        // 设置下一次刷新的随机时间间隔（3-8秒）
+        const nextInterval = Math.floor(Math.random() * 5000) + 3000;
+        this.data.particleRefreshTimer = setTimeout(refreshParticles, nextInterval);
+      } else {
+        console.log('⏸️ 当前页面不是answer页面，停止粒子刷新');
+        // 如果不是answer页面，清除定时器
+        if (this.data.particleRefreshTimer) {
+          clearTimeout(this.data.particleRefreshTimer);
+          this.setData({ particleRefreshTimer: null });
+        }
+      }
+    };
+    
+    // 首次延迟2-5秒后开始
+    const initialDelay = Math.floor(Math.random() * 3000) + 2000;
+    this.data.particleRefreshTimer = setTimeout(refreshParticles, initialDelay);
+  },
+
+  /**
+   * 根据粒子ID获取粒子配置
+   * @param {string} particleId 粒子效果ID
+   * @returns {Object|null} 粒子配置对象
+   */
+  getParticleConfig(particleId) {
+    if (!particleId) {
+      // 如果没有指定粒子ID，返回默认雪花效果
+      const randomCount = Math.floor(Math.random() * 6) + 17; // 17-22个粒子随机（更温和的变化）
+      return {
+        type: 'snow',
+        image: '/images/particles/snow.svg',
+        count: randomCount,
+        duration: 18, // 增加持续时间，让雪花下落更慢
+        size: 35
+      };
+    }
+    
+    // 粒子配置映射 - 添加随机数量变化
+    const baseConfigs = {
+      'FX-SSR-01': { // 玫瑰魔法
+        type: 'rose',
+        image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png',
+        baseCount: 8, // 调整为8个，范围7-9个
+        duration: 15,
+        size: 60
+      },
+      'FX-SR-01': { // 萤火虫
+        type: 'firefly',
+        image: 'https://free.picui.cn/free/2025/07/20/687cf85445556.png',
+        baseCount: 10, // 调整为10个，范围9-11个
+        duration: 20,
+        size: 40
+      },
+      'FX-R-01': { // 樱花魔法
+        type: 'sakura',
+        image: 'https://free.picui.cn/free/2025/07/20/687cf854d8832.png',
+        baseCount: 12, // 调整为12个，范围10-14个
+        duration: 18,
+        size: 50
+      },
+      'FX-R-02': { // 落叶魔法
+        type: 'leaf',
+        image: 'https://free.picui.cn/free/2025/07/20/687cf8549c6f3.png',
+        baseCount: 12, // 调整为12个，范围10-14个
+        duration: 16,
+        size: 55
+      },
+      'FX-R-03': { // 谧雪魔法
+        type: 'snow',
+        image: '/images/particles/snow.svg',
+        baseCount: 20, // 调整为20个，范围17-23个
+        duration: 18, // 增加持续时间，让雪花下落更慢
+        size: 35
+      }
+    };
+    
+    const baseConfig = baseConfigs[particleId];
+    if (!baseConfig) return null;
+    
+    // 随机变化粒子数量：基础数量 ± 15%（更温和的变化）
+    const variation = Math.floor(baseConfig.baseCount * 0.15);
+    const randomCount = Math.floor(Math.random() * (variation * 2 + 1)) + (baseConfig.baseCount - variation);
+    
+    return {
+      type: baseConfig.type,
+      image: baseConfig.image,
+      count: Math.max(5, randomCount), // 最少5个粒子
+      duration: baseConfig.duration,
+      size: baseConfig.size
+    };
   }
 })
