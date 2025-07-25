@@ -62,14 +62,16 @@ Page({
     
     const magicPrizes = PrizeDataManager.getPrizesBySeriesId(1).map(prize => ({
       ...prize,
-      unlocked: unlockedIds.includes(prize.id)
+      // 「麻瓜」奖品默认解锁，无需抽奖
+      unlocked: prize.id === 'FX-DEFAULT-01' ? true : unlockedIds.includes(prize.id)
     }));
 
     // 根据当前currentSeriesId设置显示的奖品
     const isSupply = this.data.currentSeriesId === 1;
     const currentDisplayPrizes = isSupply ? supplyPrizes : magicPrizes;
-    const collectedCount = currentDisplayPrizes.filter(p => p.unlocked).length;
-    const totalCount = currentDisplayPrizes.length;
+    // 计算收集状态时排除「麻瓜」奖品（不计入收集统计）
+    const collectedCount = currentDisplayPrizes.filter(p => p.unlocked && p.id !== 'FX-DEFAULT-01').length;
+    const totalCount = currentDisplayPrizes.filter(p => p.id !== 'FX-DEFAULT-01').length;
     
     this.setData({
       supplyPrizes,
@@ -95,9 +97,9 @@ Page({
     if (this.data.currentSeriesId !== seriesId && !this.data.isAnimating) {
       const newDisplayPrizes = seriesId === 1 ? this.data.supplyPrizes : this.data.magicPrizes;
       
-      // 重新计算收集进度
-      const collectedCount = newDisplayPrizes.filter(p => p.unlocked).length;
-      const totalCount = newDisplayPrizes.length;
+      // 重新计算收集进度（排除「麻瓜」奖品）
+      const collectedCount = newDisplayPrizes.filter(p => p.unlocked && p.id !== 'FX-DEFAULT-01').length;
+      const totalCount = newDisplayPrizes.filter(p => p.id !== 'FX-DEFAULT-01').length;
       
       // 根据切换的系列设置对应的粒子效果ID
       const currentParticleId = seriesId === 1 ? this.data.supplyParticleId : this.data.magicParticleId;
@@ -263,7 +265,13 @@ Page({
     }
     
     // 显示提示
-    const particleName = newParticleId ? this.data.displayPrizes.find(p => p.id === prizeId)?.name : '关闭';
+    let particleName;
+    if (prizeId === 'FX-DEFAULT-01') {
+      // 「麻瓜」奖品特殊处理：无粒子效果
+      particleName = '无魔法（麻瓜状态）';
+    } else {
+      particleName = newParticleId ? this.data.displayPrizes.find(p => p.id === prizeId)?.name : '关闭';
+    }
     const seriesName = currentSeriesId === 1 ? '美味补给' : '梦幻魔法';
     wx.showToast({
       title: `${seriesName}粒子效果：${particleName}`,

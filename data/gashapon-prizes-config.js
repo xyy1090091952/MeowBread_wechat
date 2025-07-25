@@ -25,6 +25,14 @@
 
 // 🌟 梦幻魔法系列奖品
 const magicPrizes = [
+  // 默认奖品 - 麻瓜（无粒子效果）
+  { 
+    id: 'FX-DEFAULT-01', 
+    name: '麻瓜', 
+    rarity: 'DEFAULT', 
+    image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png', 
+    quote: '平凡也是一种魔法' 
+  },
   // SSR 级别
   { 
     id: 'FX-SSR-01', 

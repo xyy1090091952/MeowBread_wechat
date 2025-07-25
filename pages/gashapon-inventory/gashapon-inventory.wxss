@@ -190,6 +190,10 @@
 }
 
 /* 稀有度颜色 */
+.rarity-DEFAULT {
+  background-color: #9D9D9D; /* 麻瓜专用灰色 */
+}
+
 .rarity-R {
   background-color: #3AD4E5;
 }
