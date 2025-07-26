@@ -342,17 +342,22 @@ Page({
       }
       
       if (!dictionaryId || dictionaryId === 'all') {
-        console.warn('无法确定单词所属词典，将使用默认词典标记:', wordInfo);
+        // 静默处理无法确定词典的情况，避免console刷屏
+        // 使用默认词典作为备选方案
         dictionaryId = 'everyones_japanese';
       }
       
       const success = learnedManager.markWordAsLearned(wordInfo, dictionaryId);
       
-      if (success) {
+      // 只在开发模式下输出成功日志
+      if (success && wx.getDeviceInfo().platform === 'devtools') {
         console.log(`单词已标记为已学习: ${wordInfo['假名'] || wordInfo['汉字']} (${dictionaryId})`);
       }
     } catch (error) {
-      console.error('标记单词为已学习时出错:', error);
+      // 只在开发模式下输出错误日志
+      if (wx.getDeviceInfo().platform === 'devtools') {
+        console.error('标记单词为已学习时出错:', error);
+      }
     }
   },
 
@@ -414,7 +419,10 @@ Page({
     else if (accuracy <= 0.8) resultLevel = 'normal';
     else resultLevel = 'perfect';
     
-    console.log(`卡片学习完成: 学习${studiedCount}个单词，记住${rememberedCount}个，准确率${(accuracy * 100).toFixed(1)}%`);
+    // 只在开发模式下输出学习完成日志
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.log(`卡片学习完成: 学习${studiedCount}个单词，记住${rememberedCount}个，准确率${(accuracy * 100).toFixed(1)}%`);
+    }
     
     wx.redirectTo({
       url: `/pages/quiz-result/quiz-result?score=${rememberedCount}&totalQuestions=${studiedCount}&timeSpent=${timeSpent}&accuracy=${accuracy.toFixed(2)}&resultLevel=${resultLevel}&studyMode=card&from=course`

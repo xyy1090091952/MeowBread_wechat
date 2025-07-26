@@ -31,7 +31,7 @@
     <view class="prize-info {{displayPrizes[currentSwiperIndex] && displayPrizes[currentSwiperIndex].unlocked ? '' : 'locked'}}" wx:if="{{displayPrizes[currentSwiperIndex]}}">
       <view class="prize-rarity rarity-{{displayPrizes[currentSwiperIndex].rarity}}">{{displayPrizes[currentSwiperIndex].rarity}}</view>
       <view class="prize-name">{{displayPrizes[currentSwiperIndex].unlocked ? displayPrizes[currentSwiperIndex].name : '???'}}</view>
-      <view class="prize-quote">{{displayPrizes[currentSwiperIndex].unlocked ? '"' + displayPrizes[currentSwiperIndex].quote + '"' : '"???"'}}</view>
+      <view class="prize-quote">{{displayPrizes[currentSwiperIndex].unlocked ? displayPrizes[currentSwiperIndex].quote : '???'}}</view>
       
       <!-- 粒子效果切换按钮 - 在所有系列且已解锁时显示 -->
       <view class="particle-button-container" wx:if="{{displayPrizes[currentSwiperIndex].unlocked}}">

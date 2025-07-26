@@ -364,32 +364,43 @@ Page({
       const wordInfo = originalQuestion ? originalQuestion.wordInfo : null;
 
       if (!wordInfo || !wordInfo['假名'] || !wordInfo['中文']) {
-        console.error('标记已背失败：无效或不完整的单词信息', question);
+        // 静默处理无效单词信息，避免console刷屏
         return;
       }
 
       // 获取词典ID，优先使用当前词典ID，如果是'all'则尝试从题目自带的来源获取
       let dictionaryId = this.data.dictionaryId;
       
-      if (dictionaryId === 'all' && question.sourceDictionary) {
-        dictionaryId = question.sourceDictionary;
+      // 如果当前是全部词典模式，尝试从题目对象获取来源词典
+      if (dictionaryId === 'all') {
+        // 优先从originalQuestion获取sourceDictionary
+        if (originalQuestion && originalQuestion.sourceDictionary) {
+          dictionaryId = originalQuestion.sourceDictionary;
+        } else if (question && question.sourceDictionary) {
+          dictionaryId = question.sourceDictionary;
+        }
       }
       
-      // 如果仍然无法确定词典ID，则不进行标记
+      // 如果仍然无法确定词典ID，则静默跳过，避免console刷屏
       if (!dictionaryId || dictionaryId === 'all') {
-        console.warn('无法确定单词所属词典，不标记为已背:', question);
+        // 在全部词典模式下，无法确定具体词典时静默跳过
+        // 这是正常情况，不需要警告输出
         return;
       }
       
       // 调用学习进度管理器标记为已背
       const success = learnedManager.markWordAsLearned(wordInfo, dictionaryId);
       
-      if (success) {
+      // 只在开发模式下输出成功日志，避免生产环境console刷屏
+      if (success && wx.getDeviceInfo().platform === 'devtools') {
         const wordIdentifier = wordInfo['假名'] || wordInfo['汉字'];
         console.log(`单词已标记为已背: ${wordIdentifier} (${dictionaryId})`);
       }
     } catch (error) {
-      console.error('标记单词为已背时出错:', error);
+      // 只在开发模式下输出错误日志
+      if (wx.getDeviceInfo().platform === 'devtools') {
+        console.error('标记单词为已背时出错:', error);
+      }
     }
   },
 

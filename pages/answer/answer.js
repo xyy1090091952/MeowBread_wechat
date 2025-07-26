@@ -32,6 +32,9 @@ Page({
     showParticles: false, // 是否显示粒子效果
     particleConfig: null, // 当前粒子配置
     particleRefreshTimer: null, // 粒子刷新定时器
+    
+    // 美味补给横幅图片
+    bannerImage: 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png', // 默认大面包图片 ✨
   },
   onLoad: function (options) {
     // 页面加载时可以进行一些初始化操作
@@ -390,6 +393,9 @@ Page({
       mistakeCount: mistakeCountDisplay // 更新错题数量显示
     });
 
+    // 获取当前选择的美味补给奖品横幅图片 🍞✨
+    this.updateBannerImage();
+
     // 重要的：更新自定义底部导航的选中状态，确保高亮正确
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       const page = getCurrentPages().pop();
@@ -437,6 +443,57 @@ Page({
       console.error('❌ 获取课本图片失败:', error);
       // 即使出错也返回默认的大家的日语图片
       return 'https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg';
+    }
+  },
+
+  /**
+   * 更新美味补给横幅图片 🍞✨
+   * 根据陈列馆页面美味补给系列的选择，动态显示对应的横幅图片
+   */
+  updateBannerImage() {
+    try {
+      console.log('🍞 开始更新美味补给横幅图片...');
+      
+      // 获取当前选择的美味补给奖品ID
+      const supplyParticleId = wx.getStorageSync('supplyParticleId') || 'FOOD-DEFAULT-01';
+      console.log('🎯 当前选择的美味补给奖品ID:', supplyParticleId);
+      
+      // 引入奖品配置数据
+      const { PrizeDataManager } = require('../../data/gashapon-prizes-config.js');
+      
+      // 查找对应的奖品配置
+      const prizeData = PrizeDataManager.getPrizeById(supplyParticleId);
+      
+      if (prizeData) {
+        console.log('🏷️ 奖品名称:', prizeData.name);
+        console.log('🖼️ 奖品横幅图片:', prizeData.bannerImage);
+        
+        // 如果奖品有横幅图片且不为空，使用奖品的横幅图片；否则使用默认的北海道面包图片
+        const bannerImageUrl = (prizeData.bannerImage && prizeData.bannerImage.trim() !== '') 
+          ? prizeData.bannerImage 
+          : 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png'; // 默认北海道面包图片
+        
+        console.log('✅ 最终使用的横幅图片:', bannerImageUrl);
+        
+        // 更新横幅图片
+        this.setData({
+          bannerImage: bannerImageUrl
+        });
+        
+        console.log('🎉 美味补给横幅图片更新成功！');
+      } else {
+        console.warn('⚠️ 未找到对应的奖品配置，使用默认图片');
+        // 使用默认的北海道面包图片
+        this.setData({
+          bannerImage: 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png'
+        });
+      }
+    } catch (error) {
+      console.error('❌ 更新美味补给横幅图片失败:', error);
+      // 出错时使用默认图片
+      this.setData({
+        bannerImage: 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png'
+      });
     }
   },
 
@@ -920,31 +977,48 @@ Page({
       const app = getApp();
       let currentParticleId = app.globalData.currentParticleId || '';
       
-      // 如果全局数据为空，从本地存储获取
+      // 如果全局数据为空，从本地存储获取当前激活的粒子效果 ✨
       if (!currentParticleId) {
-        currentParticleId = wx.getStorageSync('currentParticleId') || '';
+        // 获取两个系列的粒子效果设置
+        const supplyParticleId = wx.getStorageSync('supplyParticleId') || '';
+        const magicParticleId = wx.getStorageSync('magicParticleId') || '';
+        
+        // 优先使用梦幻魔法系列的设置，如果为空则使用美味补给系列
+        // 如果都为空，则默认使用雪花效果
+        if (magicParticleId) {
+          currentParticleId = magicParticleId;
+        } else if (supplyParticleId) {
+          currentParticleId = supplyParticleId;
+        } else {
+          currentParticleId = 'FX-R-03'; // 默认雪花效果
+        }
+        
         // 同步到全局数据
         app.globalData.currentParticleId = currentParticleId;
       }
       
-      // 如果没有任何粒子效果，默认显示雪花
-      if (!currentParticleId) {
-        currentParticleId = 'FX-R-03'; // 默认雪花效果
-      }
+      // 🔧 特殊处理：如果是麻瓜状态（FX-DEFAULT-01），则不显示粒子效果
+      const showParticles = currentParticleId !== 'FX-DEFAULT-01' && currentParticleId !== 'FOOD-DEFAULT-01';
       
       // 获取粒子配置
-      const particleConfig = this.getParticleConfig(currentParticleId);
+      const particleConfig = showParticles ? this.getParticleConfig(currentParticleId) : null;
       
       this.setData({
         currentParticleId,
-        showParticles: true, // 默认显示粒子效果
+        showParticles, // 根据粒子ID决定是否显示粒子效果 ✨
         particleConfig
       });
       
-      // 启动粒子动态刷新定时器
-      this.startParticleRefresh();
+      // 只有在显示粒子效果时才启动刷新定时器
+      if (showParticles) {
+        this.startParticleRefresh();
+      }
       
-      console.log('✨ 粒子效果初始化完成:', { currentParticleId, showParticles: true });
+      console.log('✨ 粒子效果初始化完成:', { 
+        currentParticleId, 
+        showParticles,
+        isMuggle: currentParticleId === 'FX-DEFAULT-01' || currentParticleId === 'FOOD-DEFAULT-01'
+      });
     } catch (error) {
       console.error('❌ 粒子效果初始化失败:', error);
     }

@@ -49,13 +49,15 @@ const quizService = {
           selectedLessonFiles: [`DICTIONARY_${firstDictionary.id}_ALL_LESSONS`],
           selectedLessonName: '全部课程',
           dictionaryId: firstDictionary.id,
-          basePath: firstDictionary.base_path || '',
+          basePath: firstDictionary.base_path || '', // 确保basePath始终有默认值
           quizMode: options.mode || 'quick',
           selectedQuestionTypes: ['zh_to_jp_choice', 'jp_to_zh_choice', 'zh_to_jp_fill', 'jp_kanji_to_kana_fill'] // 添加默认题型
         };
       }
 
-      const { selectedLessonFiles, dictionaryId, basePath, selectedQuestionTypes, selectedDictionaryName, selectedLessonName } = quizFilter;
+      const { selectedLessonFiles, dictionaryId, selectedQuestionTypes, selectedDictionaryName, selectedLessonName } = quizFilter;
+      // 确保basePath始终有一个有效的默认值，避免undefined导致的setData错误
+      const basePath = quizFilter.basePath || '';
       const quizMode = options.mode || quizFilter.quizMode || 'quick';
       const words = await wordManager.getWordsByFilter({ lessonFiles: selectedLessonFiles, dictionaryId });
       const questions = this.selectWordsForQuiz(words, quizMode, selectedQuestionTypes);
@@ -63,14 +65,16 @@ const quizService = {
       // 判断是否为标准模式（整本书）- 检查是否包含ALL_LESSONS
       const isStandardMode = selectedLessonFiles && selectedLessonFiles.some(file => file.includes('ALL_LESSONS'));
       
-      // 根据模式设置不同的显示文本
-      let currentFilterDisplay;
+      // 根据模式设置不同的显示文本，确保始终有有效的默认值
+      let currentFilterDisplay = '答题模式'; // 设置默认值
       if (isStandardMode) {
         // 标准模式只显示课本名称
-        currentFilterDisplay = selectedDictionaryName;
+        currentFilterDisplay = selectedDictionaryName || '未知教材';
       } else {
         // 课程模式显示课本名称和课程名称
-        currentFilterDisplay = `${selectedDictionaryName} - ${selectedLessonName}`;
+        const dictName = selectedDictionaryName || '未知教材';
+        const lessonName = selectedLessonName || '未知课程';
+        currentFilterDisplay = `${dictName} - ${lessonName}`;
       }
 
       return {
@@ -90,6 +94,7 @@ const quizService = {
       // 处理错误，例如返回一个空状态或错误提示
       return {
         isLoading: false,
+        currentFilterDisplay: '初始化失败', // 确保错误情况下也有有效的currentFilterDisplay
         error: '初始化题目失败，请稍后重试。'
       };
     }
@@ -141,12 +146,12 @@ const quizService = {
 
     // 1. 分离已学和未学单词
     const unlearnedWords = allWords.filter(word => {
-      const wordId = this.getWordId(word.data);
-      return !learnedManager.isWordLearned(wordId);
+      // 修复：isWordLearned需要传入wordData和dictionaryId，而不是wordId
+      return !learnedManager.isWordLearned(word.data, word.sourceDictionary || 'unknown');
     });
     const learnedWords = allWords.filter(word => {
-      const wordId = this.getWordId(word.data);
-      return learnedManager.isWordLearned(wordId);
+      // 修复：isWordLearned需要传入wordData和dictionaryId，而不是wordId
+      return learnedManager.isWordLearned(word.data, word.sourceDictionary || 'unknown');
     });
 
     // 2. 根据模式和可用单词数量动态决定题目数量
@@ -222,7 +227,10 @@ const quizService = {
       existingQuestions.forEach(question => {
         if (question.wordInfo) {
           const wordId = this.getWordId(question.wordInfo);
-          existingWordIds.add(wordId);
+          // 只有当wordId有效时才添加到集合中
+          if (wordId) {
+            existingWordIds.add(wordId);
+          }
         }
       });
       
@@ -266,9 +274,13 @@ const quizService = {
   /**
    * 获取单词的唯一标识符（与learnedManager保持一致）
    * @param {object} wordData - 单词数据对象
-   * @returns {string} 单词的唯一标识符
+   * @returns {string|null} 单词的唯一标识符，如果wordData无效则返回null
    */
   getWordId(wordData) {
+    // 增加空值判断，确保wordData有效
+    if (!wordData || typeof wordData !== 'object') {
+      return null;
+    }
     const kana = wordData['假名'] || '';
     const kanji = wordData['汉字'] || '';
     const meaning = wordData['中文'] || '';

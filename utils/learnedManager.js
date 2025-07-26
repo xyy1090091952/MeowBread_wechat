@@ -14,7 +14,10 @@ const { WORD_STATUS } = require('./constants.js');
 function getWordId(wordData) {
   // 增加空值判断，确保wordData有效
   if (!wordData || typeof wordData !== 'object') {
-    console.error('getWordId: 无效的单词数据', wordData);
+    // 只在开发模式下输出错误日志，帮助调试
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.error('getWordId: 无效的单词数据', wordData);
+    }
     return null;
   }
   // 使用假名+汉字+中文作为唯一标识，确保同一个单词不会重复记录
@@ -32,7 +35,7 @@ function getWordId(wordData) {
 function markWordAsLearned(wordData, dictionaryId) {
   // 增加空值判断
   if (!wordData) {
-    console.error('markWordAsLearned: 尝试标记一个空的单词信息');
+    // 静默处理空的单词信息，避免console刷屏
     return false;
   }
   try {
@@ -61,14 +64,23 @@ function markWordAsLearned(wordData, dictionaryId) {
       // 更新词典的学习进度计数
       updateLearningProgress(dictionaryId);
       
-      console.log(`单词已标记为已背: ${wordData['假名'] || wordData['汉字']} (${dictionaryId})`);
+      // 只在开发模式下输出成功日志
+      if (wx.getDeviceInfo().platform === 'devtools') {
+        console.log(`单词已标记为已背: ${wordData['假名'] || wordData['汉字']} (${dictionaryId})`);
+      }
       return true;
     } else {
-      console.log(`单词已经是已背状态: ${wordData['假名'] || wordData['汉字']}`);
+      // 只在开发模式下输出重复标记日志
+      if (wx.getDeviceInfo().platform === 'devtools') {
+        console.log(`单词已经是已背状态: ${wordData['假名'] || wordData['汉字']}`);
+      }
       return false;
     }
   } catch (error) {
-    console.error('标记单词为已背失败:', error);
+    // 只在开发模式下输出错误日志
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.error('标记单词为已背失败:', error);
+    }
     return false;
   }
 }
@@ -86,9 +98,15 @@ function updateLearningProgress(dictionaryId) {
     const oldLearnedKey = `learned_${dictionaryId}`;
     wx.setStorageSync(oldLearnedKey, learnedWords.length);
     
-    console.log(`词典 ${dictionaryId} 学习进度已更新: ${learnedWords.length} 个单词`);
+    // 只在开发模式下输出学习进度更新日志
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.log(`词典 ${dictionaryId} 学习进度已更新: ${learnedWords.length} 个单词`);
+    }
   } catch (error) {
-    console.error('更新学习进度失败:', error);
+    // 只在开发模式下输出错误日志
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.error('更新学习进度失败:', error);
+    }
   }
 }
 
@@ -118,7 +136,10 @@ function getLearnedWords(dictionaryId = null) {
       return allLearned;
     }
   } catch (error) {
-    console.error('获取已背单词列表失败:', error);
+    // 只在开发模式下输出错误日志
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.error('获取已背单词列表失败:', error);
+    }
     return [];
   }
 }
@@ -138,7 +159,10 @@ async function getLearnedWordsForCourse(dictionaryId, lessonFile) {
     const courseWords = await require('./wordManager.js').getWordsByFilter({ lessonFiles: [lessonFile], dictionaryId });
     
     if (!Array.isArray(courseWords)) {
-      console.warn(`课程文件格式不正确或加载失败: ${dictionaryId}/${lessonFile}`);
+      // 只在开发模式下输出警告日志
+      if (wx.getDeviceInfo().platform === 'devtools') {
+        console.warn(`课程文件格式不正确或加载失败: ${dictionaryId}/${lessonFile}`);
+      }
       return [];
     }
     
@@ -158,7 +182,10 @@ async function getLearnedWordsForCourse(dictionaryId, lessonFile) {
     
     return courseLearnedWords;
   } catch (error) {
-    console.error(`获取课程 ${dictionaryId}/${lessonFile} 的已背单词失败:`, error);
+    // 只在开发模式下输出错误日志
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.error(`获取课程 ${dictionaryId}/${lessonFile} 的已背单词失败:`, error);
+    }
     return [];
   }
 }
@@ -180,7 +207,10 @@ function isWordLearned(wordData, dictionaryId) {
     
     return learnedWords.some(item => item.id === wordId);
   } catch (error) {
-    console.error('检查单词学习状态失败:', error);
+    // 只在开发模式下输出错误日志
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.error('检查单词学习状态失败:', error);
+    }
     return false;
   }
 }
@@ -204,7 +234,10 @@ function getLearningProgress(dictionaryId) {
       progress: 0,   // 调用方应根据自己的总数重新计算
     };
   } catch (error) {
-    console.error('获取学习进度统计失败:', error);
+    // 只在开发模式下输出错误日志
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.error('获取学习进度统计失败:', error);
+    }
     return { learnedCount: 0, totalCount: 0, progress: 0 };
   }
 }
@@ -221,10 +254,16 @@ function resetLearningProgress(dictionaryId) {
     wx.removeStorageSync(learnedKey);
     wx.removeStorageSync(oldLearnedKey);
     
-    console.log(`词典 ${dictionaryId} 的学习进度已重置`);
+    // 只在开发模式下输出日志
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.log(`词典 ${dictionaryId} 的学习进度已重置`);
+    }
     return true;
   } catch (error) {
-    console.error('重置学习进度失败:', error);
+    // 只在开发模式下输出错误日志
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.error('重置学习进度失败:', error);
+    }
     return false;
   }
 }
@@ -244,7 +283,10 @@ function markWordsAsLearned(wordDataList, dictionaryId) {
     }
   });
   
-  console.log(`批量标记完成: ${successCount}/${wordDataList.length} 个单词已标记为已背`);
+  // 只在开发模式下输出日志
+  if (wx.getDeviceInfo().platform === 'devtools') {
+    console.log(`批量标记完成: ${successCount}/${wordDataList.length} 个单词已标记为已背`);
+  }
   return successCount;
 }
 
@@ -256,7 +298,10 @@ function markWordsAsLearned(wordDataList, dictionaryId) {
 function unmarkWordAsLearned(wordData, dictionaryId) {
   // 增加空值判断
   if (!wordData) {
-    console.error('unmarkWordAsLearned: 尝试取消标记一个空的单词信息');
+    // 只在开发模式下输出错误日志
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.error('unmarkWordAsLearned: 尝试取消标记一个空的单词信息');
+    }
     return false;
   }
   try {
@@ -271,14 +316,23 @@ function unmarkWordAsLearned(wordData, dictionaryId) {
       learnedWords.splice(wordIndex, 1);
       wx.setStorageSync(learnedKey, learnedWords);
       updateLearningProgress(dictionaryId); // 同步更新学习进度计数
-      console.log(`单词已恢复为未背: ${wordData['假名'] || wordData['汉字']} (${dictionaryId})`);
+      // 只在开发模式下输出日志
+      if (wx.getDeviceInfo().platform === 'devtools') {
+        console.log(`单词已恢复为未背: ${wordData['假名'] || wordData['汉字']} (${dictionaryId})`);
+      }
       return true;
     } else {
-      console.log(`单词未曾被标记为已背: ${wordData['假名'] || wordData['汉字']}`);
+      // 只在开发模式下输出日志
+      if (wx.getDeviceInfo().platform === 'devtools') {
+        console.log(`单词未曾被标记为已背: ${wordData['假名'] || wordData['汉字']}`);
+      }
       return false;
     }
   } catch (error) {
-    console.error('取消标记单词为已背失败:', error);
+    // 只在开发模式下输出错误日志
+    if (wx.getDeviceInfo().platform === 'devtools') {
+      console.error('取消标记单词为已背失败:', error);
+    }
     return false;
   }
 }

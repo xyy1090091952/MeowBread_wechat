@@ -18,16 +18,19 @@ Page({
 
   /**
    * 生命周期函数--监听页面加载
-   * @param {object} options 页面启动参数，包含 prizeData 和 poolId
+   * @param {object} options 页面启动参数，包含 prizeId 和 seriesId
    */
   onLoad(options) {
-    // 从页面参数中获取奖池ID
-    if (options.poolId) {
-      // 将 poolId 保存到页面数据中，方便"再抽一次"时使用
-      const poolId = Number(options.poolId);
+    console.log('结果页面接收到的参数:', options);
+    
+    // 从页面参数中获取系列ID (兼容新旧参数名)
+    const seriesId = options.seriesId || options.poolId;
+    if (seriesId) {
+      // 将 seriesId 保存到页面数据中，方便"再抽一次"时使用
+      const poolId = Number(seriesId);
       this.setData({ poolId });
       
-      // 根据poolId设置背景类型
+      // 根据seriesId设置背景类型
       const pool = gashaponData.find(p => p.id === poolId);
       if (pool) {
         let backgroundType = 'supply'; // 默认为美味补给
@@ -40,16 +43,34 @@ Page({
       }
     }
 
-    // 从页面参数中获取奖品信息
-    if (options.prizeData) {
-      // prizeData 是一个 JSON 字符串，需要解析
+    // 从页面参数中获取奖品信息 (支持新的prizeId参数)
+    if (options.prizeId) {
+      // 根据prizeId从数据管理器中获取完整的奖品信息
+      const prize = PrizeDataManager.getPrizeById(options.prizeId);
+      if (prize) {
+        console.log('找到奖品信息:', prize);
+        this.setData({ prize });
+        // 播放入场动画
+        this.playAnimation();
+      } else {
+        console.error('找不到奖品信息，prizeId:', options.prizeId);
+        wx.showToast({
+          title: '奖品信息获取失败',
+          icon: 'error',
+          duration: 2000
+        });
+        setTimeout(() => {
+          wx.navigateBack();
+        }, 2000);
+      }
+    } else if (options.prizeData) {
+      // 兼容旧的prizeData参数格式
       const prize = JSON.parse(decodeURIComponent(options.prizeData));
       this.setData({ prize });
-      // 奖品已在抽奖页面（gashapon.js）的 onDraw 方法中记录，此处无需重复操作
-      // 播放入场动画
       this.playAnimation();
     } else {
       // 如果没有奖品数据，这是一个异常情况
+      console.error('缺少奖品参数');
       wx.showToast({
         title: '奖品信息丢失',
         icon: 'error',
@@ -72,11 +93,12 @@ Page({
   },
 
   /**
-   * @description “去陈列馆”按钮的点击事件，跳转到扭蛋陈列馆页面
+   * @description "去陈列馆"按钮的点击事件，跳转到扭蛋陈列馆页面
+   * 直接跳转到陈列馆，并传递返回目标参数，让陈列馆知道应该返回到个人中心 ✨
    */
   goToGallery() {
-    wx.navigateTo({
-      url: '/pages/gashapon-inventory/gashapon-inventory',
+    wx.redirectTo({
+      url: '/pages/gashapon-inventory/gashapon-inventory?returnTo=profile',
     });
   },
 

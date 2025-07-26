@@ -8,7 +8,7 @@
     <!-- 中央 Banner -->
     <image class="banner-title" src="/images/banner/Meow Bread banner.svg" mode="widthFix" />
     <!-- 大面包装饰图片 -->
-    <image class="banner-bigbread {{breadBouncing ? 'bread-bounce' : ''}}" src="https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png" mode="widthFix" bindtap="onBreadTap" />
+    <image class="banner-bigbread {{breadBouncing ? 'bread-bounce' : ''}}" src="{{bannerImage}}" mode="widthFix" bindtap="onBreadTap" />
     
     <!-- 粒子效果层 -->
     <view class="particle-layer" wx:if="{{showParticles && particleConfig}}">
