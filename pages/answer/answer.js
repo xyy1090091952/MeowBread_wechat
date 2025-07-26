@@ -2,6 +2,7 @@
 const mistakeManager = require('../../utils/mistakeManager.js'); // 引入错题管理器
 const filterManager = require('../../utils/filterManager.js'); // 引入筛选管理器
 const quizService = require('../../utils/quiz.service.js'); // 引入答题服务
+const { AnimationHelper, ParticleHelper } = require('../../utils/animation.js'); // 引入辅助模块
 
 Page({
   data: {
@@ -12,11 +13,6 @@ Page({
     showTextbookSelector: false, // 控制教材选择弹窗的显示
     pageLoaded: false, // 控制页面渐显动画
     mistakeCount: 0, // 错题数量显示（超过99显示∞）
-    // 元素位置信息（用于碰撞检测）
-    elementPositions: [],
-    breadBouncing: false, // 控制面包弹跳动画状态
-    autoBounceTimer: null, // 自动弹跳定时器
-    
     // 题型选择相关数据
     showQuestionTypePopup: false, // 控制题型选择弹窗的显示
     questionTypeOptions: [], // 题型选项列表
@@ -27,18 +23,16 @@ Page({
     selectedDictionaryIndex: 0, // 当前选择的词典索引
     showCourseSelector: false, // 控制课程选择弹窗的显示
     
-    // 粒子效果相关数据
-    currentParticleId: '', // 当前选中的粒子效果ID
-    showParticles: false, // 是否显示粒子效果
-    particleConfig: null, // 当前粒子配置
-    particleRefreshTimer: null, // 粒子刷新定时器
-    
     // 美味补给横幅图片
     bannerImage: 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png', // 默认大面包图片 ✨
   },
   onLoad: function (options) {
     // 页面加载时可以进行一些初始化操作
     console.log('Page loaded with options:', options);
+
+    // 初始化动画辅助模块
+    this.animationHelper = new AnimationHelper(this);
+    this.particleHelper = new ParticleHelper(this);
 
     // 检查是否已选择教材
     const selectedDict = wx.getStorageSync('selectedDictionary');
@@ -50,10 +44,10 @@ Page({
     this.initializeQuestionTypes();
 
     // 启动自动弹跳效果
-    this.startAutoBounce();
+    this.animationHelper.startAutoBounce();
     
     // 初始化粒子效果
-    this.initParticleEffect();
+    this.particleHelper.init();
   },
 
   /**
@@ -95,197 +89,10 @@ Page({
   },
 
   /**
-   * 设置动画监听器
-   */
-  setupAnimationListeners() {
-    // 开始碰撞检测
-    this.startCollisionDetection();
-    
-    // 延迟设置监听器，确保动画已开始
-    setTimeout(() => {
-      for (let i = 1; i <= 5; i++) {
-        // 模拟动画结束事件，因为无法直接监听CSS动画
-        const elementInfo = this.data.elementPositions.find(pos => pos.id === i);
-        if (elementInfo) {
-          const totalTime = (elementInfo.delay + elementInfo.duration) * 1000; // 转换到毫秒
-          setTimeout(() => {
-            const positions = this.data.elementPositions;
-            const updatedPositions = positions.map(pos => 
-              pos.id === i ? { ...pos, settled: true } : pos
-            );
-            this.setData({ elementPositions: updatedPositions });
-            console.log(`元素 ${i} 动画完成，已静止`);
-          }, totalTime);
-        }
-      }
-    }, 100);
-  },
-
-  /**
-   * 开始碰撞检测
-   */
-  startCollisionDetection() {
-    // 每隔100ms检测一次碰撞
-    this.collisionTimer = setInterval(() => {
-      this.checkAndResolveCollisions();
-    }, 100);
-    
-    // 4秒后停止碰撞检测（匹配中等动画速度）
-    setTimeout(() => {
-      if (this.collisionTimer) {
-        clearInterval(this.collisionTimer);
-        this.collisionTimer = null;
-        console.log('碰撞检测已停止');
-      }
-    }, 4000);
-  },
-
-  /**
-   * 检测和解决碰撞
-   */
-  checkAndResolveCollisions() {
-    const query = wx.createSelectorQuery().in(this);
-    const positions = [];
-    
-    // 获取所有元素的当前位置
-    for (let i = 1; i <= 5; i++) {
-      query.select(`#falling-item-${i}`).boundingClientRect();
-    }
-    
-    query.exec((res) => {
-      if (!res || res.length !== 5) return;
-      
-      // 检测每对元素之间的碰撞
-      for (let i = 0; i < res.length; i++) {
-        for (let j = i + 1; j < res.length; j++) {
-          const element1 = res[i];
-          const element2 = res[j];
-          
-          if (element1 && element2 && this.isColliding(element1, element2)) {
-            console.log(`检测到碰撞：元素${i+1} 和 元素${j+1}`);
-            this.resolveCollision(i + 1, j + 1, element1, element2);
-          }
-        }
-      }
-    });
-  },
-
-  /**
-   * 检测两个元素是否碰撞
-   */
-  isColliding(element1, element2) {
-    if (!element1 || !element2) return false;
-    
-    const iconSize = 230; // 230rpx图标大小
-    const pixelRatio = wx.getWindowInfo().pixelRatio || 2;
-    const iconSizePx = iconSize / pixelRatio; // 转换为px
-    
-    // 计算中心点距离
-    const centerX1 = element1.left + element1.width / 2;
-    const centerY1 = element1.top + element1.height / 2;
-    const centerX2 = element2.left + element2.width / 2;
-    const centerY2 = element2.top + element2.height / 2;
-    
-    const distance = Math.sqrt(
-      Math.pow(centerX2 - centerX1, 2) + Math.pow(centerY2 - centerY1, 2)
-    );
-    
-    // 如果距离小于图标直径的80%，认为发生碰撞
-    return distance < iconSizePx * 0.8;
-  },
-
-  /**
-   * 解决碰撞
-   */
-  resolveCollision(id1, id2, element1, element2) {
-    const elementInfo1 = this.data.elementPositions.find(pos => pos.id === id1);
-    const elementInfo2 = this.data.elementPositions.find(pos => pos.id === id2);
-    
-    if (!elementInfo1 || !elementInfo2) return;
-    
-    // 计算推开的方向和距离
-    const centerX1 = element1.left + element1.width / 2;
-    const centerX2 = element2.left + element2.width / 2;
-    
-    // 水平推开距离
-    const pushDistance = 20; // px
-    
-    // 确定推开方向
-    let newLeft1 = elementInfo1.left;
-    let newLeft2 = elementInfo2.left;
-    
-    if (centerX1 < centerX2) {
-      // 元素1在左侧，向左推开元素1，向右推开元素2
-      newLeft1 = Math.max(5, elementInfo1.left - 3); // 最小5%
-      newLeft2 = Math.min(85, elementInfo2.left + 3); // 最大85%
-    } else {
-      // 元素1在右侧，向右推开元素1，向左推开元素2
-      newLeft1 = Math.min(85, elementInfo1.left + 3);
-      newLeft2 = Math.max(5, elementInfo2.left - 3);
-    }
-    
-    // 更新元素位置
-    const updatedPositions = this.data.elementPositions.map(pos => {
-      if (pos.id === id1) return { ...pos, left: newLeft1 };
-      if (pos.id === id2) return { ...pos, left: newLeft2 };
-      return pos;
-    });
-    
-    this.setData({ elementPositions: updatedPositions });
-    
-    // 更新样式
-    const updateStyles = {};
-    updateStyles[`fallingStyle${id1}`] = `left: ${newLeft1}%; animation-delay: ${elementInfo1.delay.toFixed(1)}s; animation-duration: ${elementInfo1.duration.toFixed(1)}s; transform: translateX(-50%);`;
-    updateStyles[`fallingStyle${id2}`] = `left: ${newLeft2}%; animation-delay: ${elementInfo2.delay.toFixed(1)}s; animation-duration: ${elementInfo2.duration.toFixed(1)}s; transform: translateX(-50%);`;
-    
-    this.setData(updateStyles);
-    
-    console.log(`碰撞解决：元素${id1}移动到${newLeft1.toFixed(1)}%，元素${id2}移动到${newLeft2.toFixed(1)}%`);
-  },
-
-  /**
-   * 检查位置是否与已有位置冲突
-   */
-  checkPositionCollision(newPosition, usedPositions, minDistance = 18) {
-    return usedPositions.some(pos => Math.abs(pos - newPosition) < minDistance);
-  },
-
-  /**
    * 处理元素触摸事件
    */
   handleElementTouch(e) {
-    const elementId = e.currentTarget.dataset.id;
-    console.log(`触摸了元素 ${elementId}`);
-    
-    // 直接操作元素样式实现弹跳效果
-    const query = wx.createSelectorQuery().in(this);
-    query.select(`#falling-item-${elementId}`).node((res) => {
-      if (res && res.node) {
-        const element = res.node;
-        
-        // 保存原始的margin-top值
-        const originalMarginTop = element.style.marginTop || '0px';
-        
-        // 设置向上弹跳
-        element.style.marginTop = '-30px';
-        
-        // 150ms后开始回弹
-        setTimeout(() => {
-          element.style.marginTop = '-5px';
-        }, 150);
-        
-        // 300ms后回到原位
-        setTimeout(() => {
-          element.style.marginTop = originalMarginTop;
-        }, 300);
-      }
-    });
-    query.exec();
-    
-    // 添加触觉反馈
-    wx.vibrateShort({
-      type: 'light' // 轻微震动
-    });
+    this.animationHelper.handleElementTouch(e);
   },
 
   /**
@@ -294,9 +101,21 @@ Page({
   onShow() {
     console.log('Page show');
     
-    // 重新初始化粒子效果（确保粒子系统正确启动）
-    this.initParticleEffect();
+    // 更新页面数据
+    this.updatePageData();
     
+    // 初始化或刷新粒子效果
+    this.particleHelper.init();
+    
+    // 更新底部导航栏状态
+    this.updateTabBarState();
+  },
+
+  /**
+   * 更新页面所有动态数据
+   * 包括筛选条件、教材信息、错题本数量等
+   */
+  updatePageData() {
     // 获取用户在filter页面的真实选择（包括course模式的选择）
     let userFilter = filterManager.getFilter();
     let currentFilterDisplay = '请选择教材和课程'; // 默认提示
@@ -395,21 +214,24 @@ Page({
 
     // 获取当前选择的美味补给奖品横幅图片 🍞✨
     this.updateBannerImage();
+  },
 
-    // 重要的：更新自定义底部导航的选中状态，确保高亮正确
+  /**
+   * 更新底部导航栏状态
+   */
+  updateTabBarState() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       const page = getCurrentPages().pop();
       const route = page.route;
       const tabList = this.getTabBar().data.tabList;
-      const index = tabList.findIndex(item => item.pagePath === route);
+      const index = tabList.findIndex(item => item.pagePath.includes(route));
       if (index !== -1) {
         this.getTabBar().updateSelected(index);
       }
     }
-    
-    // 初始化粒子效果
-    this.initParticleEffect();
   },
+
+
 
   /**
    * 根据课本ID获取对应的图片路径
@@ -591,9 +413,8 @@ Page({
     console.log('Page hide');
     
     // 停止粒子刷新定时器，节省内存
-    if (this.data.particleRefreshTimer) {
-      clearTimeout(this.data.particleRefreshTimer);
-      this.setData({ particleRefreshTimer: null });
+    if (this.particleHelper) {
+      this.particleHelper.destroy();
       console.log('⏸️ 页面隐藏，停止粒子刷新定时器');
     }
   },
@@ -604,21 +425,14 @@ Page({
   onUnload() {
     console.log('Page unload');
     
-    // 清理碰撞检测定时器
-    if (this.collisionTimer) {
-      clearInterval(this.collisionTimer);
-      this.collisionTimer = null;
+    // 销毁动画助手，清理所有定时器
+    if (this.animationHelper) {
+      this.animationHelper.destroy();
     }
 
-    // 清理自动弹跳定时器
-    if (this.data.autoBounceTimer) {
-      clearTimeout(this.data.autoBounceTimer);
-    }
-
-    // 清理粒子刷新定时器
-    if (this.data.particleRefreshTimer) {
-      clearTimeout(this.data.particleRefreshTimer);
-      this.setData({ particleRefreshTimer: null });
+    // 销毁粒子助手，清理定时器
+    if (this.particleHelper) {
+      this.particleHelper.destroy();
     }
   },
 
@@ -860,61 +674,7 @@ Page({
    * 面包点击事件 - 触发Q弹动画
    */
   onBreadTap: function() {
-    console.log('Bread tap triggered');
-    // 如果动画正在进行中，则不重复触发
-    if (this.data.breadBouncing) {
-      return;
-    }
-    
-    // 触发弹跳动画
-    this.setData({
-      breadBouncing: true
-    });
-    
-    // 动画播放完成后重置状态（动画持续0.8秒）
-    setTimeout(() => {
-      this.setData({
-        breadBouncing: false
-      });
-    }, 800);
-    
-    // 添加点击反馈
-    wx.vibrateShort({
-      type: 'light' // 轻微震动反馈
-    });
-  },
-
-  /**
-   * 启动自动弹跳效果
-   */
-  startAutoBounce: function() {
-    const scheduleNextBounce = () => {
-      // 随机间隔时间：8-15秒
-      const randomDelay = Math.random() * 7000 + 8000; // 8000-15000ms
-      
-      this.data.autoBounceTimer = setTimeout(() => {
-        // 如果页面还在显示且没有手动点击动画，则触发自动弹跳
-        if (!this.data.breadBouncing) {
-          console.log('Auto bounce triggered');
-          this.setData({
-            breadBouncing: true
-          });
-          
-          // 动画播放完成后重置状态
-          setTimeout(() => {
-            this.setData({
-              breadBouncing: false
-            });
-          }, 800);
-        }
-        
-        // 安排下一次自动弹跳
-        scheduleNextBounce();
-      }, randomDelay);
-    };
-    
-    // 启动第一次自动弹跳
-    scheduleNextBounce();
+    this.animationHelper.triggerManualBounce();
   },
 
   // ========== 词库选择弹窗相关方法 ==========
@@ -964,142 +724,5 @@ Page({
       icon: 'success',
       duration: 1500
     });
-  },
-
-  // ========== 粒子效果相关方法 ==========
-
-  /**
-   * 初始化粒子效果
-   */
-  initParticleEffect() {
-    try {
-      // 检查并停止旧的定时器
-      if (this.data.particleRefreshTimer) {
-        clearTimeout(this.data.particleRefreshTimer);
-        this.setData({ particleRefreshTimer: null });
-      }
-
-      // 从本地存储中获取当前选择的粒子效果ID
-      const currentParticleId = wx.getStorageSync('currentParticleId') || 'FX-DEFAULT-01';
-      console.log('✨ 当前选中的粒子效果ID:', currentParticleId);
-
-      // 获取粒子效果的配置
-      const particleConfig = this.getParticleConfig(currentParticleId);
-
-      if (particleConfig) {
-        // 如果有配置，则显示粒子效果
-        this.setData({
-          currentParticleId: currentParticleId,
-          particleConfig: particleConfig,
-          showParticles: true
-        });
-        // 启动粒子刷新
-        this.startParticleRefresh();
-        console.log('✅ 粒子效果初始化成功:', currentParticleId);
-      } else {
-        // 如果没有配置（例如，选择了无效果的奖品），则隐藏粒子效果
-        this.setData({
-          showParticles: false,
-          currentParticleId: '',
-          particleConfig: null
-        });
-        console.log('🚫 无需显示粒子效果或未找到配置:', currentParticleId);
-      }
-    } catch (error) {
-      console.error('❌ 初始化粒子效果失败:', error);
-      this.setData({ showParticles: false });
-    }
-  },
-
-  /**
-   * 启动粒子动态刷新
-   */
-  startParticleRefresh() {
-     // 清除之前的定时器
-     if (this.data.particleRefreshTimer) {
-       clearTimeout(this.data.particleRefreshTimer);
-     }
-    
-    // 每3-8秒随机刷新一次粒子配置
-    const refreshParticles = () => {
-      // 检查页面是否还在显示状态，只有当前页面可见时才刷新粒子
-      const pages = getCurrentPages();
-      const currentPage = pages[pages.length - 1];
-      const isCurrentPageAnswer = currentPage && currentPage.route === 'pages/answer/answer';
-      
-      if (isCurrentPageAnswer && this.data.showParticles && this.data.currentParticleId) {
-        const newConfig = this.getParticleConfig(this.data.currentParticleId);
-        
-        // 增加一个保护，防止 newConfig 为 null
-        if (newConfig) {
-          this.setData({ particleConfig: newConfig });
-          console.log('🔄 粒子配置已刷新，新数量:', newConfig.count);
-        } else {
-          console.warn(`⚠️ 无法获取 particleId 为 "${this.data.currentParticleId}" 的配置`);
-        }
-        
-        // 设置下一次刷新的随机时间间隔（3-8秒）
-        const nextInterval = Math.floor(Math.random() * 5000) + 3000;
-        this.data.particleRefreshTimer = setTimeout(refreshParticles, nextInterval);
-      } else {
-        console.log('⏸️ 当前页面不是answer页面，停止粒子刷新');
-        // 如果不是answer页面，清除定时器
-        if (this.data.particleRefreshTimer) {
-          clearTimeout(this.data.particleRefreshTimer);
-          this.setData({ particleRefreshTimer: null });
-        }
-      }
-    };
-    
-    // 首次延迟2-5秒后开始
-    const initialDelay = Math.floor(Math.random() * 3000) + 2000;
-    this.data.particleRefreshTimer = setTimeout(refreshParticles, initialDelay);
-  },
-
-  /**
-   * 根据粒子ID获取粒子配置
-   * @param {string} particleId 粒子效果ID
-   * @returns {Object|null} 粒子配置对象
-   */
-  getParticleConfig(particleId) {
-    if (!particleId) {
-      console.warn('⚠️ getParticleConfig: particleId is null or undefined, returning default snow effect.');
-      // 默认返回雪花效果的配置
-      const randomCount = Math.floor(Math.random() * 6) + 17;
-      return {
-        type: 'snow',
-        image: '/images/particles/snow.svg',
-        count: randomCount,
-        duration: 18,
-        size: 35
-      };
-    }
-
-    // 引入奖品数据管理器
-    const { PrizeDataManager } = require('../../data/gashapon-prizes-config.js');
-    
-    // 根据ID获取奖品数据
-    const prizeData = PrizeDataManager.getPrizeById(particleId);
-    
-    // 检查奖品数据和粒子配置是否存在
-    if (!prizeData || !prizeData.particleConfig) {
-      console.warn(`⚠️ 未找到ID为 "${particleId}" 的奖品或该奖品没有粒子配置。`);
-      return null;
-    }
-    
-    const baseConfig = prizeData.particleConfig;
-    
-    // 随机变化粒子数量：基础数量 ± 15%
-    const variation = Math.floor(baseConfig.baseCount * 0.15);
-    const randomCount = Math.floor(Math.random() * (variation * 2 + 1)) + (baseConfig.baseCount - variation);
-    
-    // 返回最终的、包含随机数量的配置
-    return {
-      type: baseConfig.type,
-      image: baseConfig.image,
-      count: Math.max(5, randomCount), // 确保最少有5个粒子
-      duration: baseConfig.duration,
-      size: baseConfig.size
-    };
   }
 })

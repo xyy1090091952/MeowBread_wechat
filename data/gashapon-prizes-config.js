@@ -32,7 +32,6 @@ const magicPrizes = [
     name: '麻瓜', 
     rarity: 'DEFAULT', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png', 
-    bannerImage: '',
     quote: '阿瓦达啃大瓜',
     particleConfig: null // 无粒子效果
   },
@@ -42,7 +41,6 @@ const magicPrizes = [
     name: '玫瑰魔法', 
     rarity: 'SSR', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png', 
-    bannerImage: '',
     quote: '阿姨洗铁路',
     particleConfig: {
       type: 'rose',
@@ -58,7 +56,6 @@ const magicPrizes = [
     name: '萤火虫', 
     rarity: 'SR', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf85445556.png', 
-    bannerImage: '',
     quote: '挑萤火虫夜读',
     particleConfig: {
       type: 'firefly',
@@ -74,7 +71,6 @@ const magicPrizes = [
     name: '樱花魔法', 
     rarity: 'R', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf854d8832.png', 
-    bannerImage: '',
     quote: '故乡的樱花落了',
     particleConfig: {
       type: 'sakura',
@@ -89,7 +85,6 @@ const magicPrizes = [
     name: '落叶魔法', 
     rarity: 'R', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf8549c6f3.png', 
-    bannerImage: '',
     quote: '又到一年考试时',
     particleConfig: {
       type: 'leaf',
@@ -104,7 +99,6 @@ const magicPrizes = [
     name: '谧雪魔法', 
     rarity: 'R', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf854dc136.png', 
-    bannerImage: '',
     quote: 'let it go',
     particleConfig: {
       type: 'snow',
