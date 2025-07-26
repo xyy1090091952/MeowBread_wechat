@@ -973,54 +973,41 @@ Page({
    */
   initParticleEffect() {
     try {
-      // 从全局数据获取当前粒子ID
-      const app = getApp();
-      let currentParticleId = app.globalData.currentParticleId || '';
-      
-      // 如果全局数据为空，从本地存储获取当前激活的粒子效果 ✨
-      if (!currentParticleId) {
-        // 获取两个系列的粒子效果设置
-        const supplyParticleId = wx.getStorageSync('supplyParticleId') || '';
-        const magicParticleId = wx.getStorageSync('magicParticleId') || '';
-        
-        // 优先使用梦幻魔法系列的设置，如果为空则使用美味补给系列
-        // 如果都为空，则默认使用雪花效果
-        if (magicParticleId) {
-          currentParticleId = magicParticleId;
-        } else if (supplyParticleId) {
-          currentParticleId = supplyParticleId;
-        } else {
-          currentParticleId = 'FX-R-03'; // 默认雪花效果
-        }
-        
-        // 同步到全局数据
-        app.globalData.currentParticleId = currentParticleId;
+      // 检查并停止旧的定时器
+      if (this.data.particleRefreshTimer) {
+        clearTimeout(this.data.particleRefreshTimer);
+        this.setData({ particleRefreshTimer: null });
       }
-      
-      // 🔧 特殊处理：如果是麻瓜状态（FX-DEFAULT-01），则不显示粒子效果
-      const showParticles = currentParticleId !== 'FX-DEFAULT-01' && currentParticleId !== 'FOOD-DEFAULT-01';
-      
-      // 获取粒子配置
-      const particleConfig = showParticles ? this.getParticleConfig(currentParticleId) : null;
-      
-      this.setData({
-        currentParticleId,
-        showParticles, // 根据粒子ID决定是否显示粒子效果 ✨
-        particleConfig
-      });
-      
-      // 只有在显示粒子效果时才启动刷新定时器
-      if (showParticles) {
+
+      // 从本地存储中获取当前选择的粒子效果ID
+      const currentParticleId = wx.getStorageSync('currentParticleId') || 'FX-DEFAULT-01';
+      console.log('✨ 当前选中的粒子效果ID:', currentParticleId);
+
+      // 获取粒子效果的配置
+      const particleConfig = this.getParticleConfig(currentParticleId);
+
+      if (particleConfig) {
+        // 如果有配置，则显示粒子效果
+        this.setData({
+          currentParticleId: currentParticleId,
+          particleConfig: particleConfig,
+          showParticles: true
+        });
+        // 启动粒子刷新
         this.startParticleRefresh();
+        console.log('✅ 粒子效果初始化成功:', currentParticleId);
+      } else {
+        // 如果没有配置（例如，选择了无效果的奖品），则隐藏粒子效果
+        this.setData({
+          showParticles: false,
+          currentParticleId: '',
+          particleConfig: null
+        });
+        console.log('🚫 无需显示粒子效果或未找到配置:', currentParticleId);
       }
-      
-      console.log('✨ 粒子效果初始化完成:', { 
-        currentParticleId, 
-        showParticles,
-        isMuggle: currentParticleId === 'FX-DEFAULT-01' || currentParticleId === 'FOOD-DEFAULT-01'
-      });
     } catch (error) {
-      console.error('❌ 粒子效果初始化失败:', error);
+      console.error('❌ 初始化粒子效果失败:', error);
+      this.setData({ showParticles: false });
     }
   },
 

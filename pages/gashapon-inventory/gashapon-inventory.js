@@ -395,75 +395,62 @@ Page({
   },
 
   /**
-   * @description 保存粒子效果设置
-   * @param {string} particleId 粒子效果ID
-   * @param {number} seriesId 系列ID
-   */
-  saveParticleSettings(particleId, seriesId) {
-    try {
-      const storageKey = seriesId === 1 ? 'supplyParticleId' : 'magicParticleId';
-      wx.setStorageSync(storageKey, particleId);
-    } catch (error) {
-      console.error('保存粒子设置失败:', error);
-    }
-  },
-
-  /**
-   * @description 切换粒子效果
+   * @description 装备奖品（区分美味补给和梦幻魔法）
+   * - 美味补给（seriesId: 1）只影响答题页的横幅（banner），不改变粒子效果。
+   * - 梦幻魔法（seriesId: 2）会改变全局的粒子效果。
    * @param {Object} e 事件对象
    */
   toggleParticleEffect(e) {
     const prizeId = e.currentTarget.dataset.prizeId;
     const currentSeriesId = this.data.currentSeriesId;
-    
-    // 🔧 修复逻辑：如果点击的是已选中的按钮，直接返回，不允许反选 ✨
-    if (this.data.currentParticleId === prizeId) {
-      console.log('🚫 已选中的粒子效果不能被反选:', prizeId);
-      return;
+
+    // 根据系列（美味补给/梦幻魔法）执行不同的逻辑
+    if (currentSeriesId === 1) { // --- 美味补给系列 ---
+      // 如果点击的已经是当前装备的横幅，则不作任何操作
+      if (this.data.supplyParticleId === prizeId) {
+        console.log('🚫 该美味补给已在使用中:', prizeId);
+        return;
+      }
+      
+      console.log('🍞 装备新的美味补给:', prizeId);
+      this.setData({
+        supplyParticleId: prizeId,
+        currentParticleId: prizeId // 更新UI，让选中框正确显示
+      });
+      // 只保存美味补给的ID，不影响全局粒子效果
+      wx.setStorageSync('supplyParticleId', prizeId);
+
+      wx.showToast({ title: '美味加载成功', icon: 'none' });
+
+    } else { // --- 梦幻魔法系列 ---
+      // 如果点击的已经是当前装备的粒子效果，则不作任何操作
+      if (this.data.magicParticleId === prizeId) {
+        console.log('🚫 该魔法效果已在施展中:', prizeId);
+        return;
+      }
+
+      console.log('✨ 装备新的魔法效果:', prizeId);
+      this.setData({
+        magicParticleId: prizeId,
+        currentParticleId: prizeId // 更新UI
+      });
+      // 保存当前系列的选择
+      wx.setStorageSync('magicParticleId', prizeId);
+      // 同步到全局粒子效果
+      wx.setStorageSync('currentParticleId', prizeId);
+
+      // 更新全局变量，确保立即生效
+      const app = getApp();
+      if (app.globalData) {
+        app.globalData.currentParticleId = prizeId;
+      }
+      
+      wx.showToast({ title: '魔法施展完毕', icon: 'none' });
     }
     
-    // 只有点击不同的按钮时才进行切换
-    const newParticleId = prizeId;
-    
-    // 更新对应系列的粒子效果ID
-    const updateData = {
-      currentParticleId: newParticleId
-    };
-    
-    if (currentSeriesId === 1) {
-      updateData.supplyParticleId = newParticleId;
-    } else {
-      updateData.magicParticleId = newParticleId;
-    }
-    
-    this.setData(updateData);
-    
-    // 保存设置
-    this.saveParticleSettings(newParticleId, currentSeriesId);
-    
-    // 🔧 重要：同步到全局数据，确保答题页面能立即获取到最新设置 ✨
-    const app = getApp();
-    if (app.globalData) {
-      app.globalData.currentParticleId = newParticleId;
-    }
-    
-    // 显示可爱的提示文案 ✨
-    const isSupplySeries = currentSeriesId === 1; // 美味补给系列
-    const toastMessage = isSupplySeries ? '美味加载成功' : '魔法施展完毕';
-    
-    wx.showToast({
-      title: toastMessage,
-      icon: 'none',
-      duration: 1500
-    });
-    
-    // 🔧 调试日志：记录粒子效果切换
-    console.log('🎨 粒子效果已切换:', {
+    console.log('🎨 装备切换完成:', {
       prizeId,
-      newParticleId,
-      seriesName: isSupplySeries ? '美味补给' : '梦幻魔法',
-      toastMessage,
-      isMuggleState: prizeId === 'FX-DEFAULT-01' || prizeId === 'FOOD-DEFAULT-01'
+      series: currentSeriesId === 1 ? '美味补给' : '梦幻魔法'
     });
   }
 })

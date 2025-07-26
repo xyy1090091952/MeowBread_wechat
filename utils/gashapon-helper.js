@@ -110,33 +110,49 @@ function drawPrize(prizePool) {
 }
 
 /**
- * 检查指定系列是否已经集齐所有奖品
+ * 检查指定系列是否已经集齐所有奖品（忽略默认奖品）
  * @param {Array} prizePool - 当前系列的奖池数组
  * @returns {boolean} - 是否已集齐
  */
 function isSeriesCompleted(prizePool) {
   const unlockedIds = coinManager.getUnlockedPrizes() || [];
-  const totalPrizes = prizePool.length;
-  const unlockedInSeries = prizePool.filter(prize => unlockedIds.includes(prize.id)).length;
+  // 筛选出可收集的奖品（非默认奖品）
+  const collectiblePrizes = prizePool.filter(prize => prize.rarity !== 'DEFAULT');
+  const totalCollectiblePrizes = collectiblePrizes.length;
   
-  return unlockedInSeries >= totalPrizes;
+  // 如果没有可收集的奖品，直接返回true
+  if (totalCollectiblePrizes === 0) {
+    return true;
+  }
+  
+  // 计算在可收集奖品中解锁了多少
+  const unlockedInSeries = collectiblePrizes.filter(prize => unlockedIds.includes(prize.id)).length;
+  
+  return unlockedInSeries >= totalCollectiblePrizes;
 }
 
 /**
- * 获取系列的收集进度信息
+ * 获取系列的收集进度信息（忽略默认奖品）
  * @param {Array} prizePool - 当前系列的奖池数组
  * @returns {Object} - 包含总数、已收集数、完成率等信息
  */
 function getSeriesProgress(prizePool) {
   const unlockedIds = coinManager.getUnlockedPrizes() || [];
-  const totalPrizes = prizePool.length;
-  const unlockedInSeries = prizePool.filter(prize => unlockedIds.includes(prize.id)).length;
+  // 筛选出可收集的奖品（非默认奖品）
+  const collectiblePrizes = prizePool.filter(prize => prize.rarity !== 'DEFAULT');
+  const totalPrizes = collectiblePrizes.length;
+  
+  // 计算在可收集奖品中解锁了多少
+  const unlockedInSeries = collectiblePrizes.filter(prize => unlockedIds.includes(prize.id)).length;
+  
+  // 避免除以零
+  const completionRate = totalPrizes > 0 ? Math.round((unlockedInSeries / totalPrizes) * 100) : 100;
   
   return {
     total: totalPrizes,
     unlocked: unlockedInSeries,
     remaining: totalPrizes - unlockedInSeries,
-    completionRate: Math.round((unlockedInSeries / totalPrizes) * 100)
+    completionRate: completionRate
   };
 }
 
