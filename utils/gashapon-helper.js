@@ -13,8 +13,8 @@ function drawPrize(prizePool) {
   // 获取已解锁的奖品ID列表
   const unlockedIds = coinManager.getUnlockedPrizes() || [];
   
-  // 筛选出未获得的奖品
-  const availablePrizes = prizePool.filter(prize => !unlockedIds.includes(prize.id));
+  // 筛选出未获得的奖品，并排除默认奖品
+  const availablePrizes = prizePool.filter(prize => !unlockedIds.includes(prize.id) && prize.rarity !== 'DEFAULT');
   
   // 如果没有可抽奖品，返回失败结果
   if (availablePrizes.length === 0) {

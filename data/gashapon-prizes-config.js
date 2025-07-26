@@ -97,7 +97,7 @@ const supplyPrizes = [
     name: '梦幻圈圈', 
     rarity: 'SSR', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf85670845.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf85670845.png', // 答题页面横幅图片（待添加）
     quote: '我能背一天单词' 
   },
   // SR 级别
@@ -106,7 +106,7 @@ const supplyPrizes = [
     name: '小熊饼干', 
     rarity: 'SR', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf856f3a00.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf856f3a00.png', // 答题页面横幅图片（待添加）
     quote: '小熊热量炸弹' 
   },
   // R 级别
@@ -115,7 +115,7 @@ const supplyPrizes = [
     name: '奶奶拿铁', 
     rarity: 'R', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf85828beb.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf85828beb.png', // 答题页面横幅图片（待添加）
     quote: '不是爷爷的拿铁' 
   },
   { 
@@ -123,7 +123,7 @@ const supplyPrizes = [
     name: '莓莓圈圈', 
     rarity: 'R', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf857e63ae.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf857e63ae.png', // 答题页面横幅图片（待添加）
     quote: '味觉防波堤' 
   },
   // N 级别
@@ -132,7 +132,7 @@ const supplyPrizes = [
     name: '脆脆薯条', 
     rarity: 'N', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf859a87a4.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf859a87a4.png', // 答题页面横幅图片（待添加）
     quote: '麦当劳薯条，条条条' 
   },
   { 
@@ -140,7 +140,7 @@ const supplyPrizes = [
     name: '芝识汉堡', 
     rarity: 'N', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf8593a21e.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf8593a21e.png', // 答题页面横幅图片（待添加）
     quote: '芝士就是力量' 
   },
   { 
@@ -148,7 +148,7 @@ const supplyPrizes = [
     name: '糖霜圈圈', 
     rarity: 'N', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf85854f37.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf85854f37.png', // 答题页面横幅图片（待添加）
     quote: '安赛蜜圈圈' 
   }
 ];

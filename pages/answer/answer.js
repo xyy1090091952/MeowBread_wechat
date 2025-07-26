@@ -1042,8 +1042,14 @@ Page({
       
       if (isCurrentPageAnswer && this.data.showParticles && this.data.currentParticleId) {
         const newConfig = this.getParticleConfig(this.data.currentParticleId);
-        this.setData({ particleConfig: newConfig });
-        console.log('🔄 粒子配置已刷新，新数量:', newConfig.count);
+        
+        // 增加一个保护，防止 newConfig 为 null
+        if (newConfig) {
+          this.setData({ particleConfig: newConfig });
+          console.log('🔄 粒子配置已刷新，新数量:', newConfig.count);
+        } else {
+          console.warn(`⚠️ 无法获取 particleId 为 "${this.data.currentParticleId}" 的配置`);
+        }
         
         // 设置下一次刷新的随机时间间隔（3-8秒）
         const nextInterval = Math.floor(Math.random() * 5000) + 3000;
