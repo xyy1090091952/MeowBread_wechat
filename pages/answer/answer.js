@@ -1063,67 +1063,41 @@ Page({
    */
   getParticleConfig(particleId) {
     if (!particleId) {
-      // 如果没有指定粒子ID，返回默认雪花效果
-      const randomCount = Math.floor(Math.random() * 6) + 17; // 17-22个粒子随机（更温和的变化）
+      console.warn('⚠️ getParticleConfig: particleId is null or undefined, returning default snow effect.');
+      // 默认返回雪花效果的配置
+      const randomCount = Math.floor(Math.random() * 6) + 17;
       return {
         type: 'snow',
         image: '/images/particles/snow.svg',
         count: randomCount,
-        duration: 18, // 增加持续时间，让雪花下落更慢
+        duration: 18,
         size: 35
       };
     }
+
+    // 引入奖品数据管理器
+    const { PrizeDataManager } = require('../../data/gashapon-prizes-config.js');
     
-    // 粒子配置映射 - 添加随机数量变化
-    const baseConfigs = {
-      'FX-SSR-01': { // 玫瑰魔法
-        type: 'rose',
-        image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png',
-        baseCount: 8, // 调整为8个，范围7-9个
-        duration: 15,
-        size: 60
-      },
-      'FX-SR-01': { // 萤火虫
-        type: 'firefly',
-        image: 'https://free.picui.cn/free/2025/07/20/687cf85445556.png',
-        baseCount: 10, // 调整为10个，范围9-11个
-        duration: 20,
-        size: 40
-      },
-      'FX-R-01': { // 樱花魔法
-        type: 'sakura',
-        image: 'https://free.picui.cn/free/2025/07/20/687cf854d8832.png',
-        baseCount: 12, // 调整为12个，范围10-14个
-        duration: 18,
-        size: 50
-      },
-      'FX-R-02': { // 落叶魔法
-        type: 'leaf',
-        image: 'https://free.picui.cn/free/2025/07/20/687cf8549c6f3.png',
-        baseCount: 12, // 调整为12个，范围10-14个
-        duration: 16,
-        size: 55
-      },
-      'FX-R-03': { // 谧雪魔法
-        type: 'snow',
-        image: '/images/particles/snow.svg',
-        baseCount: 20, // 调整为20个，范围17-23个
-        duration: 18, // 增加持续时间，让雪花下落更慢
-        size: 35
-      }
-    };
+    // 根据ID获取奖品数据
+    const prizeData = PrizeDataManager.getPrizeById(particleId);
     
-    const baseConfig = baseConfigs[particleId];
-    if (!baseConfig) return null;
+    // 检查奖品数据和粒子配置是否存在
+    if (!prizeData || !prizeData.particleConfig) {
+      console.warn(`⚠️ 未找到ID为 "${particleId}" 的奖品或该奖品没有粒子配置。`);
+      return null;
+    }
     
-    // 随机变化粒子数量：基础数量 ± 15%（更温和的变化）
+    const baseConfig = prizeData.particleConfig;
+    
+    // 随机变化粒子数量：基础数量 ± 15%
     const variation = Math.floor(baseConfig.baseCount * 0.15);
     const randomCount = Math.floor(Math.random() * (variation * 2 + 1)) + (baseConfig.baseCount - variation);
     
+    // 返回最终的、包含随机数量的配置
     return {
       type: baseConfig.type,
       image: baseConfig.image,
-      count: Math.max(5, randomCount), // 最少5个粒子
+      count: Math.max(5, randomCount), // 确保最少有5个粒子
       duration: baseConfig.duration,
       size: baseConfig.size
     };

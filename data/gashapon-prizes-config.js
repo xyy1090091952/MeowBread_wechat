@@ -32,8 +32,9 @@ const magicPrizes = [
     name: '麻瓜', 
     rarity: 'DEFAULT', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
-    quote: '阿瓦达啃大瓜' 
+    bannerImage: '',
+    quote: '阿瓦达啃大瓜',
+    particleConfig: null // 无粒子效果
   },
   // SSR 级别
   { 
@@ -41,8 +42,15 @@ const magicPrizes = [
     name: '玫瑰魔法', 
     rarity: 'SSR', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
-    quote: '阿姨洗铁路' 
+    bannerImage: '',
+    quote: '阿姨洗铁路',
+    particleConfig: {
+      type: 'rose',
+      image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png',
+      baseCount: 8,
+      duration: 15,
+      size: 60
+    }
   },
   // SR 级别
   { 
@@ -50,8 +58,15 @@ const magicPrizes = [
     name: '萤火虫', 
     rarity: 'SR', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf85445556.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
-    quote: '挑萤火虫夜读' 
+    bannerImage: '',
+    quote: '挑萤火虫夜读',
+    particleConfig: {
+      type: 'firefly',
+      image: 'https://free.picui.cn/free/2025/07/20/687cf85445556.png',
+      baseCount: 10,
+      duration: 20,
+      size: 40
+    }
   },
   // R 级别
   { 
@@ -59,24 +74,45 @@ const magicPrizes = [
     name: '樱花魔法', 
     rarity: 'R', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf854d8832.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
-    quote: '故乡的樱花落了' 
+    bannerImage: '',
+    quote: '故乡的樱花落了',
+    particleConfig: {
+      type: 'sakura',
+      image: 'https://free.picui.cn/free/2025/07/20/687cf854d8832.png',
+      baseCount: 12,
+      duration: 18,
+      size: 50
+    }
   },
   { 
     id: 'FX-R-02', 
     name: '落叶魔法', 
     rarity: 'R', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf8549c6f3.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
-    quote: '又到一年考试时' 
+    bannerImage: '',
+    quote: '又到一年考试时',
+    particleConfig: {
+      type: 'leaf',
+      image: 'https://free.picui.cn/free/2025/07/20/687cf8549c6f3.png',
+      baseCount: 12,
+      duration: 16,
+      size: 55
+    }
   },
   { 
     id: 'FX-R-03', 
     name: '谧雪魔法', 
     rarity: 'R', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf854dc136.png', 
-    bannerImage: '', // 答题页面横幅图片（待添加）
-    quote: 'let it go' 
+    bannerImage: '',
+    quote: 'let it go',
+    particleConfig: {
+      type: 'snow',
+      image: '/images/particles/snow.svg',
+      baseCount: 20,
+      duration: 18,
+      size: 35
+    }
   }
 ];
 
