@@ -8,13 +8,11 @@ let data = {
     "dictionaries": [
         {
             "id": "everyones_japanese",
-            "name": "大家的日语",
-            "description": "大家的日语",
-            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg",
+            "name": "大日初级2",
+            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd4713099b.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
-                {"id":"volume1","name":"第一册","description":"29-37课","lessons":[26,27,28,29,30,31,32,33,34,35,36,37]},
-                {"id":"volume2","name":"第二册","description":"38-50课","lessons":[38,39,40,41,42,43,44,45,46,47,48,49,50]}
+                {"id":"volume1","name":"下册","description":"29-50课","lessons":[26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50]},
             ],
             "courses": [
                 {"courseNumber":26,"courseTitle":"第26课","lessonFile":"lesson26","description":"大家的日语第26课"},
@@ -46,11 +44,10 @@ let data = {
         },
          {
             "id": "everyones_japanese_intermediate",
-            "name": "大日中级",
-            "description": "大日中级",
-            "cover_image": "https://free.picui.cn/free/2025/07/20/687bd4713099b.jpg",
+            "name": "大日中级1",
+            "cover_image": "https://free.picui.cn/free/2025/07/27/688510530d48c.jpg",
             "volumes": [
-                {"id":"volume1","name":"第一册","description":"1-12课","lessons":[1,2,3,4,5,6,7,8,9,10,11,12]}
+                {"id":"volume1","name":"上册","description":"1-12课","lessons":[1,2,3,4,5,6,7,8,9,10,11,12]}
             ],
             "courses": [
                 {"courseNumber":1,"courseTitle":"第1课","lessonFile":"lesson1","description":"中级N3第1课"},
@@ -70,7 +67,6 @@ let data = {
         {
             "id": "liangs_class",
             "name": "梁老师初级",
-            "description": "梁老师初级",
             "cover_image": "https://free.picui.cn/free/2025/07/20/687bd4712b75f.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
@@ -104,7 +100,6 @@ let data = {
         {
             "id": "liangs_intermediate",
             "name": "梁老师中级",
-            "description": "梁老师中级",
             "cover_image": "https://free.picui.cn/free/2025/07/20/687bd4715697e.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
@@ -131,7 +126,6 @@ let data = {
         {
             "id": "duolingguo",
             "name": "多邻国",
-            "description": "多邻国日语词汇",
             "cover_image": "https://free.picui.cn/free/2025/07/20/687bd47111ec1.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
