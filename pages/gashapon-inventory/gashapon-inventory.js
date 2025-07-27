@@ -230,7 +230,7 @@ Page({
       });
       
       // 查询当前激活的缩略图的尺寸和位置
-      query.select(`#thumbnail-${this.data.selectedPrizeId}`).boundingClientRect();
+      query.select(`#thumb-${this.data.currentSwiperIndex}`).boundingClientRect();
       
       query.exec(res => {
         // res[0] 是 .thumbnail-scroll 的信息
@@ -245,12 +245,12 @@ Page({
           const scrollLeft = activeThumbnailInfo.left + scrollViewInfo.scrollLeft - (scrollViewInfo.right - scrollViewInfo.left) / 2 + activeThumbnailInfo.width / 2;
 
           this.setData({
-            thumbnailScrollLeft: scrollLeft
+            scrollLeft: scrollLeft
           });
         } else {
           // 如果查询失败，则使用备用方案
           // wx.nextTick 已经大大降低了查询失败的概率，但作为保险措施，仍然保留备用逻辑
-          console.warn(`Thumbnail query failed for prizeId: ${this.data.selectedPrizeId}. Using fallback.`);
+          console.warn(`Thumbnail query failed for index: ${this.data.currentSwiperIndex}. Using fallback.`);
           this.fallbackCenterThumbnail();
         }
       });
