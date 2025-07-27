@@ -219,16 +219,16 @@
 }
 
 .card-label-primary {
-  font-size: 48rpx; /* 24px */
+  font-size: 40rpx; 
   font-weight: 600;
-  color: #000000; /* 改为黑色 */
+  color: #000000; 
   text-align: left;
 }
 
 .card-label-secondary {
-  font-size: 48rpx; /* 24px */
-  font-weight: bold; /* 改为加粗 */
-  color: #000000; /* 改为黑色 */
+  font-size: 48rpx; 
+  font-weight: bold; 
+  color: #000000; 
   text-align: left;
 }
 

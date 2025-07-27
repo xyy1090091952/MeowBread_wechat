@@ -1,0 +1,60 @@
+<!-- 知识库页面通用模板 - 按照Markdown导入制作规范 -->
+<view class="page">
+  <!-- 页面标题 -->
+  <view class="page-title">{{title}}</view>
+  
+  <!-- 章节内容 -->
+  <view wx:for="{{sections}}" wx:key="id" wx:for-item="section">
+    
+    <!-- 章节标题 -->
+    <view class="section-title">{{section.title}}</view>
+    
+    <!-- 如果是表格类型 -->
+    <view wx:if="{{section.type === 'table'}}" class="table-wrapper">
+      <view class="table-container">
+        <view class="table">
+          <!-- 表格头部 -->
+          <view class="table-row table-header">
+            <view class="table-cell header-cell" wx:for="{{section.tableData.headers}}" wx:key="index">
+              {{item}}
+            </view>
+          </view>
+          <!-- 表格数据行 -->
+          <view class="table-row" wx:for="{{section.tableData.rows}}" wx:key="index">
+            <view class="table-cell" wx:for="{{item}}" wx:key="index">{{item}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 如果有子章节 -->
+    <view wx:if="{{section.subsections}}" wx:for="{{section.subsections}}" wx:key="id" wx:for-item="subsection">
+      <!-- 子章节标题 -->
+      <view class="subsection-title">{{subsection.title}}</view>
+      
+      <!-- 子章节表格 -->
+      <view wx:if="{{subsection.type === 'table'}}" class="table-wrapper">
+        <view class="table-container">
+          <view class="table">
+            <!-- 表格头部 -->
+            <view class="table-row table-header">
+              <view class="table-cell header-cell" wx:for="{{subsection.tableData.headers}}" wx:key="index">
+                {{item}}
+              </view>
+            </view>
+            <!-- 表格数据行 -->
+            <view class="table-row" wx:for="{{subsection.tableData.rows}}" wx:key="index">
+              <view class="table-cell" wx:for="{{item}}" wx:key="index">{{item}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+  </view>
+  
+  <!-- 错误状态 -->
+  <view wx:if="{{!sections || sections.length === 0}}" class="error">
+    暂无内容
+  </view>
+</view>

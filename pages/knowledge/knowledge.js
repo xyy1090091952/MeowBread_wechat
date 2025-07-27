@@ -128,50 +128,76 @@ Page({
     // 根据cardId找到对应的卡片数据
     const selectedCard = this.data.grammarCards.find(card => card.id === cardId);
     
-    if (selectedCard && selectedCard.webUrl) {
-      const cardTitle = selectedCard.title || '知识详情';
-      console.log('即将打开:', selectedCard.webUrl);
-      console.log('卡片标题:', cardTitle);
-      
-      // 判断是本地页面还是外部链接
-      if (selectedCard.webUrl.startsWith('/pages/')) {
-        // 本地页面跳转
+    if (selectedCard) {
+      // 优先使用 page_url 进行本地跳转
+      if (selectedCard.page_url) {
+        console.log('即将打开本地页面:', selectedCard.page_url);
         wx.navigateTo({
-          url: selectedCard.webUrl,
+          url: selectedCard.page_url,
           success: () => {
             console.log('跳转本地页面成功');
           },
           fail: (err) => {
             console.error('跳转本地页面失败:', err);
             wx.showToast({
-              title: '页面跳转失败',
+              title: '页面加载失败',
               icon: 'none',
               duration: 2000
             });
           }
         });
+      } else if (selectedCard.webUrl) {
+        // 如果没有 page_url，则沿用旧的 webUrl 逻辑
+        const cardTitle = selectedCard.title || '知识详情';
+        console.log('即将打开 webUrl:', selectedCard.webUrl);
+        console.log('卡片标题:', cardTitle);
+
+        if (selectedCard.webUrl.startsWith('/pages/')) {
+          // 本地页面跳转
+          wx.navigateTo({
+            url: selectedCard.webUrl,
+            success: () => {
+              console.log('跳转本地页面成功');
+            },
+            fail: (err) => {
+              console.error('跳转本地页面失败:', err);
+              wx.showToast({
+                title: '页面跳转失败',
+                icon: 'none',
+                duration: 2000
+              });
+            }
+          });
+        } else {
+          // 外部链接，跳转到webview页面
+          const encodedUrl = encodeURIComponent(selectedCard.webUrl);
+          wx.navigateTo({
+            url: `/pages/webview/webview?url=${encodedUrl}&title=${cardTitle}`,
+            success: () => {
+              console.log('跳转webview页面成功');
+            },
+            fail: (err) => {
+              console.error('跳转webview页面失败:', err);
+              wx.showToast({
+                title: '页面跳转失败',
+                icon: 'none',
+                duration: 2000
+              });
+            }
+          });
+        }
       } else {
-        // 外部链接，跳转到webview页面
-        const encodedUrl = encodeURIComponent(selectedCard.webUrl);
-        wx.navigateTo({
-          url: `/pages/webview/webview?url=${encodedUrl}&title=${cardTitle}`,
-          success: () => {
-            console.log('跳转webview页面成功');
-          },
-          fail: (err) => {
-            console.error('跳转webview页面失败:', err);
-            wx.showToast({
-              title: '页面跳转失败',
-              icon: 'none',
-              duration: 2000
-            });
-          }
+        // 如果两者都无，显示提示
+        wx.showToast({
+          title: '暂无相关内容',
+          icon: 'none',
+          duration: 2000
         });
       }
     } else {
-      // 如果找不到对应的卡片或URL，显示提示
+      // 如果找不到对应的卡片，显示提示
       wx.showToast({
-        title: '暂无相关内容',
+        title: '卡片数据不存在',
         icon: 'none',
         duration: 2000
       });

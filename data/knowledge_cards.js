@@ -16,20 +16,20 @@ const knowledgeCardsDB = {
       card_label_secondary: '变化',
       card_title: '敬体&简体变化表',
       web_url: '/pages/grammar/grammar?type=verb&title=动词变化表',
+      page_url: '/pages/knowledge-base/knowledge-base?id=N5_1',
       is_active: true,
       created_at: '2024-07-13T10:00:00Z',
       updated_at: '2024-07-13T10:00:00Z'
     },
-    // 暂时注释掉其他N5卡片
-    /*
     {
       id: 2,
       level: 'N5',
       card_order: 2,
-      card_label_primary: 'GRAMMAR',
-      card_label_secondary: '知识',
-      card_title: '组合动词表',
-      web_url: '/pages/grammar/grammar?type=adjective&title=形容词变位',
+      card_label_primary: 'VOCABULARY',
+      card_label_secondary: '词汇',
+      card_title: '开关和出入词汇',
+      web_url: '/pages/reading/reading?level=N5',
+      page_url: '/pages/knowledge-base/knowledge-base?id=N5_2',
       is_active: true,
       created_at: '2024-07-13T10:00:00Z',
       updated_at: '2024-07-13T10:00:00Z'
@@ -38,10 +38,11 @@ const knowledgeCardsDB = {
       id: 3,
       level: 'N5',
       card_order: 3,
-      card_label_primary: 'GRAMMAR',
-      card_label_secondary: '变化',
-      card_title: 'N5动词变化表',
-      web_url: '/pages/grammar/grammar?type=sentence&title=基本句型',
+      card_label_primary: 'VOCABULARY',
+      card_label_secondary: '词汇',
+      card_title: '词组和固定搭配',
+      web_url: '/pages/listening/listening?level=N5',
+      page_url: '/pages/knowledge-base/knowledge-base?id=N5_3',
       is_active: true,
       created_at: '2024-07-13T10:00:00Z',
       updated_at: '2024-07-13T10:00:00Z'
@@ -55,7 +56,8 @@ const knowledgeCardsDB = {
       card_label_secondary: '基础',
       card_title: 'N5核心词汇',
       web_url: '/pages/vocabulary/vocabulary?level=N5&type=core',
-      is_active: true, // 启用第4张卡片
+      page_url: '/pages/knowledge-base/knowledge-base?id=N5_4',
+      is_active: false, // 暂时禁用
       created_at: '2024-07-13T10:00:00Z',
       updated_at: '2024-07-13T10:00:00Z'
     },
@@ -67,6 +69,7 @@ const knowledgeCardsDB = {
       card_label_secondary: '练习',
       card_title: '阅读理解训练',
       web_url: '/pages/reading/reading?level=N5',
+      page_url: '/pages/knowledge-base/knowledge-base?id=N5_5',
       is_active: false, // 暂时禁用
       created_at: '2024-07-13T10:00:00Z',
       updated_at: '2024-07-13T10:00:00Z'
@@ -79,11 +82,11 @@ const knowledgeCardsDB = {
       card_label_secondary: '听力',
       card_title: '听力练习',
       web_url: '/pages/listening/listening?level=N5',
+      page_url: '/pages/knowledge-base/knowledge-base?id=N5_6',
       is_active: false, // 暂时禁用
       created_at: '2024-07-13T10:00:00Z',
       updated_at: '2024-07-13T10:00:00Z'
     }
-    */
   ],
 
   // N4级别卡片数据（示例）
@@ -189,7 +192,8 @@ const KnowledgeCardsDB = {
         title: card.card_title,
         backgroundImage: styleConfig.backgroundImage,
         styleType: styleType,
-        webUrl: card.web_url
+        webUrl: card.web_url,
+        page_url: card.page_url
       };
     });
   },
@@ -261,6 +265,5 @@ const KnowledgeCardsDB = {
 };
 
 module.exports = {
-  KnowledgeCardsDB,
-  cardStyleConfig
+  KnowledgeCardsDB
 };
