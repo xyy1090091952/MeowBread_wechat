@@ -209,7 +209,7 @@ const supplyPrizes = [
     id: 'FOOD-N-05', 
     name: '毛线球', 
     rarity: 'N', 
-    image: 'https://free.picui.cn/free/2025/07/27/6885d27fd416d.png', // 链接先空着
+    image: 'https://free.picui.cn/free/2025/07/27/6885e1fc7a357.png', // 链接先空着
     bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd55b5df8.png', // 链接先空着
     quote: '玩着玩着就乱了' 
   }

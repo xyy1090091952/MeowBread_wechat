@@ -219,48 +219,42 @@ Page({
    * 添加重试机制，解决最后几个缩略图定位失败的问题 ✨
    */
   centerActiveThumbnail(retryCount = 0) {
-    const maxRetries = 3; // 最大重试次数
-    const retryDelay = 50; // 重试延迟（毫秒）
-    
-    // 添加小延迟确保DOM完全渲染
+    // 确保在页面准备好后再执行查询
     setTimeout(() => {
       const query = wx.createSelectorQuery().in(this);
-      const windowWidth = wx.getWindowInfo().windowWidth;
-      
-      // 使用当前索引来定位缩略图
-      query.select(`#thumb-${this.data.currentSwiperIndex}`).boundingClientRect();
-      query.select('.thumbnail-nav').scrollOffset();
-      
-      query.exec((res) => {
-        // 检查查询结果是否有效
-        if (res[0] && res[1] && res[0].left !== undefined) {
-          const thumbCenter = res[0].left + res[0].width / 2;
-          const navCenter = windowWidth / 2;
-          const targetScrollLeft = res[1].scrollLeft + thumbCenter - navCenter;
-          
-          // 确保滚动位置不为负数
-          const finalScrollLeft = Math.max(0, targetScrollLeft);
-          
+      // 同时查询滚动视图的滚动位置和尺寸
+      query.select('.thumbnail-scroll').fields({
+        scrollOffset: true, // 获取滚动位置
+        rect: true,         // 获取尺寸信息
+      });
+      // 查询当前激活的缩略图的尺寸和位置
+      query.select(`#thumbnail-${this.data.selectedPrizeId}`).boundingClientRect();
+      query.exec(res => {
+        // res[0] 是 .thumbnail-scroll 的信息
+        // res[1] 是 #thumbnail-... 的信息
+        if (res && res[0] && res[1]) {
+          const scrollViewInfo = res[0];
+          const activeThumbnailInfo = res[1];
+
+          // 计算目标滚动位置
+          // 目标是让激活的缩略图中心对齐滚动视图的中心
+          // 滚动位置 = 缩略图左侧偏移 + 当前滚动条位置 - (滚动视图宽度 / 2) + (缩略图宽度 / 2)
+          const scrollLeft = activeThumbnailInfo.left + scrollViewInfo.scrollLeft - (scrollViewInfo.right - scrollViewInfo.left) / 2 + activeThumbnailInfo.width / 2;
+
           this.setData({
-            scrollLeft: finalScrollLeft
+            thumbnailScrollLeft: scrollLeft
           });
-          
-          console.log(`缩略图定位成功: index=${this.data.currentSwiperIndex}, scrollLeft=${finalScrollLeft}`);
         } else {
-          // 查询失败，尝试重试
-          console.warn(`缩略图定位失败: index=${this.data.currentSwiperIndex}, 重试次数=${retryCount}`);
-          
-          if (retryCount < maxRetries) {
-            // 递归重试
+          // 如果查询失败，并且重试次数小于最大次数，则延迟后重试
+          if (retryCount < 3) {
             this.centerActiveThumbnail(retryCount + 1);
           } else {
-            // 重试次数用完，使用备用方案
-            console.error(`缩略图定位最终失败: index=${this.data.currentSwiperIndex}`);
+            // 如果多次尝试后仍然失败，则使用备用方案
             this.fallbackCenterThumbnail();
           }
         }
       });
-    }, retryCount === 0 ? 10 : retryDelay); // 首次调用延迟10ms，重试时延迟50ms
+    }, retryCount === 0 ? 100 : 50); // 首次调用延迟100ms，重试时延迟50ms
   },
 
   /**
