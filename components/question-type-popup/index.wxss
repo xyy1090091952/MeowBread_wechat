@@ -81,7 +81,7 @@
 }
 
 .popup-title {
-  font-size: 24px; /* Figma: style_1BP8OV */
+  font-size: 48rpx; /* 统一使用rpx单位 */
   font-weight: 700; /* Figma: style_1BP8OV */
   color: #111111; /* Figma: fill_BGAJ49 */
 }

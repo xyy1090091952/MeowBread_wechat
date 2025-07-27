@@ -2,6 +2,7 @@
 const mistakeManager = require('../../utils/mistakeManager.js'); // 引入错题管理器
 const filterManager = require('../../utils/filterManager.js'); // 引入筛选管理器
 const quizService = require('../../utils/quiz.service.js'); // 引入答题服务
+const { AnimationHelper, ParticleHelper } = require('../../utils/animation.js'); // 引入辅助模块
 
 Page({
   data: {
@@ -12,11 +13,6 @@ Page({
     showTextbookSelector: false, // 控制教材选择弹窗的显示
     pageLoaded: false, // 控制页面渐显动画
     mistakeCount: 0, // 错题数量显示（超过99显示∞）
-    // 元素位置信息（用于碰撞检测）
-    elementPositions: [],
-    breadBouncing: false, // 控制面包弹跳动画状态
-    autoBounceTimer: null, // 自动弹跳定时器
-    
     // 题型选择相关数据
     showQuestionTypePopup: false, // 控制题型选择弹窗的显示
     questionTypeOptions: [], // 题型选项列表
@@ -25,11 +21,18 @@ Page({
     // 词库选择相关数据
     dictionaries: [], // 词典列表
     selectedDictionaryIndex: 0, // 当前选择的词典索引
-    showCourseSelector: false // 控制课程选择弹窗的显示
+    showCourseSelector: false, // 控制课程选择弹窗的显示
+    
+    // 美味补给横幅图片
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png', // 默认大面包图片 ✨
   },
   onLoad: function (options) {
     // 页面加载时可以进行一些初始化操作
     console.log('Page loaded with options:', options);
+
+    // 初始化动画辅助模块
+    this.animationHelper = new AnimationHelper(this);
+    this.particleHelper = new ParticleHelper(this);
 
     // 检查是否已选择教材
     const selectedDict = wx.getStorageSync('selectedDictionary');
@@ -41,7 +44,10 @@ Page({
     this.initializeQuestionTypes();
 
     // 启动自动弹跳效果
-    this.startAutoBounce();
+    this.animationHelper.startAutoBounce();
+    
+    // 初始化粒子效果
+    this.particleHelper.init();
   },
 
   /**
@@ -83,197 +89,10 @@ Page({
   },
 
   /**
-   * 设置动画监听器
-   */
-  setupAnimationListeners() {
-    // 开始碰撞检测
-    this.startCollisionDetection();
-    
-    // 延迟设置监听器，确保动画已开始
-    setTimeout(() => {
-      for (let i = 1; i <= 5; i++) {
-        // 模拟动画结束事件，因为无法直接监听CSS动画
-        const elementInfo = this.data.elementPositions.find(pos => pos.id === i);
-        if (elementInfo) {
-          const totalTime = (elementInfo.delay + elementInfo.duration) * 1000; // 转换到毫秒
-          setTimeout(() => {
-            const positions = this.data.elementPositions;
-            const updatedPositions = positions.map(pos => 
-              pos.id === i ? { ...pos, settled: true } : pos
-            );
-            this.setData({ elementPositions: updatedPositions });
-            console.log(`元素 ${i} 动画完成，已静止`);
-          }, totalTime);
-        }
-      }
-    }, 100);
-  },
-
-  /**
-   * 开始碰撞检测
-   */
-  startCollisionDetection() {
-    // 每隔100ms检测一次碰撞
-    this.collisionTimer = setInterval(() => {
-      this.checkAndResolveCollisions();
-    }, 100);
-    
-    // 4秒后停止碰撞检测（匹配中等动画速度）
-    setTimeout(() => {
-      if (this.collisionTimer) {
-        clearInterval(this.collisionTimer);
-        this.collisionTimer = null;
-        console.log('碰撞检测已停止');
-      }
-    }, 4000);
-  },
-
-  /**
-   * 检测和解决碰撞
-   */
-  checkAndResolveCollisions() {
-    const query = wx.createSelectorQuery().in(this);
-    const positions = [];
-    
-    // 获取所有元素的当前位置
-    for (let i = 1; i <= 5; i++) {
-      query.select(`#falling-item-${i}`).boundingClientRect();
-    }
-    
-    query.exec((res) => {
-      if (!res || res.length !== 5) return;
-      
-      // 检测每对元素之间的碰撞
-      for (let i = 0; i < res.length; i++) {
-        for (let j = i + 1; j < res.length; j++) {
-          const element1 = res[i];
-          const element2 = res[j];
-          
-          if (element1 && element2 && this.isColliding(element1, element2)) {
-            console.log(`检测到碰撞：元素${i+1} 和 元素${j+1}`);
-            this.resolveCollision(i + 1, j + 1, element1, element2);
-          }
-        }
-      }
-    });
-  },
-
-  /**
-   * 检测两个元素是否碰撞
-   */
-  isColliding(element1, element2) {
-    if (!element1 || !element2) return false;
-    
-    const iconSize = 230; // 230rpx图标大小
-    const pixelRatio = wx.getWindowInfo().pixelRatio || 2;
-    const iconSizePx = iconSize / pixelRatio; // 转换为px
-    
-    // 计算中心点距离
-    const centerX1 = element1.left + element1.width / 2;
-    const centerY1 = element1.top + element1.height / 2;
-    const centerX2 = element2.left + element2.width / 2;
-    const centerY2 = element2.top + element2.height / 2;
-    
-    const distance = Math.sqrt(
-      Math.pow(centerX2 - centerX1, 2) + Math.pow(centerY2 - centerY1, 2)
-    );
-    
-    // 如果距离小于图标直径的80%，认为发生碰撞
-    return distance < iconSizePx * 0.8;
-  },
-
-  /**
-   * 解决碰撞
-   */
-  resolveCollision(id1, id2, element1, element2) {
-    const elementInfo1 = this.data.elementPositions.find(pos => pos.id === id1);
-    const elementInfo2 = this.data.elementPositions.find(pos => pos.id === id2);
-    
-    if (!elementInfo1 || !elementInfo2) return;
-    
-    // 计算推开的方向和距离
-    const centerX1 = element1.left + element1.width / 2;
-    const centerX2 = element2.left + element2.width / 2;
-    
-    // 水平推开距离
-    const pushDistance = 20; // px
-    
-    // 确定推开方向
-    let newLeft1 = elementInfo1.left;
-    let newLeft2 = elementInfo2.left;
-    
-    if (centerX1 < centerX2) {
-      // 元素1在左侧，向左推开元素1，向右推开元素2
-      newLeft1 = Math.max(5, elementInfo1.left - 3); // 最小5%
-      newLeft2 = Math.min(85, elementInfo2.left + 3); // 最大85%
-    } else {
-      // 元素1在右侧，向右推开元素1，向左推开元素2
-      newLeft1 = Math.min(85, elementInfo1.left + 3);
-      newLeft2 = Math.max(5, elementInfo2.left - 3);
-    }
-    
-    // 更新元素位置
-    const updatedPositions = this.data.elementPositions.map(pos => {
-      if (pos.id === id1) return { ...pos, left: newLeft1 };
-      if (pos.id === id2) return { ...pos, left: newLeft2 };
-      return pos;
-    });
-    
-    this.setData({ elementPositions: updatedPositions });
-    
-    // 更新样式
-    const updateStyles = {};
-    updateStyles[`fallingStyle${id1}`] = `left: ${newLeft1}%; animation-delay: ${elementInfo1.delay.toFixed(1)}s; animation-duration: ${elementInfo1.duration.toFixed(1)}s; transform: translateX(-50%);`;
-    updateStyles[`fallingStyle${id2}`] = `left: ${newLeft2}%; animation-delay: ${elementInfo2.delay.toFixed(1)}s; animation-duration: ${elementInfo2.duration.toFixed(1)}s; transform: translateX(-50%);`;
-    
-    this.setData(updateStyles);
-    
-    console.log(`碰撞解决：元素${id1}移动到${newLeft1.toFixed(1)}%，元素${id2}移动到${newLeft2.toFixed(1)}%`);
-  },
-
-  /**
-   * 检查位置是否与已有位置冲突
-   */
-  checkPositionCollision(newPosition, usedPositions, minDistance = 18) {
-    return usedPositions.some(pos => Math.abs(pos - newPosition) < minDistance);
-  },
-
-  /**
    * 处理元素触摸事件
    */
   handleElementTouch(e) {
-    const elementId = e.currentTarget.dataset.id;
-    console.log(`触摸了元素 ${elementId}`);
-    
-    // 直接操作元素样式实现弹跳效果
-    const query = wx.createSelectorQuery().in(this);
-    query.select(`#falling-item-${elementId}`).node((res) => {
-      if (res && res.node) {
-        const element = res.node;
-        
-        // 保存原始的margin-top值
-        const originalMarginTop = element.style.marginTop || '0px';
-        
-        // 设置向上弹跳
-        element.style.marginTop = '-30px';
-        
-        // 150ms后开始回弹
-        setTimeout(() => {
-          element.style.marginTop = '-5px';
-        }, 150);
-        
-        // 300ms后回到原位
-        setTimeout(() => {
-          element.style.marginTop = originalMarginTop;
-        }, 300);
-      }
-    });
-    query.exec();
-    
-    // 添加触觉反馈
-    wx.vibrateShort({
-      type: 'light' // 轻微震动
-    });
+    this.animationHelper.handleElementTouch(e);
   },
 
   /**
@@ -282,6 +101,21 @@ Page({
   onShow() {
     console.log('Page show');
     
+    // 更新页面数据
+    this.updatePageData();
+    
+    // 初始化或刷新粒子效果
+    this.particleHelper.init();
+    
+    // 更新底部导航栏状态
+    this.updateTabBarState();
+  },
+
+  /**
+   * 更新页面所有动态数据
+   * 包括筛选条件、教材信息、错题本数量等
+   */
+  updatePageData() {
     // 获取用户在filter页面的真实选择（包括course模式的选择）
     let userFilter = filterManager.getFilter();
     let currentFilterDisplay = '请选择教材和课程'; // 默认提示
@@ -378,17 +212,26 @@ Page({
       mistakeCount: mistakeCountDisplay // 更新错题数量显示
     });
 
-    // 重要的：更新自定义底部导航的选中状态，确保高亮正确
+    // 获取当前选择的美味补给奖品横幅图片 🍞✨
+    this.updateBannerImage();
+  },
+
+  /**
+   * 更新底部导航栏状态
+   */
+  updateTabBarState() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       const page = getCurrentPages().pop();
       const route = page.route;
       const tabList = this.getTabBar().data.tabList;
-      const index = tabList.findIndex(item => item.pagePath === route);
+      const index = tabList.findIndex(item => item.pagePath.includes(route));
       if (index !== -1) {
         this.getTabBar().updateSelected(index);
       }
     }
   },
+
+
 
   /**
    * 根据课本ID获取对应的图片路径
@@ -422,6 +265,57 @@ Page({
       console.error('❌ 获取课本图片失败:', error);
       // 即使出错也返回默认的大家的日语图片
       return 'https://free.picui.cn/free/2025/07/20/687bd47160e75.jpg';
+    }
+  },
+
+  /**
+   * 更新美味补给横幅图片 🍞✨
+   * 根据陈列馆页面美味补给系列的选择，动态显示对应的横幅图片
+   */
+  updateBannerImage() {
+    try {
+      console.log('🍞 开始更新美味补给横幅图片...');
+      
+      // 获取当前选择的美味补给奖品ID
+      const supplyParticleId = wx.getStorageSync('supplyParticleId') || 'FOOD-DEFAULT-01';
+      console.log('🎯 当前选择的美味补给奖品ID:', supplyParticleId);
+      
+      // 引入奖品配置数据
+      const { PrizeDataManager } = require('../../data/gashapon-prizes-config.js');
+      
+      // 查找对应的奖品配置
+      const prizeData = PrizeDataManager.getPrizeById(supplyParticleId);
+      
+      if (prizeData) {
+        console.log('🏷️ 奖品名称:', prizeData.name);
+        console.log('🖼️ 奖品横幅图片:', prizeData.bannerImage);
+        
+        // 如果奖品有横幅图片且不为空，使用奖品的横幅图片；否则使用默认的北海道面包图片
+        const bannerImageUrl = (prizeData.bannerImage && prizeData.bannerImage.trim() !== '') 
+          ? prizeData.bannerImage 
+          : 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png'; // 默认北海道面包图片
+        
+        console.log('✅ 最终使用的横幅图片:', bannerImageUrl);
+        
+        // 更新横幅图片
+        this.setData({
+          bannerImage: bannerImageUrl
+        });
+        
+        console.log('🎉 美味补给横幅图片更新成功！');
+      } else {
+        console.warn('⚠️ 未找到对应的奖品配置，使用默认图片');
+        // 使用默认的北海道面包图片
+        this.setData({
+          bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png'
+        });
+      }
+    } catch (error) {
+      console.error('❌ 更新美味补给横幅图片失败:', error);
+      // 出错时使用默认图片
+      this.setData({
+        bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png'
+      });
     }
   },
 
@@ -517,6 +411,12 @@ Page({
    */
   onHide() {
     console.log('Page hide');
+    
+    // 停止粒子刷新定时器，节省内存
+    if (this.particleHelper) {
+      this.particleHelper.destroy();
+      console.log('⏸️ 页面隐藏，停止粒子刷新定时器');
+    }
   },
 
   /**
@@ -525,15 +425,14 @@ Page({
   onUnload() {
     console.log('Page unload');
     
-    // 清理碰撞检测定时器
-    if (this.collisionTimer) {
-      clearInterval(this.collisionTimer);
-      this.collisionTimer = null;
+    // 销毁动画助手，清理所有定时器
+    if (this.animationHelper) {
+      this.animationHelper.destroy();
     }
 
-    // 清理自动弹跳定时器
-    if (this.data.autoBounceTimer) {
-      clearTimeout(this.data.autoBounceTimer);
+    // 销毁粒子助手，清理定时器
+    if (this.particleHelper) {
+      this.particleHelper.destroy();
     }
   },
 
@@ -775,61 +674,7 @@ Page({
    * 面包点击事件 - 触发Q弹动画
    */
   onBreadTap: function() {
-    console.log('Bread tap triggered');
-    // 如果动画正在进行中，则不重复触发
-    if (this.data.breadBouncing) {
-      return;
-    }
-    
-    // 触发弹跳动画
-    this.setData({
-      breadBouncing: true
-    });
-    
-    // 动画播放完成后重置状态（动画持续0.8秒）
-    setTimeout(() => {
-      this.setData({
-        breadBouncing: false
-      });
-    }, 800);
-    
-    // 添加点击反馈
-    wx.vibrateShort({
-      type: 'light' // 轻微震动反馈
-    });
-  },
-
-  /**
-   * 启动自动弹跳效果
-   */
-  startAutoBounce: function() {
-    const scheduleNextBounce = () => {
-      // 随机间隔时间：8-15秒
-      const randomDelay = Math.random() * 7000 + 8000; // 8000-15000ms
-      
-      this.data.autoBounceTimer = setTimeout(() => {
-        // 如果页面还在显示且没有手动点击动画，则触发自动弹跳
-        if (!this.data.breadBouncing) {
-          console.log('Auto bounce triggered');
-          this.setData({
-            breadBouncing: true
-          });
-          
-          // 动画播放完成后重置状态
-          setTimeout(() => {
-            this.setData({
-              breadBouncing: false
-            });
-          }, 800);
-        }
-        
-        // 安排下一次自动弹跳
-        scheduleNextBounce();
-      }, randomDelay);
-    };
-    
-    // 启动第一次自动弹跳
-    scheduleNextBounce();
+    this.animationHelper.triggerManualBounce();
   },
 
   // ========== 词库选择弹窗相关方法 ==========

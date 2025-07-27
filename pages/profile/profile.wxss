@@ -5,13 +5,13 @@
 
 /* Profile页面全局动画优化 - 只覆盖必要属性，保留全局fade-delay延迟 */
 .fade-in-element {
-  transform: translateY(30rpx); /* 与answer页面保持一致的移动幅度 */
-  transition-duration: 0.8s; /* 只覆盖动画时长，不影响延迟时间 */
-  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 只覆盖缓动曲线 */
+  transform: translateY(30rpx) !important; /* 与answer页面保持一致的移动幅度 */
+  transition-duration: 0.8s !important; /* 只覆盖动画时长，不影响延迟时间 */
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94) !important; /* 只覆盖缓动曲线 */
 }
 
 .fade-in-element.show {
-  transform: translateY(0);
+  transform: translateY(0) !important;
 }
 
 .container {

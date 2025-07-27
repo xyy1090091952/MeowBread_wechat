@@ -7,19 +7,22 @@ const coinManager = require('./coinManager.js');
 /**
  * 根据设定的概率从奖池中抽取一个奖品（防重复版本）
  * @param {Array} prizePool - 当前系列的奖池数组
- * @returns {Object} - 抽中的奖品对象，如果没有可抽奖品则返回null
+ * @returns {Object} - 抽奖结果对象 {success: boolean, prize?: Object, message?: string}
  */
 function drawPrize(prizePool) {
   // 获取已解锁的奖品ID列表
   const unlockedIds = coinManager.getUnlockedPrizes() || [];
   
-  // 筛选出未获得的奖品
-  const availablePrizes = prizePool.filter(prize => !unlockedIds.includes(prize.id));
+  // 筛选出未获得的奖品，并排除默认奖品
+  const availablePrizes = prizePool.filter(prize => !unlockedIds.includes(prize.id) && prize.rarity !== 'DEFAULT');
   
-  // 如果没有可抽奖品，返回null
+  // 如果没有可抽奖品，返回失败结果
   if (availablePrizes.length === 0) {
     console.log('该系列所有奖品已集齐！');
-    return null;
+    return {
+      success: false,
+      message: '该系列所有奖品已集齐！'
+    };
   }
   
   // 按稀有度分组可用奖品
@@ -83,42 +86,73 @@ function drawPrize(prizePool) {
     const selectedPrize = candidates[prizeIndex];
     
     console.log(`抽中了 ${selectedRarity} 级奖品: ${selectedPrize.name}`);
-    return selectedPrize;
+    
+    // 将奖品添加到已解锁列表
+    coinManager.addUnlockedPrize(selectedPrize.id);
+    
+    return {
+      success: true,
+      prize: selectedPrize
+    };
   }
   
   // 极端情况的兜底逻辑
   console.log('概率计算异常，使用兜底逻辑');
-  return availablePrizes[0];
+  const fallbackPrize = availablePrizes[0];
+  
+  // 将奖品添加到已解锁列表
+  coinManager.addUnlockedPrize(fallbackPrize.id);
+  
+  return {
+    success: true,
+    prize: fallbackPrize
+  };
 }
 
 /**
- * 检查指定系列是否已经集齐所有奖品
+ * 检查指定系列是否已经集齐所有奖品（忽略默认奖品）
  * @param {Array} prizePool - 当前系列的奖池数组
  * @returns {boolean} - 是否已集齐
  */
 function isSeriesCompleted(prizePool) {
   const unlockedIds = coinManager.getUnlockedPrizes() || [];
-  const totalPrizes = prizePool.length;
-  const unlockedInSeries = prizePool.filter(prize => unlockedIds.includes(prize.id)).length;
+  // 筛选出可收集的奖品（非默认奖品）
+  const collectiblePrizes = prizePool.filter(prize => prize.rarity !== 'DEFAULT');
+  const totalCollectiblePrizes = collectiblePrizes.length;
   
-  return unlockedInSeries >= totalPrizes;
+  // 如果没有可收集的奖品，直接返回true
+  if (totalCollectiblePrizes === 0) {
+    return true;
+  }
+  
+  // 计算在可收集奖品中解锁了多少
+  const unlockedInSeries = collectiblePrizes.filter(prize => unlockedIds.includes(prize.id)).length;
+  
+  return unlockedInSeries >= totalCollectiblePrizes;
 }
 
 /**
- * 获取系列的收集进度信息
+ * 获取系列的收集进度信息（忽略默认奖品）
  * @param {Array} prizePool - 当前系列的奖池数组
  * @returns {Object} - 包含总数、已收集数、完成率等信息
  */
 function getSeriesProgress(prizePool) {
   const unlockedIds = coinManager.getUnlockedPrizes() || [];
-  const totalPrizes = prizePool.length;
-  const unlockedInSeries = prizePool.filter(prize => unlockedIds.includes(prize.id)).length;
+  // 筛选出可收集的奖品（非默认奖品）
+  const collectiblePrizes = prizePool.filter(prize => prize.rarity !== 'DEFAULT');
+  const totalPrizes = collectiblePrizes.length;
+  
+  // 计算在可收集奖品中解锁了多少
+  const unlockedInSeries = collectiblePrizes.filter(prize => unlockedIds.includes(prize.id)).length;
+  
+  // 避免除以零
+  const completionRate = totalPrizes > 0 ? Math.round((unlockedInSeries / totalPrizes) * 100) : 100;
   
   return {
     total: totalPrizes,
     unlocked: unlockedInSeries,
     remaining: totalPrizes - unlockedInSeries,
-    completionRate: Math.round((unlockedInSeries / totalPrizes) * 100)
+    completionRate: completionRate
   };
 }
 

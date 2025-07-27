@@ -31,13 +31,13 @@ const IMAGE_PATHS = {
   banner: {
     arrow: 'banner/arrow.svg',
     banner1: 'https://free.picui.cn/free/2025/07/20/687bd6a330b7c.jpg',
-    bigbread: 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png',
+    bigbread: 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png',
     click: 'banner/click.svg',
     gashapon: 'https://free.picui.cn/free/2025/07/20/687bd6a34f3f3.jpg',
     loginBg: 'https://free.picui.cn/free/2025/07/20/687bd6a37856d.jpg',
     meowBreadBanner: 'banner/Meow-Bread-banner.svg',
     meowBread: 'banner/Meow-Bread.svg',
-    smallBread: 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png',
+    smallBread: 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png',
     whiteBread: 'banner/white-Bread.svg'
   },
   

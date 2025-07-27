@@ -47,6 +47,107 @@
   /* 移除margin-right，使用header的padding控制 */
 }
 
+/* 查看已修正按钮样式 */
+.corrected-button {
+  height: 128rpx;
+  width: calc(100% - 96rpx);
+  margin: 0 48rpx 24rpx 48rpx;
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48rpx;
+  box-shadow: 8rpx 8rpx 32rpx rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.corrected-button:active {
+  background-color: #F8F9FA;
+  transform: scale(0.98);
+}
+
+.corrected-text {
+  font-size: 32rpx;
+  color: #000000;
+  font-weight: 500;
+}
+
+.corrected-arrow {
+  width: 32rpx;
+  height: 32rpx;
+  margin-left: auto;
+}
+
+/* 底部浮层样式 */
+.bottom-sheet-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+}
+
+.bottom-sheet {
+  width: 100%;
+  background: linear-gradient(180deg, #F8F9FA 0%, #FFFFFF 100%);
+  border-radius: 48rpx 48rpx 0 0;
+  max-height: 80vh;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 48rpx 48rpx 24rpx 48rpx;
+}
+
+.sheet-title {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.sheet-close {
+  font-size: 48rpx;
+  color: #999999;
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24rpx;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.sheet-content {
+  max-height: 60vh;
+  padding: 24rpx 0 48rpx 0;
+  overflow-y: auto;
+}
+
+/* 底部浮层中的word-card样式调整 */
+.sheet-content .word-card {
+  margin: 0 48rpx 24rpx 48rpx;
+}
+
 .container {
   position: relative; /* 为遮罩定位提供基准 */
 }

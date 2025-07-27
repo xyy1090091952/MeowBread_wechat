@@ -145,7 +145,7 @@ Page({
     // 新版小程序推荐使用 open-type="chooseAvatar" 和 type="nickname" 的方式
     // 让用户主动选择头像和输入昵称，这里只设置默认头像
     this.setData({
-      avatarUrl: '/images/icons/profile.png', // 默认头像
+      avatarUrl: '/images/tab/profile.png', // 默认头像
       nickname: '' // 空昵称，等待用户输入
     });
   },
@@ -201,7 +201,7 @@ Page({
   // 用户登录功能
   login: function () {
     // 检查是否已选择头像
-    if (!this.data.avatarUrl || this.data.avatarUrl === '/images/icons/profile.png') {
+    if (!this.data.avatarUrl || this.data.avatarUrl === '/images/tab/profile.png') {
       wx.showToast({
         title: '请选择头像',
         icon: 'none'

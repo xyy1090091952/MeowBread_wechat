@@ -12,7 +12,7 @@ const statisticsManager = {
    * @param {number} quizResult.totalQuestions - 总题数
    * @param {number} quizResult.timeSpent - 用时(秒)
    * @param {number} quizResult.accuracy - 准确率(0-1)
-   * @param {string} quizResult.mode - 答题模式 ('quick', 'endless', 'course', 'mistakes')
+   * @param {string} quizResult.mode - 答题模式 ('quick', 'course', 'mistakes')
    */
   saveQuizResult(quizResult) {
     try {
@@ -69,37 +69,7 @@ const statisticsManager = {
     }
   },
 
-  /**
-   * 更新无尽模式最长答题数记录
-   * @param {number} currentCount - 当前答题数量
-   */
-  updateEndlessModeRecord(currentCount) {
-    try {
-      const currentRecord = wx.getStorageSync('endlessModeRecord') || 0;
-      if (currentCount > currentRecord) {
-        wx.setStorageSync('endlessModeRecord', currentCount);
-        console.log('无尽模式最长答题数记录已更新:', currentCount);
-        return true; // 返回true表示创造了新记录
-      }
-      return false; // 返回false表示没有创造新记录
-    } catch (error) {
-      console.error('更新无尽模式最长答题数失败:', error);
-      return false;
-    }
-  },
 
-  /**
-   * 获取无尽模式最长答题数
-   * @returns {number} 无尽模式最长答题数
-   */
-  getEndlessModeRecord() {
-    try {
-      return wx.getStorageSync('endlessModeRecord') || 0;
-    } catch (error) {
-      console.error('获取无尽模式最长答题数失败:', error);
-      return 0;
-    }
-  },
   
   /**
    * 获取用户的总体统计数据
@@ -186,7 +156,7 @@ const statisticsManager = {
     try {
       wx.removeStorageSync('userQuizStatistics');
       wx.removeStorageSync('standardModeCount'); // 清除标准模式完成次数
-      wx.removeStorageSync('endlessModeRecord'); // 清除无尽模式最长答题数
+  
       console.log('所有统计数据已清除');
     } catch (error) {
       console.error('清除统计数据失败:', error);

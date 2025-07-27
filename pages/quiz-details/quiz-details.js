@@ -13,7 +13,7 @@ Page({
       totalTimeSpent: 0,
       averageTimePerQuestion: 0,
       standardModeCount: 0, // 标准模式完成次数（暂时模拟数据）
-      endlessModeRecord: 0   // 无尽模式最长答题数（暂时模拟数据）
+
     },
     formattedTimeSpent: '00:00:00', // 格式化的总练习时长 (时:分:秒)
     ratingInfo: {
@@ -42,7 +42,7 @@ Page({
         : 0,
       // 获取真实的标准模式完成次数和无尽模式最长答题数
       standardModeCount: statisticsManager.getStandardModeCount(),
-      endlessModeRecord: statisticsManager.getEndlessModeRecord()
+      
     };
     
     // 格式化练习时长

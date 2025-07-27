@@ -133,8 +133,7 @@
           <button 
             class="skip-button half-width-button" 
             bindtap="skipQuestion">
-            <text wx:if="{{quizMode === 'endless'}}" class="skip-text">结算</text>
-            <image wx:else class="skip-arrow-icon" src="/images/icons/arrow_right.svg"></image>
+            <image class="skip-arrow-icon" src="/images/icons/arrow_right.svg"></image>
           </button>
           <button 
             class="submit-button half-width-button" 

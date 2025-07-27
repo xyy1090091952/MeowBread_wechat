@@ -8,7 +8,20 @@
     <!-- 中央 Banner -->
     <image class="banner-title" src="/images/banner/Meow Bread banner.svg" mode="widthFix" />
     <!-- 大面包装饰图片 -->
-    <image class="banner-bigbread {{breadBouncing ? 'bread-bounce' : ''}}" src="https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png" mode="widthFix" bindtap="onBreadTap" />
+    <image class="banner-bigbread {{breadBouncing ? 'bread-bounce' : ''}}" src="{{bannerImage}}" mode="widthFix" bindtap="onBreadTap" />
+    
+    <!-- 粒子效果层 -->
+    <view class="particle-layer" wx:if="{{showParticles && particleConfig}}">
+      <block wx:for="{{particleConfig.count}}" wx:key="index">
+        <view class="particle particle-{{particleConfig.type}} particle-{{index + 1}} particle-start-{{(index % 20) + 1}}" 
+              style="animation-duration: {{particleConfig.duration * (0.7 + (index % 8) * 0.05)}}s; animation-delay: {{(index * 0.15 + (index % 13) * 0.08 + (index % 17) * 0.03) % 3}}s;">
+          <image class="particle-image" 
+                 src="{{particleConfig.image}}" 
+                 mode="aspectFit"
+                 style="width: {{particleConfig.size}}rpx; height: {{particleConfig.size}}rpx;"></image>
+        </view>
+      </block>
+    </view>
   </view>
   <view class="content">
     <!-- 筛选按钮行 -->

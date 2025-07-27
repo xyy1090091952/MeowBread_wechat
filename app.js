@@ -14,5 +14,6 @@ App({
   globalData: {
     // 全局共享的数据
     userInfo: null,
+    currentParticleId: '', // 当前选中的粒子效果ID
   }
 })

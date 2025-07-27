@@ -102,11 +102,12 @@ page {
 /* 扭蛋机主体 */
 .gashapon-machine {
   position: absolute;
-  bottom: 580rpx; /* 调整此值将图片上移 */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 600rpx; /* 根据实际图片尺寸调整 */
-  height: 600rpx; /* 根据实际图片尺寸调整 */
+  top: 0; /* 顶对齐 */
+  left: 0;
+  width: 100vw; /* 左右撑满画面 */
+  max-height: 70vh; /* 限制最大高度，避免撑爆页面 */
+  object-fit: cover; /* 保持比例并裁剪 */
+  z-index: 1; /* 确保在背景之上，但在其他元素之下 */
 }
 
 /* 底部操作区域 */
@@ -121,6 +122,7 @@ page {
   padding-bottom: 68rpx; /* 为底部安全区留出空间 */
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
   overflow: hidden; /* 确保伪元素不溢出 */
+  z-index: 10; /* 确保在背景图片之上 */
 }
 
 /* 使用伪元素实现背景渐变过渡 */
@@ -241,7 +243,7 @@ page {
 }
 
 .display-card {
-  width: 240rpx;
+  width: 320rpx;
   height: 320rpx;
   border-radius: 48rpx;
 }
