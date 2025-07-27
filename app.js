@@ -1,8 +1,14 @@
 // app.js
-const coinManager = require('./utils/coinManager'); // 引入金币管理器
+// 导入预加载管理器
+const { preloadGashaponImages } = require('./utils/preloadManager.js');
+const coinManager = require('./utils/coinManager.js'); // 引入金币管理器
 
 App({
   onLaunch() {
+    // 在小程序启动时，调用预加载函数
+    preloadGashaponImages(() => {
+      console.log('Gashapon images preloading task completed.');
+    });
     // 小程序启动时执行的逻辑
     console.log('App launched');
     

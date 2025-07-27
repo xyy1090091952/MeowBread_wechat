@@ -218,17 +218,20 @@ Page({
    * @description 将当前选中的缩略图滚动到中心位置
    * 添加重试机制，解决最后几个缩略图定位失败的问题 ✨
    */
-  centerActiveThumbnail(retryCount = 0) {
-    // 确保在页面准备好后再执行查询
-    setTimeout(() => {
+  centerActiveThumbnail() {
+    // wx.nextTick 确保在下一次UI更新后执行，避免因DOM未渲染完成而查询失败
+    wx.nextTick(() => {
       const query = wx.createSelectorQuery().in(this);
+      
       // 同时查询滚动视图的滚动位置和尺寸
       query.select('.thumbnail-scroll').fields({
         scrollOffset: true, // 获取滚动位置
         rect: true,         // 获取尺寸信息
       });
+      
       // 查询当前激活的缩略图的尺寸和位置
       query.select(`#thumbnail-${this.data.selectedPrizeId}`).boundingClientRect();
+      
       query.exec(res => {
         // res[0] 是 .thumbnail-scroll 的信息
         // res[1] 是 #thumbnail-... 的信息
@@ -245,16 +248,13 @@ Page({
             thumbnailScrollLeft: scrollLeft
           });
         } else {
-          // 如果查询失败，并且重试次数小于最大次数，则延迟后重试
-          if (retryCount < 3) {
-            this.centerActiveThumbnail(retryCount + 1);
-          } else {
-            // 如果多次尝试后仍然失败，则使用备用方案
-            this.fallbackCenterThumbnail();
-          }
+          // 如果查询失败，则使用备用方案
+          // wx.nextTick 已经大大降低了查询失败的概率，但作为保险措施，仍然保留备用逻辑
+          console.warn(`Thumbnail query failed for prizeId: ${this.data.selectedPrizeId}. Using fallback.`);
+          this.fallbackCenterThumbnail();
         }
       });
-    }, retryCount === 0 ? 100 : 50); // 首次调用延迟100ms，重试时延迟50ms
+    });
   },
 
   /**
