@@ -1,18 +1,28 @@
 <!--pages/cache-manager/cache-manager.wxml-->
 <view class="container">
-  <!-- 从vocabulary页面复制的section-title -->
-  <view class="section-title fade-in-element fade-delay-2 show">缓存详情</view>
-
-  <!-- 从quiz-details页面复制的form-item-wrapper -->
+  <view class="section-title fade-in-element fade-delay-2 show">缓存总览</view>
   <view class="detail-forms fade-in-element fade-delay-3 show">
     <view class="form-item-wrapper">
       <view class="form-label">总缓存数</view>
-      <view class="form-value">{{cacheStats.totalCaches}}</view>
+      <view class="form-value">{{totalCache.count}}</view>
     </view>
-    
     <view class="form-item-wrapper">
-      <view class="form-label">占用空间</view>
-      <view class="form-value">{{cacheStats.totalSizeKB}}KB</view>
+      <view class="form-label">总占用空间</view>
+      <view class="form-value">{{totalCache.size}} KB</view>
+    </view>
+  </view>
+
+  <view class="section-title fade-in-element fade-delay-4 show">缓存详情</view>
+  <view class="detail-forms fade-in-element fade-delay-5 show">
+    <!-- 单词缓存 -->
+    <view class="form-item-wrapper">
+      <view class="form-label">单词缓存</view>
+      <view class="form-value">{{wordCache.count}} 条 / {{wordCache.size}} KB</view>
+    </view>
+    <!-- 图片缓存 -->
+    <view class="form-item-wrapper">
+      <view class="form-label">图片缓存</view>
+      <view class="form-value">{{imageCache.count}} 张 / {{imageCache.size}} KB</view>
     </view>
   </view>
 

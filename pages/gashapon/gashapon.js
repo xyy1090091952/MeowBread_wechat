@@ -3,6 +3,7 @@
 const { gashaponData, PrizeDataManager } = require('../../data/gashapon-prizes-config.js');
 const { drawPrize, isSeriesCompleted, getSeriesProgress } = require('../../utils/gashapon-helper.js');
 const coinManager = require('../../utils/coinManager.js'); // 引入金币管理器
+import imageManager from '../../utils/imageManager.js'; // 引入图片管理器
 
 Page({
   /**
@@ -24,14 +25,20 @@ Page({
     drawCost: 0,
     // swiper相关数据（调换后索引0对应系列2美味补给，索引1对应系列1梦幻魔法）
     swiperIndex: 0, // 默认显示索引0，即美味补给
-    // 扭蛋机背景图片URL
-    machineImageUrl: 'https://free.picui.cn/free/2025/07/26/6883c5e4b8633.jpg', // 默认显示美味补给的图片
+    // 图片URL，初始为空，通过imageManager加载
+    machineImageUrl: '', 
+    machineImageUrls: { // 存储不同系列的背景图
+      1: '', // 梦幻魔法
+      2: ''  // 美味补给
+    },
+    displayCard1: '', // 美味补给展示卡
+    displayCard2: ''  // 梦幻魔法展示卡
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad(options) {
+  async onLoad(options) {
     // 设置导航栏高度
     const windowInfo = wx.getWindowInfo();
     const menuButtonInfo = wx.getMenuButtonBoundingClientRect();
@@ -41,12 +48,48 @@ Page({
       menuButtonTop: menuButtonInfo.bottom + 8,
     });
 
+    // 异步加载所有页面图片
+    await this.loadPageImages();
+
     // 初始化时更新系列进度和抽奖价格
     this.updateSeriesProgress();
     const initialSeries = gashaponData.find(series => series.id === this.data.currentSeriesId);
     this.setData({
       drawCost: initialSeries ? initialSeries.cost : 0, // 动态获取初始系列的消耗
     });
+  },
+
+  /**
+   * 异步加载页面所需的所有图片
+   */
+  async loadPageImages() {
+    try {
+      const [
+        machineImg1, 
+        machineImg2, 
+        cardImg1, 
+        cardImg2
+      ] = await Promise.all([
+        imageManager.getImagePath('https://free.picui.cn/free/2025/07/26/6883c5e48d352.jpg'), // 梦幻魔法背景
+        imageManager.getImagePath('https://free.picui.cn/free/2025/07/26/6883c5e4b8633.jpg'), // 美味补给背景
+        imageManager.getImagePath('https://free.picui.cn/free/2025/07/26/6883c5e44f3af.png'), // 美味补给卡片
+        imageManager.getImagePath('https://free.picui.cn/free/2025/07/20/687bd7c1b8eae.png')  // 梦幻魔法卡片
+      ]);
+
+      this.setData({
+        'machineImageUrls.1': machineImg1,
+        'machineImageUrls.2': machineImg2,
+        machineImageUrl: machineImg2, // 默认显示美味补给的图片
+        displayCard1: cardImg1,
+        displayCard2: cardImg2
+      });
+    } catch (error) {
+      console.error('陈列馆页面图片加载失败', error);
+      wx.showToast({
+        title: '图片加载失败',
+        icon: 'none'
+      });
+    }
   },
 
   /**
@@ -171,16 +214,11 @@ Page({
     const targetSeriesId = currentIndex === 0 ? 2 : 1;
     const currentSeries = gashaponData.find(series => series.id === targetSeriesId);
     
-    // 根据系列ID切换背景图片
-    const machineImageUrl = targetSeriesId === 2 
-      ? 'https://free.picui.cn/free/2025/07/26/6883c5e4b8633.jpg' // 美味补给
-      : 'https://free.picui.cn/free/2025/07/26/6883c5e48d352.jpg'; // 梦幻魔法
-    
     this.setData({
       swiperIndex: currentIndex,
       currentSeriesId: targetSeriesId,
       drawCost: currentSeries ? currentSeries.cost : 0, // 动态获取当前系列的消耗
-      machineImageUrl: machineImageUrl, // 更新背景图片
+      machineImageUrl: this.data.machineImageUrls[targetSeriesId], // 更新背景图片
     });
   },
 
@@ -194,16 +232,11 @@ Page({
     const targetIndex = selectedId === 2 ? 0 : 1;
     const currentSeries = gashaponData.find(series => series.id === selectedId);
     
-    // 根据系列ID切换背景图片
-    const machineImageUrl = selectedId === 2 
-      ? 'https://free.picui.cn/free/2025/07/26/6883c5e4b8633.jpg' // 美味补给
-      : 'https://free.picui.cn/free/2025/07/26/6883c5e48d352.jpg'; // 梦幻魔法
-    
     this.setData({
       swiperIndex: targetIndex,
       currentSeriesId: selectedId,
       drawCost: currentSeries ? currentSeries.cost : 0, // 动态获取当前系列的消耗
-      machineImageUrl: machineImageUrl, // 更新背景图片
+      machineImageUrl: this.data.machineImageUrls[selectedId], // 更新背景图片
     });
   },
 

@@ -3,6 +3,7 @@
 const { gashaponData, PrizeDataManager } = require('../../data/gashapon-prizes-config.js');
 const { drawPrize } = require('../../utils/gashapon-helper.js');
 const coinManager = require('../../utils/coinManager.js'); // 引入金币管理器
+import imageManager from '../../utils/imageManager.js';
 
 Page({
 
@@ -20,7 +21,7 @@ Page({
    * 生命周期函数--监听页面加载
    * @param {object} options 页面启动参数，包含 prizeId 和 seriesId
    */
-  onLoad(options) {
+  async onLoad(options) {
     console.log('结果页面接收到的参数:', options);
     
     // 从页面参数中获取系列ID (兼容新旧参数名)
@@ -49,6 +50,15 @@ Page({
       const prize = PrizeDataManager.getPrizeById(options.prizeId);
       if (prize) {
         console.log('找到奖品信息:', prize);
+
+        // 使用 imageManager 获取本地缓存路径
+        if (prize.image) {
+            prize.image = await imageManager.getImagePath(prize.image);
+        }
+        if (prize.bannerImage) {
+            prize.bannerImage = await imageManager.getImagePath(prize.bannerImage);
+        }
+
         this.setData({ prize });
         // 播放入场动画
         this.playAnimation();
@@ -66,6 +76,15 @@ Page({
     } else if (options.prizeData) {
       // 兼容旧的prizeData参数格式
       const prize = JSON.parse(decodeURIComponent(options.prizeData));
+
+      // 使用 imageManager 获取本地缓存路径
+      if (prize.image) {
+          prize.image = await imageManager.getImagePath(prize.image);
+      }
+      if (prize.bannerImage) {
+          prize.bannerImage = await imageManager.getImagePath(prize.bannerImage);
+      }
+
       this.setData({ prize });
       this.playAnimation();
     } else {

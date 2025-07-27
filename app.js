@@ -1,5 +1,7 @@
 // app.js
 const coinManager = require('./utils/coinManager'); // 引入金币管理器
+const imageManager = require('./utils/imageManager');
+const imageList = require('./data/imageList');
 
 App({
   onLaunch() {
@@ -9,11 +11,12 @@ App({
     // 初始化用户数据（金币、奖品等）
     coinManager.initializeUserData();
 
-    // 发送 res.code 到后台换取 openId, sessionKey, unionId
+    // 预加载图片
+    imageManager.preloadImages(imageList);
   },
   globalData: {
     // 全局共享的数据
     userInfo: null,
     currentParticleId: '', // 当前选中的粒子效果ID
   }
-})
+});

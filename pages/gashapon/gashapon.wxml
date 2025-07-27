@@ -54,7 +54,7 @@
         <view class="series-content">
           <!-- 视觉展示区域 -->
           <view class="visual-display">
-            <image class="display-card" src="https://free.picui.cn/free/2025/07/26/6883c5e44f3af.png" mode="aspectFit"></image>
+            <image class="display-card" src="{{displayCard1}}" mode="aspectFit"></image>
           </view>
         </view>
       </swiper-item>
@@ -64,7 +64,7 @@
         <view class="series-content">
           <!-- 视觉展示区域 -->
           <view class="visual-display">
-            <image class="display-card" src="https://free.picui.cn/free/2025/07/20/687bd7c1b8eae.png" mode="aspectFit"></image>
+            <image class="display-card" src="{{displayCard2}}" mode="aspectFit"></image>
           </view>
         </view>
       </swiper-item>
