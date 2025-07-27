@@ -17,9 +17,7 @@ const knowledgeCardsDB = {
       card_title: '敬体&简体变化表',
       web_url: '/pages/grammar/grammar?type=verb&title=动词变化表',
       page_url: '/pages/knowledge-base/knowledge-base?id=N5_1',
-      is_active: true,
-      created_at: '2024-07-13T10:00:00Z',
-      updated_at: '2024-07-13T10:00:00Z'
+      is_active: true
     },
     {
       id: 2,
@@ -30,9 +28,7 @@ const knowledgeCardsDB = {
       card_title: '开关和出入词汇',
       web_url: '/pages/reading/reading?level=N5',
       page_url: '/pages/knowledge-base/knowledge-base?id=N5_2',
-      is_active: true,
-      created_at: '2024-07-13T10:00:00Z',
-      updated_at: '2024-07-13T10:00:00Z'
+      is_active: true
     },
     {
       id: 3,
@@ -43,9 +39,7 @@ const knowledgeCardsDB = {
       card_title: '词组和固定搭配',
       web_url: '/pages/listening/listening?level=N5',
       page_url: '/pages/knowledge-base/knowledge-base?id=N5_3',
-      is_active: true,
-      created_at: '2024-07-13T10:00:00Z',
-      updated_at: '2024-07-13T10:00:00Z'
+      is_active: true
     },
     // 暂时隐藏的卡片 - 可以通过修改is_active来启用/禁用
     {
@@ -57,9 +51,7 @@ const knowledgeCardsDB = {
       card_title: 'N5核心词汇',
       web_url: '/pages/vocabulary/vocabulary?level=N5&type=core',
       page_url: '/pages/knowledge-base/knowledge-base?id=N5_4',
-      is_active: false, // 暂时禁用
-      created_at: '2024-07-13T10:00:00Z',
-      updated_at: '2024-07-13T10:00:00Z'
+      is_active: false // 暂时禁用
     },
     {
       id: 5,
@@ -70,9 +62,7 @@ const knowledgeCardsDB = {
       card_title: '阅读理解训练',
       web_url: '/pages/reading/reading?level=N5',
       page_url: '/pages/knowledge-base/knowledge-base?id=N5_5',
-      is_active: false, // 暂时禁用
-      created_at: '2024-07-13T10:00:00Z',
-      updated_at: '2024-07-13T10:00:00Z'
+      is_active: false // 暂时禁用
     },
     {
       id: 6,
@@ -83,9 +73,7 @@ const knowledgeCardsDB = {
       card_title: '听力练习',
       web_url: '/pages/listening/listening?level=N5',
       page_url: '/pages/knowledge-base/knowledge-base?id=N5_6',
-      is_active: false, // 暂时禁用
-      created_at: '2024-07-13T10:00:00Z',
-      updated_at: '2024-07-13T10:00:00Z'
+      is_active: false // 暂时禁用
     }
   ],
 
@@ -99,9 +87,7 @@ const knowledgeCardsDB = {
       card_label_secondary: '进阶',
       card_title: 'N4语法要点',
       web_url: '/pages/grammar/grammar?type=n4&title=N4语法',
-      is_active: false, // 暂时禁用，内容正在准备中
-      created_at: '2024-07-13T10:00:00Z',
-      updated_at: '2024-07-13T10:00:00Z'
+      is_active: false // 暂时禁用，内容正在准备中
     }
   ],
 
@@ -222,9 +208,7 @@ const KnowledgeCardsDB = {
     const newCard = {
       id: Date.now(), // 简单的ID生成
       ...cardData,
-      is_active: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      is_active: true
     };
     
     knowledgeCardsDB[level].push(newCard);
@@ -245,8 +229,7 @@ const KnowledgeCardsDB = {
       if (cardIndex !== -1) {
         knowledgeCardsDB[level][cardIndex] = {
           ...cards[cardIndex],
-          ...updateData,
-          updated_at: new Date().toISOString()
+          ...updateData
         };
         return true;
       }
