@@ -53,7 +53,24 @@ const getImagePath = (url) => {
   return new Promise((resolve, reject) => {
     // 校验URL的有效性
     if (!url || typeof url !== 'string') {
-      return reject('无效的图片URL');
+      // 如果url是无效的，比如undefined或者空字符串，我们返回一个空字符串，避免页面渲染失败
+      return resolve('');
+    }
+
+    // 新增：判断是否为本地路径或已经是微信临时/用户文件路径
+    // 本地绝对路径通常以 / 开头
+    // 微信文件路径以 wxfile:// 开头
+    if (url.startsWith('/') || url.startsWith('wxfile://')) {
+      // 如果是本地路径，直接返回，不进行缓存处理
+      return resolve(url);
+    }
+    
+    // 新增：判断是否为网络路径
+    if (!url.startsWith('http')) {
+      // 对于非网络路径，且不符合本地路径规则的，可能是一些动态拼接的错误路径
+      // 直接返回原路径，并打印一个警告，方便排查问题
+      console.warn(`[ImageManager] 检测到非标准的图片路径: ${url}，直接返回原路径。`);
+      return resolve(url);
     }
 
     // 1. 检查内存中的缓存映射
