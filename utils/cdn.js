@@ -62,7 +62,7 @@ const IMAGE_PATHS = {
   
   // 扭蛋机图片
   gashapon: {
-    machine: 'https://free.picui.cn/free/2025/07/20/687bd7c226b4e.png',
+    machine: '',
     magic: 'https://free.picui.cn/free/2025/07/20/687bd7c1b8eae.png',
     energy: 'gashapon/enegy.png',
     shinning: 'gashapon/shinning.svg'
