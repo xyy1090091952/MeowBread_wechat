@@ -40,11 +40,11 @@ const magicPrizes = [
     id: 'FX-SSR-01', 
     name: '玫瑰魔法', 
     rarity: 'SSR', 
-    image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png', 
+    image: 'https://free.picui.cn/free/2025/07/27/6885d7ecf3f07.png', 
     quote: '阿姨洗铁路',
     particleConfig: {
       type: 'rose',
-      image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png',
+      image: 'https://free.picui.cn/free/2025/07/27/6885d7ecf3f07.png',
       baseCount: 8,
       duration: 15,
       size: 60
@@ -55,11 +55,11 @@ const magicPrizes = [
     id: 'FX-SR-01', 
     name: '萤火虫', 
     rarity: 'SR', 
-    image: 'https://free.picui.cn/free/2025/07/20/687cf85445556.png', 
+    image: 'https://free.picui.cn/free/2025/07/27/6885d8248ac68.png', 
     quote: '挑萤火虫夜读',
     particleConfig: {
       type: 'firefly',
-      image: 'https://free.picui.cn/free/2025/07/20/687cf85445556.png',
+      image: 'https://free.picui.cn/free/2025/07/27/6885d8248ac68.png',
       baseCount: 10,
       duration: 20,
       size: 40
@@ -118,7 +118,7 @@ const supplyPrizes = [
     name: '北海道面包', 
     rarity: 'DEFAULT', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png', 
-    bannerImage: 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png', // 默认大面包图片 ✨
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png', // 默认大面包图片 ✨
     quote: '小叮当同款平替'
   },
   // SSR 级别
@@ -127,7 +127,7 @@ const supplyPrizes = [
     name: '梦幻圈圈', 
     rarity: 'SSR', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf85670845.png', 
-    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf85670845.png', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd5ac4046.png', // 答题页面横幅图片（待添加）
     quote: '我能背一天单词' 
   },
   // SR 级别
@@ -136,8 +136,16 @@ const supplyPrizes = [
     name: '小熊饼干', 
     rarity: 'SR', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf856f3a00.png', 
-    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf856f3a00.png', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd5943fd9.png', // 答题页面横幅图片（待添加）
     quote: '小熊热量炸弹' 
+  },
+  { 
+    id: 'FOOD-SR-02', 
+    name: '吞拿鱼罐头', 
+    rarity: 'SR', 
+    image: 'https://free.picui.cn/free/2025/07/27/6885d2800695d.png', // 链接先空着
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd57eb086.png', // 链接先空着
+    quote: '猫咪的最爱' 
   },
   // R 级别
   { 
@@ -145,7 +153,7 @@ const supplyPrizes = [
     name: '奶奶拿铁', 
     rarity: 'R', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf85828beb.png', 
-    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf85828beb.png', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd55f2f34.png', // 答题页面横幅图片（待添加）
     quote: '不是爷爷的拿铁' 
   },
   { 
@@ -153,8 +161,16 @@ const supplyPrizes = [
     name: '莓莓圈圈', 
     rarity: 'R', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf857e63ae.png', 
-    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf857e63ae.png', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd5788c62.png', // 答题页面横幅图片（待添加）
     quote: '味觉防波堤' 
+  },
+  { 
+    id: 'FOOD-R-03', 
+    name: '冰美式', 
+    rarity: 'R', 
+    image: 'https://free.picui.cn/free/2025/07/27/6885d2800b9d2.png', // 链接先空着
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd57dbe8a.png', // 链接先空着
+    quote: '打工人的续命水' 
   },
   // N 级别
   { 
@@ -162,7 +178,7 @@ const supplyPrizes = [
     name: '脆脆薯条', 
     rarity: 'N', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf859a87a4.png', 
-    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf859a87a4.png', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd52e7d20.png', // 答题页面横幅图片（待添加）
     quote: '麦当劳薯条，条条条' 
   },
   { 
@@ -170,7 +186,7 @@ const supplyPrizes = [
     name: '芝识汉堡', 
     rarity: 'N', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf8593a21e.png', 
-    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf8593a21e.png', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd52e796f.png', // 答题页面横幅图片（待添加）
     quote: '芝士就是力量' 
   },
   { 
@@ -178,8 +194,24 @@ const supplyPrizes = [
     name: '糖霜圈圈', 
     rarity: 'N', 
     image: 'https://free.picui.cn/free/2025/07/20/687cf85854f37.png', 
-    bannerImage: 'https://free.picui.cn/free/2025/07/20/687cf85854f37.png', // 答题页面横幅图片（待添加）
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd52cccb8.png', // 答题页面横幅图片（待添加）
     quote: '安赛蜜圈圈' 
+  },
+  { 
+    id: 'FOOD-N-04', 
+    name: '鲷鱼烧', 
+    rarity: 'N', 
+    image: 'https://free.picui.cn/free/2025/07/27/6885d280077fe.png', // 链接先空着
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd52d6751.png', // 链接先空着
+    quote: '从头开始吃还是从尾巴开始吃？' 
+  },
+  { 
+    id: 'FOOD-N-05', 
+    name: '毛线球', 
+    rarity: 'N', 
+    image: 'https://free.picui.cn/free/2025/07/27/6885d27fd416d.png', // 链接先空着
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd55b5df8.png', // 链接先空着
+    quote: '玩着玩着就乱了' 
   }
 ];
 

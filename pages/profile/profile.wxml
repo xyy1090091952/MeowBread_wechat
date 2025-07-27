@@ -46,7 +46,7 @@
 
   <!-- 装饰素材 - 仅在未登录时显示，无动画效果 -->
   <block wx:if="{{!isLoggedIn}}">
-    <image class="small-bread-decoration {{breadBouncing ? 'bread-bounce' : ''}}" src="https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png" mode="aspectFit" bindtap="onBreadTap"></image>
+    <image class="small-bread-decoration {{breadBouncing ? 'bread-bounce' : ''}}" src="https://free.picui.cn/free/2025/07/27/6885dd53087dd.png" mode="aspectFit" bindtap="onBreadTap"></image>
     <image class="click-decoration" src="/images/banner/click.svg" mode="aspectFit"></image>
     <image class="arrow-decoration" src="/images/banner/arrow.svg" mode="aspectFit"></image>
   </block>

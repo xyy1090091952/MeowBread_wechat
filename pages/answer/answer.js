@@ -24,7 +24,7 @@ Page({
     showCourseSelector: false, // 控制课程选择弹窗的显示
     
     // 美味补给横幅图片
-    bannerImage: 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png', // 默认大面包图片 ✨
+    bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png', // 默认大面包图片 ✨
   },
   onLoad: function (options) {
     // 页面加载时可以进行一些初始化操作
@@ -293,7 +293,7 @@ Page({
         // 如果奖品有横幅图片且不为空，使用奖品的横幅图片；否则使用默认的北海道面包图片
         const bannerImageUrl = (prizeData.bannerImage && prizeData.bannerImage.trim() !== '') 
           ? prizeData.bannerImage 
-          : 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png'; // 默认北海道面包图片
+          : 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png'; // 默认北海道面包图片
         
         console.log('✅ 最终使用的横幅图片:', bannerImageUrl);
         
@@ -307,14 +307,14 @@ Page({
         console.warn('⚠️ 未找到对应的奖品配置，使用默认图片');
         // 使用默认的北海道面包图片
         this.setData({
-          bannerImage: 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png'
+          bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png'
         });
       }
     } catch (error) {
       console.error('❌ 更新美味补给横幅图片失败:', error);
       // 出错时使用默认图片
       this.setData({
-        bannerImage: 'https://free.picui.cn/free/2025/07/20/687bd6a37f4b4.png'
+        bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png'
       });
     }
   },
