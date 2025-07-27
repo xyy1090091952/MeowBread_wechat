@@ -53,8 +53,8 @@ const getImagePath = (url) => {
   return new Promise((resolve, reject) => {
     // 校验URL的有效性
     if (!url || typeof url !== 'string') {
-      // 如果url是无效的，比如undefined或者空字符串，我们返回一个空字符串，避免页面渲染失败
-      return resolve('');
+      // 如果url是无效的，比如undefined或者空字符串，我们返回 null，避免页面渲染失败
+      return resolve(null);
     }
 
     // 新增：判断是否为本地路径或已经是微信临时/用户文件路径
