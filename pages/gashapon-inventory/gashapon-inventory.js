@@ -2,6 +2,7 @@
 // 使用新的数据管理器，提供更好的数据访问体验 ✨
 const { gashaponData, PrizeDataManager } = require('../../data/gashapon-prizes-config.js');
 const coinManager = require('../../utils/coinManager.js'); // 引入金币管理器
+const imageManager = require('../../utils/imageManager');
 
 Page({
 
@@ -45,8 +46,8 @@ Page({
    * 生命周期函数--监听页面显示
    * 每次进入页面都刷新，确保解锁状态最新
    */
-  onShow() {
-    this.loadPrizes();
+  async onShow() {
+    await this.loadPrizes();
     this.loadParticleSettings();
     
     // 🔧 修复逻辑：确保梦幻魔法系列正确初始化「麻瓜」默认状态
@@ -63,21 +64,29 @@ Page({
   /**
    * @description 加载并处理所有奖品数据 (使用新数据管理器优化)
    */
-  loadPrizes() {
+  async loadPrizes() {
     const unlockedIds = coinManager.getUnlockedPrizes() || [];
     
-    // 使用数据管理器获取分类数据，更加清晰和高效 ✨
-    const supplyPrizes = PrizeDataManager.getPrizesBySeriesId(2).map(prize => ({
+    // 使用数据管理器获取原始数据
+    const originalSupplyPrizes = PrizeDataManager.getPrizesBySeriesId(2);
+    const originalMagicPrizes = PrizeDataManager.getPrizesBySeriesId(1);
+
+    // 异步地将远程URL转换为本地缓存路径
+    const supplyPrizes = await Promise.all(originalSupplyPrizes.map(async (prize) => ({
       ...prize,
+      image: await imageManager.getImagePath(prize.image),
+      bannerImage: prize.bannerImage ? await imageManager.getImagePath(prize.bannerImage) : '',
       // 「普通面包」奖品默认解锁，无需抽奖
       unlocked: prize.id === 'FOOD-DEFAULT-01' ? true : unlockedIds.includes(prize.id)
-    }));
+    })));
     
-    const magicPrizes = PrizeDataManager.getPrizesBySeriesId(1).map(prize => ({
+    const magicPrizes = await Promise.all(originalMagicPrizes.map(async (prize) => ({
       ...prize,
+      image: await imageManager.getImagePath(prize.image),
+      bannerImage: prize.bannerImage ? await imageManager.getImagePath(prize.bannerImage) : '',
       // 「麻瓜」奖品默认解锁，无需抽奖
       unlocked: prize.id === 'FX-DEFAULT-01' ? true : unlockedIds.includes(prize.id)
-    }));
+    })));
 
     // 根据当前currentSeriesId设置显示的奖品
     const isSupply = this.data.currentSeriesId === 1;

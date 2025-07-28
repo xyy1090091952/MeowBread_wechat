@@ -1,5 +1,6 @@
 // pages/quiz-result/quiz-result.js
 const statisticsManager = require('../../utils/statisticsManager.js');
+const imageManager = require('../../utils/imageManager.js');
 
 Page({
   data: {
@@ -19,21 +20,21 @@ Page({
     mode: 'quick', // 新增：答题模式
   },
 
-  onLoad: function (options) {
+  onLoad: async function (options) {
     const { score, totalQuestions, timeSpent, accuracy, resultLevel, coinsEarned, from, mode } = options; // 新增：获取答题模式
 
     const resultInfo = {
       noob: {
         text: '菜逼 Noob',
-        image: 'https://free.picui.cn/free/2025/07/20/687cec7e7d209.png'
+        image: await imageManager.getImagePath('https://free.picui.cn/free/2025/07/20/687cec7e7d209.png')
       },
       normal: {
         text: '平平无奇 Normal',
-        image: 'https://free.picui.cn/free/2025/07/20/687cec7e5578f.png'
+        image: await imageManager.getImagePath('https://free.picui.cn/free/2025/07/20/687cec7e5578f.png')
       },
       perfect: {
         text: '完美 Perfect',
-        image: 'https://free.picui.cn/free/2025/07/20/687cec7e5cf3a.png'
+        image: await imageManager.getImagePath('https://free.picui.cn/free/2025/07/20/687cec7e5cf3a.png')
       }
     };
 

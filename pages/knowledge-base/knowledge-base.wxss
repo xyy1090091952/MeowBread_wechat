@@ -1,34 +1,19 @@
-/* pages/grammar/grammar.wxss */
+/* 知识库页面通用样式 - 按照Markdown导入制作规范 */
 
 /* 页面容器 */
 .page {
   min-height: 100vh;
-  background: #ffffff;
+  background: #ffffff; /* 纯白背景 */
 }
 
 /* 页面标题 */
-.page .page-title {
+.page-title {
   font-size: 48rpx !important;
   font-weight: bold !important;
   color: #000000 !important;
   margin-top: 48rpx !important;
   margin-bottom: 40rpx !important;
   padding-left: 48rpx !important;
-}
-
-/* 新增专门的语法页面标题样式 */
-.grammar-title {
-  font-size: 48rpx !important;
-  font-weight: bold !important;
-  color: #000000 !important;
-  margin-top: 48rpx !important;
-  margin-bottom: 40rpx !important;
-  padding-left: 48rpx !important;
-}
-
-/* 主内容区域 */
-.main {
-  /* 所有内容的容器 */
 }
 
 /* 章节标题 */
@@ -40,10 +25,6 @@
   padding-left: 48rpx;
 }
 
-.section-title:first-child {
-  margin-top: 0;
-}
-
 /* 子章节标题 */
 .subsection-title {
   font-size: 32rpx;
@@ -53,22 +34,40 @@
   padding-left: 48rpx;
 }
 
-/* 表格包装器 - 处理滚动 */
+/* 表格容器 - 三层嵌套结构 */
 .table-wrapper {
   margin-bottom: 48rpx;
   overflow-x: auto;
   overflow-y: visible;
   -webkit-overflow-scrolling: touch;
-  /* 完全模仿dict-row的写法 */
+  /* 使用padding来控制边距，避免滚动时内容被裁剪 */
   padding-left: 48rpx;
-  padding-right: 72rpx;
+  padding-right: 48rpx;
   padding-top: 8rpx;
   padding-bottom: 25rpx;
   width: 100%;
   box-sizing: border-box;
+  /* 隐藏滚动条但保持滚动功能 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
-/* 表格 */
+/* 隐藏滚动条 */
+.table-wrapper::-webkit-scrollbar {
+  height: 0;
+  width: 0;
+  display: none;
+}
+
+/* 表格容器 */
+.table-container {
+  width: max-content; /* 让容器宽度适应内容 */
+  min-width: calc(100% - 96rpx); /* 减去左右padding后的宽度 */
+  padding-right: 48rpx; /* 在内容右侧添加额外空间，确保滚动到最右侧时有呼吸空间 */
+  box-sizing: border-box;
+}
+
+/* 表格主体 */
 .table {
   display: table;
   width: auto;
@@ -78,7 +77,6 @@
   table-layout: auto;
   border-collapse: separate;
   border-spacing: 0;
-  margin-right: 48rpx; /* 给表格添加右边距，防止滑动时贴边 */
 }
 
 /* 表格行 */
@@ -86,12 +84,10 @@
   display: table-row;
 }
 
-/* 表格头部行 */
+/* 表格头部 */
 .table-header {
   background: linear-gradient(90deg, #A9FFCA 0%, #D2FFE3 100%);
 }
-
-
 
 /* 表格单元格 */
 .table-cell {
@@ -109,17 +105,13 @@
   line-height: 1.5;
 }
 
-.table-cell:last-child {
-  border-right: none;
-}
-
 /* 表头单元格 */
 .header-cell {
   background: transparent !important;
   color: #000000 !important;
 }
 
-/* 表格行背景色交替 */
+/* 表格行颜色交替 */
 .table-row:nth-child(odd) {
   background-color: #ffffff;
 }
@@ -128,14 +120,8 @@
   background-color: #FAFAFA;
 }
 
-
-
-/* 表格行悬停效果 */
-.table-row:hover {
-  background-color: rgba(52, 152, 219, 0.1) !important;
-}
-
-/* 表格圆角优化 - 第一行 */
+/* 表格圆角处理 */
+/* 第一行圆角 */
 .table-row:first-child .table-cell:first-child {
   border-top-left-radius: 24rpx;
 }
@@ -144,7 +130,7 @@
   border-top-right-radius: 24rpx;
 }
 
-/* 表格圆角优化 - 最后一行 */
+/* 最后一行圆角 */
 .table-row:last-child .table-cell:first-child {
   border-bottom-left-radius: 24rpx;
 }
@@ -153,42 +139,22 @@
   border-bottom-right-radius: 24rpx;
 }
 
-/* 响应式设计 */
-@media (max-width: 480px) {
-  /* 删除page的padding，保持与大屏幕一致 */
-  
-  .page .page-title {
-    font-size: 48rpx !important;
-    margin-top: 48rpx !important;
-    padding-left: 48rpx !important;
-  }
-  
-  .grammar-title {
-    font-size: 48rpx !important;
-    color: #000000 !important;
-  }
-  
-  .section-title {
-    font-size: 32rpx;
-    padding-left: 48rpx;
-  }
-  
-  .subsection-title {
-    font-size: 28rpx;
-    padding-left: 48rpx;
-  }
-  
-  .table-cell {
-    padding: 16rpx 48rpx;
-    font-size: 26rpx;
-    min-width: 100rpx;
-    max-width: 300rpx;
-  }
+/* 移除最后一列的右边框 */
+.table-cell:last-child {
+  border-right: none;
 }
 
-/* 滚动条样式 - 隐藏滚动条 */
-.table-wrapper::-webkit-scrollbar {
-  height: 0;
-  width: 0;
-  display: none;
+/* 错误状态 */
+.error {
+  text-align: center;
+  color: #999;
+  font-size: 28rpx;
+  padding: 80rpx 48rpx;
+}
+
+/* 页面底部空白边距 */
+.page::after {
+  content: '';
+  display: block;
+  height: 80rpx;
 }

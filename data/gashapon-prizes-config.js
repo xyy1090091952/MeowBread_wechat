@@ -31,7 +31,7 @@ const magicPrizes = [
     id: 'FX-DEFAULT-01', 
     name: '麻瓜', 
     rarity: 'DEFAULT', 
-    image: 'https://free.picui.cn/free/2025/07/20/687cf854b2086.png', 
+    image: 'https://free.picui.cn/free/2025/07/27/688635c415308.png', 
     quote: '阿瓦达啃大瓜',
     particleConfig: null // 无粒子效果
   },

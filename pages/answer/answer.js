@@ -3,6 +3,7 @@ const mistakeManager = require('../../utils/mistakeManager.js'); // 引入错题
 const filterManager = require('../../utils/filterManager.js'); // 引入筛选管理器
 const quizService = require('../../utils/quiz.service.js'); // 引入答题服务
 const { AnimationHelper, ParticleHelper } = require('../../utils/animation.js'); // 引入辅助模块
+const imageManager = require('../../utils/imageManager.js'); // 引入图片管理器
 
 Page({
   data: {
@@ -272,7 +273,7 @@ Page({
    * 更新美味补给横幅图片 🍞✨
    * 根据陈列馆页面美味补给系列的选择，动态显示对应的横幅图片
    */
-  updateBannerImage() {
+  async updateBannerImage() {
     try {
       console.log('🍞 开始更新美味补给横幅图片...');
       
@@ -286,35 +287,37 @@ Page({
       // 查找对应的奖品配置
       const prizeData = PrizeDataManager.getPrizeById(supplyParticleId);
       
+      let bannerImageUrl = 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png'; // 默认北海道面包图片
+
       if (prizeData) {
         console.log('🏷️ 奖品名称:', prizeData.name);
         console.log('🖼️ 奖品横幅图片:', prizeData.bannerImage);
         
-        // 如果奖品有横幅图片且不为空，使用奖品的横幅图片；否则使用默认的北海道面包图片
-        const bannerImageUrl = (prizeData.bannerImage && prizeData.bannerImage.trim() !== '') 
-          ? prizeData.bannerImage 
-          : 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png'; // 默认北海道面包图片
-        
-        console.log('✅ 最终使用的横幅图片:', bannerImageUrl);
-        
-        // 更新横幅图片
-        this.setData({
-          bannerImage: bannerImageUrl
-        });
-        
-        console.log('🎉 美味补给横幅图片更新成功！');
+        // 如果奖品有横幅图片且不为空，使用奖品的横幅图片
+        if (prizeData.bannerImage && prizeData.bannerImage.trim() !== '') {
+          bannerImageUrl = prizeData.bannerImage; 
+        }
       } else {
         console.warn('⚠️ 未找到对应的奖品配置，使用默认图片');
-        // 使用默认的北海道面包图片
-        this.setData({
-          bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png'
-        });
       }
+
+      // 使用 imageManager 获取本地缓存路径
+      const localBannerPath = await imageManager.getImagePath(bannerImageUrl);
+      console.log('✅ 最终使用的横幅图片本地路径:', localBannerPath);
+
+      // 更新横幅图片
+      this.setData({
+        bannerImage: localBannerPath
+      });
+      
+      console.log('🎉 美味补给横幅图片更新成功！');
+
     } catch (error) {
       console.error('❌ 更新美味补给横幅图片失败:', error);
-      // 出错时使用默认图片
+      // 出错时也尝试加载默认图片的缓存版本
+      const defaultImagePath = await imageManager.getImagePath('https://free.picui.cn/free/2025/07/27/6885dd53087dd.png');
       this.setData({
-        bannerImage: 'https://free.picui.cn/free/2025/07/27/6885dd53087dd.png'
+        bannerImage: defaultImagePath
       });
     }
   },
