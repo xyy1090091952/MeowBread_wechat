@@ -17,6 +17,7 @@ Page({
     isCourseSelectorVisible: false, // 控制课程范围选择弹窗的显示
     selectedCourseRange: { label: '全部课程', value: 'all' }, // 当前选择的课程范围
     // 加载动画控制
+    isLoading: false, // 控制loading加载动画显示
     wordListLoaded: false // 控制单词列表页面渐显动画
   },
 
@@ -112,10 +113,15 @@ Page({
    * @param {string} dictionaryId - 词典ID
    */
   async loadWordList(dictionaryId) {
+    // 开始加载，显示loading动画
+    this.setData({ isLoading: true });
+    
     const db = require('../../database/dictionaries.js').dictionaries;
     const dictionary = db.find(dict => dict.id === dictionaryId);
     
     if (!dictionary) {
+      // 出错时隐藏loading动画
+      this.setData({ isLoading: false });
       wx.showToast({
         title: '词典不存在',
         icon: 'error'
@@ -206,6 +212,9 @@ Page({
       );
     }
 
+    // 加载完成，隐藏loading动画
+    this.setData({ isLoading: false });
+    
     // 启动单词列表页面的渐显动画
     setTimeout(() => {
       this.setData({ wordListLoaded: true });
