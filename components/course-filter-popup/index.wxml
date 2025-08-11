@@ -1,7 +1,7 @@
 <!--components/course-filter-popup/index.wxml-->
 <!-- 课程筛选弹窗 -->
-<view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="closePopup" catchtouchmove="stopPropagation"></view>
-<view class="modal-container {{visible ? 'modal-show' : ''}}" catchtouchmove="preventPropagation">
+<view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="closePopup" catchtouchmove="preventTouchMove"></view>
+<view class="modal-container {{visible ? 'modal-show' : ''}}" wx:if="{{visible}}">
   <view class="modal-content">
     <view class="modal-title">课本选择</view>
     <view class="book-list">
