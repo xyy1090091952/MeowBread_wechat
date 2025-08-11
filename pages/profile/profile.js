@@ -20,6 +20,7 @@ Page({
     mistakeCount: 0, // 错题数量
     userCoins: 0, // 用户金币数量
     pageLoaded: false, // 控制页面渐显动画
+    isFirstLoad: true, // 标识是否为首次加载页面
     breadBouncing: false, // 控制面包弹跳动画状态
     cacheStats: { // 缓存统计信息
       totalCaches: 0,
@@ -56,8 +57,15 @@ Page({
         userInfo: userInfo
       });
       
-      // 只有在登录后才触发加载动画
-      this.triggerLoadAnimation();
+      // 只有在首次加载时才触发动画，从其他页面返回时直接显示
+      if (this.data.isFirstLoad) {
+        this.triggerLoadAnimation();
+      } else {
+        // 从其他页面返回时，直接设置为显示状态，不播放动画
+        this.setData({
+          pageLoaded: true
+        });
+      }
       
       // 加载统计数据
       this.loadStatistics();
@@ -73,7 +81,7 @@ Page({
     }
   },
 
-  // 触发加载动画 - 只在登录后调用
+  // 触发加载动画 - 只在首次加载或登录时调用
   triggerLoadAnimation: function() {
     // 重置动画状态
     this.setData({
@@ -83,7 +91,8 @@ Page({
     // 延迟触发动画，确保页面渲染完成
     setTimeout(() => {
       this.setData({
-        pageLoaded: true
+        pageLoaded: true,
+        isFirstLoad: false // 标记首次加载已完成
       });
     }, 100);
   },
@@ -229,7 +238,8 @@ Page({
     // 更新页面状态为已登录
     this.setData({
       userInfo: userInfo,
-      isLoggedIn: true
+      isLoggedIn: true,
+      isFirstLoad: true // 重置为首次加载状态，允许登录时触发动画
     });
     
     // 登录成功后触发加载动画
@@ -355,8 +365,31 @@ Page({
    */
   onShow() {
     console.log('Profile page onShow');
-    // 检查登录状态，以防在其他页面进行了登录/登出操作
-    this.checkLoginStatus();
+    
+    // 检查当前存储的登录状态，以防在其他页面进行了登录/登出操作
+    const currentUserInfo = wx.getStorageSync('userInfo');
+    const wasLoggedIn = this.data.isLoggedIn;
+    const isNowLoggedIn = !!currentUserInfo;
+    
+    // 如果登录状态发生了变化，需要重新检查并可能触发动画
+    if (wasLoggedIn !== isNowLoggedIn) {
+      // 登录状态变化时，重置为首次加载状态，允许触发动画
+      this.setData({
+        isFirstLoad: true
+      });
+      this.checkLoginStatus();
+    } else if (!this.data.isFirstLoad) {
+      // 登录状态未变化且不是首次加载，说明是从其他页面返回
+      // 直接保持当前显示状态，不重复播放动画
+      if (this.data.isLoggedIn) {
+        this.setData({
+          pageLoaded: true
+        });
+      }
+    } else {
+      // 首次加载时正常检查登录状态和触发动画
+      this.checkLoginStatus();
+    }
     
     // 更新用户金币数量（可能在其他页面有变化）
     this.updateUserCoins();

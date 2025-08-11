@@ -3,7 +3,7 @@
 <view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="closePopup" catchtouchmove="stopPropagation"></view>
 <view class="modal-container {{visible ? 'modal-show' : ''}}">
   <view class="modal-content">
-    <view class="modal-title">选择词库</view>
+    <view class="modal-title">课本选择</view>
     <view class="book-list">
       <block wx:for="{{dictionaries}}" wx:key="id" wx:for-index="index">
         <view class="book-card {{index === selectedDictionaryIndex ? 'selected' : ''}}" data-index="{{index}}" bindtap="onSelectDictionary">
