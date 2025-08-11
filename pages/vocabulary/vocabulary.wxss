@@ -1,4 +1,42 @@
 /* pages/vocabulary/vocabulary.wxss */
+
+/* ==================== 全局加载动画样式 ==================== */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh; /* 占满整个屏幕 */
+  background-color: #ffffff;
+  position: fixed; /* 固定定位，覆盖在页面之上 */
+  top: 0;
+  left: 0;
+  z-index: 999;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 8rpx solid #f3f3f3; /* 浅灰色轨道 */
+  border-top: 8rpx solid #4845F7; /* 主题色 */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ==================== 原有样式 ==================== */
+
 .container {
   display: flex;
   flex-direction: column;
