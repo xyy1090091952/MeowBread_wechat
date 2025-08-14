@@ -1,4 +1,10 @@
 <!--pages/word-list/word-list.wxml-->
+<!-- 加载动画容器 -->
+<view class="loading-container" wx:if="{{isLoading}}">
+  <view class="loading-spinner"></view>
+  <text class="loading-text">正在加载单词...</text>
+</view>
+
 <view class="container">
   <!-- 顶部导航栏 -->
   <view class="word-list-header fade-in-element fade-delay-1 {{wordListLoaded ? 'show' : ''}}">

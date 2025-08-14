@@ -1,7 +1,13 @@
 <!--pages/vocabulary/vocabulary.wxml-->
 <view class="container">
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">正在加载词典...</text>
+  </view>
+
   <!-- 词典选择页面 -->
-  <block wx:if="{{!showWordList}}">
+  <block wx:if="{{!showWordList && !isLoading}}">
     <!-- 顶部提示横幅 -->
     <view class="banner fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}">
       <text class="banner-text">{{bannerText}}</text>
@@ -10,7 +16,9 @@
     <!-- 分类循环 -->
     <block wx:for="{{categories}}" wx:key="id">
       <!-- 分类标题 -->
-      <view class="section-title fade-in-element fade-delay-{{(index + 1) * 2}} {{pageLoaded ? 'show' : ''}}">{{item.title}}</view>
+      <view class="section-title fade-in-element fade-delay-{{(index + 1) * 2}} {{pageLoaded ? 'show' : ''}}">
+        {{item.title}}
+      </view>
 
       <!-- 横向滑动词典列表 -->
       <view class="dict-scroll-wrapper fade-in-element fade-delay-{{(index + 1) * 2 + 1}} {{pageLoaded ? 'show' : ''}}">
@@ -24,8 +32,6 @@
       </view>
     </block>
   </block>
-
-
 
   <!-- 底部白色渐变遮罩 -->
   <view class="bottom-gradient-mask"></view>

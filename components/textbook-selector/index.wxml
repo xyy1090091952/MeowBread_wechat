@@ -1,5 +1,5 @@
 <!--components/textbook-selector/index.wxml-->
-<view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="handleClose" catchtouchmove="stopPropagation"></view>
+<view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="handleClose" catchtouchmove="preventTouchMove"></view>
 <view class="modal-container {{visible ? 'modal-show' : ''}}">
   <view class="modal-content">
     <view class="modal-title">课本选择</view>

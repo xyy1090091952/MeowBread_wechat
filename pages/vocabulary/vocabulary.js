@@ -7,7 +7,8 @@ Page({
     bannerText: '就算切换课本MeowBread也会保存学习进度',
     categories: [], // [{id,title,dicts:[{id,name,wordCount,progress}] }]
     // 加载动画控制
-    pageLoaded: false // 控制词典选择页面渐显动画
+    pageLoaded: false, // 控制词典选择页面渐显动画
+    isLoading: true // 控制loading状态显示
   },
 
   onLoad() {
@@ -25,13 +26,9 @@ Page({
     const db = require('../../database/dictionaries.js').dictionaries;
     // 封面图片现在从 dictionaries.js 中直接获取，不再需要本地的 coverMap
 
-    // 显示加载状态
+    // 设置加载状态为true
     this.setData({
-      categories: [{
-        id: 'loading',
-        title: '加载中...',
-        dicts: []
-      }]
+      isLoading: true
     });
 
     const loadPromises = db.map(dict => (async () => {
@@ -101,17 +98,21 @@ Page({
         dicts: sortDictsBySeriesAndSelection(dicts.filter(d => d.id === 'duolingguo'))
       }];
 
+      // 数据加载完成，关闭loading状态
       this.setData({
-        categories
+        categories,
+        isLoading: false
       });
     }).catch(error => {
       console.error("加载词典数据失败", error);
+      // 即使出错也要关闭loading状态
       this.setData({
         categories: [{
           id: 'error',
           title: '加载失败，请稍后重试',
           dicts: []
-        }]
+        }],
+        isLoading: false
       });
     });
   },
@@ -128,8 +129,6 @@ Page({
       url: `/pages/word-list/word-list?dictionaryId=${id}`
     });
   },
-
-
 
   /** 页面展示时更新底部导航选中状态并重新加载进度数据 */
   onShow() {
