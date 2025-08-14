@@ -129,14 +129,30 @@ let data = {
             "cover_image": "https://free.picui.cn/free/2025/07/20/687bd47111ec1.jpg",
             "lesson_files": [], // 将被动态填充
             "volumes": [
-                {"id":"complete","name":"完整版","description":"1-5课","lessons":[1,2,3,4,5]}
+                {"id":"basic","name":"基础版","description":"21-41课","lessons":[21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41]}
             ],
             "courses": [
-                {"courseNumber":1,"courseTitle":"第1课","lessonFile":"lesson1","description":"多邻国第1课"},
-                {"courseNumber":2,"courseTitle":"第2课","lessonFile":"lesson2","description":"多邻国第2课"},
-                {"courseNumber":3,"courseTitle":"第3课","lessonFile":"lesson3","description":"多邻国第3课"},
-                {"courseNumber":4,"courseTitle":"第4课","lessonFile":"lesson4","description":"多邻国第4课"},
-                {"courseNumber":5,"courseTitle":"第5课","lessonFile":"lesson5","description":"多邻国第5课"}
+                {"courseNumber":21,"courseTitle":"第21课","lessonFile":"lesson21","description":"给出说明或指令"},
+                {"courseNumber":22,"courseTitle":"第22课","lessonFile":"lesson22","description":"表达想法"},
+                {"courseNumber":23,"courseTitle":"第23课","lessonFile":"lesson23","description":"谈论学术研究"},
+                {"courseNumber":24,"courseTitle":"第24课","lessonFile":"lesson24","description":"讲述学校"},
+                {"courseNumber":25,"courseTitle":"第25课","lessonFile":"lesson25","description":"谈论宗教"},
+                {"courseNumber":26,"courseTitle":"第26课","lessonFile":"lesson26","description":"表达身体的疼痛"},
+                {"courseNumber":27,"courseTitle":"第27课","lessonFile":"lesson27","description":"谈论生病看医生"},
+                {"courseNumber":28,"courseTitle":"第28课","lessonFile":"lesson28","description":"描述日本海鲜料理"},
+                {"courseNumber":29,"courseTitle":"第29课","lessonFile":"lesson29","description":"讲述日本社会生活"},
+                {"courseNumber":30,"courseTitle":"第30课","lessonFile":"lesson30","description":"谈论政府"},
+                {"courseNumber":31,"courseTitle":"第31课","lessonFile":"lesson31","description":"提出建议"},
+                {"courseNumber":32,"courseTitle":"第32课","lessonFile":"lesson32","description":"表达内心的感受"},
+                {"courseNumber":33,"courseTitle":"第33课","lessonFile":"lesson33","description":"谈论各种社会问题"},
+                {"courseNumber":34,"courseTitle":"第34课","lessonFile":"lesson34","description":"使用被动语态"},
+                {"courseNumber":35,"courseTitle":"第35课","lessonFile":"lesson35","description":"谈论艺术"},
+                {"courseNumber":36,"courseTitle":"第36课","lessonFile":"lesson36","description":"描述和他人的关系"},
+                {"courseNumber":37,"courseTitle":"第37课","lessonFile":"lesson37","description":"讨论不同的工作内容"},
+                {"courseNumber":38,"courseTitle":"第38课","lessonFile":"lesson38","description":"谈论气候"},
+                {"courseNumber":39,"courseTitle":"第39课","lessonFile":"lesson39","description":"讨论有关法律的问题"},
+                {"courseNumber":40,"courseTitle":"第40课","lessonFile":"lesson40","description":"描述犯罪和刑罚"},
+                {"courseNumber":41,"courseTitle":"第41课","lessonFile":"lesson41","description":"叙述计划"}
             ]
         }
     ]
