@@ -1,1 +1,56 @@
 node_modules
+
+# 云开发相关文件
+.cloudbase/
+
+# 开发工具配置
+.trae/
+.vercel/
+.vscode/
+
+# 系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 日志文件
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# 编辑器配置
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 构建输出
+dist/
+build/
+
+# 环境配置
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 缓存目录
+.cache/
+.npm/
+.yarn/
+
+# 微信开发者工具生成的文件
+project.private.config.json
