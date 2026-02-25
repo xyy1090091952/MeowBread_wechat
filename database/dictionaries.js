@@ -154,6 +154,31 @@ let data = {
                 {"courseNumber":40,"courseTitle":"第40课","lessonFile":"lesson40","description":"描述犯罪和刑罚"},
                 {"courseNumber":41,"courseTitle":"第41课","lessonFile":"lesson41","description":"叙述计划"}
             ]
+        },
+        {
+            "id": "try_n2",
+            "name": "TRY日语N2",
+            "cover_image": "https://free.picui.cn/free/2026/02/25/699ec223b37e6.jpg",
+            "lesson_files": [], // 将被动态填充
+            "volumes": [
+                {"id":"basic","name":"n2","description":"1-14课","lessons":[1,2,3,4,5,6,7,8,9,10,11,12,13,14]}
+            ],
+            "courses": [
+                {"courseNumber":1,"courseTitle":"第1课","lessonFile":"lesson1","description":"Try N2 第1课"},
+                {"courseNumber":2,"courseTitle":"第2课","lessonFile":"lesson2","description":"Try N2 第2课"},
+                {"courseNumber":3,"courseTitle":"第3课","lessonFile":"lesson3","description":"Try N2 第3课"},
+                {"courseNumber":4,"courseTitle":"第4课","lessonFile":"lesson4","description":"Try N2 第4课"},
+                {"courseNumber":5,"courseTitle":"第5课","lessonFile":"lesson5","description":"Try N2 第5课"},
+                {"courseNumber":6,"courseTitle":"第6课","lessonFile":"lesson6","description":"Try N2 第6课"},
+                {"courseNumber":7,"courseTitle":"第7课","lessonFile":"lesson7","description":"Try N2 第7课"},
+                {"courseNumber":8,"courseTitle":"第8课","lessonFile":"lesson8","description":"Try N2 第8课"},
+                {"courseNumber":9,"courseTitle":"第9课","lessonFile":"lesson9","description":"Try N2 第9课"},
+                {"courseNumber":10,"courseTitle":"第10课","lessonFile":"lesson10","description":"Try N2 第10课"},
+                {"courseNumber":11,"courseTitle":"第11课","lessonFile":"lesson11","description":"Try N2 第11课"},
+                {"courseNumber":12,"courseTitle":"第12课","lessonFile":"lesson12","description":"Try N2 第12课"},
+                {"courseNumber":13,"courseTitle":"第13课","lessonFile":"lesson13","description":"Try N2 第13课"},
+                {"courseNumber":14,"courseTitle":"第14课","lessonFile":"lesson14","description":"Try N2 第14课"}
+            ]
         }
     ]
 };

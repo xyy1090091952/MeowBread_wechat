@@ -6,6 +6,9 @@
  */
 
 const imageList = [
+
+  "https://free.picui.cn/free/2026/02/25/699ec223b37e6.jpg",//新增的tryn2封面
+
   "https://free.picui.cn/free/2025/07/20/687bd36a16e2b.jpg",
   "https://free.picui.cn/free/2025/07/20/687bd36a6ae61.jpg",
   "https://free.picui.cn/free/2025/07/20/687bd36b17b24.jpg",
