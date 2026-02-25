@@ -7,6 +7,39 @@ const BASE_URL = 'https://xyy1090091952.github.io/MeowBread_database/';
 let data = {
     "dictionaries": [
         {
+            "id": "try_n2",
+            "name": "TRY日语N2",
+            "cover_image": "https://free.picui.cn/free/2026/02/25/699ec223b37e6.jpg",
+            "lesson_files": [], // 将被动态填充
+            "volumes": [
+                {"id":"basic","name":"n2","description":"1-22课","lessons":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]}
+            ],
+            "courses": [
+                {"courseNumber":1,"courseTitle":"第1课","lessonFile":"lesson1","description":"01招聘启事"},
+                {"courseNumber":2,"courseTitle":"第2课","lessonFile":"lesson2","description":"02调职致辞（1）"},
+                {"courseNumber":3,"courseTitle":"第3课","lessonFile":"lesson3","description":"02调职致辞（2）"},
+                {"courseNumber":4,"courseTitle":"第4课","lessonFile":"lesson4","description":"03在宾馆工作"},
+                {"courseNumber":5,"courseTitle":"第5课","lessonFile":"lesson5","description":"04台风情报"},
+                {"courseNumber":6,"courseTitle":"第6课","lessonFile":"lesson6","description":"05求职（1）"},
+                {"courseNumber":7,"courseTitle":"第7课","lessonFile":"lesson7","description":"05求职（2）"},
+                {"courseNumber":8,"courseTitle":"第8课","lessonFile":"lesson8","description":"06辛苦的五年（1）"},
+                {"courseNumber":9,"courseTitle":"第9课","lessonFile":"lesson9","description":"06辛苦的五年（2）"},
+                {"courseNumber":10,"courseTitle":"第10课","lessonFile":"lesson10","description":"07狼与生态系统（1）"},
+                {"courseNumber":11,"courseTitle":"第11课","lessonFile":"lesson11","description":"07狼与生态系统（2）"},
+                {"courseNumber":12,"courseTitle":"第12课","lessonFile":"lesson12","description":"08拜访客户"},
+                {"courseNumber":13,"courseTitle":"第13课","lessonFile":"lesson13","description":"09自助餐（1）"},
+                {"courseNumber":14,"courseTitle":"第14课","lessonFile":"lesson14","description":"09自助餐（2）"},
+                {"courseNumber":15,"courseTitle":"第15课","lessonFile":"lesson15","description":"10满员电车（1）"},
+                {"courseNumber":16,"courseTitle":"第16课","lessonFile":"lesson16","description":"10满员电车（2）"},
+                {"courseNumber":17,"courseTitle":"第17课","lessonFile":"lesson17","description":"11介绍拉面"},
+                {"courseNumber":18,"courseTitle":"第18课","lessonFile":"lesson18","description":"12开发轻便鞋（1）"},
+                {"courseNumber":19,"courseTitle":"第19课","lessonFile":"lesson19","description":"12开发轻便鞋（2）"},
+                {"courseNumber":20,"courseTitle":"第20课","lessonFile":"lesson20","description":"13人生的转折点（1）"},
+                {"courseNumber":21,"courseTitle":"第21课","lessonFile":"lesson21","description":"13人生的转折点（2）"},
+                {"courseNumber":22,"courseTitle":"第22课","lessonFile":"lesson22","description":"14关于举办奥运会"}
+            ]
+        },
+        {
             "id": "everyones_japanese",
             "name": "大日初级2",
             "cover_image": "https://free.picui.cn/free/2025/07/20/687bd4713099b.jpg",
@@ -153,39 +186,6 @@ let data = {
                 {"courseNumber":39,"courseTitle":"第39课","lessonFile":"lesson39","description":"讨论有关法律的问题"},
                 {"courseNumber":40,"courseTitle":"第40课","lessonFile":"lesson40","description":"描述犯罪和刑罚"},
                 {"courseNumber":41,"courseTitle":"第41课","lessonFile":"lesson41","description":"叙述计划"}
-            ]
-        },
-        {
-            "id": "try_n2",
-            "name": "TRY日语N2",
-            "cover_image": "https://free.picui.cn/free/2026/02/25/699ec223b37e6.jpg",
-            "lesson_files": [], // 将被动态填充
-            "volumes": [
-                {"id":"basic","name":"n2","description":"1-22课","lessons":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]}
-            ],
-            "courses": [
-                {"courseNumber":1,"courseTitle":"第1课","lessonFile":"lesson1","description":"01招聘启事"},
-                {"courseNumber":2,"courseTitle":"第2课","lessonFile":"lesson2","description":"02调职致辞（1）"},
-                {"courseNumber":3,"courseTitle":"第3课","lessonFile":"lesson3","description":"02调职致辞（2）"},
-                {"courseNumber":4,"courseTitle":"第4课","lessonFile":"lesson4","description":"03在宾馆工作"},
-                {"courseNumber":5,"courseTitle":"第5课","lessonFile":"lesson5","description":"04台风情报"},
-                {"courseNumber":6,"courseTitle":"第6课","lessonFile":"lesson6","description":"05求职（1）"},
-                {"courseNumber":7,"courseTitle":"第7课","lessonFile":"lesson7","description":"05求职（2）"},
-                {"courseNumber":8,"courseTitle":"第8课","lessonFile":"lesson8","description":"06辛苦的五年（1）"},
-                {"courseNumber":9,"courseTitle":"第9课","lessonFile":"lesson9","description":"06辛苦的五年（2）"},
-                {"courseNumber":10,"courseTitle":"第10课","lessonFile":"lesson10","description":"07狼与生态系统（1）"},
-                {"courseNumber":11,"courseTitle":"第11课","lessonFile":"lesson11","description":"07狼与生态系统（2）"},
-                {"courseNumber":12,"courseTitle":"第12课","lessonFile":"lesson12","description":"08拜访客户"},
-                {"courseNumber":13,"courseTitle":"第13课","lessonFile":"lesson13","description":"09自助餐（1）"},
-                {"courseNumber":14,"courseTitle":"第14课","lessonFile":"lesson14","description":"09自助餐（2）"},
-                {"courseNumber":15,"courseTitle":"第15课","lessonFile":"lesson15","description":"10满员电车（1）"},
-                {"courseNumber":16,"courseTitle":"第16课","lessonFile":"lesson16","description":"10满员电车（2）"},
-                {"courseNumber":17,"courseTitle":"第17课","lessonFile":"lesson17","description":"11介绍拉面"},
-                {"courseNumber":18,"courseTitle":"第18课","lessonFile":"lesson18","description":"12开发轻便鞋（1）"},
-                {"courseNumber":19,"courseTitle":"第19课","lessonFile":"lesson19","description":"12开发轻便鞋（2）"},
-                {"courseNumber":20,"courseTitle":"第20课","lessonFile":"lesson20","description":"13人生的转折点（1）"},
-                {"courseNumber":21,"courseTitle":"第21课","lessonFile":"lesson21","description":"13人生的转折点（2）"},
-                {"courseNumber":22,"courseTitle":"第22课","lessonFile":"lesson22","description":"14关于举办奥运会"}
             ]
         }
     ]
