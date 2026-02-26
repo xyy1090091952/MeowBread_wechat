@@ -19,13 +19,18 @@
       <text>陈列馆</text>
     </view>
     <!-- 调试按钮 -->
-    <view class="side-button debug-button" bindtap="onDebugClear">
+    <!-- <view class="side-button debug-button" bindtap="onDebugClear">
       <text>调试</text>
-    </view>
+    </view> -->
   </view>
 
-  <!-- 扭蛋机主体 -->
-  <image class="gashapon-machine" src="{{machineImageUrl}}" mode="widthFix"></image>
+  <!-- 扭蛋机主体 - 两个图片层叠，通过透明度切换 -->
+  <view class="machine-container">
+    <!-- 系列2: 美味补给 -->
+    <image class="gashapon-machine {{currentSeriesId === 2 ? 'active' : ''}}" src="{{machineImageUrls[2]}}" mode="widthFix"></image>
+    <!-- 系列1: 梦幻魔法 -->
+    <image class="gashapon-machine {{currentSeriesId === 1 ? 'active' : ''}}" src="{{machineImageUrls[1]}}" mode="widthFix"></image>
+  </view>
 
   <!-- 底部操作区域 -->
   <view class="bottom-sheet series-{{currentSeriesId}}">

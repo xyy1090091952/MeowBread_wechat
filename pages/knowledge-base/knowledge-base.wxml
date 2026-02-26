@@ -4,49 +4,66 @@
   <view class="page-title">{{title}}</view>
   
   <!-- 章节内容 -->
-  <view wx:for="{{sections}}" wx:key="id" wx:for-item="section">
+  <view wx:for="{{sections}}" wx:key="id" wx:for-item="section" class="section">
     
     <!-- 章节标题 -->
-    <view class="section-title">{{section.title}}</view>
+    <view class="section-title" wx:if="{{section.title}}">{{section.title}}</view>
+    
+    <!-- 章节文本内容 -->
+    <view wx:if="{{section.content}}" class="section-content">
+      <text>{{section.content}}</text>
+    </view>
     
     <!-- 如果是表格类型 -->
     <view wx:if="{{section.type === 'table'}}" class="table-wrapper">
       <view class="table-container">
-        <view class="table">
-          <!-- 表格头部 -->
-          <view class="table-row table-header">
-            <view class="table-cell header-cell" wx:for="{{section.tableData.headers}}" wx:key="index">
-              {{item}}
-            </view>
-          </view>
-          <!-- 表格数据行 -->
-          <view class="table-row" wx:for="{{section.tableData.rows}}" wx:key="index">
-            <view class="table-cell" wx:for="{{item}}" wx:key="index">{{item}}</view>
+        <!-- 表格头部 -->
+        <view class="table-header">
+          <view class="header-cell" wx:for="{{section.tableData.headers}}" wx:key="index">
+            {{item}}
           </view>
         </view>
+        <!-- 表格数据 -->
+        <block wx:for="{{section.tableData.rows}}" wx:key="index" wx:for-item="row">
+          <view class="table-row">
+            <view class="table-cell" wx:for="{{row}}" wx:key="index">{{item}}</view>
+          </view>
+        </block>
       </view>
     </view>
     
     <!-- 如果有子章节 -->
-    <view wx:if="{{section.subsections}}" wx:for="{{section.subsections}}" wx:key="id" wx:for-item="subsection">
+    <view wx:if="{{section.subsections}}" wx:for="{{section.subsections}}" wx:key="id" wx:for-item="subsection" class="subsection">
       <!-- 子章节标题 -->
-      <view class="subsection-title">{{subsection.title}}</view>
+      <view class="subsection-title" wx:if="{{subsection.title}}">{{subsection.title}}</view>
+      
+      <!-- 子章节文本内容 -->
+      <view wx:if="{{subsection.content}}" class="subsection-content">
+        <text>{{subsection.content}}</text>
+      </view>
       
       <!-- 子章节表格 -->
       <view wx:if="{{subsection.type === 'table'}}" class="table-wrapper">
         <view class="table-container">
-          <view class="table">
-            <!-- 表格头部 -->
-            <view class="table-row table-header">
-              <view class="table-cell header-cell" wx:for="{{subsection.tableData.headers}}" wx:key="index">
-                {{item}}
-              </view>
-            </view>
-            <!-- 表格数据行 -->
-            <view class="table-row" wx:for="{{subsection.tableData.rows}}" wx:key="index">
-              <view class="table-cell" wx:for="{{item}}" wx:key="index">{{item}}</view>
+          <!-- 表格头部 -->
+          <view class="table-header">
+            <view class="header-cell" wx:for="{{subsection.tableData.headers}}" wx:key="index">
+              {{item}}
             </view>
           </view>
+          <!-- 表格数据 -->
+          <block wx:for="{{subsection.tableData.rows}}" wx:key="index" wx:for-item="row">
+            <view class="table-row">
+              <view class="table-cell" wx:for="{{row}}" wx:key="index">{{item}}</view>
+            </view>
+          </block>
+        </view>
+      </view>
+      
+      <!-- 子章节列表 -->
+      <view wx:if="{{subsection.type === 'list'}}" class="list-container">
+        <view class="list-item" wx:for="{{subsection.items}}" wx:key="index">
+          <text>{{item}}</text>
         </view>
       </view>
     </view>

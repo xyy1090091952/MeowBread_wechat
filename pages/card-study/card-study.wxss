@@ -395,7 +395,8 @@
 }
 
 .part-of-speech-tag {
-  width: 84rpx;
+  min-width: 84rpx; /* 设置最小宽度 */
+  width: auto; /* 宽度自适应 */
   height: 40rpx;
   font-size: 20rpx;
   border-radius: 20rpx;
@@ -405,6 +406,8 @@
   display: inline-block;
   background-color: #6c757d;
   align-self: flex-start;
+  padding: 0 16rpx; /* 添加左右内边距，避免文字紧贴边缘 */
+  box-sizing: border-box; /* 确保padding包含在宽高内 */
 }
 
 /* 单词详情行 */

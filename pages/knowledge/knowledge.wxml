@@ -22,8 +22,8 @@
 
   <!-- 内容区域 DIV2 -->
   <view class="content-area fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}">
-    <!-- 第一个分类的内容 -->
-    <view wx:if="{{selectedCategory === 1}}" class="content-grid" style="width: {{containerWidth}}rpx;">
+    <!-- 内容卡片区域 -->
+    <view wx:if="{{grammarCards.length > 0}}" class="content-grid" style="width: {{containerWidth}}rpx;">
       <view 
         class="content-card slide-in-card {{contentLoaded ? 'show' : ''}}" 
         wx:for="{{grammarCards}}" 
@@ -46,8 +46,8 @@
       </view>
     </view>
 
-    <!-- 其他分类的空内容 -->
-    <view wx:elif="{{selectedCategory > 1}}" class="empty-content">
+    <!-- 空内容提示 -->
+    <view wx:else class="empty-content">
       <text>该分类内容正在准备中...</text>
     </view>
   </view>

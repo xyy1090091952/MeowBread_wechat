@@ -12,33 +12,13 @@
   opacity: 0;
   pointer-events: auto;
   touch-action: none;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* 弹窗动画样式 */
-.modal-fade-in {
-  animation: modalFadeIn 0.2s ease-out forwards;
-}
-
-.modal-fade-out {
-  animation: modalFadeOut 0.2s ease-out forwards;
-}
-
-@keyframes modalFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes modalFadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+.modal-mask.show {
+  opacity: 1;
+  visibility: visible;
 }
 
 .modal-container {
@@ -47,12 +27,23 @@
   left: 0;
   right: 0;
   transform: translateY(100%);
-  transition: transform 0.3s ease-out;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   z-index: 100000;
+  visibility: hidden;
 }
 
-.modal-container.modal-show {
+.modal-container.show {
   transform: translateY(0);
+  visibility: visible;
+}
+
+/* 确保 transition 在隐藏时也能生效 */
+.modal-mask:not(.show) {
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.modal-container:not(.show) {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0s linear 0.3s;
 }
 
 .modal-content {
@@ -62,17 +53,6 @@
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  transform: translateY(100%);
-  transition: transform 0.3s ease-out;
-}
-
-/* 弹窗内容动画 - 修复双重动画问题 */
-.modal-mask.modal-fade-in + .modal-container .modal-content {
-  transform: translateY(0);
-}
-
-.modal-mask.modal-fade-out + .modal-container .modal-content {
-  transform: translateY(100%);
 }
 
 .modal-title {

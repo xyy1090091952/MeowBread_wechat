@@ -34,6 +34,42 @@
   padding-left: 48rpx;
 }
 
+/* 文本内容样式 */
+.section-content, .subsection-content {
+  font-size: 30rpx;
+  line-height: 1.6;
+  color: #333333;
+  margin-bottom: 32rpx;
+  padding: 0 48rpx;
+  text-align: justify;
+}
+
+.section-content text, .subsection-content text {
+  display: block; /* 确保text组件换行 */
+}
+
+/* 列表样式 */
+.list-container {
+  padding: 0 48rpx 48rpx 48rpx;
+}
+
+.list-item {
+  font-size: 30rpx;
+  line-height: 1.6;
+  color: #333333;
+  margin-bottom: 16rpx;
+  position: relative;
+  padding-left: 24rpx;
+}
+
+.list-item::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #4845F7;
+  font-weight: bold;
+}
+
 /* 表格容器 - 三层嵌套结构 */
 .table-wrapper {
   margin-bottom: 48rpx;
@@ -42,7 +78,7 @@
   -webkit-overflow-scrolling: touch;
   /* 使用padding来控制边距，避免滚动时内容被裁剪 */
   padding-left: 48rpx;
-  padding-right: 48rpx;
+  /* 移除 padding-right，改为使用伪元素撑开 */
   padding-top: 8rpx;
   padding-bottom: 25rpx;
   width: 100%;
@@ -50,6 +86,9 @@
   /* 隐藏滚动条但保持滚动功能 */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
+  /* 让伪元素生效 */
+  display: flex; 
+  flex-direction: row;
 }
 
 /* 隐藏滚动条 */
@@ -59,49 +98,71 @@
   display: none;
 }
 
-/* 表格容器 */
+/* 表格主体 - 使用伪元素撑开右边距 */
 .table-container {
-  width: max-content; /* 让容器宽度适应内容 */
-  min-width: calc(100% - 96rpx); /* 减去左右padding后的宽度 */
-  padding-right: 48rpx; /* 在内容右侧添加额外空间，确保滚动到最右侧时有呼吸空间 */
-  box-sizing: border-box;
-}
-
-/* 表格主体 */
-.table {
   display: table;
   width: auto;
   min-width: 800rpx; /* 设置最小宽度确保触发滚动 */
   border-radius: 24rpx;
+  overflow: hidden; /* 确保圆角生效 */
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
   table-layout: auto;
   border-collapse: separate;
   border-spacing: 0;
+  border: 1rpx solid #ecf0f1; /* 外边框 */
+  /* 关键：使用 margin-right 无法在 overflow 容器中撑开空间，需要使用伪元素技巧或者嵌套容器 */
 }
 
-/* 表格行 */
-.table-row {
-  display: table-row;
+/* 这是一个经典的 CSS 滚动容器右侧 padding 丢失问题的解决方案 */
+/* 在 table-container 后面添加一个不可见的伪元素或者 spacer */
+.table-wrapper::after {
+  content: "";
+  display: block;
+  min-width: 48rpx; /* 强制占据 48rpx 宽度 */
+  height: 1px;
 }
 
 /* 表格头部 */
 .table-header {
+  display: table-row;
   background: linear-gradient(90deg, #A9FFCA 0%, #D2FFE3 100%);
+  font-weight: bold;
+}
+
+.header-cell {
+  display: table-cell;
+  padding: 24rpx 48rpx;
+  text-align: left;
+  vertical-align: middle;
+  border-right: 1rpx solid #ecf0f1;
+  white-space: nowrap;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+/* 表格数据行 */
+.table-row {
+  display: table-row;
+  background-color: #ffffff;
+  border-bottom: 1rpx solid #ecf0f1;
+}
+
+.table-row:last-child {
+  border-bottom: none;
 }
 
 /* 表格单元格 */
 .table-cell {
   display: table-cell;
-  padding: 16rpx 48rpx;
+  padding: 24rpx 48rpx;
   vertical-align: middle;
   text-align: left;
   border-right: 1rpx solid #ecf0f1;
   white-space: nowrap;
+  font-size: 28rpx;
+  color: #666666;
   min-width: 120rpx;
   max-width: 500rpx;
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #666666;
   line-height: 1.5;
 }
 

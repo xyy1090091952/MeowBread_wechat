@@ -142,11 +142,21 @@ function getMistake(wordInfo) {
   });
 }
 
+/**
+ * 获取处于“错误”状态的错题数量
+ * @returns {number} - 错误单词数量
+ */
+function getActiveMistakeCount() {
+  const mistakes = getMistakeList();
+  return mistakes.filter(item => item.status === WORD_STATUS.ERROR).length;
+}
+
 module.exports = {
   getMistakeList,
   addMistake,
   correctMistake,
   clearCorrectedMistakes,
   removeMistake, // 导出新函数
-  getMistake
+  getMistake,
+  getActiveMistakeCount // 导出新函数
 };

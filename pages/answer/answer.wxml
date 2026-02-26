@@ -58,8 +58,8 @@
     <!-- 标准模式按钮 -->
     <view class="option-card standard-mode-card fade-in-element fade-delay-5 {{pageLoaded ? 'show' : ''}}" bindtap="navigateToStandardQuiz">
       <view class="option-text-container">
-        <text class="option-main-text">标准模式</text>
-        <text class="option-sub-text">当前词库的全部单词随机抽答</text>
+        <text class="option-main-text">挑战模式</text>
+        <text class="option-sub-text">当前课本30个单词抽答</text>
       </view>
       <image class="option-icon arrow-black" src="/images/icons/arrow_right.svg" />
     </view>

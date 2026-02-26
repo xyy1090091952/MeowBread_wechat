@@ -124,22 +124,76 @@ async function getWordsByFilter(filter) {
 
       // Case 1: identifier 本身就是完整的 URL
       if (cleanedIdentifier.startsWith('http')) {
+        lessonUrl = cleanedIdentifier;
+        // 尝试根据URL匹配字典，如果匹配不到，尝试根据filter中传入的dictionaryId匹配
         for (const dict of dictionariesConfig) {
           if (dict.lesson_files && dict.lesson_files.includes(cleanedIdentifier)) {
-            lessonUrl = cleanedIdentifier;
             dictionary = dict;
             break;
           }
         }
+        
+        // 如果通过URL没找到字典（可能是因为URL中的域名差异或者数据未同步），
+        // 尝试使用传入的 dictionaryId
+        if (!dictionary && filter.dictionaryId) {
+          dictionary = dictionariesConfig.find(d => d.id === filter.dictionaryId);
+          // 如果强制指定了字典，也需要确认这个字典里确实应该包含这个文件（可选，为了健壮性可以不做严格校验）
+          console.log(`URL匹配字典失败，回退使用 dictionaryId: ${filter.dictionaryId}`);
+        }
       } 
       // Case 2: identifier 是 '教材_文件名' 格式，例如 'liangs_class_lesson1.json'
+      // 或者是 'DICTIONARY_liangs_class_lesson1' 这样的格式
       else {
-        const fileName = identifier.split('_').pop(); // 获取 'lesson1.json'
-        const { url, dict } = findUrlByFileName(fileName);
-        if (url) {
-          lessonUrl = url;
-          dictionary = dict;
-        }
+         // 尝试解析自定义格式 'DICTIONARY_{dictId}_{lessonFile}'
+         // 例如: DICTIONARY_liangs_class_lesson1
+         if (identifier.startsWith('DICTIONARY_') && identifier.includes('_lesson')) {
+             const parts = identifier.split('_');
+             // 找到 'lesson' 的索引位置，以此来分割 dictId 和 lessonFile
+             const lessonIndex = parts.findIndex(part => part.startsWith('lesson'));
+             
+             if (lessonIndex > 1) {
+                const dictId = parts.slice(1, lessonIndex).join('_');
+                const lessonFileName = parts.slice(lessonIndex).join('_') + '.json';
+                
+                const targetDict = dictionariesConfig.find(d => d.id === dictId);
+                if (targetDict) {
+                    // 尝试精确匹配
+                    const url = targetDict.lesson_files.find(u => u.endsWith(`/${lessonFileName}`));
+                    if (url) {
+                        lessonUrl = url;
+                        dictionary = targetDict;
+                    }
+                }
+             }
+         }
+
+         // 如果上面没解析出来，再尝试原来的逻辑
+         if (!lessonUrl) {
+             let fileName = identifier.split('_').pop(); // 获取 'lesson1.json'
+             // 如果fileName不包含.json后缀，加上
+             const fileNameWithExt = fileName.endsWith('.json') ? fileName : fileName + '.json';
+             
+             // 优先使用 filter.dictionaryId 指定的字典查找
+             if (filter.dictionaryId) {
+                 const targetDict = dictionariesConfig.find(d => d.id === filter.dictionaryId);
+                 if (targetDict) {
+                     const url = targetDict.lesson_files.find(u => u.endsWith(`/${fileNameWithExt}`));
+                     if (url) {
+                         lessonUrl = url;
+                         dictionary = targetDict;
+                     }
+                 }
+             }
+             
+             // 如果还没找到，全局查找（可能会匹配错）
+             if (!lessonUrl) {
+                 const { url, dict } = findUrlByFileName(fileNameWithExt);
+                 if (url) {
+                     lessonUrl = url;
+                     dictionary = dict;
+                 }
+             }
+         }
       }
 
       if (lessonUrl && dictionary) {
