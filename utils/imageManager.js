@@ -16,6 +16,21 @@ const CACHE_MAP_KEY = 'image_cache_map';
 // 缓存映射对象，用于在内存中快速查找，避免频繁读写Storage
 let cacheMap = {};
 
+// 辅助函数：确保目录存在
+const ensureDirExists = (dirPath) => {
+  try {
+    fs.accessSync(dirPath);
+  } catch (e) {
+    // 目录不存在，尝试创建
+    try {
+      fs.mkdirSync(dirPath, true);
+      console.log(`[ImageManager] Created directory: ${dirPath}`);
+    } catch (mkErr) {
+      console.error(`[ImageManager] Failed to create directory: ${dirPath}`, mkErr);
+    }
+  }
+};
+
 /**
  * 初始化图片管理器
  * @description 在小程序启动时调用，确保缓存目录存在，并从Storage中加载缓存映射表到内存。
@@ -24,20 +39,8 @@ const init = () => {
   try {
     // 尝试从本地存储中同步获取缓存映射表
     cacheMap = wx.getStorageSync(CACHE_MAP_KEY) || {};
-    // 使用同步方法检查并创建缓存目录，防止因异步导致后续操作失败
-    try {
-      fs.accessSync(CACHE_DIR);
-      console.log('[ImageManager] 图片缓存目录已存在');
-    } catch (e) {
-      // 如果目录不存在，accessSync会抛出异常
-      console.log('[ImageManager] 图片缓存目录不存在，开始创建...');
-      try {
-        fs.mkdirSync(CACHE_DIR, true);
-        console.log('[ImageManager] 图片缓存目录创建成功');
-      } catch (mkdirErr) {
-        console.error('[ImageManager] 创建缓存目录失败', mkdirErr);
-      }
-    }
+    // 确保缓存目录存在
+    ensureDirExists(CACHE_DIR);
   } catch (e) {
     console.error('[ImageManager] 初始化图片缓存失败', e);
     cacheMap = {};
@@ -107,21 +110,58 @@ const getImagePath = (url) => {
  */
 const downloadAndCacheImage = (url) => {
   return new Promise((resolve, reject) => {
-    // 根据URL生成一个合法且唯一的文件名
-    const fileName = url.replace(/[\/\:\*\?"<>\|]/g, '_');
-    const filePath = `${CACHE_DIR}/${fileName}`;
+    // 简单粗暴：使用 md5 或简单的 hash 算法生成文件名
+    const simpleHash = (str) => {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+      }
+      return Math.abs(hash).toString(16);
+    };
 
+    // 获取文件扩展名
+    let ext = '.png'; // 默认扩展名
+    if (url.includes('.jpg') || url.includes('.jpeg')) ext = '.jpg';
+    else if (url.includes('.gif')) ext = '.gif';
+    else if (url.includes('.svg')) ext = '.svg';
+    else if (url.includes('.webp')) ext = '.webp';
+
+    // 生成纯数字字母的文件名，绝对安全
+    const fileName = `img_${simpleHash(url)}${ext}`;
+    const targetFilePath = `${CACHE_DIR}/${fileName}`;
+
+    // 确保缓存目录存在
+    ensureDirExists(CACHE_DIR);
+
+    // 1. 先下载到临时路径 (不指定 filePath)
     wx.downloadFile({
       url: url,
-      filePath: filePath, // 直接下载到永久文件路径
       success: (res) => {
-        if (res.statusCode === 200) {
-          console.log(`[ImageManager] 图片下载并保存成功: ${filePath}`);
-          // 更新缓存映射
-          cacheMap[url] = filePath;
-          // 将更新后的映射表异步写入本地存储
-          wx.setStorage({ key: CACHE_MAP_KEY, data: cacheMap });
-          resolve(filePath);
+        if (res.statusCode === 200 && res.tempFilePath) {
+          // 2. 下载成功后，使用 saveFile 移动到目标目录
+          // 使用 saveFile 比 downloadFile 直接写入更稳定，且能规避部分权限问题
+          fs.saveFile({
+            tempFilePath: res.tempFilePath,
+            filePath: targetFilePath,
+            success: (saveRes) => {
+              const savedPath = saveRes.savedFilePath;
+              console.log(`[ImageManager] 图片保存成功: ${savedPath}`);
+              
+              // 更新缓存映射
+              cacheMap[url] = savedPath;
+              wx.setStorage({ key: CACHE_MAP_KEY, data: cacheMap });
+              resolve(savedPath);
+            },
+            fail: (saveErr) => {
+              console.error(`[ImageManager] 图片保存失败: ${targetFilePath}`, saveErr);
+              // 如果保存失败（可能是空间不足），尝试直接返回临时路径，起码让用户这次能看到图
+              // 微信临时路径 http://tmp/ 可能会在某些组件上报 HTTP 协议警告，但通常能显示
+              // 为了兼容性，可以尝试将 http://tmp/ 替换为 wxfile://tmp_ （如果适用）或者不做处理
+              resolve(res.tempFilePath);
+            }
+          });
         } else {
           console.error(`[ImageManager] 图片下载失败，状态码: ${res.statusCode}`, res);
           reject(res);

@@ -8,8 +8,8 @@
 <!-- 主内容区域，加载完成后显示 -->
 <view wx:else>
   <view class="container" wx:if="{{questions.length > 0}}">
-    <view class="current-filter-display fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}" wx:if="{{currentFilterDisplay}}">
-      <text>你当前选择了: {{currentFilterDisplay}}</text>
+    <view class="current-filter-display fade-in-element fade-delay-1 {{pageLoaded ? 'show' : ''}}">
+      <text>{{currentFilterDisplay}}</text>
     </view>
       <!-- 新增的进度条和计时器容器 -->
       <view class="progress-timer-container fade-in-element fade-delay-2 {{pageLoaded ? 'show' : ''}}" wx:if="{{quizMode === 'quick' || quizMode === 'course'}}">

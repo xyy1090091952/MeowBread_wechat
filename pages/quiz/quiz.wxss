@@ -65,26 +65,26 @@
 
 /* 筛选显示区域样式 */
 .current-filter-display {
-  width: 100%; /* 100%屏幕宽度 */
-  height: 64rpx; /* 高度64rpx */
-  background: linear-gradient(to right, #CFE2FF, #F0F6FC); /* 左到右渐变背景 */
-  border-radius: 48rpx; /* 圆角48rpx */
+  width: 100%;
+  height: 64rpx;
+  background: linear-gradient(90deg, #F0F6FC 0%, #E6EEF5 100%); /* 更柔和的蓝灰渐变 */
+  border-radius: 32rpx; /* 圆角调整 */
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* 改为左对齐 */
-  padding-left: 48rpx; /* 左边距48rpx */
-  box-sizing: border-box; /* 确保padding不影响总宽度 */
+  justify-content: flex-start;
+  padding: 0 32rpx; /* 左右内边距 */
+  margin-bottom: 24rpx; /* 底部间距 */
+  box-sizing: border-box;
 }
 
 .current-filter-display text {
-  font-size: 24rpx; /* 文字字号24rpx */
-  color: #000000; /* 黑色文字 */
-  font-weight: 500; /* 稍微加粗，增强可读性 */
-  /* 限制只显示一行，超过时显示省略号 */
+  font-size: 26rpx;
+  color: #555555; /* 深灰色文字，更显质感 */
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  width: 100%;
 }
 
 /* 新增：进度条和计时器容器 */

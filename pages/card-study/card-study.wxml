@@ -60,10 +60,10 @@
         </view>
         <!-- 第二行：单词文本 -->
         <text class="word-text">{{nextCard['汉字'] ? nextCard['汉字'] : nextCard['假名']}}</text>
-        <!-- 第三行：汉字和中文 -->
+        <!-- 第三行：假名和中文 -->
         <view class="word-details-line">
-          <text class="detail-value" wx:if="{{nextCard['汉字']}}">{{nextCard['汉字']}}</text>
-          <text class="separator" wx:if="{{nextCard['汉字']}}"> | </text>
+          <text class="detail-value">{{nextCard['假名']}}</text>
+          <text class="separator"> | </text>
           <text class="detail-value">{{nextCard['中文']}}</text>
         </view>
         <!-- 第四行：例句 -->
@@ -102,10 +102,10 @@
         </view>
         <!-- 第二行：单词文本 -->
         <text class="word-text">{{currentCard['汉字'] ? currentCard['汉字'] : currentCard['假名']}}</text>
-        <!-- 第三行：汉字和中文 -->
+        <!-- 第三行：假名和中文 -->
         <view class="word-details-line">
-          <text class="detail-value" wx:if="{{currentCard['汉字']}}">{{currentCard['汉字']}}</text>
-          <text class="separator" wx:if="{{currentCard['汉字']}}"> | </text>
+          <text class="detail-value">{{currentCard['假名']}}</text>
+          <text class="separator"> | </text>
           <text class="detail-value">{{currentCard['中文']}}</text>
         </view>
         <!-- 第四行：例句 -->

@@ -23,11 +23,8 @@ Component({
     'visible': function(newVal) {
       if (newVal) {
         this.setData({ 
-          selectedValue: this.data.defaultValue,
-          modalAnimationClass: 'modal-fade-in'
+          selectedValue: this.data.defaultValue
         });
-      } else {
-        this.setData({ modalAnimationClass: 'modal-fade-out' });
       }
     }
   },

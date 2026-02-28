@@ -195,9 +195,9 @@ Page({
     }
 
     // 获取错题数量
-    const mistakeCount = mistakeManager.getMistakeList().length;
-    // 当错题数量超过99时显示∞符号
-    const mistakeCountDisplay = mistakeCount > 99 ? '∞' : mistakeCount;
+    const mistakeCount = mistakeManager.getActiveMistakeCount();
+    // 当错题数量超过999时显示999+
+    const mistakeCountDisplay = mistakeCount > 999 ? '999+' : mistakeCount;
 
     console.log('🎯 最终设置的数据:', {
       currentFilterDisplay,

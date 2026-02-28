@@ -1,6 +1,6 @@
 <!--components/course-selector/index.wxml-->
-<view class="modal-mask {{modalAnimationClass}}" wx:if="{{visible}}" bindtap="closePopup" catchtouchmove="stopPropagation"></view>
-<view class="popup-container {{visible ? 'popup-show' : ''}}" catchtouchmove="preventPropagation">
+<view class="modal-mask {{visible ? 'show' : ''}}" bindtap="closePopup" catchtouchmove="stopPropagation"></view>
+<view class="popup-container {{visible ? 'show' : ''}}" catchtouchmove="preventPropagation">
   <view class="popup-content">
     <view class="popup-header">
       <text class="popup-title">内容选择</text>
@@ -14,8 +14,11 @@
         bindtap="onSelect"
         data-value="{{item.value}}"
       >
-        <text class="option-label">{{item.label}}</text>
-        <text class="option-sublabel" wx:if="{{item.sublabel}}">{{item.sublabel}}</text>
+        <view class="option-text-container">
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-sublabel" wx:if="{{item.sublabel}}">{{item.sublabel}}</text>
+        </view>
+        <view class="radio-circle {{selectedValue === item.value ? 'selected' : ''}}"></view>
       </view>
     </view>
 

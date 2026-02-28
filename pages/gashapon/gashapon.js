@@ -26,7 +26,7 @@ Page({
     // swiper相关数据（调换后索引0对应系列2美味补给，索引1对应系列1梦幻魔法）
     swiperIndex: 0, // 默认显示索引0，即美味补给
     // 图片URL，初始为空，通过imageManager加载
-    machineImageUrl: '', 
+    // machineImageUrl 已废弃，使用 machineImageUrls 配合 currentSeriesId 动态控制显示
     machineImageUrls: { // 存储不同系列的背景图
       1: '', // 梦幻魔法
       2: ''  // 美味补给
@@ -79,7 +79,6 @@ Page({
       this.setData({
         'machineImageUrls.1': machineImg1,
         'machineImageUrls.2': machineImg2,
-        machineImageUrl: machineImg2, // 默认显示美味补给的图片
         displayCard1: cardImg1,
         displayCard2: cardImg2
       });
@@ -218,7 +217,6 @@ Page({
       swiperIndex: currentIndex,
       currentSeriesId: targetSeriesId,
       drawCost: currentSeries ? currentSeries.cost : 0, // 动态获取当前系列的消耗
-      machineImageUrl: this.data.machineImageUrls[targetSeriesId], // 更新背景图片
     });
   },
 
@@ -236,7 +234,6 @@ Page({
       swiperIndex: targetIndex,
       currentSeriesId: selectedId,
       drawCost: currentSeries ? currentSeries.cost : 0, // 动态获取当前系列的消耗
-      machineImageUrl: this.data.machineImageUrls[selectedId], // 更新背景图片
     });
   },
 

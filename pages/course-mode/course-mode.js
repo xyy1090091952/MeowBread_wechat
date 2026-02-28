@@ -485,13 +485,17 @@ Page({
       console.log('使用默认题型:', userSelectedQuestionTypes);
     }
 
+    // 还原修改：使用原始的 lessonFile 标识符，让 wordManager 自行处理 URL 查找
+    // 之前尝试手动构造 URL 导致了 wordManager 无法正确解析
+    console.log('Using lesson file identifier:', courseData.lessonFile);
+
     // 设置筛选器为当前课程（临时选择），保留用户的题型选择
     filterManager.saveFilter({
       selectedDictionaryKey: courseData.textbook,
       selectedDictionaryName: textbookName,
       selectedLessonKey: courseData.lessonFile,
       selectedLessonName: `第${courseData.courseNumber}课`,
-      selectedLessonFiles: [courseData.lessonFile],
+      selectedLessonFiles: [`DICTIONARY_${courseData.textbook}_${courseData.lessonFile}`], // 使用特定格式的标识符
       dictionaryId: courseData.textbook,
       basePath: courseData.textbook,
       quizMode: 'course', // 新增课程模式

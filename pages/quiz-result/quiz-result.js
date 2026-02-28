@@ -21,53 +21,81 @@ Page({
   },
 
   onLoad: async function (options) {
-    const { score, totalQuestions, timeSpent, accuracy, resultLevel, coinsEarned, from, mode } = options; // 新增：获取答题模式
+    try {
+      const { score, totalQuestions, timeSpent, accuracy, resultLevel, coinsEarned, from, mode } = options; // 新增：获取答题模式
 
-    const resultInfo = {
-      noob: {
-        text: '菜逼 Noob',
-        image: await imageManager.getImagePath('https://free.picui.cn/free/2025/07/20/687cec7e7d209.png')
-      },
-      normal: {
-        text: '平平无奇 Normal',
-        image: await imageManager.getImagePath('https://free.picui.cn/free/2025/07/20/687cec7e5578f.png')
-      },
-      perfect: {
-        text: '完美 Perfect',
-        image: await imageManager.getImagePath('https://free.picui.cn/free/2025/07/20/687cec7e5cf3a.png')
-      }
-    };
+      // 辅助函数：安全获取图片路径，失败时返回原链接
+      const getSafeImagePath = (url) => {
+        return imageManager.getImagePath(url).catch(err => {
+          console.error('获取图片路径失败，使用原链接:', url, err);
+          return url;
+        });
+      };
 
-    const bubbleInfo = {
-      noob: { text: '菜就多练？', color: '#CFFFF0' },
-      normal: { text: '无事发生~', color: '#FFCFE6' },
-      perfect: { text: '太牛逼了！', color: '#FFFF00' }
-    };
+      // 并行加载所有图片，提高速度
+      const [noobImg, normalImg, perfectImg] = await Promise.all([
+        getSafeImagePath('https://free.picui.cn/free/2025/07/20/687cec7e7d209.png'),
+        getSafeImagePath('https://free.picui.cn/free/2025/07/20/687cec7e5578f.png'),
+        getSafeImagePath('https://free.picui.cn/free/2025/07/20/687cec7e5cf3a.png')
+      ]);
 
-    const accuracyPercentage = (parseFloat(accuracy) * 100).toFixed(0);
+      const resultInfo = {
+        noob: {
+          text: '菜逼 Noob',
+          image: noobImg
+        },
+        normal: {
+          text: '平平无奇 Normal',
+          image: normalImg
+        },
+        perfect: {
+          text: '完美 Perfect',
+          image: perfectImg
+        }
+      };
 
-    this.setData({
-      from: from, // 设置页面来源
-      fromMistakes: options.fromMistakes === 'true',
-      mode: mode || 'quick', // 设置答题模式，默认为标准模式
-      score: parseInt(score, 10) || 0,
-      totalQuestions: parseInt(totalQuestions, 10) || 0,
-      timeSpent: parseInt(timeSpent, 10) || 0,
-      accuracy: parseFloat(accuracy) || 0,
-      accuracyPercentage: accuracyPercentage,
-      resultLevel: resultLevel || 'normal',
-      resultText: resultInfo[resultLevel]?.text || resultInfo.normal.text,
-      resultImage: resultInfo[resultLevel]?.image || resultInfo.normal.image,
-      formattedTime: this.formatTime(parseInt(timeSpent, 10) || 0),
-      bubbleText: bubbleInfo[resultLevel]?.text,
-      bubbleColor: bubbleInfo[resultLevel]?.color,
-      coinsEarned: parseInt(coinsEarned, 10) || 0, // 新增：设置金币数量
-    });
+      const bubbleInfo = {
+        noob: { text: '菜就多练？', color: '#CFFFF0' },
+        normal: { text: '无事发生~', color: '#FFCFE6' },
+        perfect: { text: '太牛逼了！', color: '#FFFF00' }
+      };
 
-    // 保存答题统计数据到本地存储
-    this.saveQuizStatistics();
-    
-    this.triggerAnimations();
+      const accuracyPercentage = (parseFloat(accuracy) * 100).toFixed(0);
+      const currentResultLevel = resultLevel || 'normal';
+
+      this.setData({
+        from: from, // 设置页面来源
+        fromMistakes: options.fromMistakes === 'true',
+        mode: mode || 'quick', // 设置答题模式，默认为标准模式
+        score: parseInt(score, 10) || 0,
+        totalQuestions: parseInt(totalQuestions, 10) || 0,
+        timeSpent: parseInt(timeSpent, 10) || 0,
+        accuracy: parseFloat(accuracy) || 0,
+        accuracyPercentage: accuracyPercentage,
+        resultLevel: currentResultLevel,
+        resultText: resultInfo[currentResultLevel]?.text || resultInfo.normal.text,
+        resultImage: resultInfo[currentResultLevel]?.image || resultInfo.normal.image,
+        formattedTime: this.formatTime(parseInt(timeSpent, 10) || 0),
+        bubbleText: bubbleInfo[currentResultLevel]?.text,
+        bubbleColor: bubbleInfo[currentResultLevel]?.color,
+        coinsEarned: parseInt(coinsEarned, 10) || 0, // 新增：设置金币数量
+      });
+
+      // 保存答题统计数据到本地存储
+      this.saveQuizStatistics();
+      
+      this.triggerAnimations();
+    } catch (error) {
+      console.error('结果页加载失败:', error);
+      // 发生错误时，尝试显示基本信息，避免完全白屏
+      this.setData({
+        resultLevel: 'normal',
+        resultText: '加载失败',
+        resultImage: '', // 或者设置一个默认错误图
+        bubbleText: '出错了喵...',
+        bubbleColor: '#FFCFE6'
+      });
+    }
   },
 
   // 保存答题统计数据

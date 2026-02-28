@@ -67,12 +67,24 @@ const quizService = {
       
       // 根据模式设置不同的显示文本，确保始终有有效的默认值
       let currentFilterDisplay = '答题模式'; // 设置默认值
+      
+      // 重新获取最新的字典信息，以确保名称是最新的
+      const dictionariesData = require('../database/dictionaries.js');
+      let displayDictName = selectedDictionaryName;
+      
+      if (dictionaryId) {
+        const currentDict = dictionariesData.dictionaries.find(d => d.id === dictionaryId);
+        if (currentDict) {
+          displayDictName = currentDict.name;
+        }
+      }
+
       if (isStandardMode) {
         // 标准模式只显示课本名称
-        currentFilterDisplay = selectedDictionaryName || '未知教材';
+        currentFilterDisplay = displayDictName || '未知教材';
       } else {
         // 课程模式显示课本名称和课程名称
-        const dictName = selectedDictionaryName || '未知教材';
+        const dictName = displayDictName || '未知教材';
         const lessonName = selectedLessonName || '未知课程';
         currentFilterDisplay = `${dictName} - ${lessonName}`;
       }
@@ -156,8 +168,18 @@ const quizService = {
 
     // 2. 根据模式和可用单词数量动态决定题目数量
     let targetQuestionCount;
-    if (mode === 'course' || mode === 'quick') {
-      // 课程和快速模式：根据可用单词数量动态决定，最多30题
+    if (mode === 'course') {
+      // 课程模式：题目数量 = 未学单词数量
+      // 如果所有单词都已学完（未学为0），则默认出全部单词的题目复习（或者也可以设为0提示完成）
+      // 这里为了让用户能继续练习，如果未学为0，则使用全部单词
+      if (unlearnedWords.length > 0) {
+        targetQuestionCount = unlearnedWords.length;
+      } else {
+        // 如果全部学会了，就出所有单词作为复习
+        targetQuestionCount = allWords.length;
+      }
+    } else if (mode === 'quick') {
+      // 快速模式：根据可用单词数量动态决定，最多30题
       targetQuestionCount = Math.min(allWords.length, 30);
     } else {
       // 其他模式（如错题库模式）：使用全部可用单词
@@ -170,15 +192,35 @@ const quizService = {
     // 3. 优先从未学单词中生成问题
     let questionsFromUnlearned = this.generateQuestions(unlearnedWords, selectedQuestionTypes);
 
-    // 4. 如果未学单词不足，从已学单词中补充
+    // 4. 根据目标数量组装题目
     let finalQuestions = [];
-    if (questionsFromUnlearned.length < targetQuestionCount) {
-      const needed = targetQuestionCount - questionsFromUnlearned.length;
-      const questionsFromLearned = this.generateQuestions(learnedWords, selectedQuestionTypes);
-      const supplement = questionsFromLearned.slice(0, needed);
-      finalQuestions = questionsFromUnlearned.concat(supplement);
+    
+    if (mode === 'course') {
+      if (unlearnedWords.length > 0) {
+        // 如果有未学单词，只出未学单词的题
+        finalQuestions = questionsFromUnlearned;
+      } else {
+        // 如果没有未学单词（全学会了），进入复习模式
+        // 需求：如果这个课程的单词数量小于30个，那么就使用这个课程的全部单词
+        // 如果这个课程的全部单词数量大于30个，那么就会选择其中30个组成一次问题
+        const reviewCount = Math.min(allWords.length, 30);
+        
+        // 重新生成所有单词的题目
+        let allQuestions = this.generateQuestions(allWords, selectedQuestionTypes);
+        
+        // 截取指定数量
+        finalQuestions = allQuestions.slice(0, reviewCount);
+      }
     } else {
-      finalQuestions = questionsFromUnlearned.slice(0, targetQuestionCount);
+      // 原有逻辑保持不变：未学不足时用已学补充
+      if (questionsFromUnlearned.length < targetQuestionCount) {
+        const needed = targetQuestionCount - questionsFromUnlearned.length;
+        const questionsFromLearned = this.generateQuestions(learnedWords, selectedQuestionTypes);
+        const supplement = questionsFromLearned.slice(0, needed);
+        finalQuestions = questionsFromUnlearned.concat(supplement);
+      } else {
+        finalQuestions = questionsFromUnlearned.slice(0, targetQuestionCount);
+      }
     }
 
     // 5. 随机打乱最终的题目顺序
@@ -299,11 +341,60 @@ const quizService = {
       return userAnswerTrimmed === currentQuestion.answer;
     }
 
+    // 辅助函数：将片假名转换为平假名
+    const katakanaToHiragana = (str) => {
+      return str.replace(/[\u30a1-\u30f6]/g, function(match) {
+        var chr = match.charCodeAt(0) - 0x60;
+        return String.fromCharCode(chr);
+      });
+    };
+
+    // 辅助函数：将平假名转换为片假名
+    const hiraganaToKatakana = (str) => {
+      return str.replace(/[\u3041-\u3096]/g, function(match) {
+        var chr = match.charCodeAt(0) + 0x60;
+        return String.fromCharCode(chr);
+      });
+    };
+
+    // 辅助函数：标准化假名（统一转换为平假名进行比较）
+    const normalizeKana = (str) => {
+      if (!str) return '';
+      // 移除所有空格
+      str = str.replace(/\s+/g, '');
+      // 转换为平假名
+      return katakanaToHiragana(str);
+    };
+
     const correctAnswerData = currentQuestion.answer;
+    
+    // 标准化用户答案
+    const normalizedUserAnswer = normalizeKana(userAnswerTrimmed);
+
     if (typeof correctAnswerData === 'object' && correctAnswerData !== null && correctAnswerData.hasOwnProperty('word')) {
-      return (userAnswerTrimmed === correctAnswerData.word) || 
-             (correctAnswerData.kana && userAnswerTrimmed === correctAnswerData.kana);
+      // 填空题（可能是汉字或假名）
+      // 检查汉字（如果不为空）
+      if (correctAnswerData.word && userAnswerTrimmed === correctAnswerData.word) {
+        return true;
+      }
+      // 检查假名（忽略平片假名区别）
+      if (correctAnswerData.kana) {
+        const normalizedCorrectKana = normalizeKana(correctAnswerData.kana);
+        if (normalizedUserAnswer === normalizedCorrectKana) {
+          return true;
+        }
+      }
+      return false;
     } else if (typeof correctAnswerData === 'string') {
+      // 可能是假名填空题
+      const normalizedCorrectAnswer = normalizeKana(correctAnswerData);
+      
+      // 直接比较（忽略平片假名区别）
+      if (normalizedUserAnswer === normalizedCorrectAnswer) {
+        return true;
+      }
+      
+      // 保留原始比较作为后备（针对非假名答案，虽然一般不会走到这里）
       return userAnswerTrimmed === correctAnswerData;
     }
     return false;
