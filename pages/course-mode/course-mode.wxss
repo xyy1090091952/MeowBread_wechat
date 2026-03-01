@@ -60,7 +60,7 @@
   box-sizing: border-box;
   background-color: #ffffff;
   min-height: 100vh;
-  padding: 20rpx 48rpx 40rpx 48rpx;
+  padding: 20rpx 48rpx 40rpx 48rpx; /* 上 左右 下，与course-item的margin-right保持一致 */
 }
 
 /* 筛选显示区域样式 - 与quiz页面完全一致 */
@@ -112,7 +112,7 @@
 
 .filter-title {
   font-family: Inter, sans-serif; /* 根据Figma设置字体 */
-  font-size: 16px; /* 根据Figma设置字号 */
+  font-size: 28rpx; /* 根据用户需求调整为28rpx */
   font-weight: 700; /* 根据Figma设置字重 */
   color: #000000; /* 根据Figma设置颜色 */
 }
@@ -158,19 +158,20 @@
 
 /* 课程节数区域 */
 .course-number {
-  width: 120rpx;
-  height: 120rpx;
+  width: 88rpx; /* 原高120rpx - 16rpx*2 = 88rpx */
+  height: 88rpx; /* 保持正圆 */
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #4845F7;
-  border-radius: 60rpx;
-  margin-right: 24rpx;
+  border-radius: 50%; /* 正圆 */
+  margin: 16rpx; /* 四周16rpx边距 */
+  margin-right: 24rpx; /* 右边距保持24rpx，与其他元素保持间距 */
   flex-shrink: 0;
 }
 
 .course-num {
-  font-size: 48rpx;
+  font-size: 40rpx; /* 适当调大字号 */
   font-weight: 900;
   color: #ffffff;
 }
@@ -198,7 +199,7 @@
 }
 
 .course-name {
-  font-size: 32rpx;
+  font-size: 28rpx; 
   font-weight: 600;
   color: #000000;
   margin-bottom: 8rpx;

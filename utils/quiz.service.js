@@ -169,14 +169,17 @@ const quizService = {
     // 2. 根据模式和可用单词数量动态决定题目数量
     let targetQuestionCount;
     if (mode === 'course') {
-      // 课程模式：题目数量 = 未学单词数量
-      // 如果所有单词都已学完（未学为0），则默认出全部单词的题目复习（或者也可以设为0提示完成）
-      // 这里为了让用户能继续练习，如果未学为0，则使用全部单词
+      // 课程模式：题目数量逻辑优化
+      // 1. 先判断剩余未学单词数量
       if (unlearnedWords.length > 0) {
-        targetQuestionCount = unlearnedWords.length;
+        // 如果有未学单词，则只从未学单词中出题
+        // 如果未学单词数量 > 30，则只取30个
+        // 如果未学单词数量 <= 30，则取全部
+        targetQuestionCount = Math.min(unlearnedWords.length, 30);
       } else {
-        // 如果全部学会了，就出所有单词作为复习
-        targetQuestionCount = allWords.length;
+        // 如果所有单词都已学完（未学为0），则进入复习模式
+        // 同样限制最大30题
+        targetQuestionCount = Math.min(allWords.length, 30);
       }
     } else if (mode === 'quick') {
       // 快速模式：根据可用单词数量动态决定，最多30题
@@ -197,19 +200,19 @@ const quizService = {
     
     if (mode === 'course') {
       if (unlearnedWords.length > 0) {
-        // 如果有未学单词，只出未学单词的题
-        finalQuestions = questionsFromUnlearned;
+        // 如果有未学单词，只出未学单词的题，且限制数量
+        // questionsFromUnlearned 已经是乱序的，直接截取即可
+        finalQuestions = questionsFromUnlearned.slice(0, targetQuestionCount);
       } else {
         // 如果没有未学单词（全学会了），进入复习模式
         // 需求：如果这个课程的单词数量小于30个，那么就使用这个课程的全部单词
         // 如果这个课程的全部单词数量大于30个，那么就会选择其中30个组成一次问题
-        const reviewCount = Math.min(allWords.length, 30);
         
         // 重新生成所有单词的题目
         let allQuestions = this.generateQuestions(allWords, selectedQuestionTypes);
         
         // 截取指定数量
-        finalQuestions = allQuestions.slice(0, reviewCount);
+        finalQuestions = allQuestions.slice(0, targetQuestionCount);
       }
     } else {
       // 原有逻辑保持不变：未学不足时用已学补充
