@@ -53,18 +53,18 @@
 }
 
 .category-button {
-  width: 280rpx; /* 调整按钮宽度为280rpx */
+  width: 240rpx; /* 调整按钮宽度为240rpx */
   height: 112rpx; /* 调整所有按钮高度为56px = 112rpx */
   margin-right: 24rpx; /* 按钮间距 */
   border-radius: 56rpx; /* 调整圆角为高度的一半，更美观 */
   display: flex;
   align-items: center;
   justify-content: flex-start; /* 改为左对齐 */
-  padding-left: 32rpx; /* 调整左边距适应窄按钮 */
+  padding-left: 48rpx; /* 调整左边距适应窄按钮 */
   flex-shrink: 0;
   transition: all 0.3s ease;
   /* 未选中状态：白色底 + 投影效果 */
-  background-color: #ffffff;
+  background: linear-gradient(to right, #F2F2F2, #FFFFFF); /* 未选中状态渐变背景 */
   box-shadow: 0px 8rpx 24rpx rgba(0, 0, 0, 0.05); /* 参考option-card的投影样式 */
   position: relative; /* 确保投影层级正确 */
   z-index: 1; /* 确保投影不被遮挡 */

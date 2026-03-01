@@ -52,6 +52,46 @@ Page({
   checkLoginStatus: function() {
     const userInfo = wx.getStorageSync('userInfo');
     if (userInfo) {
+      // 检查头像路径是否有效（防止因为使用临时路径过期导致头像消失）
+      const fs = wx.getFileSystemManager();
+      const avatarPath = userInfo.avatarUrl;
+      
+      // 默认认为头像有效
+      let isAvatarValid = true;
+      
+      // 如果头像路径存在且不是默认头像
+      if (avatarPath && avatarPath !== '/images/tab/profile.png') {
+        try {
+          // 尝试访问文件，看是否存在
+          fs.accessSync(avatarPath);
+        } catch (e) {
+          // 文件不存在，说明是过期的临时文件或者已被删除
+          console.warn('用户头像文件失效:', avatarPath);
+          isAvatarValid = false;
+        }
+      }
+      
+      // 如果头像失效，恢复为默认头像，并更新存储
+      if (!isAvatarValid) {
+        userInfo.avatarUrl = '/images/tab/profile.png';
+        wx.setStorageSync('userInfo', userInfo);
+        
+        // 更新页面数据中的用户信息
+        this.setData({
+          userInfo: userInfo
+        });
+
+        // 提示用户重新设置头像
+        // 只有在页面显示时才提示，避免打扰
+        setTimeout(() => {
+          wx.showToast({
+            title: '头像已失效，请重新设置',
+            icon: 'none',
+            duration: 2000
+          });
+        }, 1000);
+      }
+
       this.setData({
         isLoggedIn: true,
         userInfo: userInfo
@@ -161,10 +201,33 @@ Page({
 
   // 用户选择头像时的回调函数（原微信API方式）
   onChooseAvatar: function (e) {
-    const { avatarUrl } = e.detail; // 获取用户选择的头像路径
+    const { avatarUrl } = e.detail; 
+    console.log('用户选择的头像路径:', avatarUrl);
+
+    // 将临时头像保存到本地缓存目录
+    // 微信的临时文件有有效期，如果不保存，下次打开可能就失效了
+    const fs = wx.getFileSystemManager();
+    // 使用时间戳生成唯一文件名，防止覆盖
+    const fileName = `user_avatar_${Date.now()}.png`; // 统一保存为png或保留原扩展名
+    const savePath = `${wx.env.USER_DATA_PATH}/${fileName}`;
     
-    this.setData({
-      avatarUrl: avatarUrl, // 更新头像路径到页面数据
+    // 直接使用 saveFile 接口保存临时文件
+    fs.saveFile({
+      tempFilePath: avatarUrl,
+      filePath: savePath,
+      success: (res) => {
+        console.log('头像已保存到本地:', res.savedFilePath);
+        this.setData({
+          avatarUrl: res.savedFilePath, // 更新为永久路径
+        });
+      },
+      fail: (err) => {
+        console.error('头像保存失败:', err);
+        // 如果保存失败，降级使用临时路径（虽然下次可能失效，但至少这次能用）
+        this.setData({
+          avatarUrl: avatarUrl, 
+        });
+      }
     });
     
     // 显示选择成功提示
