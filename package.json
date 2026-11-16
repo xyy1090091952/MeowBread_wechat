@@ -6,7 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "update-dict": "node scripts/update-dictionaries.js",
-    "convert-json": "node scripts/batch_convert_json.js"
+    "convert-json": "node scripts/batch_convert_json.js",
+    "dev": "bash scripts/open-devtools.sh",
+    "check": "node scripts/check-dev.cjs",
+    "check:n1": "node scripts/check-try-n1.cjs",
+    "sync:n1": "node scripts/sync-try-n1.cjs"
   },
   "scripts_description": {
     "update-dict": "（开发用）自动扫描 database 目录，更新 dictionaries.js 文件中每个词典的课程列表。当你新增或删除课程文件后，运行此命令。",

@@ -69,11 +69,13 @@ Page({
       };
 
       const sortDictsBySeriesAndSelection = (dictsArray) => {
-        if (!selectedDictionaryId) {
-          return dictsArray;
-        }
         const selectedSeries = getBookSeries(selectedDictionaryId);
         return dictsArray.sort((a, b) => {
+          const n1Priority = Number(b.id === 'try_n1') - Number(a.id === 'try_n1');
+          if (n1Priority) return n1Priority;
+          if (!selectedDictionaryId) {
+            return db.findIndex(d => d.id === a.id) - db.findIndex(d => d.id === b.id);
+          }
           const aIsSelected = a.id === selectedDictionaryId;
           const bIsSelected = b.id === selectedDictionaryId;
           const aIsInSelectedSeries = getBookSeries(a.id) === selectedSeries;

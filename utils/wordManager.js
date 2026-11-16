@@ -6,6 +6,7 @@
 
 const allDictionariesData = require('../database/dictionaries.js');
 const wordCacheManager = require('./wordCacheManager.js'); // 引入缓存管理器
+const { requestLesson, hasBundledLesson } = require('./lessonData.js');
 /**
  * 根据筛选条件获取单词列表
  * @param {object} filter - 筛选条件，包含 lessonFiles, dictionaryId 等
@@ -38,7 +39,7 @@ async function getWordsByFilter(filter) {
   const processLessonFile = async (dict, lessonFileUrl) => {
     try {
       // 🚀 优先从缓存中获取数据
-      const cachedData = wordCacheManager.getCachedWords(lessonFileUrl);
+      const cachedData = hasBundledLesson(lessonFileUrl) ? null : wordCacheManager.getCachedWords(lessonFileUrl);
       if (cachedData) {
         // 缓存命中，直接使用缓存数据
         wordsToLoad.push(...cachedData.map(item => {
@@ -54,9 +55,9 @@ async function getWordsByFilter(filter) {
       }
 
       // 缓存未命中，从网络加载
-      console.log(`从网络加载单词: ${lessonFileUrl}`);
+      console.log(`${hasBundledLesson(lessonFileUrl) ? '从内置词库加载单词' : '从网络加载单词'}: ${lessonFileUrl}`);
       const res = await new Promise((resolve, reject) => {
-        wx.request({
+        requestLesson({
           url: lessonFileUrl,
           dataType: 'json',
           success: resolve,
@@ -206,7 +207,9 @@ async function getWordsByFilter(filter) {
 
   await Promise.all(loadingPromises);
 
-  return wordsToLoad;
+  return filter.priorityOnly === true
+    ? wordsToLoad.filter(word => word.data.重点 === true)
+    : wordsToLoad;
 }
 
 /**
@@ -217,14 +220,14 @@ async function getWordsByFilter(filter) {
 async function getDictionaryWordCount(dictionaryId) {
   const cacheKey = `word_count_cache_${dictionaryId}`;
   try {
+    const dictionary = allDictionariesData.dictionaries.find(d => d.id === dictionaryId);
     // 1. 尝试从缓存中读取
     const cachedCount = wx.getStorageSync(cacheKey);
-    if (cachedCount) {
+    if (cachedCount && !dictionary?.lesson_files?.some(hasBundledLesson)) {
       return cachedCount;
     }
 
     // 2. 如果缓存中没有，则计算
-    const dictionary = allDictionariesData.dictionaries.find(d => d.id === dictionaryId);
     if (!dictionary || !dictionary.lesson_files) {
       return 0;
     }
@@ -232,7 +235,7 @@ async function getDictionaryWordCount(dictionaryId) {
     let totalCount = 0;
     const countPromises = dictionary.lesson_files.map(lessonFileUrl => {
       return new Promise((resolve) => {
-        wx.request({
+        requestLesson({
           url: lessonFileUrl,
           dataType: 'json',
           success: (res) => {

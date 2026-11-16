@@ -1,7 +1,7 @@
 // pages/course-mode/course-mode.js - 课程模式页面
 const filterManager = require('../../utils/filterManager.js');
 const courseDataManager = require('../../utils/courseDataManager.js');
-const learnedManager = require('../../utils/learnedManager.js');
+const { buildCoursePracticeRows } = require('../../utils/coursePractice.js');
 
 const dictionaries = require('../../database/dictionaries.js');
 
@@ -13,7 +13,8 @@ Page({
   data: {
     currentFilterDisplay: '', // 当前筛选显示文本
     pageLoaded: false, // 控制页面渐显动画
-    courseData: [], // 课程数据
+    courseData: [], // 实际课程，用于课数统计
+    courseRows: [], // 课程及其重点词练习入口
     isLoading: true, // 加载状态
     isCourseSelectorVisible: false, // 控制课程范围选择弹窗的显示
     courseSelectorOptions: [], // 课程范围选择器的选项
@@ -168,35 +169,12 @@ Page({
       
       if (!courseList || courseList.length === 0) {
         console.warn(`No courses found for textbook: ${textbook} and range: ${selectedRangeValue}`);
-        this.setData({ courseData: [], isLoading: false });
+        this.setData({ courseData: [], courseRows: [], isLoading: false });
         return;
       }
       
-      // 为每个课程添加学习进度信息
-      const courseDataWithProgress = await Promise.all(courseList.map(async (course) => {
-        const learnedWords = await learnedManager.getLearnedWordsForCourse(textbook, course.lessonFile);
-        const learnedCount = learnedWords.length;
-        const totalWords = course.wordCount;
-        const progress = totalWords > 0 ? Math.round((learnedCount / totalWords) * 100) : 0;
-        const isCompleted = progress >= 100;
-
-        return {
-          courseNumber: course.courseNumber,
-          courseTitle: course.courseTitle,
-          description: course.description,
-          learnedCount: learnedCount,
-          totalWords: totalWords,
-          progress: progress,
-          isCompleted: isCompleted,
-          textbook: textbook,
-          lessonFile: course.lessonFile
-        };
-      }));
-
-      this.setData({
-        courseData: courseDataWithProgress,
-        isLoading: false
-      });
+      const practiceRows = await buildCoursePracticeRows(courseList, textbook);
+      this.setData({ ...practiceRows, isLoading: false });
 
     } catch (error) {
       console.error('Error loading course data:', error);
@@ -210,30 +188,8 @@ Page({
   async loadDefaultCourseData() {
     const courseList = await courseDataManager.getAllCourseDetails('liangs_class');
     
-    const courseDataWithProgress = await Promise.all(courseList.map(async (course) => {
-      const learnedWords = await learnedManager.getLearnedWordsForCourse('liangs_class', course.lessonFile);
-      const learnedCount = learnedWords.length;
-      const totalWords = course.wordCount;
-      const progress = totalWords > 0 ? Math.round((learnedCount / totalWords) * 100) : 0;
-      const isCompleted = progress >= 100;
-
-      return {
-        courseNumber: course.courseNumber,
-        courseTitle: course.courseTitle,
-        description: course.description,
-        learnedCount: learnedCount,
-        totalWords: totalWords,
-        progress: progress,
-        isCompleted: isCompleted,
-        textbook: 'liangs_class',
-        lessonFile: course.lessonFile
-      };
-    }));
-
-    this.setData({
-      courseData: courseDataWithProgress,
-      isLoading: false
-    });
+    const practiceRows = await buildCoursePracticeRows(courseList, 'liangs_class');
+    this.setData({ ...practiceRows, isLoading: false });
   },
 
   /**
@@ -347,7 +303,7 @@ Page({
     console.log('Actions button tapped:', courseData, 'index:', index);
     
     // 获取当前课程数据
-    const courseDataList = this.data.courseData;
+    const courseDataList = this.data.courseRows;
     
     // 切换当前课程的展开显示状态
     courseDataList[index].showActionsExpanded = !courseDataList[index].showActionsExpanded;
@@ -360,7 +316,7 @@ Page({
     });
     
     this.setData({
-      courseData: courseDataList
+      courseRows: courseDataList
     });
     
     // 如果展开状态打开，添加点击外部关闭的监听
@@ -393,12 +349,12 @@ Page({
    * 关闭所有展开状态
    */
   closeAllPopups() {
-    const courseDataList = this.data.courseData;
+    const courseDataList = this.data.courseRows;
     courseDataList.forEach(item => {
       item.showActionsExpanded = false;
     });
     this.setData({
-      courseData: courseDataList
+      courseRows: courseDataList
     });
   },
 
@@ -434,7 +390,8 @@ Page({
       selectedDictionaryKey: courseData.textbook,
       selectedDictionaryName: textbookName,
       selectedLessonKey: courseData.lessonFile,
-      selectedLessonName: `第${courseData.courseNumber}课`,
+      selectedLessonName: courseData.priorityOnly ? `第${courseData.courseNumber}课 · 重点词汇` : `第${courseData.courseNumber}课`,
+      priorityOnly: courseData.priorityOnly === true,
       selectedLessonFiles: [courseData.lessonFile], // [FIX] 修正数据格式，直接传递课程文件的URL
       dictionaryId: courseData.textbook,
       basePath: courseData.textbook,
@@ -494,7 +451,8 @@ Page({
       selectedDictionaryKey: courseData.textbook,
       selectedDictionaryName: textbookName,
       selectedLessonKey: courseData.lessonFile,
-      selectedLessonName: `第${courseData.courseNumber}课`,
+      selectedLessonName: courseData.priorityOnly ? `第${courseData.courseNumber}课 · 重点词汇` : `第${courseData.courseNumber}课`,
+      priorityOnly: courseData.priorityOnly === true,
       selectedLessonFiles: [`DICTIONARY_${courseData.textbook}_${courseData.lessonFile}`], // 使用特定格式的标识符
       dictionaryId: courseData.textbook,
       basePath: courseData.textbook,

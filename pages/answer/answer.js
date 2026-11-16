@@ -643,6 +643,8 @@ Page({
     // 确保使用全部课程
     const updatedFilter = {
       ...currentFilter,
+      priorityOnly: false,
+      selectedLessonName: '全部课程',
       selectedLessonFiles: [`DICTIONARY_${currentFilter.dictionaryId}_ALL_LESSONS`]
     };
     filterManager.saveFilter(updatedFilter);

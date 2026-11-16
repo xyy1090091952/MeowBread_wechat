@@ -59,7 +59,7 @@ const quizService = {
       // 确保basePath始终有一个有效的默认值，避免undefined导致的setData错误
       const basePath = quizFilter.basePath || '';
       const quizMode = options.mode || quizFilter.quizMode || 'quick';
-      const words = await wordManager.getWordsByFilter({ lessonFiles: selectedLessonFiles, dictionaryId });
+      const words = await wordManager.getWordsByFilter({ lessonFiles: selectedLessonFiles, dictionaryId, priorityOnly: quizFilter.priorityOnly === true });
       const questions = this.selectWordsForQuiz(words, quizMode, selectedQuestionTypes);
 
       // 判断是否为标准模式（整本书）- 检查是否包含ALL_LESSONS

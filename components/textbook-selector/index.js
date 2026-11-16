@@ -1,4 +1,6 @@
 // components/textbook-selector/index.js
+const { requestLesson } = require('../../utils/lessonData.js');
+
 Component({
   /**
    * 组件的属性列表
@@ -67,7 +69,7 @@ Component({
         // 创建一个Promise数组来处理所有的异步请求
         const promises = dict.lesson_files.map(filePath => {
           return new Promise((resolve, reject) => {
-            wx.request({
+            requestLesson({
               url: filePath,
               success: (res) => {
                 if (res.statusCode === 200 && Array.isArray(res.data)) {
