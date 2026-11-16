@@ -39,6 +39,7 @@
         <!-- 题目头部区域 - 首先出现，无动画延迟 -->
         <view class="question-header">
           <view class="question-stem-container">
+            <image wx:if="{{questions[currentQuestionIndex].isPriority}}" class="priority-star" src="/images/icons/priority-star.svg" mode="aspectFit" aria-label="重点单词" />
             <text class="question-word">{{questions[currentQuestionIndex].wordToDisplay}}</text>
             <view class="part-of-speech-tag {{utils.mapPartOfSpeechToClassName(questions[currentQuestionIndex].partOfSpeech)}}">
               {{questions[currentQuestionIndex].wordInfo['词性']}}

@@ -187,6 +187,30 @@ let data = {
                 {"courseNumber":40,"courseTitle":"第40课","lessonFile":"lesson40","description":"描述犯罪和刑罚"},
                 {"courseNumber":41,"courseTitle":"第41课","lessonFile":"lesson41","description":"叙述计划"}
             ]
+        },
+        {
+            "id": "try_n1",
+            "name": "TRY日语N1",
+            "cover_image": "/images/textbooks/try_n1_v6.webp",
+            "lesson_files": [],
+            "volumes": [
+                {
+                    "id": "basic",
+                    "name": "N1",
+                    "description": "第1课（其余课程待补充）",
+                    "lessons": [
+                        1
+                    ]
+                }
+            ],
+            "courses": [
+                {
+                    "courseNumber": 1,
+                    "courseTitle": "第1课",
+                    "lessonFile": "lesson1",
+                    "description": "ビールの祭典"
+                }
+            ]
         }
     ]
 };

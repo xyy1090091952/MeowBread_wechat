@@ -218,6 +218,12 @@
   color: #333;
   margin-right: 0;
 }
+.priority-star {
+  width: 28rpx;
+  height: 28rpx;
+  flex-shrink: 0;
+  margin-right: 8rpx;
+}
 
 .question-stem-remainder {
   font-size: 36rpx;

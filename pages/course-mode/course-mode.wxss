@@ -158,6 +158,7 @@
 
 /* 课程节数区域 */
 .course-number {
+  position: relative;
   width: 88rpx; /* 原高120rpx - 16rpx*2 = 88rpx */
   height: 88rpx; /* 保持正圆 */
   display: flex;
@@ -168,6 +169,14 @@
   margin: 16rpx; /* 四周16rpx边距 */
   margin-right: 24rpx; /* 右边距保持24rpx，与其他元素保持间距 */
   flex-shrink: 0;
+}
+
+.course-priority-star {
+  position: absolute;
+  top: -4rpx;
+  right: -4rpx;
+  width: 28rpx;
+  height: 28rpx;
 }
 
 .course-num {

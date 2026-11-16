@@ -18,18 +18,19 @@
   <view class="course-list" wx:if="{{!isLoading && courseData.length > 0}}">
     <view class="course-item {{pageLoaded ? 'show' : ''}} {{item.isCompleted ? 'course-completed' : ''}}" 
           style="opacity: {{pageLoaded ? 1 : 0}}; transform: translateY({{pageLoaded ? 0 : 30}}rpx); transition: all 0.6s ease-out {{0.3 + index * 0.05}}s;"
-          wx:for="{{courseData}}" 
-          wx:key="courseNumber"
+          wx:for="{{courseRows}}"
+          wx:key="practiceKey"
           data-index="{{index}}"
           bindtap="onCourseItemTap">
       <view class="course-number {{item.isCompleted ? 'course-number-completed' : ''}}">
         <text class="course-num">{{item.courseNumber}}</text>
+        <image wx:if="{{item.priorityOnly}}" class="course-priority-star" src="/images/icons/priority-star.svg" mode="aspectFit" aria-label="重点词汇"></image>
       </view>
       <!-- 课程信息区域 - 根据展开状态显示/隐藏 -->
       <view class="course-info {{item.showActionsExpanded ? 'course-info-hidden' : ''}}" wx:if="{{item.isCompleted}}">
         <text class="course-name {{item.isCompleted ? 'course-name-completed' : ''}}">{{item.courseTitle}}{{item.description ? ' ' + item.description : ''}}</text>
         <view class="course-progress">
-          <text class="progress-text {{item.isCompleted ? 'progress-text-completed' : ''}}">单词进度{{item.learnedCount}}/{{item.totalWords}}</text>
+          <text class="progress-text {{item.isCompleted ? 'progress-text-completed' : ''}}">{{item.progressLabel}}{{item.learnedCount}}/{{item.totalWords}}</text>
           <view class="progress-bar">
             <view class="progress-fill {{item.isCompleted ? 'progress-fill-completed' : ''}}" style="width: {{item.progress}}%;"></view>
           </view>
@@ -40,7 +41,7 @@
       <view class="course-info" wx:else>
         <text class="course-name {{item.isCompleted ? 'course-name-completed' : ''}}">{{item.courseTitle}}{{item.description ? ' ' + item.description : ''}}</text>
         <view class="course-progress">
-          <text class="progress-text {{item.isCompleted ? 'progress-text-completed' : ''}}">单词进度{{item.learnedCount}}/{{item.totalWords}}</text>
+          <text class="progress-text {{item.isCompleted ? 'progress-text-completed' : ''}}">{{item.progressLabel}}{{item.learnedCount}}/{{item.totalWords}}</text>
           <view class="progress-bar">
             <view class="progress-fill {{item.isCompleted ? 'progress-fill-completed' : ''}}" style="width: {{item.progress}}%;"></view>
           </view>

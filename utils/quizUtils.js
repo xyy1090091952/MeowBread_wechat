@@ -80,6 +80,7 @@ function formatQuestion(wordData, questionTypeToGenerate, allWordsInLesson) {
     wordInfo: word,
     sourceDictionary: wordData.sourceDictionary, // 把来源信息也打包进去！
     partOfSpeech: word.词性 || '',
+    isPriority: word.重点 === true,
     specificQuestionType: questionTypeToGenerate
   };
 }
