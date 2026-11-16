@@ -40,6 +40,10 @@ logs/
 dist/
 build/
 
+# 本地封面生成过程与已替换的封面，保留本地文件
+/output/
+/images/textbooks/try_n1.webp
+
 # 环境配置
 .env
 .env.local

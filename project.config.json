@@ -3,7 +3,40 @@
   "compileType": "miniprogram",
   "libVersion": "3.8.7",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "output"
+      },
+      {
+        "type": "folder",
+        "value": "docs"
+      },
+      {
+        "type": "folder",
+        "value": "scripts"
+      },
+      {
+        "type": "file",
+        "value": "AGENTS.md"
+      },
+      {
+        "type": "file",
+        "value": "README.md"
+      },
+      {
+        "type": "file",
+        "value": ".nvmrc"
+      },
+      {
+        "type": "file",
+        "value": "启动小程序.command"
+      },
+      {
+        "type": "file",
+        "value": "images/textbooks/try_n1.webp"
+      }
+    ],
     "include": []
   },
   "setting": {
