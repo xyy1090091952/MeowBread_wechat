@@ -313,7 +313,7 @@ Page({
 
     // 显示登录成功提示
     wx.showToast({
-      title: '登录成功',
+      title: '资料已保存',
       icon: 'success'
     });
   },

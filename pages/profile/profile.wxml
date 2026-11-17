@@ -22,8 +22,9 @@
         <!-- 昵称输入框 - 微信推荐方式 -->
         <input class="nickname-input {{nickname ? 'has-nickname' : ''}}" type="nickname" placeholder="请输入昵称" bind:input="onNicknameInput" value="{{nickname}}" />
 
-        <!-- 登录按钮 -->
-        <view class="login-btn" bindtap="login">登录</view>
+        <!-- 保存本地个人资料 -->
+        <view class="login-btn" bindtap="login">保存资料</view>
+        <text class="local-storage-note">学习记录保存在当前设备</text>
       </view>
     </block>
     
