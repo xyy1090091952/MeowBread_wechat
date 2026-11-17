@@ -788,6 +788,14 @@
   box-shadow: 0 8rpx 24rpx rgba(76, 175, 80, 0.15);
 }
 /* 登录按钮 - 统一样式 */
+.local-storage-note {
+  margin-top: 20rpx;
+  font-size: 22rpx;
+  line-height: 1.5;
+  color: #666666;
+  text-align: center;
+}
+
 .login-btn{
   width: 100%;
   margin: 48rpx 0 0 0;
